@@ -7,7 +7,7 @@ import { Provider } from 'react-redux'
 import { createStore, combineReducers  } from 'redux'
 
 
-const dashboardReducer = (state = null, action) => {
+const dashboardReducer = (state = {}, action) => {
 
     console.log("Dashboard reducer called with state ", state, "and action ", action);
 
@@ -15,8 +15,15 @@ const dashboardReducer = (state = null, action) => {
         console.log("Received ADD_TODO, state: ", state)
         console.log("Received ADD_TODO, action data: ", action.data)
         return {
-            state,
+            ...state,
             user: action.data
+        }
+    }else if(action.type=='SUB_TODO') {
+        console.log("Received SUB_TODO, state: ", state)
+        console.log("Received SUB_TODO, action data: ", action.data)
+        return {
+            ...state,
+            newUser: action.newUser
         }
     }else{
         return state;
@@ -24,7 +31,7 @@ const dashboardReducer = (state = null, action) => {
 
 };
 
-const loginReducer = (state = null, action) => {
+const loginReducer = (state = {}, action) => {
 
     console.log("Login reducer called with state ", state, "and action ", action);
 
@@ -38,7 +45,6 @@ const loginReducer = (state = null, action) => {
 
 let store = createStore(combineReducers({dashboardReducer, loginReducer}));
 
-//store.dispatch({type: 'ADD_TODO', data: 'hi'});
 
 ReactDOM.render(
     <Provider store={store}>

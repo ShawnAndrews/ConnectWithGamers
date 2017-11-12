@@ -14,13 +14,13 @@ const mapStateToProps = state => {
     }
 }
 
-// const mapDispatchToProps = (dispatch, ownProps) => {
-//     return {
-//         onClick: () => {
-//             dispatch(setVisibilityFilter(ownProps.filter))
-//         }
-//     }
-// }
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLoginClick: (obj) => {
+            dispatch(obj)
+        }
+    }
+}
 
 
 class App extends React.Component {
@@ -83,5 +83,5 @@ App.propTypes = {
     dispatch: PropTypes.func.isRequired,
 }
 
-export default connect(mapStateToProps)(withRouter(App));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(App));
 //export default withRouter(App);

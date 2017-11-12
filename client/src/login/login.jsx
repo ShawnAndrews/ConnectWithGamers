@@ -9,12 +9,6 @@ import {withRouter} from "react-router-dom";
 import { connect } from "react-redux"
 import PropTypes from 'prop-types';
 
-// interface ILoginProps {
-//     history: any;
-//     authenticated: () => void;
-// }
-
-
 
 const styles = {
     body: {
@@ -60,6 +54,14 @@ const mapStateToProps = state => {
     }
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLoginClick: (obj) => {
+            dispatch(obj)
+        }
+    }
+}
+
 class Login extends React.Component {
 
 
@@ -72,13 +74,20 @@ class Login extends React.Component {
     }
 
 	loginBtnClick() {
-        this.props.dispatch({type: 'ADD_TODO', data: 'John'});
+        this.props.onLoginClick({type: 'ADD_TODO', data: 'Bob'});
 	    console.log('Logged in!');
+        //this.props.authenticated();
+    }
+
+    signUpBtnClick() {
+        this.props.onLoginClick({type: 'SUB_TODO', newUser: 'Jim'});
+        console.log('Signed up in!');
         //this.props.authenticated();
     }
 
     render() {
         console.log("Login rendered with props ", this.props);
+        console.log(this.props.store);
         return (
                 <div>
                     <MuiThemeProvider>
@@ -105,10 +114,8 @@ class Login extends React.Component {
                                 style={styles.rememberMe}
                             />
                             <div style={styles.loginAndSignUpBlock}>
-                                <RaisedButton label="Login" onClick={this.loginBtnClick.bind(this)} primary={true} style={styles.loginAndSignUpBtn} >
-
-                                </RaisedButton>
-                                <RaisedButton label="Sign up" secondary={true} style={styles.loginAndSignUpBtn} />
+								<RaisedButton label="Login" onClick={this.loginBtnClick.bind(this)} primary={true} style={styles.loginAndSignUpBtn}></RaisedButton>
+                                <RaisedButton label="Sign up" secondary={true} onClick={this.signUpBtnClick.bind(this)} style={styles.loginAndSignUpBtn} />
                             </div>
                         </Paper>
                     </MuiThemeProvider>
@@ -123,4 +130,4 @@ Login.propTypes = {
     authenticated: PropTypes.func.isRequired,
 }
 
-export default connect(mapStateToProps)(withRouter(Login));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Login));

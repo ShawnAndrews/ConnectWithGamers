@@ -10,14 +10,6 @@ import { Route, Switch } from 'react-router-dom';
 import { ERR_LEVEL, log } from '../util/error';
 import PropTypes from 'prop-types';
 
-// interface IDashboardComponentProps {
-//     history;
-// }
-//
-// interface MenuItem {
-//     label: string,
-//     link: string
-// }
 
 const styles = {
     title: {
