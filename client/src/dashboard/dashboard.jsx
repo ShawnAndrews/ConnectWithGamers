@@ -1,9 +1,9 @@
 import * as React from 'react';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import IconButton from 'material-ui/IconButton';
+import Avatar from 'material-ui/Avatar';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import {withRouter} from "react-router-dom";
 import { Route, Switch } from 'react-router-dom';
@@ -12,15 +12,21 @@ import PropTypes from 'prop-types';
 
 
 const styles = {
-    title: {
+    dashboard: {
         textAlign: 'center',
-        backgroundColor: '#00BCD4',
+        marginBottom: '8px'
     },
-    iconRoot: {
+    titleText: {
 
     },
     iconColor: {
         color: 'white'
+    },
+    avatarStyle: {
+        backgroundColor: 'none'
+    },
+    avatarContainerStyle: {
+        margin: 'auto'
     }
 };
 
@@ -128,30 +134,34 @@ class Dashboard extends React.Component {
   render() {
     console.log("Dashboard rendered with props ", this.props);
     return (
-      <div>
-        <MuiThemeProvider>
-            <AppBar
-                title={<span>Dashboard</span>}
-                style={styles.title}
-                iconElementLeft={
-                    <IconMenu
-                        style={styles.iconRoot}
-                        iconStyle={styles.iconColor}
-                        iconButtonElement={
-                            <IconButton>
-                                <MoreVertIcon />
-                            </IconButton>
-                        }
-                        targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                        anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-                    >
-                        <Route exact path='/' render={(props) => this.renderRoutesMenuItems('/') }/>
-                        <Route exact path='/login' render={(props) => this.renderRoutesMenuItems('/login') }/>
-                    </IconMenu>
-                }
-            />
-        </MuiThemeProvider>
-      </div>
+        <AppBar
+            title={<span>Dashboard</span>}
+            style={styles.dashboard}
+            titleStyle={styles.titleText}
+            iconElementLeft={
+                <IconMenu
+                    iconStyle={styles.iconColor}
+                    iconButtonElement={
+                        <IconButton>
+                            <MoreVertIcon />
+                        </IconButton>
+                    }
+                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                    anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+                >
+                    <Route exact path='/' render={(props) => this.renderRoutesMenuItems('/') }/>
+                    <Route exact path='/login' render={(props) => this.renderRoutesMenuItems('/login') }/>
+                </IconMenu>
+            }
+            iconElementRight={
+                <Avatar
+                    src="https://i.imgur.com/KpWb0dz.png"
+                    size={35}
+                    style={styles.avatarStyle}
+                />
+            }
+            iconStyleRight={styles.avatarContainerStyle}
+        />
     );
   }
 

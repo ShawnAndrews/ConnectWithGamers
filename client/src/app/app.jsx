@@ -5,22 +5,10 @@ import Login from "../login/login";
 import Home from "../home/home";
 import NotFound from "../notfound/notfound";
 import {withRouter} from "react-router-dom";
-import { connect } from "react-redux"
 import PropTypes from 'prop-types';
+import {HomeContainer} from "../redux/containers/homeContainer";
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
-const mapStateToProps = state => {
-    return {
-        store: state
-    }
-}
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        onLoginClick: (obj) => {
-            dispatch(obj)
-        }
-    }
-}
 
 
 class App extends React.Component {
@@ -46,32 +34,16 @@ class App extends React.Component {
     render() {
         console.log("App rendered with props ", this.props);
 
-        // not authenticated
-        if(!this.state.loggedIn){
-
-            return (
-                <div>
-                    <Dashboard/>
-                    <Redirect to="/login"/>
-                    <Switch>
-                        <Route exact path='/login' render={() => <Login authenticated={this.authenticated}/>} />} />
-                        <Route component={NotFound}/>
-                    </Switch>
-                </div>
-            );
-
-        }
-
-        // authenticated
+        // render
         return (
-            <div>
+            <MuiThemeProvider>
                 <Dashboard loggedIn={this.state.loggedIn} authenticated={this.authenticated} />
-                <Redirect from="/login" to="/"/>
                 <Switch>
-                    <Route path='/' component={Home}/>
+                    <Route exact path='/' component={HomeContainer}/>
+                    <Route exact path='/login' render={() => <Login authenticated={this.authenticated}/>} />
                     <Route component={NotFound}/>
                 </Switch>
-            </div>
+            </MuiThemeProvider>
         );
 
     }
@@ -83,5 +55,4 @@ App.propTypes = {
     dispatch: PropTypes.func.isRequired,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(App));
-//export default withRouter(App);
+export default withRouter(App);
