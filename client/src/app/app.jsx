@@ -2,7 +2,7 @@ import * as React from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Dashboard from "../dashboard/dashboard";
 import Login from "../login/login";
-import Home from "../home/home";
+import Signup from "../signup/signup";
 import NotFound from "../notfound/notfound";
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
@@ -41,6 +41,7 @@ class App extends React.Component {
                 <Switch>
                     <Route exact path='/' component={HomeContainer}/>
                     <Route exact path='/login' render={() => <Login authenticated={this.authenticated}/>} />
+                    <Route exact path='/signup' component={Signup}/>
                     <Route component={NotFound}/>
                 </Switch>
             </MuiThemeProvider>

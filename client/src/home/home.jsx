@@ -5,10 +5,57 @@ import PropTypes from 'prop-types';
 import {Card, CardTitle, CardMedia, CardHeader} from 'material-ui/Card';
 
 const styles = {
-    rootStyle: {
+    menuOneRootStyle: {
         height: '27vh',
-        backgroundColor: 'rgb(0, 188, 212)'
-    }
+        backgroundImage: 'url(https://i.imgur.com/GamY817.png)',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+    },
+    menuTwoRootStyle: {
+        height: '27vh',
+        backgroundImage: 'url(https://i.imgur.com/u7dYF4q.png)',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+    },
+    menuThreeRootStyle: {
+        height: '27vh',
+        backgroundImage: 'url(https://i.imgur.com/KTF6xMu.png)',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+    },
+
+    menuFourRootStyle: {
+        height: '27vh',
+        backgroundImage: 'url(https://i.imgur.com/VZkIbR0.png)',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+    },
+    menuFiveRootStyle: {
+        height: '27vh',
+        backgroundImage: 'url(https://i.imgur.com/9HhPAwR.png)',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+    },
+    menuSixRootStyle: {
+        height: '27vh',
+        backgroundImage: 'url(https://i.imgur.com/EUHHCQM.png)',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+    },
+    headerStyle: {
+        backgroundColor: 'rgba(0,0,0,0.3)',
+        textAlign: 'center'
+    },
+    headerContainerStyle: {
+        padding: '0',
+    },
+    headerTitleColor: 'white'
 };
 
 export default class Home extends React.Component {
@@ -22,74 +69,80 @@ export default class Home extends React.Component {
         return (
             <div>
                 <Flex wrap justify='space-evenly'>
-                    <Box px={1} py={1} w={1/2.3}>
+                    <Box px={1} py={1} w={1/2.25}>
                         <Card
-                            style={styles.rootStyle}
+                            style={styles.menuOneRootStyle}
                         >
                             <CardHeader
-                                title="Most active days"
-                                style={{backgroundColor: 'white'}}
-                                textStyle={{padding: '0'}}
+                                title="Find a group"
+                                style={styles.headerStyle}
+                                textStyle={styles.headerContainerStyle}
+                                titleColor={styles.headerTitleColor}
                             />
 
                         </Card>
                     </Box>
-                    <Box px={1} py={1} w={1/2.3}>
+                    <Box px={1} py={1} w={1/2.25}>
                         <Card
-                            style={styles.rootStyle}
+                            style={styles.menuTwoRootStyle}
                         >
                             <CardHeader
-                                title="Search for a game"
-                                style={{backgroundColor: 'white'}}
-                                textStyle={{padding: '0'}}
+                                title="Statistics"
+                                style={styles.headerStyle}
+                                textStyle={styles.headerContainerStyle}
+                                titleColor={styles.headerTitleColor}
                             />
 
                         </Card>
                     </Box>
-                    <Box px={1} py={1} w={1/2.3}>
+                    <Box px={1} py={1} w={1/2.25}>
                         <Card
-                            style={styles.rootStyle}
+                            style={styles.menuThreeRootStyle}
                         >
                             <CardHeader
                                 title="Find a player"
-                                style={{backgroundColor: 'white'}}
-                                textStyle={{padding: '0'}}
+                                style={styles.headerStyle}
+                                textStyle={styles.headerContainerStyle}
+                                titleColor={styles.headerTitleColor}
                             />
 
                         </Card>
                     </Box>
-                    <Box px={1} py={1} w={1/2.3}>
+                    <Box px={1} py={1} w={1/2.25}>
                         <Card
-                            style={styles.rootStyle}
+                            style={styles.menuFourRootStyle}
                         >
                             <CardHeader
                                 title="Roster"
-                                style={{backgroundColor: 'white'}}
-                                textStyle={{padding: '0'}}
+                                style={styles.headerStyle}
+                                textStyle={styles.headerContainerStyle}
+                                titleColor={styles.headerTitleColor}
                             />
 
                         </Card>
                     </Box>
-                    <Box px={1} py={1} w={1/2.3}>
+                    <Box px={1} py={1} w={1/2.25}>
                         <Card
-                            style={styles.rootStyle}
+                            style={styles.menuFiveRootStyle}
                         >
                             <CardHeader
-                                title="!!!!!!!!!"
-                                style={{backgroundColor: 'white'}}
-                                textStyle={{padding: '0'}}
+                                title="Create a profile"
+                                style={styles.headerStyle}
+                                textStyle={styles.headerContainerStyle}
+                                titleColor={styles.headerTitleColor}
                             />
 
                         </Card>
                     </Box>
-                    <Box px={1} py={1} w={1/2.3}>
+                    <Box px={1} py={1} w={1/2.25}>
                         <Card
-                            style={styles.rootStyle}
+                            style={styles.menuSixRootStyle}
                         >
                             <CardHeader
-                                title="^^^^^^^"
-                                style={{backgroundColor: 'white'}}
-                                textStyle={{padding: '0'}}
+                                title="Upgrade to pro"
+                                style={styles.headerStyle}
+                                textStyle={styles.headerContainerStyle}
+                                titleColor={styles.headerTitleColor}
                             />
 
                         </Card>

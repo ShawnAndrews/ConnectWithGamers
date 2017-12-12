@@ -75,7 +75,7 @@ class Login extends React.Component {
         return (
                 <Paper style={styles.body} zDepth={1}>
                     <div style={styles.logoWrapper}>
-                        <img src="https://i.imgur.com/2fROVWC.png" style={styles.logo} alt="logo"/>
+                        <img src="https://i.imgur.com/U9yx972.png" style={styles.logo} alt="logo"/>
                     </div>
                     <div style={styles.loginStyle}>
                         <TextField

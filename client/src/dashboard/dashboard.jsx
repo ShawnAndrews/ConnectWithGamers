@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 const styles = {
     dashboard: {
         textAlign: 'center',
-        marginBottom: '8px'
+        marginBottom: '8px',
     },
     titleText: {
 
