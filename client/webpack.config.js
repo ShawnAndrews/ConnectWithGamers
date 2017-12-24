@@ -13,10 +13,10 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/,
+        test: /\.less$/,
         loader: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: [ 'css-loader' ]
+          use: [ 'css-loader', 'less-loader' ]
         })
       },
       {
@@ -36,6 +36,6 @@ module.exports = {
     })
   ],
   resolve: {
-      extensions: ['.js', '.jsx'],
+      extensions: ['.js', '.jsx', '.less'],
   }
 };

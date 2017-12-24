@@ -4,13 +4,17 @@ const app = express();
 const path = require('path');
 const bodyParser = require('body-parser')
 const mainController = require('./controllers/mainController/main')
+const registerController = require('./controllers/registerController/register')
 
-// parse post body
+/* parse post body */ 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-/* main controller */
-app.use('/', mainController);
+/* registration controller */
+app.use('/register', registerController);
+
+/* oauth rest api controller */
+app.use('/v1', mainController);
 
 /* listen */
 app.listen(config.serverPort, function () {
