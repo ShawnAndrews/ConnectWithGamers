@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import Paper from 'material-ui/Paper';
-import RaisedButton from 'material-ui/RaisedButton';
-import Toggle from 'material-ui/Toggle';
-import TextField from 'material-ui/TextField';
+//import Paper from 'material-ui/Paper';
+//import RaisedButton from 'material-ui/RaisedButton';
+//import Toggle from 'material-ui/Toggle';
+//import TextField from 'material-ui/TextField';
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
 
@@ -73,33 +73,36 @@ class Login extends React.Component {
         console.log("Login rendered with props ", this.props);
         console.log(this.props.store);
         return (
-                <Paper style={styles.body} zDepth={1}>
-                    <div style={styles.logoWrapper}>
-                        <img src="https://i.imgur.com/U9yx972.png" style={styles.logo} alt="logo"/>
-                    </div>
-                    <div style={styles.loginStyle}>
-                        <TextField
-                            hintText="Input your username here"
-                            floatingLabelText="Username"
-                        /><br />
-                        <TextField
-                          hintText="Input your password here"
-                          floatingLabelText="Password"
-                          type="password"
-                        /><br />
-                    </div>
-                    <Toggle
-                        label="Remember me"
-                        labelStyle={styles.rememberMeLabel}
-                        defaultToggled={false}
-                        labelPosition="left"
-                        style={styles.rememberMe}
-                    />
-                    <div style={styles.loginAndSignUpBlock}>
-                        <RaisedButton label="Login" onClick={this.loginBtnClick.bind(this)} primary={true} style={styles.loginAndSignUpBtn}></RaisedButton>
-                        <RaisedButton label="Sign up" secondary={true} onClick={this.signUpBtnClick.bind(this)} style={styles.loginAndSignUpBtn} />
-                    </div>
-                </Paper>
+                // <Paper style={styles.body} zDepth={1}>
+                //     <div style={styles.logoWrapper}>
+                //         <img src="https://i.imgur.com/U9yx972.png" style={styles.logo} alt="logo"/>
+                //     </div>
+                //     <div style={styles.loginStyle}>
+                //         <TextField
+                //             hintText="Input your username here"
+                //             floatingLabelText="Username"
+                //         /><br />
+                //         <TextField
+                //           hintText="Input your password here"
+                //           floatingLabelText="Password"
+                //           type="password"
+                //         /><br />
+                //     </div>
+                //     <Toggle
+                //         label="Remember me"
+                //         labelStyle={styles.rememberMeLabel}
+                //         defaultToggled={false}
+                //         labelPosition="left"
+                //         style={styles.rememberMe}
+                //     />
+                //     <div style={styles.loginAndSignUpBlock}>
+                //         <RaisedButton label="Login" onClick={this.loginBtnClick.bind(this)} primary={true} style={styles.loginAndSignUpBtn}></RaisedButton>
+                //         <RaisedButton label="Sign up" secondary={true} onClick={this.signUpBtnClick.bind(this)} style={styles.loginAndSignUpBtn} />
+                //     </div>
+                // </Paper>
+                <div>
+                    <h1>Login page</h1>
+                </div>
         );
     }
 

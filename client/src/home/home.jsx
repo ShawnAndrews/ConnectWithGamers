@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Flex, Box } from 'reflexbox';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {Card, CardTitle, CardMedia, CardHeader} from 'material-ui/Card';
+//import {Card, CardTitle, CardMedia, CardHeader} from 'material-ui/Card';
 
 const styles = {
     menuOneRootStyle: {
@@ -70,7 +70,7 @@ export default class Home extends React.Component {
             <div>
                 <Flex wrap justify='space-evenly'>
                     <Box px={1} py={1} w={1/2.25}>
-                        <Card
+                        {/* <Card
                             style={styles.menuOneRootStyle}
                         >
                             <CardHeader
@@ -80,10 +80,11 @@ export default class Home extends React.Component {
                                 titleColor={styles.headerTitleColor}
                             />
 
-                        </Card>
+                        </Card> */}
+                        <h1>Find a group</h1>
                     </Box>
                     <Box px={1} py={1} w={1/2.25}>
-                        <Card
+                        {/* <Card
                             style={styles.menuTwoRootStyle}
                         >
                             <CardHeader
@@ -93,10 +94,11 @@ export default class Home extends React.Component {
                                 titleColor={styles.headerTitleColor}
                             />
 
-                        </Card>
+                        </Card> */}
+                        <h1>Statistics</h1>
                     </Box>
                     <Box px={1} py={1} w={1/2.25}>
-                        <Card
+                        {/* <Card
                             style={styles.menuThreeRootStyle}
                         >
                             <CardHeader
@@ -106,10 +108,11 @@ export default class Home extends React.Component {
                                 titleColor={styles.headerTitleColor}
                             />
 
-                        </Card>
+                        </Card> */}
+                        <h1>Find a player</h1>
                     </Box>
                     <Box px={1} py={1} w={1/2.25}>
-                        <Card
+                        {/* <Card
                             style={styles.menuFourRootStyle}
                         >
                             <CardHeader
@@ -119,10 +122,11 @@ export default class Home extends React.Component {
                                 titleColor={styles.headerTitleColor}
                             />
 
-                        </Card>
+                        </Card> */}
+                        <h1>Roster</h1>
                     </Box>
                     <Box px={1} py={1} w={1/2.25}>
-                        <Card
+                        {/* <Card
                             style={styles.menuFiveRootStyle}
                         >
                             <CardHeader
@@ -132,10 +136,11 @@ export default class Home extends React.Component {
                                 titleColor={styles.headerTitleColor}
                             />
 
-                        </Card>
+                        </Card> */}
+                        <h1>Create a profile</h1>
                     </Box>
                     <Box px={1} py={1} w={1/2.25}>
-                        <Card
+                        {/* <Card
                             style={styles.menuSixRootStyle}
                         >
                             <CardHeader
@@ -145,7 +150,8 @@ export default class Home extends React.Component {
                                 titleColor={styles.headerTitleColor}
                             />
 
-                        </Card>
+                        </Card> */}
+                        <h1>Upgrade to pro</h1>
                     </Box>
                 </Flex>
             </div>

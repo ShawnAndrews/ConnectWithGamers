@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import Paper from 'material-ui/Paper';
-import RaisedButton from 'material-ui/RaisedButton';
-import Toggle from 'material-ui/Toggle';
-import TextField from 'material-ui/TextField';
+// import Paper from 'material-ui/Paper';
+// import RaisedButton from 'material-ui/RaisedButton';
+// import Toggle from 'material-ui/Toggle';
+// import TextField from 'material-ui/TextField';
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
 
@@ -57,32 +57,35 @@ class Signup extends React.Component {
         console.log("Signup rendered with props ", this.props);
         console.log(this.props.store);
         return (
-            <Paper style={styles.body} zDepth={1}>
-                <div style={styles.signupStyle}>
-                    <p style={styles.headerTextStyle}>Create a new account</p>
-                    <TextField
-                        hintText="Input your username here"
-                        floatingLabelText="Username"
-                    /><br />
-                    <TextField
-                        hintText="Input your password here"
-                        floatingLabelText="Password"
-                        type="password"
-                    /><br />
-                    <TextField
-                        hintText="Confirm your password here"
-                        floatingLabelText="Confirm password"
-                        type="password"
-                    /><br />
-                    <TextField
-                        hintText="Enter your email here"
-                        floatingLabelText="Email"
-                    /><br />
-                </div>
-                <div style={styles.createBlock}>
-                    <RaisedButton label="Create account" secondary={true} style={styles.createBtn} />
-                </div>
-            </Paper>
+            // <Paper style={styles.body} zDepth={1}>
+            //     <div style={styles.signupStyle}>
+            //         <p style={styles.headerTextStyle}>Create a new account</p>
+            //         <TextField
+            //             hintText="Input your username here"
+            //             floatingLabelText="Username"
+            //         /><br />
+            //         <TextField
+            //             hintText="Input your password here"
+            //             floatingLabelText="Password"
+            //             type="password"
+            //         /><br />
+            //         <TextField
+            //             hintText="Confirm your password here"
+            //             floatingLabelText="Confirm password"
+            //             type="password"
+            //         /><br />
+            //         <TextField
+            //             hintText="Enter your email here"
+            //             floatingLabelText="Email"
+            //         /><br />
+            //     </div>
+            //     <div style={styles.createBlock}>
+            //         <RaisedButton label="Create account" secondary={true} style={styles.createBtn} />
+            //     </div>
+            // </Paper>
+            <div>
+                <h1>Sign up page</h1>
+            </div>
         );
     }
 
