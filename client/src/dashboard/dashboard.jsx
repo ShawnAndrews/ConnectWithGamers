@@ -136,7 +136,7 @@ class Dashboard extends React.Component {
     return (
         <AppBar
             title={<span>Dashboard</span>}
-            className={styles.dashboard}
+            style={styles.dashboard}
             titleStyle={styles.titleText}
             iconElementLeft={
                 <IconMenu
