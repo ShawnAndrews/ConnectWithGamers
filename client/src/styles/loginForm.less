@@ -1,0 +1,157 @@
+@login-background-col1: #5B83AD;
+@login-background-col2: #53e3a6;
+@login-form-col: whitesmoke;
+@login-logo-width: 250px;
+@login-logo-height: 250px;
+
+.center {
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.login-logo {
+  background-color: rgba(12,111,222,0.5);
+  margin: auto;
+  height: @login-logo-height;
+  width: @login-logo-width;
+}
+
+.login-form {
+
+  [class^="login-form"] {
+    position: relative;
+    display: block;
+    background: transparent;
+    letter-spacing: 2px;
+    font-family: Tahoma, Geneva, sans-serif;
+  }
+
+  .login-form-username, .login-form-password {
+    margin: 25px auto auto auto;
+    width: 50%;
+    font-size: 1.4em;
+    font-family: inherit;
+    border-width: 0px 0px 2px 0px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    color: transparent;
+    text-shadow: 0 0 0 @login-form-col;
+    transition: border-bottom 0.35s ease-in-out;
+  }
+
+  .login-form-username:focus, .login-form-password:focus {
+    border-bottom: 1px solid @login-form-col;
+  }
+
+  .login-form-submit {
+    border: 1px solid @login-form-col;
+    border-radius: 10px;
+    color: @login-form-col;
+    font-weight: bold;
+    font-size: 1.15em;
+    line-height: 40px;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 25px auto auto auto;
+    width: 60%;
+  }
+
+  .login-form-signup {
+    position: relative;
+    display: block;
+    background: transparent;
+    border: 1px solid @login-form-col;
+    border-radius: 10px;
+    color: @login-form-col;
+    font-weight: bold;
+    font-size: 1em;
+    line-height: 32px;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 25px auto auto auto;
+    width: 35%;
+  }
+
+  button > i {
+    margin-right: 10px;
+  }
+
+  ::-webkit-input-placeholder {
+    color: @login-form-col;
+    letter-spacing: 2px;
+    opacity: 0.5;
+    -webkit-transition: opacity 0.35s ease-in-out;
+    transition: opacity 0.35s ease-in-out;
+  }
+  :-moz-placeholder {
+    color: @login-form-col;
+    letter-spacing: 2px;
+    opacity: 0.5;
+    -moz-transition: opacity 0.35s ease-in-out;
+    transition: opacity 0.35s ease-in-out;
+  }
+  ::-moz-placeholder {
+    color: @login-form-col;
+    letter-spacing: 2px;
+    opacity: 0.5;
+    -moz-transition: opacity 0.35s ease-in-out;
+    transition: opacity 0.35s ease-in-out;
+  }
+  :-ms-input-placeholder {  
+    color: @login-form-col;
+    letter-spacing: 2px;
+    opacity: 0.5;
+    -ms-transition: opacity 0.35s ease-in-out;
+    transition: opacity 0.35s ease-in-out;
+  }
+
+  :focus::-webkit-input-placeholder {
+    opacity: 0;
+    -webkit-transition: opacity 0.35s ease-in-out;
+    transition: opacity 0.35s ease-in-out;
+  }
+  :focus:-moz-placeholder {
+    opacity: 0;
+    -moz-transition: opacity 0.35s ease-in-out;
+    transition: opacity 0.35s ease-in-out;
+  }
+  :focus::-moz-placeholder {
+    opacity: 0;
+    -moz-transition: opacity 0.35s ease-in-out;
+    transition: opacity 0.35s ease-in-out;
+  }
+  :focus:-ms-input-placeholder {  
+    opacity: 0;
+    -ms-transition: opacity 0.35s ease-in-out;
+    transition: opacity 0.35s ease-in-out;
+  }
+
+  input:focus, button:focus {
+    outline: none;
+  }
+
+}
+
+.login-icons {
+  position: absolute;
+  z-index: 10;
+  bottom: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  text-align: center;
+  
+  span a i {
+    color: @login-form-col;
+    opacity: 0.7;
+    text-decoration: none;
+    margin: 0 20px 5px 20px;
+    transition: all 0.4s ease-in-out;
+    &:hover {
+      opacity: 1.0;
+    }
+  }
+}

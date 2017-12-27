@@ -7,8 +7,6 @@ import NotFound from "../notfound/notfound";
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
 import {HomeContainer} from "../redux/containers/homeContainer";
-// import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-
 
 
 class App extends React.Component {
@@ -37,7 +35,7 @@ class App extends React.Component {
         // render
         return (
             <div>
-                {/* <Dashboard loggedIn={this.state.loggedIn} authenticated={this.authenticated} /> */}
+                {/* dashboard here*/}
                 <Switch>
                     <Route exact path='/' component={HomeContainer}/>
                     <Route exact path='/login' render={() => <Login authenticated={this.authenticated}/>} />

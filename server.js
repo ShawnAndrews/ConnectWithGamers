@@ -16,6 +16,7 @@ app.use('/register', registerController);
 /* oauth rest api controller */
 app.use('/v1', mainController);
 
+/* client */
 app.get('/bundle.js', function(req, res) {res.sendFile(path.join(__dirname, 'client/dist/bundle.js'))});
 app.get('/bundle.css', function(req, res) {res.sendFile(path.join(__dirname, 'client/dist/bundle.css'))});
 app.use('*', express.static(path.join(__dirname, 'client/dist')));

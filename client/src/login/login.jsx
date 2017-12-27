@@ -1,9 +1,4 @@
 import * as React from 'react';
-
-//import Paper from 'material-ui/Paper';
-//import RaisedButton from 'material-ui/RaisedButton';
-//import Toggle from 'material-ui/Toggle';
-//import TextField from 'material-ui/TextField';
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
 
@@ -69,39 +64,45 @@ class Login extends React.Component {
         //this.props.authenticated();
     }
 
+    handleSubmit(event) {
+        console.log('A name was submitted: ' + this.state.value);
+      }
+
     render() {
         console.log("Login rendered with props ", this.props);
         console.log(this.props.store);
         return (
-                // <Paper style={styles.body} zDepth={1}>
-                //     <div style={styles.logoWrapper}>
-                //         <img src="https://i.imgur.com/U9yx972.png" style={styles.logo} alt="logo"/>
-                //     </div>
-                //     <div style={styles.loginStyle}>
-                //         <TextField
-                //             hintText="Input your username here"
-                //             floatingLabelText="Username"
-                //         /><br />
-                //         <TextField
-                //           hintText="Input your password here"
-                //           floatingLabelText="Password"
-                //           type="password"
-                //         /><br />
-                //     </div>
-                //     <Toggle
-                //         label="Remember me"
-                //         labelStyle={styles.rememberMeLabel}
-                //         defaultToggled={false}
-                //         labelPosition="left"
-                //         style={styles.rememberMe}
-                //     />
-                //     <div style={styles.loginAndSignUpBlock}>
-                //         <RaisedButton label="Login" onClick={this.loginBtnClick.bind(this)} primary={true} style={styles.loginAndSignUpBtn}></RaisedButton>
-                //         <RaisedButton label="Sign up" secondary={true} onClick={this.signUpBtnClick.bind(this)} style={styles.loginAndSignUpBtn} />
-                //     </div>
-                // </Paper>
                 <div>
-                    <h1>Login page</h1>
+                    <div class="login-background">
+                        <ul class="login-floats">
+                            <li/>
+                            <li/>
+                            <li/>
+                            <li/>
+                            <li/>
+                            <li/>
+                            <li/>
+                            <li/>
+                            <li/>
+                            <li/>
+                        </ul>
+                    </div>
+                    <div class="center">
+                        <div class="login-logo"/>
+                        <form class="login-form">
+                            <input type="text" class="login-form-username" placeholder="Username" />
+                            <input type="password" class="login-form-password" placeholder="Password" />
+                            <button type="submit" class="login-form-submit" ><i class="fa fa-sign-in" />Login</button>
+                            <button type="button" class="login-form-signup" ><i class="fa fa-user-o" />Sign Up</button>
+                        </form>
+                    </div>
+                    <div class="login-icons">
+                        <span><a href="https://twitter.com/ConnectWithGamers" target="_blank"><i class="fa fa-twitter fa-2x"></i></a></span>
+                        <span><a href="https://github.com/ShawnAndrews/ConnectWithGamers" target="_blank"><i class="fa fa-github fa-2x"></i></a></span>
+                        <span><a href="https://www.linkedin.com/in/shawnandrewsur/" target="_blank"><i class="fa fa-linkedin fa-2x"></i></a></span>
+                        <span><a href="https://www.youtube.com/channel/UCLrdQcxsSZsYwY69uH9D0QA/videos" target="_blank"><i class="fa fa-youtube fa-2x"></i></a></span>
+                        <span><a href="http://www.saportfolio.ca" target="_blank"><i class="fa fa-cloud fa-2x"></i></a></span>
+                    </div>
                 </div>
         );
     }
