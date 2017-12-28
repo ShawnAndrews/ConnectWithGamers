@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Dashboard from "../dashboard/dashboard";
 import Login from "../login/login";
 import Signup from "../signup/signup";
+import Background from '../background/background';
 import NotFound from "../notfound/notfound";
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
@@ -35,10 +36,10 @@ class App extends React.Component {
         // render
         return (
             <div>
-                {/* dashboard here*/}
+                <Background/>
                 <Switch>
                     <Route exact path='/' component={HomeContainer}/>
-                    <Route exact path='/login' render={() => <Login authenticated={this.authenticated}/>} />
+                    <Route exact path='/login' component={Login} />
                     <Route exact path='/signup' component={Signup}/>
                     <Route component={NotFound}/>
                 </Switch>

@@ -1,100 +1,80 @@
 import * as React from 'react';
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
+import store from '../redux/store/store';
+import Spinner from '../loader/spinner';
+import axios from 'axios';
 
-
-const styles = {
-    body: {
-        height: 'calc(100vh - 120px)',
-        width: '100%',
-        margin: '20px auto',
-        padding: '50px',
-        display: 'inline-block',
-    },
-    logoWrapper: {
-        height: '250px',
-        width: '250px',
-        margin: 'auto',
-    },
-    logo: {
-        margin: '10px',
-    },
-    loginAndSignUpBlock: {
-        margin: 'auto',
-        textAlign: 'center'
-    },
-    loginAndSignUpBtn: {
-        width: '100px',
-        display: 'inline-block',
-        margin: '15px'
-    },
-    rememberMe: {
-        width: '160px',
-        textAlign: 'center',
-        margin: '15px auto 0 auto'
-    },
-    rememberMeLabel: {
-        color: '#00BCD4'
-    },
-    loginStyle: {
-        textAlign: 'center'
-    },
-};
+import '../styles/loginForm';
 
 class Login extends React.Component {
 
 
 	constructor(props) {
         super(props);
+        this.usernameChanged = this.usernameChanged.bind(this);
+        this.passwordChanged = this.passwordChanged.bind(this);
+
+        this.state = {
+            username: '',
+            password: '',
+            isLoading: false
+        };
 	}
 
-	componentWillMount(){
-
+    usernameChanged(event) {
+        this.setState({username: event.target.value});
     }
 
-	loginBtnClick() {
-        //this.props.onLoginClick({type: 'ADD_TODO', data: 'Bob'});
-	    console.log('Logged in!');
-        //this.props.authenticated();
-    }
-
-    signUpBtnClick() {
-        //this.props.onLoginClick({type: 'SUB_TODO', newUser: 'Jim'});
-        console.log('Signed up in!');
-        //this.props.authenticated();
+    passwordChanged(event) {
+        this.setState({password: event.target.value});
     }
 
     handleSubmit(event) {
-        console.log('A name was submitted: ' + this.state.value);
-      }
+        event.preventDefault();
+        
+        if(this.state.username != '' && this.state.password != ''){
+            console.log('Yes');
+            this.setState({isLoading: true});
+            axios.post('/account/login', {
+                username: 'Fred',
+                password: 'Flintstone'
+              })
+              .then( (response) => {
+                console.log(response);
+                this.props.history.push('/')
+              }, this)
+              .catch( (error) => {
+                console.log(error);
+                this.setState({isLoading: false});
+              }, this);
+            this.state.username = '';
+            this.state.password = '';
+        }else{
+            console.log('No');
+        }
+
+    }
 
     render() {
         console.log("Login rendered with props ", this.props);
         console.log(this.props.store);
+
         return (
-                <div>
-                    <div class="login-background">
-                        <ul class="login-floats">
-                            <li/>
-                            <li/>
-                            <li/>
-                            <li/>
-                            <li/>
-                            <li/>
-                            <li/>
-                            <li/>
-                            <li/>
-                            <li/>
-                        </ul>
-                    </div>
+                <div class='login-page'>
                     <div class="center">
-                        <div class="login-logo"/>
-                        <form class="login-form">
-                            <input type="text" class="login-form-username" placeholder="Username" />
-                            <input type="password" class="login-form-password" placeholder="Password" />
-                            <button type="submit" class="login-form-submit" ><i class="fa fa-sign-in" />Login</button>
-                            <button type="button" class="login-form-signup" ><i class="fa fa-user-o" />Sign Up</button>
-                        </form>
+                        {this.state.isLoading
+                            ? <Spinner loadingMsg="Logging in..." />
+                            : <div>
+                                <div class="login-logo"/>
+                                <form class="login-form" onSubmit={this.handleSubmit.bind(this)}>
+                                    <input type="text" class="login-form-username" placeholder="Username" onChange={this.usernameChanged} />
+                                    <input type="password" class="login-form-password" placeholder="Password" onChange={this.passwordChanged} />
+                                    <button type="submit" class="login-form-submit" ><i class="fa fa-sign-in" />Login</button>
+                                    <button type="button" class="login-form-signup" ><i class="fa fa-user-o" />Sign Up</button>
+                                </form>
+                            </div>
+                            }
                     </div>
                     <div class="login-icons">
                         <span><a href="https://twitter.com/ConnectWithGamers" target="_blank"><i class="fa fa-twitter fa-2x"></i></a></span>
@@ -110,8 +90,7 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-    history: PropTypes.object.isRequired,
-    authenticated: PropTypes.func.isRequired,
+    history: PropTypes.object.isRequired
 }
 
 export default withRouter(Login);

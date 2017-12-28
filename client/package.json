@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@types/react": "^16.0.31",
+    "axios": "^0.17.1",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-bootstrap": "^0.31.5",

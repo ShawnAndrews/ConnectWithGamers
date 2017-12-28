@@ -1,3 +1,7 @@
+@import "util.less";
+
+@login-background-col1: #5B83AD;
+@login-background-col2: #53e3a6;
 @login-floats-rot-origin-size: 20px;
 @login-floats-min-duration: 30s;
 @login-floats-max-duration: 40s;
@@ -12,7 +16,7 @@
 @login-floats-dist: -950px;
 @login-floats: "\f108", "\f0d0", "\f132", "\f11c", "\f091", "\f11b";
 
-.login-background {
+.background {
   width: 100%;
   height: 100vh;
   display: block;
@@ -20,7 +24,7 @@
   background: -webkit-linear-gradient(top left, @login-background-col1 0%, @login-background-col2 100%);
   background: linear-gradient(to bottom right, @login-background-col1 0%, @login-background-col2 100%);
 
-  .login-floats li {
+  .background-floats li {
     position: absolute;
     color: whitesmoke;
     opacity: @login-floats-opacity;
@@ -43,7 +47,7 @@
   .set-float(@i) when (@i > 0) {
     .genRandomInt(1,100);
 
-    .login-floats li:nth-child(@{i}) {
+    .background-floats li:nth-child(@{i}) {
       @range-per-icon: floor(100/@login-floats-quantity);
       @login-floats-pos-x: ((@i - 1)*@range-per-icon) + mod(@rnd, @range-per-icon);
       @float-delay: @login-floats-min-delay + ((@rnd/100) * (@login-floats-max-delay - @login-floats-min-delay));
@@ -60,12 +64,12 @@
               animation-duration: @float-duration;
     }
 
-    .login-floats li:nth-child(@{i}):after {
+    .background-floats li:nth-child(@{i}):after {
       font-family: FontAwesome;
       content: extract(@login-floats, mod(@rnd, length(@login-floats)) + 1);
     }
 
-    .login-floats li:nth-child(odd) {
+    .background-floats li:nth-child(odd) {
       animation-direction: reverse;
     }
 
