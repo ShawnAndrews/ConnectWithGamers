@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 
-import '../styles/loginSpinner';
+import '../styles/spinner/main';
 
 class Spinner extends React.Component {
 

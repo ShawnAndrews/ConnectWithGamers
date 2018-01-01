@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import Dashboard from "../dashboard/dashboard";
-import Login from "../login/login";
+import Account from "../account/main";
 import Signup from "../signup/signup";
 import Background from '../background/background';
 import NotFound from "../notfound/notfound";
@@ -39,8 +39,7 @@ class App extends React.Component {
                 <Background/>
                 <Switch>
                     <Route exact path='/' component={HomeContainer}/>
-                    <Route exact path='/login' component={Login} />
-                    <Route exact path='/signup' component={Signup}/>
+                    <Route path='/account' component={Account} />
                     <Route component={NotFound}/>
                 </Switch>
             </div>
