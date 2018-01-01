@@ -34,7 +34,6 @@ class LoginForm extends React.Component {
 
     remembermeChanged(event) {
         this.setState({rememberme: event.target.checked});
-        console.log("remember me:", this.state.rememberme)
     }
 
     onClickLogin(event) {

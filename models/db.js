@@ -20,9 +20,9 @@ class DatabaseModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
             
             this.insert("dbo.accounts",
-                ['username', 'email', 'passwordHash', 'salt'],
-                [this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.VarChar], 
-                [username, email, hash, salt])
+                ['username', 'email', 'passwordHash', 'salt', 'createdOn'],
+                [this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.DateTime], 
+                [username, email, hash, salt, Date.now()])
                 .then(() => {
                     return resolve({error: false});
                 })
@@ -159,9 +159,9 @@ class DatabaseModel extends DatabaseBase {
 
                 this.insert(
                     "dbo.tokens",
-                    ['accountid', 'tokenHash', 'salt'],
-                    [this.sql.Int, this.sql.VarChar, this.sql.VarChar], 
-                    [dbAccountid, bcrypt.hashSync(token, tokenSalt), tokenSalt])
+                    ['accountid', 'tokenHash', 'salt', 'createdOn'],
+                    [this.sql.Int, this.sql.VarChar, this.sql.VarChar, this.sql.DateTime], 
+                    [dbAccountid, bcrypt.hashSync(token, tokenSalt), tokenSalt, Date.now()])
                     .then(() => {
                         console.log('inserted token!');
                         let tokenExpiration = null;
