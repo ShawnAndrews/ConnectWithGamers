@@ -1,0 +1,105 @@
+@import "util.less";
+
+@login-background-col1: #2137a7;
+@login-background-col2: #38caeb;
+@login-floats-rot-origin-size: 20px;
+@login-floats-min-duration: 30s;
+@login-floats-max-duration: 40s;
+@login-floats-min-delay: 0s;
+@login-floats-max-delay: 10s;
+@login-floats-min-size: 1em;
+@login-floats-max-size: 3em;
+@login-floats-rot: 600deg;
+@login-floats-opacity: 0.3;
+@login-floats-quantity: 10;
+@login-floats-pos-y: -100px;
+@login-floats-dist: -950px;
+@login-floats: "\f108", "\f0d0", "\f132", "\f11c", "\f091", "\f11b";
+
+.background {
+  width: 100%;
+  height: 100vh;
+  display: block;
+  overflow: hidden;
+  background: -webkit-linear-gradient(top left, @login-background-col1 0%, @login-background-col2 100%);
+  background: linear-gradient(to bottom right, @login-background-col1 0%, @login-background-col2 100%);
+
+  .background-floats li {
+    position: absolute;
+    color: whitesmoke;
+    opacity: @login-floats-opacity;
+    width: @login-floats-rot-origin-size;
+    height: @login-floats-rot-origin-size;
+    list-style-type: none;
+    -webkit-animation: float infinite;
+    -moz-animation:    float infinite;
+    -o-animation:      float infinite;
+    animation:         float infinite;
+    -webkit-transition-timing-function: linear;
+    transition-timing-function: linear;
+    -webkit-transform-origin: 50% 50%;
+    -moz-transform-origin: 50% 50%;
+    -o-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+  }
+
+  .set-float(@login-floats-quantity);
+  .set-float(@i) when (@i > 0) {
+    .genRandomInt(1,100);
+
+    .background-floats li:nth-child(@{i}) {
+      @range-per-icon: floor(100/@login-floats-quantity);
+      @login-floats-pos-x: ((@i - 1)*@range-per-icon) + mod(@rnd, @range-per-icon);
+      @float-delay: @login-floats-min-delay + ((@rnd/100) * (@login-floats-max-delay - @login-floats-min-delay));
+      @float-duration: @login-floats-min-duration + ((@rnd/100) * (@login-floats-max-duration - @login-floats-min-duration));
+      @float-size: @login-floats-min-size + ((@rnd/100) * (@login-floats-max-size - @login-floats-min-size));
+
+      left: ~"@{login-floats-pos-x}%";
+      bottom: @login-floats-pos-y;
+      font-size: @float-size;
+
+      -webkit-animation-delay: @float-delay;
+              animation-delay: @float-delay;
+      -webkit-animation-duration: @float-duration;
+              animation-duration: @float-duration;
+    }
+
+    .background-floats li:nth-child(@{i}):after {
+      font-family: FontAwesome;
+      content: extract(@login-floats, mod(@rnd, length(@login-floats)) + 1);
+    }
+
+    .background-floats li:nth-child(odd) {
+      animation-direction: reverse;
+    }
+
+    .set-float(@i - 1);
+  }
+
+  @-webkit-keyframes float {
+    0% { 
+      -webkit-transform: translateY(0);
+          -ms-transform: translateY(0);
+              transform: translateY(0);
+    }
+    100% { 
+      -webkit-transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
+          -ms-transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
+              transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
+    }
+  }
+  
+  @keyframes float {
+    0% { 
+      -webkit-transform: translateY(0);
+          -ms-transform: translateY(0);
+              transform: translateY(0);
+    }
+    100% { 
+      -webkit-transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
+          -ms-transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
+              transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
+    }
+  }
+
+}
