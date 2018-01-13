@@ -4,6 +4,7 @@ import Account from '../account/main';
 import Background from '../background/background';
 import NotFound from '../notfound/notfound';
 import { withRouter } from 'react-router-dom';
+import Notice from '../notice/notice';
 
 interface IAppProps {
     history: any;
@@ -30,6 +31,10 @@ class App extends React.Component<IAppProps, any> {
         );
     }
 
+    public get isMobileBrowser(): boolean {
+        return (window.innerWidth <= 800 && window.innerHeight <= 1000);
+    }
+
     render() {
         console.log('App rendered with props ', this.props);
 
@@ -37,10 +42,16 @@ class App extends React.Component<IAppProps, any> {
         return (
             <div>
                 <Background/>
-                <Switch>
-                    <Route path="/account" component={Account} />
-                    <Route component={NotFound}/>
-                </Switch>
+                {this.isMobileBrowser 
+                    ? 
+                    <Switch>
+                        <Route path="/account" component={Account} />
+                        <Route component={NotFound}/>
+                    </Switch>
+                    :
+                    <Notice message="Sorry! This application is only available on mobile devices."/>
+                    }
+                
             </div>
         );
 
