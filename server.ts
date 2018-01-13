@@ -37,9 +37,4 @@ app.listen(config.serverPort, function () {
       process.exit();
     });
 
-  // const the_interval = 1 * 30 * 1000;
-  // setInterval(function() {
-  //    console.log("Checking time: ", JSON.stringify(db));
-  // }, the_interval);
-
 });

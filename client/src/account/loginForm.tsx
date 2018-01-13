@@ -77,16 +77,16 @@ class LoginForm extends React.Component<ILoginFormProps, any> {
             <div>
                 <div className="account-logo"/>
                 <form className="account-form" onSubmit={this.onClickLogin}>
-                    <input type="text" className="account-form underline" placeholder="Username" onChange={this.usernameChanged} />
-                    <input type="password" className=" account-form underline" placeholder="Password" onChange={this.passwordChanged} />
-                    <label className="account-form">
+                    <input type="text" className="account-form underline top-md-padding" placeholder="Username" onChange={this.usernameChanged} />
+                    <input type="password" className=" account-form underline top-md-padding" placeholder="Password" onChange={this.passwordChanged} />
+                    <label className="account-form top-sm-padding">
                         <div className="div-center">
                             <span className="account-rememberme">Remember me</span>
                             <input type="checkbox" onChange={this.remembermeChanged}/>
                         </div>
                     </label>
-                    <button type="submit" className="account-form-login" ><i className="fa fa-sign-in" />Login</button>
-                    <button type="button" className="account-form-signup" onClick={this.onClickSignUp} ><i className="fa fa-user-o" />Sign Up</button>
+                    <button type="submit" className="account-form-login top-sm-padding" ><i className="fa fa-sign-in" />Login</button>
+                    <button type="button" className="account-form-signup top-sm-padding" onClick={this.onClickSignUp} ><i className="fa fa-user-o" />Sign Up</button>
                 </form>
             </div>
         );

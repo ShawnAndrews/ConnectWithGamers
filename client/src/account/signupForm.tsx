@@ -57,7 +57,6 @@ class SignupForm extends React.Component<ISignupFormProps, any> {
                 this.props.history.push('/account/login');
             })
             .catch( (response: ResponseModel) => {
-                console.log('resp: ', JSON.stringify(response));
                 const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
                 this.setState({ username: '', email: '', password: '', isLoading: false });
                 popupS.modal({ content: formattedErrors.join('') });
@@ -79,11 +78,11 @@ class SignupForm extends React.Component<ISignupFormProps, any> {
             <div>
                 <div className="account-logo"/>
                 <form className="account-form" onSubmit={this.onClickCreate}>
-                    <input type="text" className="account-form" placeholder="Username" onChange={this.usernameChanged} />
-                    <input type="email" className="account-form" placeholder="Email" onChange={this.emailChanged} />
-                    <input type="password" className="account-form" placeholder="Password" onChange={this.passwordChanged} />
-                    <button type="submit" className="account-form-create" ><i className="fa fa-user-plus" />Sign up</button>
-                    <button type="button" className="account-form-back" onClick={this.onClickBack}><i className="fa fa-arrow-left" />Back</button>
+                    <input type="text" className="account-form top-md-padding" placeholder="Username" onChange={this.usernameChanged} />
+                    <input type="email" className="account-form top-md-padding" placeholder="Email" onChange={this.emailChanged} />
+                    <input type="password" className="account-form top-md-padding" placeholder="Password" onChange={this.passwordChanged} />
+                    <button type="submit" className="account-form-create top-sm-padding" ><i className="fa fa-user-plus" />Sign up</button>
+                    <button type="button" className="account-form-back top-sm-padding" onClick={this.onClickBack}><i className="fa fa-arrow-left" />Back</button>
                 </form>
             </div>
         );
