@@ -24,7 +24,7 @@ app.use("*", express.static(path.join(__dirname, "../client/dist")));
 
 /* listen */
 app.listen(config.serverPort, function () {
-  console.log("Example app listening on port 9003!");
+  console.log(`Example app listening on port ${config.serverPort}!`);
   console.log("Directory: " + path.join(__dirname, "client/dist"));
 
   // connect to db
