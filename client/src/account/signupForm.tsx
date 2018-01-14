@@ -78,9 +78,9 @@ class SignupForm extends React.Component<ISignupFormProps, any> {
             <div>
                 <div className="account-logo"/>
                 <form className="account-form" onSubmit={this.onClickCreate}>
-                    <input type="text" className="account-form top-md-padding" placeholder="Username" onChange={this.usernameChanged} />
-                    <input type="email" className="account-form top-md-padding" placeholder="Email" onChange={this.emailChanged} />
-                    <input type="password" className="account-form top-md-padding" placeholder="Password" onChange={this.passwordChanged} />
+                    <input type="text" className="account-form underline top-md-padding" placeholder="Username" onChange={this.usernameChanged} />
+                    <input type="email" className="account-form underline top-md-padding" placeholder="Email" onChange={this.emailChanged} />
+                    <input type="password" className="account-form underline top-md-padding" placeholder="Password" onChange={this.passwordChanged} />
                     <button type="submit" className="account-form-create top-sm-padding" ><i className="fa fa-user-plus" />Sign up</button>
                     <button type="button" className="account-form-back top-sm-padding" onClick={this.onClickBack}><i className="fa fa-arrow-left" />Back</button>
                 </form>

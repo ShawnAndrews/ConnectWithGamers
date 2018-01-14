@@ -1,8 +1,9 @@
-@import "../util.less";
+@import "checkboxSwitch";
 
 @login-form-col: whitesmoke;
-@login-logo-width: 250px;
-@login-logo-height: 250px;
+@login-logo-URL: url("https://i.imgur.com/obqCKhX.png");
+@login-logo-width: 200px;
+@login-logo-height: 200px;
 
 .account-page {
 
@@ -11,11 +12,11 @@
     }
 
     .top-xs-padding {
-      margin: 5px auto auto auto;
+      margin: 10px auto auto auto;
     }
 
     .top-sm-padding {
-      margin: 10px auto auto auto;
+      margin: 16px auto auto auto;
     }
 
     .top-md-padding {
@@ -31,7 +32,7 @@
       transform: translate(-50%, -50%);
 
       .account-logo {
-        background-image: url("https://i.imgur.com/ktsmRV8.png");
+        background-image: @login-logo-URL;
         margin: auto;
         height: @login-logo-height;
         width: @login-logo-width;
@@ -52,7 +53,7 @@
         letter-spacing: 2px;
         font-family: Tahoma, Geneva, sans-serif;
         width: 60%;
-        font-size: 1.4em;
+        font-size: 1em;
         border-width: 0px 0px 2px 0px;
         color: transparent;
         text-shadow: 0 0 0 @login-form-col;

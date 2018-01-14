@@ -4,10 +4,6 @@ import { withRouter } from 'react-router-dom';
 import LoginForm from '../account/loginForm';
 import SignupForm from '../account/signupForm';
 
-import '../styles/account/main';
-import '../styles/account/checkboxSwitch';
-import '../styles/popupS';
-
 interface IAccountProps {
     history: any;
 }

@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import '../styles/background';
-
 class Background extends React.Component<any, any> {
 
     constructor(props: any) {

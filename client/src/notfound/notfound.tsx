@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 
-import '../styles/notfound/main';
-
 interface INotFoundProps {
   history: any;
 }
