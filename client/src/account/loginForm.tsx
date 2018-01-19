@@ -85,8 +85,18 @@ class LoginForm extends React.Component<ILoginFormProps, any> {
                             <input type="checkbox" onChange={this.remembermeChanged}/>
                         </div>
                     </label>
-                    <button type="submit" className="account-form-login top-sm-padding" ><i className="fa fa-sign-in" />Login</button>
-                    <button type="button" className="account-form-signup top-sm-padding" onClick={this.onClickSignUp} ><i className="fa fa-user-o" />Sign Up</button>
+                    <button type="submit" className="account-form-login top-sm-padding">
+                        <span>
+                            <i className="fa fa-sign-in" />
+                            &nbsp;Login
+                        </span>
+                    </button>
+                    <button type="button" className="account-form-signup top-sm-padding" onClick={this.onClickSignUp}>
+                        <span>
+                            <i className="fa fa-user-o" />
+                            &nbsp;Sign Up
+                        </span>
+                    </button>
                 </form>
             </div>
         );

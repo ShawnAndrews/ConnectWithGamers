@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Account from '../account/main';
 import Background from '../background/background';
 import NotFound from '../notfound/notfound';
-import { withRouter } from 'react-router-dom';
 import Notice from '../notice/notice';
+import Navbar from '../navbar/navbar';
 
 interface IAppProps {
     history: any;
@@ -43,11 +44,14 @@ class App extends React.Component<IAppProps, any> {
             <div>
                 <Background/>
                 {this.isMobileBrowser 
-                    ? 
-                    <Switch>
-                        <Route path="/account" component={Account} />
-                        <Route component={NotFound}/>
-                    </Switch>
+                    ?
+                    <div>
+                        <Navbar/>
+                        <Switch>
+                            <Route path="/account" component={Account} />
+                            <Route component={NotFound}/>
+                        </Switch>
+                    </div>
                     :
                     <Notice message="Sorry! This application is only available on mobile devices."/>
                     }

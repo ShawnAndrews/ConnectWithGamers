@@ -14,6 +14,11 @@ app.use(bodyParser.json());
 /* enable cookies  */
 app.use(cookieParser());
 
+app.use((req: any, res: any, next: any) => {
+  console.log(`Request (${req.connection.remoteAddress}): ${req.url}`);
+  next();
+});
+
 /* account authentication controller */
 app.use("/account", accountController);
 
