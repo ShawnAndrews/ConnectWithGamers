@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import { withRouter } from 'react-router-dom';
+import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
 import Account from '../account/main';
 import Background from '../background/background';
 import NotFound from '../notfound/notfound';
@@ -17,23 +16,18 @@ class App extends React.Component<IAppProps, any> {
     constructor(props: IAppProps) {
         super(props);
         console.log('App props', this.props);
-        this.authenticated = this.authenticated.bind(this);
 
         this.state = {
-            loggedIn: false
+            authenticatedRoutes: ['/', '/account']
         };
     }
 
-    authenticated() {
-        this.setState(
-            {
-                loggedIn: true
-            }
-        );
+    private get isMobileBrowser(): boolean {
+        return (window.innerWidth <= 800 && window.innerHeight <= 1000);
     }
 
-    public get isMobileBrowser(): boolean {
-        return (window.innerWidth <= 800 && window.innerHeight <= 1000);
+    private get loggedIn(): boolean {
+        return (document.cookie.indexOf('login_token=') !== -1);
     }
 
     render() {
@@ -48,7 +42,19 @@ class App extends React.Component<IAppProps, any> {
                     <div>
                         <Navbar/>
                         <Switch>
-                            <Route path="/account" component={Account} />
+                            {!this.loggedIn &&
+                            this.state.authenticatedRoutes
+                                .map((x: string) => 
+                                     (
+                                        <Route
+                                            key={x} 
+                                            exact={true}
+                                            path={x} 
+                                            render={() => (<Redirect to="/account/login"/>)}
+                                        />
+                                    )
+                                )}
+                            <Route path="/account" component={Account}/>
                             <Route component={NotFound}/>
                         </Switch>
                     </div>

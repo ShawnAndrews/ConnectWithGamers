@@ -1,20 +1,31 @@
 import * as React from 'react';
+import { withRouter } from 'react-router-dom';
 
 interface INavbarProps {
-    
+    history: any;
 }
 
 class Navbar extends React.Component<INavbarProps, any> {
 
     constructor(props: INavbarProps) {
         super(props);
+        this.goToHomePage = this.goToHomePage.bind(this);
+        this.goToAccountPage = this.goToAccountPage.bind(this);
+    }
+
+    private goToHomePage(): void {
+        this.props.history.push('/');
+    }
+
+    private goToAccountPage(): void {
+        this.props.history.push('/account');
     }
 
     render() {
 
         return (
             <div className="navbar">
-                <div className="navbar-item">
+                <div className="navbar-item" onClick={this.goToHomePage}>
                     <i className="fa fa-home" aria-hidden="true">
                         &nbsp;Home
                     </i>
@@ -27,7 +38,7 @@ class Navbar extends React.Component<INavbarProps, any> {
                         &nbsp;Find match
                     </i>
                 </div>
-                <div className="navbar-item">
+                <div className="navbar-item" onClick={this.goToAccountPage}>
                     <span className="navbar-right-divider">
                         ·
                     </span>
@@ -41,4 +52,4 @@ class Navbar extends React.Component<INavbarProps, any> {
 
 }
 
-export default Navbar;
+export default withRouter(Navbar);

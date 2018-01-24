@@ -3,12 +3,15 @@ const HttpStatus = require("http-status-codes");
 const RateLimit = require("express-rate-limit");
 const bcrypt = require("bcrypt");
 const router = express.Router();
+const igdb = require("igdb-api-node").default;
 import { validateCredentials, ResponseModel } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import db from "../../models/db";
+import config from "../../config";
 
 const LOGIN_COOKIE_NAME = "login_token";
 const routes = new routeModel();
+const client = igdb(config.igdbKey);
 
 /* routes */
 routes.addRoute("signup", "/signup");
@@ -51,6 +54,17 @@ router.post(routes.getRoute("signup"), (req: any, res: any) => {
 });
 
 router.post(routes.getRoute("login"), (req: any, res: any) => {
+
+    client.games({
+        fields: "*",
+        limit: 5,
+        offset: 15
+    }).then( (response: any) => {
+        console.log(response.body);
+        console.log(`All games: ${response.body}`);
+    }).catch( (error: any) => {
+        throw error;
+    });
 
     // validate credentials
     const response: ResponseModel = validateCredentials(req.body.username, req.body.password, undefined, req.body.remember);
