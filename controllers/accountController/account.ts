@@ -84,7 +84,7 @@ router.post(routes.getRoute("login"), (req: any, res: any) => {
             // token success
             console.log("auth2 then: ", JSON.stringify(result));
             return res
-            .cookie(LOGIN_COOKIE_NAME, result.data.token, { expires: result.data.tokenExpiration, httpOnly: true })
+            .cookie(LOGIN_COOKIE_NAME, result.data.token, { expires: result.data.tokenExpiration })
             .send();
         })
         .catch((response: ResponseModel) => {

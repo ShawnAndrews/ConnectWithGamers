@@ -18,7 +18,8 @@ class App extends React.Component<IAppProps, any> {
         console.log('App props', this.props);
 
         this.state = {
-            authenticatedRoutes: ['/', '/account']
+            authenticatedRoutes: ['/account'],
+            unauthenticatedRedirect: '/account/login'
         };
     }
 
@@ -27,7 +28,27 @@ class App extends React.Component<IAppProps, any> {
     }
 
     private get loggedIn(): boolean {
+        console.log(`Is logged in? ${document.cookie.indexOf('login_token=')}`);
         return (document.cookie.indexOf('login_token=') !== -1);
+    }
+
+    private get renderUnauthenticatedRedirects(): JSX.Element[] {
+        if (!this.loggedIn) {
+            return (
+                this.state.authenticatedRoutes
+                                .map((x: string) => 
+                                     (
+                                        <Route
+                                            key={x} 
+                                            exact={true}
+                                            path={x} 
+                                            component={<Redirect to={this.state.unauthenticatedRedirect}/>}
+                                        />
+                                    )
+                                )
+            );
+        }
+        return [];
     }
 
     render() {
@@ -42,18 +63,7 @@ class App extends React.Component<IAppProps, any> {
                     <div>
                         <Navbar/>
                         <Switch>
-                            {!this.loggedIn &&
-                            this.state.authenticatedRoutes
-                                .map((x: string) => 
-                                     (
-                                        <Route
-                                            key={x} 
-                                            exact={true}
-                                            path={x} 
-                                            render={() => (<Redirect to="/account/login"/>)}
-                                        />
-                                    )
-                                )}
+                            {this.renderUnauthenticatedRedirects}
                             <Route path="/account" component={Account}/>
                             <Route component={NotFound}/>
                         </Switch>
