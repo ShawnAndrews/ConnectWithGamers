@@ -5,6 +5,14 @@ import Background from '../background/background';
 import NotFound from '../notfound/notfound';
 import Notice from '../notice/notice';
 import Navbar from '../navbar/navbar';
+import Home from '../home/home';
+import Menu from '../menu/menu';
+
+export enum NAV_PAGE {
+    HOME = '/',
+    MENU = '/menu',
+    ACCOUNT = '/account'
+}
 
 interface IAppProps {
     history: any;
@@ -28,8 +36,19 @@ class App extends React.Component<IAppProps, any> {
     }
 
     private get loggedIn(): boolean {
-        console.log(`Is logged in? ${document.cookie.indexOf('login_token=')}`);
-        return (document.cookie.indexOf('login_token=') !== -1);
+        return (document.cookie.indexOf('loginToken=') !== -1);
+    }
+
+    private get currentNavPage(): NAV_PAGE {
+        console.log(this.props.history);
+        const path: string = this.props.history.location.pathname;
+        if (path.startsWith(NAV_PAGE.ACCOUNT)) {
+            return NAV_PAGE.ACCOUNT;
+        } else if (path.startsWith(NAV_PAGE.MENU)) {
+            return NAV_PAGE.MENU;
+        } else {
+            return NAV_PAGE.HOME;
+        }
     }
 
     private get renderUnauthenticatedRedirects(): JSX.Element[] {
@@ -42,7 +61,7 @@ class App extends React.Component<IAppProps, any> {
                                             key={x} 
                                             exact={true}
                                             path={x} 
-                                            component={<Redirect to={this.state.unauthenticatedRedirect}/>}
+                                            render={() => (<Redirect to={this.state.unauthenticatedRedirect}/>)}
                                         />
                                     )
                                 )
@@ -61,10 +80,12 @@ class App extends React.Component<IAppProps, any> {
                 {this.isMobileBrowser 
                     ?
                     <div>
-                        <Navbar/>
+                        <Navbar page={this.currentNavPage}/>
                         <Switch>
                             {this.renderUnauthenticatedRedirects}
                             <Route path="/account" component={Account}/>
+                            <Route path="/menu" component={Menu}/>
+                            <Route exact={true} path="/" component={Home}/>
                             <Route component={NotFound}/>
                         </Switch>
                     </div>

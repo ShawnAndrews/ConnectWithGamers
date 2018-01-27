@@ -23,6 +23,7 @@ app.use((req: any, res: any, next: any) => {
 app.use("/account", accountController);
 
 /* client */
+app.get("/favicon.ico", function(req: any, res: any) {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });
 app.get("/bundle.js", function(req: any, res: any) {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
 app.get("/bundle.css", function(req: any, res: any) {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
 app.use("*", express.static(path.join(__dirname, "../client/dist")));
