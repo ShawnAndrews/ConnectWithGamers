@@ -33,21 +33,18 @@ class Navbar extends React.Component<INavbarProps, any> {
         return (
             <div className="navbar">
                 <div className={`navbar-item ${this.props.page === NAV_PAGE.HOME && 'navbar-item-selected'}`} onClick={this.goToHomePage}>
-                    <i className="fa fa-home navbar-item-text" aria-hidden="true">
-                        &nbsp;&nbsp;Home
-                    </i>
+                    <i className="fas fa-home"/>
+                    &nbsp;&nbsp;Home
                 </div>
                 <div className="navbar-left-divider"/>
                 <div className={`navbar-item ${this.props.page === NAV_PAGE.MENU && 'navbar-item-selected'}`} onClick={this.goToMenuPage}>
-                    <i className="fa fa-bars navbar-item-text" aria-hidden="true">
-                        &nbsp;&nbsp;Menu
-                    </i>
+                    <i className="fas fa-bars"/>
+                    &nbsp;&nbsp;Menu
                 </div>
                 <div className="navbar-left-divider"/>
                 <div className={`navbar-item ${this.props.page === NAV_PAGE.ACCOUNT && 'navbar-item-selected'}`} onClick={this.goToAccountPage}>
-                    <i className="fa fa-user navbar-item-text" aria-hidden="true">
-                        &nbsp;&nbsp;Account
-                    </i>
+                    <i className="far fa-user"/>
+                    &nbsp;&nbsp;Account
                 </div>
             </div>
         );

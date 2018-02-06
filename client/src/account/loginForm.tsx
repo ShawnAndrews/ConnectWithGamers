@@ -87,13 +87,13 @@ class LoginForm extends React.Component<ILoginFormProps, any> {
                     </label>
                     <button type="submit" className="account-form-login top-sm-padding">
                         <span>
-                            <i className="fa fa-sign-in" />
+                            <i className="fas fa-sign-in-alt"/>
                             &nbsp;Login
                         </span>
                     </button>
                     <button type="button" className="account-form-signup top-sm-padding" onClick={this.onClickSignUp}>
                         <span>
-                            <i className="fa fa-user-o" />
+                            <i className="fas fa-user-plus"/>
                             &nbsp;Sign Up
                         </span>
                     </button>
