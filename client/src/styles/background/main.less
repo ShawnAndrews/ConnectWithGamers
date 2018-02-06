@@ -15,10 +15,12 @@
 @login-floats: "\f108", "\f0d0", "\f132", "\f11c", "\f091", "\f11b";
 
 .background {
+  position: fixed;
   width: 100%;
   height: 100vh;
   display: block;
   overflow: hidden;
+  z-index: -1;
   background: -webkit-linear-gradient(top left, @login-background-col1 0%, @login-background-col2 100%);
   background: linear-gradient(to bottom right, @login-background-col1 0%, @login-background-col2 100%);
 

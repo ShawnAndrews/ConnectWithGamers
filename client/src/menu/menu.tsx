@@ -14,8 +14,43 @@ class Menu extends React.Component<IMenuProps, any> {
     render() {
 
         return (
-            <div>
-                MENU
+            <div className="menu">
+                <div className="menu-item">
+                    <div className="menu-item-overlay"/>
+                    Upcoming Games
+                </div>
+                <div className="menu-item">
+                    <div className="menu-item-overlay"/>
+                    Most Popular Games
+                </div>
+                <div className="menu-item">
+                    <div className="menu-item-overlay"/>
+                    By Platform
+                </div>
+                <div className="menu-item">
+                    <div className="menu-item-overlay"/>
+                    Upcoming Games
+                </div>
+                <div className="menu-item">
+                    <div className="menu-item-overlay"/>
+                    Most Popular Games
+                </div>
+                <div className="menu-item">
+                    <div className="menu-item-overlay"/>
+                    By Platform
+                </div>
+                <div className="menu-item">
+                    <div className="menu-item-overlay"/>
+                    Upcoming Games
+                </div>
+                <div className="menu-item">
+                    <div className="menu-item-overlay"/>
+                    Most Popular Games
+                </div>
+                <div className="menu-item">
+                    <div className="menu-item-overlay"/>
+                    By Platform
+                </div>
             </div>
         );
 

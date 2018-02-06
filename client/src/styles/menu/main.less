@@ -1,0 +1,30 @@
+@menu-item-height: 150px;
+
+.menu {
+    position: absolute;
+    width: 100%;
+    height: calc(100%-@navbar-item-height);
+    top: @navbar-item-height;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    .menu-item {
+        position: relative;
+        height: @menu-item-height;
+        width: 100%;
+        text-align: center;
+        color: whitesmoke;
+        opacity: 0.5;
+    }
+
+    .menu-item-overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: -moz-linear-gradient(top, rgba(0,0,0,0) 85%, rgba(0,0,0,0) 87%, rgba(0,0,0,0.31) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, rgba(0,0,0,0) 85%,rgba(0,0,0,0) 87%,rgba(0,0,0,0.31) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, rgba(0,0,0,0) 85%,rgba(0,0,0,0) 87%,rgba(0,0,0,0.31) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#4f000000',GradientType=0 ); /* IE6-9 */
+    }
+
+}
