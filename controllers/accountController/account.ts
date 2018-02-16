@@ -12,7 +12,7 @@ import config from "../../config";
 const AUTH_COOKIE_NAME = "authToken";
 const LOGIN_COOKIE_NAME = "loginToken";
 const routes = new routeModel();
-const client = igdb(config.igdbKey);
+const client = igdb(config.igdb.key);
 
 /* routes */
 routes.addRoute("signup", "/signup");

@@ -49,3 +49,23 @@ export interface ResponseModel {
     errors: string[];
     data: any;
 }
+
+export interface GameListEntryResponse {
+    name: string;
+    id: number;
+}
+
+export const GameListEntryResponseFields: string[] = [`id`, `name`];
+
+export interface GameResponse {
+
+    name: string;
+    rating?: number;
+    rating_count?: number;
+    cover?: string;
+    summary?: string;
+    genres?: string[];
+    screenshots?: string[];
+}
+
+export const GameResponseFields: string[] = [`name`, `release_dates.date`, `cover`, `total_rating`, `total_rating_count`, `summary`, `genres`, `screenshots`];

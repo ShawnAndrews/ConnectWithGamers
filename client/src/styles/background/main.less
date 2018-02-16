@@ -12,7 +12,7 @@
 @login-floats-quantity: 10;
 @login-floats-pos-y: -100px;
 @login-floats-dist: -950px;
-@login-floats: "\f108", "\f0d0", "\f132", "\f11c", "\f091", "\f11b";
+@login-floats: "\f108", "\f0d0", "\f3ed", "\f11c", "\f091", "\f11b";
 
 .background {
   position: fixed;
@@ -65,7 +65,13 @@
     }
 
     .background-floats li:nth-child(@{i}):after {
-      font-family: FontAwesome;
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 900;
+      font-family: 'Font Awesome 5 Free';
       content: extract(@login-floats, mod(@rnd, length(@login-floats)) + 1);
     }
 

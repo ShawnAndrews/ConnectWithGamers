@@ -4,6 +4,7 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 import accountController from "./controllers/accountController/account";
+import igdbController from "./controllers/igdbController/igdb";
 import config from "./config";
 import db from "./models/db";
 
@@ -21,6 +22,9 @@ app.use((req: any, res: any, next: any) => {
 
 /* account authentication controller */
 app.use("/account", accountController);
+
+/* igdb api controller */
+app.use("/igdb", igdbController);
 
 /* client */
 app.get("/favicon.ico", function(req: any, res: any) {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });

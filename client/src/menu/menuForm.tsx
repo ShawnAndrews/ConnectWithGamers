@@ -1,28 +1,29 @@
 import * as React from 'react';
+import { Route, Switch } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 
-interface IMenuProps {
+interface IMenuFormProps {
     history: any;
 }
 
-class Menu extends React.Component<IMenuProps, any> {
+class MenuForm extends React.Component<IMenuFormProps, any> {
 
-    constructor(props: IMenuProps) {
+    constructor(props: IMenuFormProps) {
         super(props);
     }
 
     render() {
 
         return (
-            <div className="menu">
-                <div className="menu-item">
+            <div>
+                <div className="menu-item" onClick={() => this.props.history.push('/menu/search')}>
                     <div className="menu-item-overlay"/>
                     <div className="menu-item-content">
                         <i className="fas fa-search fa-4x"/>
                         <p>Search Games</p>
                     </div>
                 </div>
-                <div className="menu-item">
+                <div className="menu-item" onClick={() => this.props.history.push('/menu/upcoming')}>
                     <div className="menu-item-overlay"/>
                     <div className="menu-item-content">
                         <i className="fa fa-calendar-alt fa-4x"/>
@@ -64,4 +65,4 @@ class Menu extends React.Component<IMenuProps, any> {
 
 }
 
-export default withRouter(Menu);
+export default withRouter(MenuForm);

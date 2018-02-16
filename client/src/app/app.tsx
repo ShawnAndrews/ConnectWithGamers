@@ -6,7 +6,7 @@ import NotFound from '../notfound/notfound';
 import Notice from '../notice/notice';
 import Navbar from '../navbar/navbar';
 import Home from '../home/home';
-import Menu from '../menu/menu';
+import Menu from '../menu/main';
 
 export enum NAV_PAGE {
     HOME = '/',

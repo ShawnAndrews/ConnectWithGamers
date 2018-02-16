@@ -3,7 +3,7 @@
 .menu {
     position: absolute;
     width: 100%;
-    height: calc(100%-@navbar-item-height);
+    height: calc(~"100% -" @navbar-item-height);
     top: @navbar-item-height;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -34,6 +34,108 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+    }
+
+    .menu-center {
+        position: absolute;
+        z-index: 10;
+        width: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .menu-grid-center {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.4em;
+    }
+
+    .menu-game {
+        color: whitesmoke;
+        height: 100%;
+        .menu-game-cover {
+            position: relative;
+            opacity: 0.7;
+        }
+
+        .menu-game-name {
+            margin: 10px;
+            opacity: 0.65;
+        }
+
+        .menu-game-rating-stars {
+            margin: 10px;
+            opacity: 0.65;
+        }
+
+        .menu-game-rating-count {
+            font-size: 1.5em;
+            margin: 0 5px;
+            opacity: 0.65;
+        }
+
+        .menu-game-summary {
+            font-size: 1.2em;
+            opacity: 0.65;
+            margin: 10px;
+
+            .menu-game-summary-text {
+                margin: 5px 0 0 0;
+            }
+        }
+
+        .menu-game-genres {
+            margin: 20px 0;
+            opacity: 0.65;
+            margin: 10px;
+            
+            .menu-game-genres-header {
+                display: inline;
+            }
+        }
+
+        .menu-game-screenshots {
+            position: relative;
+
+            .menu-game-screenshots-header {
+                opacity: 0.65;
+                margin: 10px;
+            }
+        }
+
+    }
+
+    .menu-game-table {
+        list-style: none;
+        border: 1px solid silver;
+        -ms-box-orient: horizontal;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: -moz-flex;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-flex-wrap: wrap;
+        flex-wrap: wrap;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+
+        li {
+            width: 50%;
+            height: 50%;
+            
+            color: white;
+            font-weight: bold;
+            font-size: 2em;
+            text-align: center;
+        }
     }
 
 }
