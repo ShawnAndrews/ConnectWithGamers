@@ -62,10 +62,26 @@ export interface GameResponse {
     name: string;
     rating?: number;
     rating_count?: number;
+    price?: string;
+    discount_percent?: number;
+    steam_url?: string;
     cover?: string;
     summary?: string;
     genres?: string[];
+    platforms?: string[];
+    platforms_release_dates?: string[];
+    next_release_date?: string;
     screenshots?: string[];
 }
 
-export const GameResponseFields: string[] = [`name`, `release_dates.date`, `cover`, `total_rating`, `total_rating_count`, `summary`, `genres`, `screenshots`];
+export const GameResponseFields: string[] = [`name`, `release_dates`, `cover`, `total_rating`, `total_rating_count`, `summary`, `genres`, `platforms`, `screenshots`, `external`];
+
+export interface UpcomingGameResponse {
+
+    id: number;
+    name: string;
+    next_release_date: string;
+    cover?: string;
+}
+
+export const UpcomingGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`];

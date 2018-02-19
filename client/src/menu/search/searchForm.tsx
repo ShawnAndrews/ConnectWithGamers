@@ -16,21 +16,24 @@ interface Game {
 
 interface ISearchFormProps {
     history: any;
+    match?: any;
 }
 
 class SearchForm extends React.Component<ISearchFormProps, any> {
 
     constructor(props: ISearchFormProps) {
         super(props);
-        this.state = { rawInput: '', selectedGame: null, gameslist: [], isLoading: false, loadingMsg: '' };
+        this.state = { rawInput: '', gameslist: [], isLoading: false, loadingMsg: '' };
         this.handleChange = this.handleChange.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.loadGamesList = this.loadGamesList.bind(this);
         this.handleRawInputChange = this.handleRawInputChange.bind(this);
+        console.log(`Routed id: #${this.props.match.params.id}`);
     }
 
     private handleChange(selectedGame: any) {
-        this.setState({ selectedGame: selectedGame });
+        console.log(`Input changed to ${JSON.stringify(selectedGame)}`);
+        this.props.history.push(`/menu/search/${selectedGame.value}`);
     }
 
     private handleKeyDown(event: any) {
@@ -68,15 +71,15 @@ class SearchForm extends React.Component<ISearchFormProps, any> {
             <div>
                 <Select
                     name="gameslist"
-                    value={this.state.selectedGame}
                     isLoading={this.state.isLoading}
                     onChange={this.handleChange}
                     options={this.state.gameslist}
                     onInputKeyDown={this.handleKeyDown}
                     onInputChange={this.handleRawInputChange}
+                    noResultsText="Enter query to return a list of games"
                 />
                 <Game
-                    gameId={this.state.selectedGame ? this.state.selectedGame.value : null} 
+                    gameId={this.props.match.params.id} 
                 />
             </div>
         );

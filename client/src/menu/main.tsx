@@ -21,6 +21,7 @@ class Menu extends React.Component<IMenuProps, any> {
             <div className="menu">
                 <Switch>
                     <Route exact={true} path="/menu" component={MenuForm}/>
+                    <Route exact={true} path="/menu/search/:id" component={SearchForm} />
                     <Route exact={true} path="/menu/search" component={SearchForm} />
                     <Route exact={true} path="/menu/upcoming" component={UpcomingForm} />
                 </Switch>

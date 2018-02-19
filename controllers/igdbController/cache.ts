@@ -2,7 +2,8 @@ const redis = require("redis");
 const redisClient = redis.createClient();
 const igdb = require("igdb-api-node").default;
 import config from "../../config";
-import { GameListEntryResponse, GameListEntryResponseFields, GameResponse, GameResponseFields } from "../../client/client-server-common/common";
+import { formatDate, formatTimestamp, addMonths, SteamAPIGetPriceInfoResponse, steamAPIGetPriceInfo } from "../../util/main";
+import { GameListEntryResponse, GameListEntryResponseFields, GameResponse, GameResponseFields, UpcomingGameResponse, UpcomingGameResponseFields } from "../../client/client-server-common/common";
 
 const igdbClient = igdb(config.igdb.key);
 
@@ -17,7 +18,7 @@ interface IGDBCacheEntry {
 
 export const redisCache: IGDBCacheEntry[] = [
     {key: "upcominggames", expiry: ONE_DAY},
-    {key: "games", expiry: INFINITE},
+    {key: "games", expiry: ONE_WEEK},
     {key: "searchGames", expiry: ONE_DAY}
 ];
 
@@ -27,7 +28,7 @@ redisClient.on("error", function (err: any) {
 });
 
 /**
- *  UPCOMINGGAMES
+ *  UPCOMING GAMES
  */
 export function upcomingGamesKeyExists(): Promise<boolean> {
     const cacheEntry: IGDBCacheEntry = redisCache[0];
@@ -45,67 +46,98 @@ export function upcomingGamesKeyExists(): Promise<boolean> {
 
 }
 
-export function getCachedUpcomingGames(): Promise<number[]> {
+export function getCachedUpcomingGames(): Promise<UpcomingGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[0];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.lrange(cacheEntry.key, 0, -1, (err: any, value: number[]) => {
+        redisClient.lrange(cacheEntry.key, 0, -1, (err: any, stringifiedUpcomingGames: string) => {
             console.log(`err: ${err}`);
-            console.log(`value: ${JSON.stringify(value)}`);
+            console.log(`value: ${stringifiedUpcomingGames}`);
             if (err) {
                 return reject(err);
             }
-            return resolve(value);
+            return resolve(JSON.parse("[" + stringifiedUpcomingGames + "]"));
         });
     });
 
 }
 
-export function cacheUpcomingGames(): Promise<number[]> {
+export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[0];
-
-    const formatDate = (date: Date) => {
-        const d = new Date(date);
-        let month = "" + (d.getMonth() + 1);
-        let day = "" + d.getDate();
-        const year = d.getFullYear();
-
-        if (month.length < 2) {
-            month = "0" + month;
-        }
-        if (day.length < 2) {
-            day = "0" + day;
-        }
-
-        const formattedDate = [year, month, day].join("-");
-        return formattedDate;
-    };
-
     const date = new Date();
-    const lastDayOfPreviousMonth = formatDate(new Date(date.getFullYear(), date.getMonth(), 0));
-    const lastDayOfCurrentMonth = formatDate(new Date(date.getFullYear(), date.getMonth() + 1, 0));
+    const currentDay = formatDate(new Date());
+    const oneMonthAfterCurrentDay = formatDate(addMonths(new Date(), 1));
 
-    let upcomingGameIds: number[];
     return new Promise((resolve: any, reject: any) => {
         igdbClient.games({
             filters: {
-                "release_dates.date-gt": lastDayOfPreviousMonth,
-                "release_dates.date-lt": lastDayOfCurrentMonth
+                "release_dates.date-gt": currentDay,
+                "release_dates.date-lt": oneMonthAfterCurrentDay
             },
-            limit: config.igdb.pageLimit,
-            order: "release_dates.date:desc"
-        }, ["id"])
+            limit: config.igdb.pageLimit
+        }, UpcomingGameResponseFields)
         .then( (response: any) => {
-            upcomingGameIds = response.body.map((x: any) => { return x.id; });
-            upcomingGameIds.forEach((x: number) => {
-                console.log(`Caching upcoming game id #${x}`);
-                redisClient.rpush(cacheEntry.key, x);
+            const unsortedUpcomingGames: any[] = [];
+            let sortedUpcomingGames: UpcomingGameResponse[];
+
+            response.body.forEach((x: any) => {
+                const id: number = x.id;
+                const name: string = x.name;
+                let cover: string;
+                if (x.cover) {
+                    cover = igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg");
+                }
+
+                const sortedReleaseDates: any[] = x.release_dates
+                    .filter((x: any) => new Date(x.date) > new Date())
+                    .sort((a: any, b: any) => {
+                        if (a.date < b.date) {
+                            return -1;
+                        }
+                        if (a.date > b.date) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                    .map((x: any) => { return x; });
+
+                unsortedUpcomingGames.push({
+                    id: id,
+                    name: name,
+                    cover: cover,
+                    next_release_date: sortedReleaseDates[0].date
+                });
+
+            });
+
+            sortedUpcomingGames = unsortedUpcomingGames
+                .sort((a: any, b: any) => {
+                    if (a.next_release_date < b.next_release_date) {
+                        return -1;
+                    }
+                    if (a.next_release_date > b.next_release_date) {
+                        return 1;
+                    }
+                    return 0;
+                })
+                .map((x: any) => {
+                    return {
+                        id: x.id,
+                        name: x.name,
+                        cover: x.cover,
+                        next_release_date: formatTimestamp(x.next_release_date)
+                    };
+                });
+
+            sortedUpcomingGames.forEach((x: UpcomingGameResponse) => {
+                console.log(`Caching upcoming game id #${x.id}`);
+                redisClient.rpush(cacheEntry.key, JSON.stringify(x));
             });
             if (cacheEntry.expiry !== -1) {
                 redisClient.expire(cacheEntry.key, cacheEntry.expiry);
             }
-            console.log(`Cached upcoming game ids: ${upcomingGameIds}`);
-            return resolve(upcomingGameIds);
+
+            return resolve(sortedUpcomingGames);
         })
         .catch( (error: any) => {
             return reject(error);
@@ -156,15 +188,13 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
             ids: [gameId]
         }, GameResponseFields)
         .then( (response: any) => {
-
-            // load game properties
             game.name = response.body[0].name;
             game.rating = response.body[0].total_rating;
             game.rating_count = response.body[0].total_rating_count;
             if (response.body[0].cover) {
                 game.cover = igdbClient.image(
                     { cloudinary_id: response.body[0].cover.cloudinary_id },
-                    "screenshot_huge", "jpg");
+                    "cover_big", "jpg");
             }
             game.summary = response.body[0].summary;
             if (response.body[0].screenshots) {
@@ -175,41 +205,134 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                 });
             }
 
-            // async load genre
-            if (response.body[0].genres) {
-                const genreIds: number[] = response.body[0].genres;
+            const genresPromise: Promise<string[]> = new Promise((resolve: any, reject: any) => {
 
-                igdbClient.genres({
-                    ids: genreIds
-                }, ["name"])
-                .then( (genreResponse: any) => {
-                    const genreNames: string[] = genreResponse.body.map( (x: any) => { return x.name; });
-                    game.genres = genreNames;
-                    console.log(`CACHEING GAME #${gameId}`);
-                    redisClient.hset(cacheEntry.key, gameId, JSON.stringify(game));
-                    if (cacheEntry.expiry !== -1) {
-                        redisClient.expire(cacheEntry.key, cacheEntry.expiry);
-                    }
-                    resolve(game);
-                })
-                .catch ( (error: any) => {
-                    reject(error);
-                });
-            } else {
-                console.log(`CACHEING GAME #${gameId}`);
+                if (response.body[0].genres) {
+                    const genreIds: number[] = response.body[0].genres;
+
+                    igdbClient.genres({
+                        ids: genreIds
+                    }, ["name"])
+                    .then( (genreResponse: any) => {
+                        const genreNames: string[] = genreResponse.body.map( (x: any) => { return x.name; });
+                        resolve(genreNames);
+                    })
+                    .catch ( (error: any) => {
+                        reject(error);
+                    });
+                } else {
+                    resolve([]);
+                }
+            });
+
+            const platformsPromise: Promise<any> = new Promise((resolve: any, reject: any) => {
+
+                if (response.body[0].platforms) {
+                    const platformIds: number[] = response.body[0].platforms;
+
+                    igdbClient.platforms({
+                        ids: platformIds
+                    }, ["name"])
+                    .then( (platformResponse: any) => {
+                        const platformAndReleaseDates: any[] = platformResponse.body;
+                        const platformsNames: string[] = [];
+                        const platformsReleaseDates: string[] = [];
+
+                        platformAndReleaseDates.forEach((x: any) => {
+                            const platformId: number = x.id;
+                            const indexOfReleaseDateMatch: number = response.body[0].release_dates.findIndex((e: any) => { return e.platform === platformId; });
+                            if (indexOfReleaseDateMatch !== -1) {
+                                x.release_date = response.body[0].release_dates[indexOfReleaseDateMatch].date;
+                            }
+                        });
+
+                        platformAndReleaseDates
+                        .sort((a: any, b: any) => {
+                            if (a.release_date < b.release_date) {
+                                return -1;
+                            }
+                            if (a.release_date > b.release_date) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+
+                        if (platformAndReleaseDates.length > 0) {
+                            const sortedReleaseDatesAfterToday: number[] = platformAndReleaseDates
+                            .filter((x: any) => new Date(x.release_date) > new Date())
+                            .map((x: any) => { return x.release_date; });
+                            if (sortedReleaseDatesAfterToday.length > 0) {
+                                const earliestUpcomingPlatformReleaseDate: number = sortedReleaseDatesAfterToday[0];
+                                const readableDateFormat: string = formatTimestamp(earliestUpcomingPlatformReleaseDate);
+                                game.next_release_date = readableDateFormat;
+                            }
+                        }
+
+                        platformAndReleaseDates.forEach((platform: any, index: number) => {
+                            platformsNames.push(platform.name);
+                            platformsReleaseDates.push(formatTimestamp(platform.release_date));
+                        });
+
+                        resolve({platforms: platformsNames, platforms_release_dates: platformsReleaseDates});
+                    })
+                    . catch ( (error: any) => {
+                        reject(error);
+                    });
+                } else {
+                    resolve([]);
+                }
+            });
+
+            const pricePromise: Promise<SteamAPIGetPriceInfoResponse> = new Promise((resolve: any, reject: any) => {
+                if (response.body[0].external) {
+                    const steamId: number = response.body[0].external.steam;
+                    steamAPIGetPriceInfo(steamId)
+                        .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse) => {
+                            return resolve(steamAPIGetPriceInfoResponse);
+                        })
+                        . catch ( (error: any) => {
+                            return reject(error);
+                        });
+                } else {
+                    return resolve();
+                }
+            });
+
+            Promise.all([genresPromise, platformsPromise, pricePromise])
+            .then((vals: any) => {
+                if (vals[0].length > 0) {
+                    game.genres = vals[0];
+                }
+                if (vals[1]) {
+                    game.platforms = vals[1].platforms;
+                    game.platforms_release_dates = vals[1].platforms_release_dates;
+                }
+                if (vals[2]) {
+                    game.price = vals[2].price;
+                    game.discount_percent = vals[2].discount_percent;
+                    game.steam_url = vals[2].steam_url;
+                }
+
                 redisClient.hset(cacheEntry.key, gameId, JSON.stringify(game));
-                resolve(game);
-            }
-        })
-        .catch( (error: any) => {
-            reject(error);
+                if (cacheEntry.expiry !== -1) {
+                    redisClient.expire(cacheEntry.key, cacheEntry.expiry);
+                }
+
+                console.log(`CACHEING GAME #${gameId}`);
+                return resolve(game);
+            })
+            .catch((error: any) => {
+                throw(error);
+            });
+
         });
+
     });
 
 }
 
 /**
- *  GAMESLIST
+ *  SEARCH GAMES
  */
 export function searchGamesKeyExists(query: string): Promise<boolean> {
     const cacheEntry: IGDBCacheEntry = redisCache[2];
@@ -233,7 +356,7 @@ export function getCachedSearchGames(query: string): Promise<GameListEntryRespon
             if (err) {
                 return reject(err);
             }
-            console.log(`GETTING CACHED GAMESLIST ${JSON.parse(stringifiedGameIds)}`);
+            console.log(`GETTING CACHED GAMESLIST.`);
             return resolve(JSON.parse(stringifiedGameIds));
         });
     });

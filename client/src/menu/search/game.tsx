@@ -20,9 +20,10 @@ class Game extends React.Component<IGameProps, any> {
         super(props);
         this.state = {};
         this.loadGame = this.loadGame.bind(this);
-
+        console.log(`Passed game #${this.props.gameId}`);
         // load game
         if (this.props.gameId) {
+            this.state = { isLoading: true };
             this.loadGame(this.props.gameId);
         }
     }
@@ -30,22 +31,20 @@ class Game extends React.Component<IGameProps, any> {
     public componentWillReceiveProps(newProps: IGameProps) {
         // load new game
         if (newProps.gameId && this.props.gameId !== newProps.gameId) {
+            this.setState({ isLoading: true });
             this.loadGame(newProps.gameId);
         }
     }
 
     private loadGame(id: string): void {
-        console.log(`Loading new game #${this.props.gameId}...`);
-        this.setState({ isLoading: true }, () => {
-            IGDBService.httpGetGame(id)
-                .then( (response: GameResponse) => {
-                    this.setState({ isLoading: false, game: response });
-                })
-                .catch( (response: any) => {
-                    const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
-                    popupS.modal({ content: formattedErrors.join('') });
-                });
-        });
+        IGDBService.httpGetGame(id)
+            .then( (response: GameResponse) => {
+                this.setState({ isLoading: false, game: response });
+            })
+            .catch( (response: any) => {
+                const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div > • ${errorMsg}</div > `; });
+                popupS.modal({ content: formattedErrors.join('') });
+            });
     }
 
     render() {
@@ -59,6 +58,16 @@ class Game extends React.Component<IGameProps, any> {
             );
         }
         
+        if (!this.props.gameId) {
+            console.log(`RENDERING START!`);
+            return (
+                <div className="menu-choose-game">
+                    <i className="fas fa-arrow-right fa-6x menu-choose-game-arrow" data-fa-transform="rotate-270"/>
+                    <strong className="menu-choose-game-text">Search a Game</strong>
+                </div>
+            );
+        }
+        console.log(`RENDERING GAME!`);
         return (
             <div>
                 {this.props.gameId && 
@@ -94,8 +103,32 @@ class Game extends React.Component<IGameProps, any> {
                                         : <i className="fas fa-star fa-2x"/>
                                     : this.state.game.rating === -1 && <i className="far fa-star fa-2x"/>}
                             </span>}
-                            {this.state.game.rating_count && 
+                            {this.state.game.rating_count !== undefined && 
                                 <span className="menu-game-rating-count">({this.state.game.rating_count} reviews)</span>}
+                            {this.state.game.price && 
+                                <div className="menu-game-price">
+                                    <h2 className="menu-game-price-header">Price: </h2>
+                                    {this.state.game.price === 'Free'
+                                    ? <strong>Free</strong>
+                                    : <i>${this.state.game.price} USD {this.state.game.discount_percent !== 0 && '(-' + this.state.game.discount_percent + '% SALE)'}</i>}
+                                    <a href={this.state.game.steam_url} className="menu-game-releasedate-icon"><i className="fab fa-steam-square fa-2x"/></a>
+                                </div>}
+                            <div className="menu-game-releasedate">
+                                <h2 className="menu-game-releasedate-header">Next release: </h2>
+                                <i>{this.state.game.next_release_date ? this.state.game.next_release_date : 'No planned releases'}</i>
+                            </div>
+                            {this.state.game.platforms && 
+                                <div className="menu-game-platforms">
+                                    <h2 className="menu-game-platforms-header">Platforms: </h2>
+                                    <ul>
+                                    {this.state.game.platforms
+                                        .map((x: string, index: number) => {
+                                            return (
+                                                <li key={x}>{x} <i className="menu-game-platforms-releasedate">({this.state.game.platforms_release_dates[index]})</i></li>
+                                            );
+                                        })}
+                                    </ul>
+                                </div>}
                             {this.state.game.genres && 
                                 <div className="menu-game-genres">
                                     <h2 className="menu-game-genres-header">Genres: </h2>

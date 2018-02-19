@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const igdb = require("igdb-api-node").default;
-import { ResponseModel, GameListEntryResponse, GameResponse, GameResponseFields } from "../../client/client-server-common/common";
+import { ResponseModel, GameListEntryResponse, GameResponse, GameResponseFields, UpcomingGameResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import db from "../../models/db";
 import config from "../../config";
+import { formatDate } from "../../util/main";
 import { cacheGame, getCachedGame, cacheUpcomingGames, getCachedUpcomingGames, upcomingGamesKeyExists, gameKeyExists, searchGamesKeyExists, getCachedSearchGames, cacheSearchGames } from "./cache";
 
 const routes = new routeModel();
@@ -46,24 +47,6 @@ router.post(routes.getRoute("searchgames"), (req: any, res: any) => {
 });
 
 router.post(routes.getRoute("upcominggames"), (req: any, res: any) => {
-
-    const formatDate = (date: Date) => {
-        const d = new Date(date);
-        let month = "" + (d.getMonth() + 1);
-        let day = "" + d.getDate();
-        const year = d.getFullYear();
-
-        if (month.length < 2) {
-            month = "0" + month;
-        }
-        if (day.length < 2) {
-            day = "0" + day;
-        }
-
-        const formattedDate = [year, month, day].join("-");
-        return formattedDate;
-    };
-
     const date = new Date();
     const lastDayOfPreviousMonth = formatDate(new Date(date.getFullYear(), date.getMonth(), 0));
     const lastDayOfCurrentMonth = formatDate(new Date(date.getFullYear(), date.getMonth() + 1, 0));
@@ -73,8 +56,8 @@ router.post(routes.getRoute("upcominggames"), (req: any, res: any) => {
             if (exists) {
                 console.log(`Getting cached upcominggames...`);
                 getCachedUpcomingGames()
-                .then((gameIds: number[]) => {
-                    return res.send(gameIds);
+                .then((upcomingGame: UpcomingGameResponse[]) => {
+                    return res.send(upcomingGame);
                 })
                 .catch((err: any) => {
                     throw(err);
@@ -82,8 +65,8 @@ router.post(routes.getRoute("upcominggames"), (req: any, res: any) => {
             } else {
                 console.log(`Cacheing upcominggames...`);
                 cacheUpcomingGames()
-                .then((gameIds: number[]) => {
-                    return res.send(gameIds);
+                .then((upcomingGame: UpcomingGameResponse[]) => {
+                    return res.send(upcomingGame);
                 })
                 .catch((err: any) => {
                     throw(err);
