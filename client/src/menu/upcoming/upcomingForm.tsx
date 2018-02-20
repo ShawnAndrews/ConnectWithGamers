@@ -32,7 +32,14 @@ class UpcomingForm extends React.Component<IUpcomingFormProps, any> {
             .then( (response: any) => {
                 this.setState({ upcomingGames: response });
                 console.log(`response data: ${response}`);
-                this.setState({ isLoading: false });
+                const uniqueArray = function(arrArg: any) {
+                    return arrArg.filter(function(elem: string, pos: number, arr: string[]) {
+                        return arr.indexOf(elem) === pos;
+                    });
+                };
+                const uniqueReleaseDates: string[] = uniqueArray(response.map((x: any) => { return x.next_release_date; }));
+                console.log(`Unique release dates (${uniqueReleaseDates.length}): ${JSON.stringify(uniqueReleaseDates)}`);
+                this.setState({ isLoading: false, upcomingGames: response, uniqueReleaseDates: uniqueReleaseDates });
             })
             .catch( (response: any) => {
                 const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
@@ -52,18 +59,24 @@ class UpcomingForm extends React.Component<IUpcomingFormProps, any> {
 
         return (
             <div className="menu-game-table-container">
-                <div className="menu-game-table-header">
-                    <strong>Upcoming in next 30 days</strong>
+                <div className="menu-game-table">
+                    {this.state.upcomingGames && 
+                        this.state.uniqueReleaseDates
+                        .map((uniqueReleaseDate: string) => {
+                            return (
+                                <div key={uniqueReleaseDate}>
+                                    <div className="menu-game-table-header">
+                                        <strong>{uniqueReleaseDate}</strong>
+                                    </div>
+                                    {this.state.upcomingGames
+                                    .filter((x: UpcomingGameResponse) => { return x.next_release_date === uniqueReleaseDate; } )
+                                    .map((x: UpcomingGameResponse) => {
+                                        return <UpcomingGame key={x.id} className="menu-game-table-game" upcomingGame={x}/>;
+                                    })}
+                                </div>
+                            );
+                        })}
                 </div>
-                <ul className="menu-game-table">
-                    {this.state.upcomingGames && this.state.upcomingGames
-                        .map((x: UpcomingGameResponse) => {
-                            return ( 
-                                <li key={x.id}>
-                                    <UpcomingGame upcomingGame={x}/>
-                                </li>);
-                    })}
-                </ul>
             </div>
         );       
 

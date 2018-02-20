@@ -24,7 +24,6 @@ class UpcomingGame extends React.Component<IUpcomingGameProps, any> {
                 <img className="menu-game-cover" height="100%" width="100%" src={this.props.upcomingGame.cover ? this.props.upcomingGame.cover : 'https://i.imgur.com/TPRlZkd.png'} alt="Game cover"/>
                 {!this.props.upcomingGame.cover && 
                     <div className="menu-game-upcoming-name">{this.props.upcomingGame.name}</div>}
-                <i className="menu-game-upcoming-releasedate">{this.props.upcomingGame.next_release_date}</i>
             </div>
         );
 

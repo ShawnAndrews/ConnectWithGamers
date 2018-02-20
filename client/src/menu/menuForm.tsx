@@ -33,6 +33,13 @@ class MenuForm extends React.Component<IMenuFormProps, any> {
                 <div className="menu-item">
                     <div className="menu-item-overlay"/>
                     <div className="menu-item-content">
+                        <i className="fas fa-desktop fa-4x"/>
+                        <p>Popular Games By Platform</p>
+                    </div>
+                </div>
+                <div className="menu-item">
+                    <div className="menu-item-overlay"/>
+                    <div className="menu-item-content">
                         <i className="fas fa-gamepad fa-4x"/>
                         <p>Recently Released</p>
                     </div>
@@ -49,13 +56,6 @@ class MenuForm extends React.Component<IMenuFormProps, any> {
                     <div className="menu-item-content">
                         <i className="far fa-star fa-4x"/>
                         <p>Highest Rated</p>
-                    </div>
-                </div>
-                <div className="menu-item">
-                    <div className="menu-item-overlay"/>
-                    <div className="menu-item-content">
-                        <i className="fas fa-desktop fa-4x"/>
-                        <p>By Platform</p>
                     </div>
                 </div>
             </div>
