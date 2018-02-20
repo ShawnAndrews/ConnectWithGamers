@@ -72,15 +72,14 @@ export function steamAPIGetPriceInfo(id: number): Promise<SteamAPIGetPriceInfoRe
 
         WebRequest.get(`${config.steam.apiURL}/appdetails?appids=${id}&cc=us`)
         .then((response: any) => {
-            // console.log(`Steam Response: ${JSON.stringify(JSON.parse(response.message.body)[id])}`);
+            const steam_url: string = `${config.steam.appURL}/${id}`;
 
             if (!JSON.parse(response.message.body)[id].data.price_overview) {
-                return resolve({ price: "Free"});
+                return resolve({ price: "Free", steam_url: steam_url });
             } else {
                 const price_unformatted: string = (JSON.parse(response.message.body)[id].data.price_overview.final).toString();
                 const price: string = price_unformatted.slice(0, price_unformatted.length - 2) + `.` + price_unformatted.slice(price_unformatted.length - 2);
                 const discount_percent: number = JSON.parse(response.message.body)[id].data.price_overview.discount_percent;
-                const steam_url: string = `${config.steam.appURL}/${id}`;
 
                 return resolve({ price: price, discount_percent: discount_percent, steam_url: steam_url });
             }
