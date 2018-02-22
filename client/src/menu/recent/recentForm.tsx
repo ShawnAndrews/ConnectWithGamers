@@ -6,32 +6,30 @@ import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
 import Spinner from '../../loader/spinner';
 import ThumbnailGame from '../thumbnailGame';
-import { ResponseModel, UpcomingGameResponse } from '../../../../client/client-server-common/common';
+import { ResponseModel, UpcomingGameResponse, RecentGameResponse } from '../../../../client/client-server-common/common';
 
-interface IUpcomingFormProps {
+interface IRecentFormProps {
     history: any;
 }
 
-class UpcomingForm extends React.Component<IUpcomingFormProps, any> {
+class RecentForm extends React.Component<IRecentFormProps, any> {
 
-    constructor(props: IUpcomingFormProps) {
+    constructor(props: IRecentFormProps) {
         super(props);
         this.state = { isLoading: true };
-        this.loadUpcomingGames = this.loadUpcomingGames.bind(this);
-        this.loadUpcomingGames();
+        this.loadRecentlyReleasedGames = this.loadRecentlyReleasedGames.bind(this);
+        this.loadRecentlyReleasedGames();
     }
 
-    private loadUpcomingGames(): void {
-        IGDBService.httpGetUpcomingGamesList()
+    private loadRecentlyReleasedGames(): void {
+        IGDBService.httpGetRecentlyReleasedGamesList()
             .then( (response: any) => {
-                console.log(`response data: ${response}`);
                 const uniqueArray = function(arrArg: any) {
                     return arrArg.filter(function(elem: string, pos: number, arr: string[]) {
                         return arr.indexOf(elem) === pos;
                     });
                 };
-                const uniqueReleaseDates: string[] = uniqueArray(response.map((x: any) => { return x.next_release_date; }));
-                console.log(`Unique release dates (${uniqueReleaseDates.length}): ${JSON.stringify(uniqueReleaseDates)}`);
+                const uniqueReleaseDates: string[] = uniqueArray(response.map((x: any) => { return x.last_release_date; }));
                 this.setState({ isLoading: false, upcomingGames: response, uniqueReleaseDates: uniqueReleaseDates });
             })
             .catch( (response: any) => {
@@ -61,8 +59,8 @@ class UpcomingForm extends React.Component<IUpcomingFormProps, any> {
                                     <strong>{uniqueReleaseDate}</strong>
                                 </div>
                                 {this.state.upcomingGames
-                                .filter((x: UpcomingGameResponse) => { return x.next_release_date === uniqueReleaseDate; } )
-                                .map((x: UpcomingGameResponse) => {
+                                .filter((x: RecentGameResponse) => { return x.last_release_date === uniqueReleaseDate; } )
+                                .map((x: RecentGameResponse) => {
                                     return <ThumbnailGame key={x.id} className="menu-game-table-game" game={x}/>;
                                 })}
                             </div>
@@ -75,4 +73,4 @@ class UpcomingForm extends React.Component<IUpcomingFormProps, any> {
 
 }
 
-export default withRouter(UpcomingForm);
+export default withRouter(RecentForm);

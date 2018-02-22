@@ -48,7 +48,6 @@ class Game extends React.Component<IGameProps, any> {
     }
 
     render() {
-        const deviceWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 
         if (this.state.isLoading) {
             return (
@@ -73,7 +72,7 @@ class Game extends React.Component<IGameProps, any> {
                 {this.props.gameId && 
                     <div className="menu-game">
                         {this.state.game.cover && 
-                            <img className="menu-game-cover" height={deviceWidth * 1.25} width={deviceWidth} src={this.state.game.cover} alt="Game cover"/>}
+                            <img className="menu-game-cover" width="100%" src={this.state.game.cover} alt="Game cover"/>}
                         <h1 className="menu-game-name">{this.state.game.name}</h1>
                         {this.state.game.rating && 
                             <span className="menu-game-rating-stars">
@@ -124,7 +123,7 @@ class Game extends React.Component<IGameProps, any> {
                                     {this.state.game.platforms
                                         .map((x: string, index: number) => {
                                             return (
-                                                <li key={x}>{x} <i className="menu-game-platforms-releasedate">({this.state.game.platforms_release_dates[index]})</i></li>
+                                                <li key={x}><span className="menu-game-platforms-name">{x}</span> <i className="menu-game-platforms-releasedate">({this.state.game.platforms_release_dates[index]})</i></li>
                                             );
                                         })}
                                     </ul>

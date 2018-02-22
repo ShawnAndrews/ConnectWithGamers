@@ -4,6 +4,9 @@ import { withRouter } from 'react-router-dom';
 import MenuForm from './menuForm';
 import SearchForm from './search/searchForm';
 import UpcomingForm from './upcoming/upcomingForm';
+import PlatformForm from './platform/platformForm';
+import PlatformGameListForm from './platform/platformGameListForm';
+import RecentForm from './recent/recentForm';
 
 interface IMenuProps {
     history: any;
@@ -24,6 +27,9 @@ class Menu extends React.Component<IMenuProps, any> {
                     <Route exact={true} path="/menu/search/:id" component={SearchForm} />
                     <Route exact={true} path="/menu/search" component={SearchForm} />
                     <Route exact={true} path="/menu/upcoming" component={UpcomingForm} />
+                    <Route exact={true} path="/menu/platform/:id" component={PlatformGameListForm} />
+                    <Route exact={true} path="/menu/platform" component={PlatformForm} />
+                    <Route exact={true} path="/menu/recent" component={RecentForm} />
                 </Switch>
             </div>
         );

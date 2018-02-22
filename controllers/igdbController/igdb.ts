@@ -1,12 +1,23 @@
 const express = require("express");
 const router = express.Router();
 const igdb = require("igdb-api-node").default;
-import { ResponseModel, GameListEntryResponse, GameResponse, GameResponseFields, UpcomingGameResponse } from "../../client/client-server-common/common";
+import {
+    ResponseModel,
+    GameListEntryResponse,
+    GameResponse,
+    UpcomingGameResponse,
+    RecentGameResponse,
+    PlatformGameResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import db from "../../models/db";
 import config from "../../config";
 import { formatDate } from "../../util/main";
-import { cacheGame, getCachedGame, cacheUpcomingGames, getCachedUpcomingGames, upcomingGamesKeyExists, gameKeyExists, searchGamesKeyExists, getCachedSearchGames, cacheSearchGames } from "./cache";
+import {
+    upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames,
+    recentGamesKeyExists, getCachedRecentGames, cacheRecentGames,
+    platformGamesKeyExists, getCachedPlatformGames, cachePlatformGames,
+    gameKeyExists, getCachedGame, cacheGame,
+    searchGamesKeyExists, getCachedSearchGames, cacheSearchGames } from "./cache";
 
 const routes = new routeModel();
 const client = igdb(config.igdb.key);
@@ -14,6 +25,8 @@ const client = igdb(config.igdb.key);
 /* routes */
 routes.addRoute("searchgames", "/games/search/:query");
 routes.addRoute("upcominggames", "/games/upcoming");
+routes.addRoute("recentgames", "/games/recent");
+routes.addRoute("platformgames", "/games/platform/:id");
 routes.addRoute("game", "/game/:id");
 
 router.post(routes.getRoute("searchgames"), (req: any, res: any) => {
@@ -47,9 +60,6 @@ router.post(routes.getRoute("searchgames"), (req: any, res: any) => {
 });
 
 router.post(routes.getRoute("upcominggames"), (req: any, res: any) => {
-    const date = new Date();
-    const lastDayOfPreviousMonth = formatDate(new Date(date.getFullYear(), date.getMonth(), 0));
-    const lastDayOfCurrentMonth = formatDate(new Date(date.getFullYear(), date.getMonth() + 1, 0));
 
     upcomingGamesKeyExists()
         .then((exists: boolean) => {
@@ -67,6 +77,67 @@ router.post(routes.getRoute("upcominggames"), (req: any, res: any) => {
                 cacheUpcomingGames()
                 .then((upcomingGame: UpcomingGameResponse[]) => {
                     return res.send(upcomingGame);
+                })
+                .catch((err: any) => {
+                    throw(err);
+                });
+            }
+        })
+        .catch((err: any) => {
+            throw err;
+        });
+
+});
+
+router.post(routes.getRoute("recentgames"), (req: any, res: any) => {
+
+    recentGamesKeyExists()
+        .then((exists: boolean) => {
+            if (exists) {
+                console.log(`Getting cached recentgames...`);
+                getCachedRecentGames()
+                .then((recentGame: RecentGameResponse[]) => {
+                    return res.send(recentGame);
+                })
+                .catch((err: any) => {
+                    throw(err);
+                });
+            } else {
+                console.log(`Cacheing recentgames...`);
+                cacheRecentGames()
+                .then((recentGame: RecentGameResponse[]) => {
+                    return res.send(recentGame);
+                })
+                .catch((err: any) => {
+                    throw(err);
+                });
+            }
+        })
+        .catch((err: any) => {
+            throw err;
+        });
+
+});
+
+router.post(routes.getRoute("platformgames"), (req: any, res: any) => {
+    const platformId: number = Number(req.params.id);
+
+    platformGamesKeyExists(platformId)
+        .then((exists: boolean) => {
+            if (exists) {
+                console.log(`Getting cached platformgames...`);
+                getCachedPlatformGames(platformId)
+                .then((platformGames: PlatformGameResponse[]) => {
+                    return res.send(platformGames);
+                })
+                .catch((err: any) => {
+                    throw(err);
+                });
+            } else {
+                console.log(`Cacheing platformgames...`);
+                cachePlatformGames(platformId)
+                .then((platformGames: PlatformGameResponse[]) => {
+                    return res.send(platformGames);
                 })
                 .catch((err: any) => {
                     throw(err);

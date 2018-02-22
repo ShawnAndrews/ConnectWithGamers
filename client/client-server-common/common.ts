@@ -85,3 +85,23 @@ export interface UpcomingGameResponse {
 }
 
 export const UpcomingGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`];
+
+export interface RecentGameResponse {
+
+    id: number;
+    name: string;
+    last_release_date: string;
+    cover?: string;
+}
+
+export const RecentGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`];
+
+export interface PlatformGameResponse {
+
+    id: number;
+    name: string;
+    rating: string;
+    cover?: string;
+}
+
+export const PlatformGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`];

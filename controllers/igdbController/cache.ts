@@ -3,7 +3,12 @@ const redisClient = redis.createClient();
 const igdb = require("igdb-api-node").default;
 import config from "../../config";
 import { formatDate, formatTimestamp, addMonths, SteamAPIGetPriceInfoResponse, steamAPIGetPriceInfo } from "../../util/main";
-import { GameListEntryResponse, GameListEntryResponseFields, GameResponse, GameResponseFields, UpcomingGameResponse, UpcomingGameResponseFields } from "../../client/client-server-common/common";
+import {
+    GameListEntryResponse, GameListEntryResponseFields,
+    GameResponse, GameResponseFields,
+    UpcomingGameResponse, UpcomingGameResponseFields,
+    RecentGameResponse, RecentGameResponseFields,
+    PlatformGameResponse, PlatformGameResponseFields } from "../../client/client-server-common/common";
 
 const igdbClient = igdb(config.igdb.key);
 
@@ -19,7 +24,9 @@ interface IGDBCacheEntry {
 export const redisCache: IGDBCacheEntry[] = [
     {key: "upcominggames", expiry: ONE_DAY},
     {key: "games", expiry: ONE_WEEK},
-    {key: "searchGames", expiry: ONE_DAY}
+    {key: "searchgames", expiry: ONE_DAY},
+    {key: "platformgames", expiry: ONE_DAY},
+    {key: "recentgames", expiry: ONE_DAY},
 ];
 
 // register redis error handler
@@ -89,7 +96,7 @@ export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
                 }
 
                 const sortedReleaseDates: any[] = x.release_dates
-                    .filter((x: any) => new Date(x.date) > new Date())
+                    .filter((releaseDate: any) => new Date(releaseDate.date) > new Date())
                     .sort((a: any, b: any) => {
                         if (a.date < b.date) {
                             return -1;
@@ -99,14 +106,16 @@ export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
                         }
                         return 0;
                     })
-                    .map((x: any) => { return x; });
+                    .map((releaseDate: any) => { return releaseDate; });
 
-                unsortedUpcomingGames.push({
-                    id: id,
-                    name: name,
-                    cover: cover,
-                    next_release_date: sortedReleaseDates[0].date
-                });
+                if (sortedReleaseDates.length > 0) {
+                    unsortedUpcomingGames.push({
+                        id: id,
+                        name: name,
+                        cover: cover,
+                        next_release_date: sortedReleaseDates[0].date
+                    });
+                }
 
             });
 
@@ -142,6 +151,195 @@ export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
         .catch( (error: any) => {
             return reject(error);
         });
+    });
+
+}
+
+/**
+ *  RECENTLY RELEASED GAMES
+ */
+export function recentGamesKeyExists(): Promise<boolean> {
+    const cacheEntry: IGDBCacheEntry = redisCache[4];
+
+    return new Promise((resolve: any, reject: any) => {
+        redisClient.exists(cacheEntry.key, (err: any, value: boolean) => {
+            console.log(`err: ${err}`);
+            console.log(`value: ${JSON.stringify(value)}`);
+            if (err) {
+                return reject(err);
+            }
+            return resolve(value);
+        });
+    });
+
+}
+
+export function getCachedRecentGames(): Promise<RecentGameResponse[]> {
+    const cacheEntry: IGDBCacheEntry = redisCache[4];
+
+    return new Promise((resolve: any, reject: any) => {
+        redisClient.lrange(cacheEntry.key, 0, -1, (err: any, stringifiedRecentGames: string) => {
+            console.log(`err: ${err}`);
+            console.log(`value: ${stringifiedRecentGames}`);
+            if (err) {
+                return reject(err);
+            }
+            return resolve(JSON.parse("[" + stringifiedRecentGames + "]"));
+        });
+    });
+
+}
+
+export function cacheRecentGames(): Promise<RecentGameResponse[]> {
+    const cacheEntry: IGDBCacheEntry = redisCache[4];
+    const date = new Date();
+    const oneMonthBeforeCurrentDay = formatDate(addMonths(new Date(), -1));
+    const currentDay = formatDate(new Date());
+    console.log(`gt: ${oneMonthBeforeCurrentDay}`);
+    console.log(`lt: ${currentDay}`);
+    return new Promise((resolve: any, reject: any) => {
+        igdbClient.games({
+            filters: {
+                "release_dates.date-gt": oneMonthBeforeCurrentDay,
+                "release_dates.date-lt": currentDay
+            },
+            limit: config.igdb.pageLimit
+        }, RecentGameResponseFields)
+        .then( (response: any) => {
+            const unsortedRecentGames: any[] = [];
+            let sortedRecentGames: RecentGameResponse[];
+
+            response.body.forEach((x: any) => {
+                const id: number = x.id;
+                const name: string = x.name;
+                let cover: string;
+                if (x.cover) {
+                    cover = igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg");
+                }
+
+                const sortedReleaseDates: any[] = x.release_dates
+                    .sort((a: any, b: any) => {
+                        if (a.date < b.date) {
+                            return -1;
+                        }
+                        if (a.date > b.date) {
+                            return 1;
+                        }
+                        return 0;
+                    })
+                    .map((releaseDate: any) => { return releaseDate; });
+
+                console.log(`#${id} sorted dates: ${JSON.stringify(sortedReleaseDates)}`);
+
+                if (sortedReleaseDates.length > 0) {
+                    unsortedRecentGames.push({
+                        id: id,
+                        name: name,
+                        cover: cover,
+                        last_release_date: sortedReleaseDates[sortedReleaseDates.length - 1].date
+                    });
+                }
+
+            });
+
+            sortedRecentGames = unsortedRecentGames
+                .sort((a: any, b: any) => {
+                    if (a.last_release_date < b.last_release_date) {
+                        return -1;
+                    }
+                    if (a.last_release_date > b.last_release_date) {
+                        return 1;
+                    }
+                    return 0;
+                })
+                .map((x: any) => {
+                    return {
+                        id: x.id,
+                        name: x.name,
+                        cover: x.cover,
+                        last_release_date: formatTimestamp(x.last_release_date)
+                    };
+                });
+
+            sortedRecentGames.forEach((x: RecentGameResponse) => {
+                console.log(`Caching recent game id #${x.id}`);
+                redisClient.rpush(cacheEntry.key, JSON.stringify(x));
+            });
+            if (cacheEntry.expiry !== -1) {
+                redisClient.expire(cacheEntry.key, cacheEntry.expiry);
+            }
+
+            return resolve(sortedRecentGames);
+        })
+        .catch( (error: any) => {
+            return reject(error);
+        });
+    });
+
+}
+
+/**
+ *  PLATFORM GAMES
+ */
+export function platformGamesKeyExists(platformId: number): Promise<boolean> {
+    const cacheEntry: IGDBCacheEntry = redisCache[3];
+
+    return new Promise((resolve: any, reject: any) => {
+        redisClient.hexists(cacheEntry.key, platformId, (err: any, value: boolean) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(value);
+        });
+    });
+
+}
+
+export function getCachedPlatformGames(platformId: number): Promise<PlatformGameResponse[]> {
+    const cacheEntry: IGDBCacheEntry = redisCache[3];
+
+    return new Promise((resolve: any, reject: any) => {
+        redisClient.hget(cacheEntry.key, platformId, (err: any, stringifiedUpcomingGames: string) => {
+            console.log(`err: ${err}`);
+            console.log(`value: ${stringifiedUpcomingGames}`);
+            if (err) {
+                return reject(err);
+            }
+            return resolve(JSON.parse(stringifiedUpcomingGames));
+        });
+    });
+
+}
+
+export function cachePlatformGames(platformId: number): Promise<PlatformGameResponse[]> {
+    const cacheEntry: IGDBCacheEntry = redisCache[3];
+
+    return new Promise((resolve: any, reject: any) => {
+        igdbClient.games({
+            filters: {
+                "release_dates.platform-eq": platformId,
+            },
+            order: "rating_count:desc",
+            limit: config.igdb.pageLimit
+        }, PlatformGameResponseFields )
+        .then( (response: any) => {
+
+            response.body.forEach((x: any) => {
+                if (x.cover) {
+                    x.cover = igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg");
+                }
+            });
+
+            redisClient.hset(cacheEntry.key, platformId, JSON.stringify(response.body));
+            if (cacheEntry.expiry !== -1) {
+                redisClient.expire(cacheEntry.key, cacheEntry.expiry);
+            }
+
+            console.log(`Platform games: ${JSON.stringify(response.body)}`);
+
+            return resolve(response.body);
+        });
+
     });
 
 }
