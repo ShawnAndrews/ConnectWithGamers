@@ -95,6 +95,13 @@ export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
                     cover = igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg");
                 }
 
+                x.release_dates.forEach(function(ele: any, index: number, arr: any[]) {
+                    const duplicate: any = arr.find((x: any) => { return new Date(x.date) < new Date(ele.date); });
+                    if (duplicate) {
+                        arr.splice(index, 1);
+                    }
+                });
+
                 const sortedReleaseDates: any[] = x.release_dates
                     .filter((releaseDate: any) => new Date(releaseDate.date) > new Date())
                     .sort((a: any, b: any) => {
@@ -107,6 +114,8 @@ export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
                         return 0;
                     })
                     .map((releaseDate: any) => { return releaseDate; });
+
+                console.log(`#${id} sorted dates: ${JSON.stringify(sortedReleaseDates)}`);
 
                 if (sortedReleaseDates.length > 0) {
                     unsortedUpcomingGames.push({
@@ -228,8 +237,6 @@ export function cacheRecentGames(): Promise<RecentGameResponse[]> {
                         return 0;
                     })
                     .map((releaseDate: any) => { return releaseDate; });
-
-                console.log(`#${id} sorted dates: ${JSON.stringify(sortedReleaseDates)}`);
 
                 if (sortedReleaseDates.length > 0) {
                     unsortedRecentGames.push({
