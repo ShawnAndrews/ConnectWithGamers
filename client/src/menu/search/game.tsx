@@ -131,7 +131,7 @@ class Game extends React.Component<IGameProps, any> {
                             {this.state.game.genres && 
                                 <div className="menu-game-genres">
                                     <h2 className="menu-game-genres-header">Genres: </h2>
-                                    <i>{this.state.game.genres.join(', ')}</i>
+                                    <i>{this.state.game.genres}</i>
                                 </div>}
                             {this.state.game.summary && 
                                 <div className="menu-game-summary">

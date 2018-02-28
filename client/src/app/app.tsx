@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
 import Account from '../account/main';
+import Home from '../home/home';
+import Menu from '../menu/main';
 import Background from '../background/background';
 import NotFound from '../notfound/notfound';
 import Notice from '../notice/notice';
 import Navbar from '../navbar/navbar';
-import Home from '../home/home';
-import Menu from '../menu/main';
 
 export enum NAV_PAGE {
     HOME = '/',

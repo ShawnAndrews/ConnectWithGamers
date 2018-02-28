@@ -80,10 +80,30 @@
 
     }
 
+    .menu-game-thumbnail-icons {
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+        margin: 0 5px;
+    }
+
+    .menu-game-thumbnail {
+        background-color: rgba(0,0,0,0.7) !important;
+        margin-bottom: 20px;
+
+        * {
+            color: rgba(255,255,255,0.7);
+        }
+
+    }
+
     .menu-game {
-        position: relative;
-        color: whitesmoke;
-        
+        position: absolute;
+        background-color: rgba(0,0,0,0.2) !important;
+
+        * {
+            color: rgba(255,255,255,0.7);
+        }
+
         .menu-game-cover {
             position: relative;
             display: block;
@@ -186,6 +206,10 @@
 
     }
 
+    .menu-game:last-child {
+        margin-bottom: 0px;
+    }
+
     .menu-game-table-header {
         color: whitesmoke;
         text-align: center;
@@ -208,4 +232,26 @@
             height: 200px;
         }
     }
+}
+
+.searchbar {
+    > div {
+        background: rgba(0,0,0,0.4);
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        border-bottom: 2px solid whitesmoke;
+    }
+
+    * {
+        color: whitesmoke !important;
+    }
+
+    .Select-menu-outer .Select-option {
+        background: rgba(0,0,0,0.4) !important;
+    }
+}
+
+.Select-control {
+    background: rgba(0,0,0,0.2) !important;
 }

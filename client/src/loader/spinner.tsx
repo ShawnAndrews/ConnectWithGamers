@@ -1,4 +1,5 @@
 import * as React from 'react';
+import CircularProgress from 'material-ui/CircularProgress';
 
 interface ISpinnerProps {
     loadingMsg: string;
@@ -13,7 +14,7 @@ class Spinner extends React.Component<ISpinnerProps, any> {
     render() {
         return (
             <div className="login-spinner">
-                <i className="fa fa-spinner fa-pulse fa-5x fa-fw"/>
+                <CircularProgress color="whitesmoke" size={120} thickness={7}/>
                 {this.props.loadingMsg &&
                     <div className="login-spinner-message">{this.props.loadingMsg}</div>
                     }

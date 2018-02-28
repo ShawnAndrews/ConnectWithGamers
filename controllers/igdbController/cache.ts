@@ -2,7 +2,7 @@ const redis = require("redis");
 const redisClient = redis.createClient();
 const igdb = require("igdb-api-node").default;
 import config from "../../config";
-import { formatDate, formatTimestamp, addMonths, SteamAPIGetPriceInfoResponse, steamAPIGetPriceInfo } from "../../util/main";
+import { formatDate, formatTimestamp, addMonths, SteamAPIGetPriceInfoResponse, steamAPIGetPriceInfo, ArrayClean } from "../../util/main";
 import {
     GameListEntryResponse, GameListEntryResponseFields,
     GameResponse, GameResponseFields,
@@ -15,6 +15,28 @@ const igdbClient = igdb(config.igdb.key);
 const ONE_DAY: number = 60 * 60 * 24;
 const ONE_WEEK: number = 60 * 60 * 24 * 7;
 const INFINITE: number = -1;
+
+const igdbGenreNames: any = {};
+igdbGenreNames[2] = `Point-and-click`;
+igdbGenreNames[4] = `Fighting`;
+igdbGenreNames[5] = `Shooter`;
+igdbGenreNames[7] = `Music`;
+igdbGenreNames[8] = `Platform`;
+igdbGenreNames[9] = `Puzzle`;
+igdbGenreNames[10] = `Racing`;
+igdbGenreNames[11] = `Real Time Strategy (RTS)`;
+igdbGenreNames[12] = `Role-playing (RPG)`;
+igdbGenreNames[13] = `Simulator`;
+igdbGenreNames[14] = `Sport`;
+igdbGenreNames[15] = `Strategy`;
+igdbGenreNames[16] = `Turn-based strategy (TBS)`;
+igdbGenreNames[24] = `Tactical`;
+igdbGenreNames[25] = `Hack and slash/Beat 'em up`;
+igdbGenreNames[26] = `Quiz/Trivia`;
+igdbGenreNames[30] = `Pinball`;
+igdbGenreNames[31] = `Adventure`;
+igdbGenreNames[32] = `Indie`;
+igdbGenreNames[33] = `Arcade`;
 
 interface IGDBCacheEntry {
     key: string;
@@ -118,11 +140,47 @@ export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
                 console.log(`#${id} sorted dates: ${JSON.stringify(sortedReleaseDates)}`);
 
                 if (sortedReleaseDates.length > 0) {
+                    let genres: string;
+                    if (x.genres) {
+                        genres = x.genres.map((genreId: number) => { return igdbGenreNames[genreId]; }).join(`, `);
+                    }
+                    let steam_url: string;
+                    if (x.external) {
+                        const steamId: number = x.external.steam;
+                        steam_url = `${config.steam.appURL}/${steamId}`;
+                    }
+                    let platformIcons: string[];
+                    if (x.platforms) {
+                        platformIcons = x.platforms
+                        .map((platformId: number) => {
+                            if (platformId === 48 || platformId === 45) {
+                                return "fab fa-playstation";
+                            } else if (platformId === 34) {
+                                return "fab fa-android";
+                            } else if (platformId === 6) {
+                                return "fab fa-windows";
+                            } else if (platformId === 14) {
+                                return "fab fa-apple";
+                            } else if (platformId === 3) {
+                                return "fab fa-linux";
+                            } else if (platformId === 92) {
+                                return "fab fa-steam";
+                            } else if (platformId === 49) {
+                                return "fab fa-xbox";
+                            } else if (platformId === 130) {
+                                return "fab fa-nintendo-switch";
+                            }
+                        });
+                        platformIcons = ArrayClean(platformIcons, undefined);
+                    }
                     unsortedUpcomingGames.push({
                         id: id,
                         name: name,
                         cover: cover,
-                        next_release_date: sortedReleaseDates[0].date
+                        next_release_date: sortedReleaseDates[0].date,
+                        steam_url: steam_url,
+                        genres: genres,
+                        platformIcons: platformIcons
                     });
                 }
 
@@ -143,7 +201,10 @@ export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
                         id: x.id,
                         name: x.name,
                         cover: x.cover,
-                        next_release_date: formatTimestamp(x.next_release_date)
+                        next_release_date: formatTimestamp(x.next_release_date),
+                        steam_url: x.steam_url,
+                        genres: x.genres,
+                        platformIcons: x.platformIcons
                     };
                 });
 
@@ -225,7 +286,39 @@ export function cacheRecentGames(): Promise<RecentGameResponse[]> {
                 if (x.cover) {
                     cover = igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg");
                 }
-
+                let genres: string;
+                if (x.genres) {
+                    genres = x.genres.map((genreId: number) => { return igdbGenreNames[genreId]; }).join(`, `);
+                }
+                let steam_url: string;
+                if (x.external) {
+                    const steamId: number = x.external.steam;
+                    steam_url = `${config.steam.appURL}/${steamId}`;
+                }
+                let platformIcons: string[];
+                if (x.platforms) {
+                    platformIcons = x.platforms
+                    .map((platformId: number) => {
+                        if (platformId === 48 || platformId === 45) {
+                            return "fab fa-playstation";
+                        } else if (platformId === 34) {
+                            return "fab fa-android";
+                        } else if (platformId === 6) {
+                            return "fab fa-windows";
+                        } else if (platformId === 14) {
+                            return "fab fa-apple";
+                        } else if (platformId === 3) {
+                            return "fab fa-linux";
+                        } else if (platformId === 92) {
+                            return "fab fa-steam";
+                        } else if (platformId === 49) {
+                            return "fab fa-xbox";
+                        } else if (platformId === 130) {
+                            return "fab fa-nintendo-switch";
+                        }
+                    });
+                    platformIcons = ArrayClean(platformIcons, undefined);
+                }
                 const sortedReleaseDates: any[] = x.release_dates
                     .sort((a: any, b: any) => {
                         if (a.date < b.date) {
@@ -243,7 +336,10 @@ export function cacheRecentGames(): Promise<RecentGameResponse[]> {
                         id: id,
                         name: name,
                         cover: cover,
-                        last_release_date: sortedReleaseDates[sortedReleaseDates.length - 1].date
+                        last_release_date: sortedReleaseDates[sortedReleaseDates.length - 1].date,
+                        steam_url: steam_url,
+                        genres: genres,
+                        platformIcons: platformIcons
                     });
                 }
 
@@ -264,7 +360,10 @@ export function cacheRecentGames(): Promise<RecentGameResponse[]> {
                         id: x.id,
                         name: x.name,
                         cover: x.cover,
-                        last_release_date: formatTimestamp(x.last_release_date)
+                        last_release_date: formatTimestamp(x.last_release_date),
+                        steam_url: x.steam_url,
+                        genres: x.genres,
+                        platformIcons: x.platformIcons
                     };
                 });
 
@@ -332,9 +431,48 @@ export function cachePlatformGames(platformId: number): Promise<PlatformGameResp
         .then( (response: any) => {
 
             response.body.forEach((x: any) => {
-                if (x.cover) {
-                    x.cover = igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg");
+                let genres: string;
+                if (x.genres) {
+                    genres = x.genres.map((genreId: number) => { return igdbGenreNames[genreId]; }).join(`, `);
                 }
+                let steam_url: string;
+                if (x.external) {
+                    const steamId: number = x.external.steam;
+                    steam_url = `${config.steam.appURL}/${steamId}`;
+                }
+                let platformIcons: string[];
+                if (x.platforms) {
+                    console.log(`Platform ids: ${JSON.stringify(x.platforms)}`);
+                    platformIcons = x.platforms
+                    .map((platformId: number) => {
+                        if (platformId === 48 || platformId === 45) {
+                            return "fab fa-playstation";
+                        } else if (platformId === 34) {
+                            return "fab fa-android";
+                        } else if (platformId === 6) {
+                            return "fab fa-windows";
+                        } else if (platformId === 14) {
+                            return "fab fa-apple";
+                        } else if (platformId === 3) {
+                            return "fab fa-linux";
+                        } else if (platformId === 92) {
+                            return "fab fa-steam";
+                        } else if (platformId === 49) {
+                            return "fab fa-xbox";
+                        } else if (platformId === 130) {
+                            return "fab fa-nintendo-switch";
+                        }
+                    });
+                    platformIcons = ArrayClean(platformIcons, undefined);
+                }
+                let cover: string;
+                if (x.cover) {
+                    cover = igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg");
+                }
+                x.cover = cover;
+                x.genres = genres;
+                x.steam_url = steam_url;
+                x.platformIcons = platformIcons;
             });
 
             redisClient.hset(cacheEntry.key, platformId, JSON.stringify(response.body));
@@ -409,26 +547,9 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                         "screenshot_huge", "jpg");
                 });
             }
-
-            const genresPromise: Promise<string[]> = new Promise((resolve: any, reject: any) => {
-
-                if (response.body[0].genres) {
-                    const genreIds: number[] = response.body[0].genres;
-
-                    igdbClient.genres({
-                        ids: genreIds
-                    }, ["name"])
-                    .then( (genreResponse: any) => {
-                        const genreNames: string[] = genreResponse.body.map( (x: any) => { return x.name; });
-                        resolve(genreNames);
-                    })
-                    .catch ( (error: any) => {
-                        reject(error);
-                    });
-                } else {
-                    resolve([]);
-                }
-            });
+            if (response.body[0].genres) {
+                game.genres = response.body[0].genres.map((genreId: number) => { return igdbGenreNames[genreId]; }).join(`, `);
+            }
 
             const platformsPromise: Promise<any> = new Promise((resolve: any, reject: any) => {
 
@@ -480,7 +601,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
 
                         resolve({platforms: platformsNames, platforms_release_dates: platformsReleaseDates});
                     })
-                    . catch ( (error: any) => {
+                    .catch ( (error: any) => {
                         reject(error);
                     });
                 } else {
@@ -495,7 +616,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                         .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse) => {
                             return resolve(steamAPIGetPriceInfoResponse);
                         })
-                        . catch ( (error: any) => {
+                        .catch ( (error: any) => {
                             return reject(error);
                         });
                 } else {
@@ -503,19 +624,16 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                 }
             });
 
-            Promise.all([genresPromise, platformsPromise, pricePromise])
+            Promise.all([platformsPromise, pricePromise])
             .then((vals: any) => {
-                if (vals[0].length > 0) {
-                    game.genres = vals[0];
+                if (vals[0]) {
+                    game.platforms = vals[0].platforms;
+                    game.platforms_release_dates = vals[0].platforms_release_dates;
                 }
                 if (vals[1]) {
-                    game.platforms = vals[1].platforms;
-                    game.platforms_release_dates = vals[1].platforms_release_dates;
-                }
-                if (vals[2]) {
-                    game.price = vals[2].price;
-                    game.discount_percent = vals[2].discount_percent;
-                    game.steam_url = vals[2].steam_url;
+                    game.price = vals[1].price;
+                    game.discount_percent = vals[1].discount_percent;
+                    game.steam_url = vals[1].steam_url;
                 }
 
                 redisClient.hset(cacheEntry.key, gameId, JSON.stringify(game));

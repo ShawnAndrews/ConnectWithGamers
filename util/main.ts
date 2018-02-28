@@ -92,3 +92,16 @@ export function steamAPIGetPriceInfo(id: number): Promise<SteamAPIGetPriceInfoRe
     });
 
 }
+
+/**
+ * Returns an array with all elements of given value deleted.
+ */
+export function ArrayClean(arr: any[], deleteValue: any): any[] {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] == deleteValue) {
+            arr.splice(i, 1);
+            i--;
+        }
+    }
+    return arr;
+}

@@ -82,7 +82,7 @@ class LoginForm extends React.Component<ILoginFormProps, any> {
                     <label className="account-form top-sm-padding">
                         <div className="div-center">
                             <span className="account-rememberme">Remember me</span>
-                            <input type="checkbox" onChange={this.remembermeChanged}/>
+                            <input className="account-checkbox" type="checkbox" onChange={this.remembermeChanged}/>
                         </div>
                     </label>
                     <button type="submit" className="account-form-login top-sm-padding">

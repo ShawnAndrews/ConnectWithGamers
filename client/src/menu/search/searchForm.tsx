@@ -71,12 +71,15 @@ class SearchForm extends React.Component<ISearchFormProps, any> {
             <div>
                 <Select
                     name="gameslist"
+                    className="searchbar"
+                    optionClassName="searchbar"
                     isLoading={this.state.isLoading}
                     onChange={this.handleChange}
                     options={this.state.gameslist}
                     onInputKeyDown={this.handleKeyDown}
                     onInputChange={this.handleRawInputChange}
                     noResultsText="Enter query to return a list of games"
+                    placeholder="Search..."
                 />
                 <Game
                     gameId={this.props.match.params.id} 

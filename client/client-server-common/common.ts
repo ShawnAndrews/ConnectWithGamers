@@ -81,27 +81,36 @@ export interface UpcomingGameResponse {
     id: number;
     name: string;
     next_release_date: string;
+    genres: string;
+    platformIcons: string[];
+    steam_url?: string;
     cover?: string;
 }
 
-export const UpcomingGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`];
+export const UpcomingGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`, `genres`, `platforms`, `external`];
 
 export interface RecentGameResponse {
 
     id: number;
     name: string;
     last_release_date: string;
+    genres: string;
+    platformIcons: string[];
+    steam_url?: string;
     cover?: string;
 }
 
-export const RecentGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`];
+export const RecentGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`, `genres`, `platforms`, `external`];
 
 export interface PlatformGameResponse {
 
     id: number;
     name: string;
     rating: string;
+    genres: string;
+    platformIcons: string[];
+    steam_url?: string;
     cover?: string;
 }
 
-export const PlatformGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`];
+export const PlatformGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`, `genres`, `platforms`, `external`];
