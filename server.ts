@@ -7,6 +7,7 @@ import accountController from "./controllers/accountController/account";
 import igdbController from "./controllers/igdbController/igdb";
 import config from "./config";
 import db from "./models/db";
+import logIP from "./controllers/logger/main";
 
 /* parse post body */
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -15,8 +16,10 @@ app.use(bodyParser.json());
 /* enable cookies  */
 app.use(cookieParser());
 
+/* log ip and date of access */
 app.use((req: any, res: any, next: any) => {
-  console.log(`Request (${req.connection.remoteAddress}): ${req.url}`);
+  console.log(`Request (${req.connection.remoteAddress.replace(/^.*:/, ``)}): ${req.url}`);
+  logIP(req.connection.remoteAddress);
   next();
 });
 
