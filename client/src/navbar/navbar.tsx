@@ -15,14 +15,17 @@ class Navbar extends React.Component<INavbarProps, any> {
         super(props);
         this.goToHomePage = this.goToHomePage.bind(this);
         this.goToMenuPage = this.goToMenuPage.bind(this);
+        this.goToChatroomPage = this.goToChatroomPage.bind(this);
         this.goToAccountPage = this.goToAccountPage.bind(this);
         
         if (this.props.page === NAV_PAGE.HOME) {
             this.state = { index: 0 };
         } else if (this.props.page === NAV_PAGE.MENU) {
             this.state = { index: 1 };
-        } else if (this.props.page === NAV_PAGE.ACCOUNT) {
+        } else if (this.props.page === NAV_PAGE.CHATROOM) {
             this.state = { index: 2 };
+        } else if (this.props.page === NAV_PAGE.ACCOUNT) {
+            this.state = { index: 3 };
         } else {
             this.state = { index: -1};
         }
@@ -31,17 +34,22 @@ class Navbar extends React.Component<INavbarProps, any> {
 
     private goToHomePage(): void {
         this.setState({ index: 0 });
-        this.props.history.push('/');
+        this.props.history.push(NAV_PAGE.HOME);
     }
 
     private goToMenuPage(): void {
         this.setState({ index: 1 });
-        this.props.history.push('/menu');
+        this.props.history.push(NAV_PAGE.MENU);
+    }
+
+    private goToChatroomPage(): void {
+        this.setState({ index: 2 });
+        this.props.history.push(NAV_PAGE.CHATROOM);
     }
 
     private goToAccountPage(): void {
-        this.setState({ index: 2 });
-        this.props.history.push('/account');
+        this.setState({ index: 3 });
+        this.props.history.push(NAV_PAGE.ACCOUNT);
     }
 
     render() {
@@ -63,7 +71,8 @@ class Navbar extends React.Component<INavbarProps, any> {
             >
                 <Tab label="Home" value={0} icon={<i className="fas fa-home navbar-item-icon"/>} className="navbar-item-text" onActive={this.goToHomePage}/>
                 <Tab label="Menu" value={1} icon={<i className="fas fa-bars navbar-item-icon"/>} className="navbar-item-text" onActive={this.goToMenuPage}/>
-                <Tab label="Account" value={2} icon={<i className="far fa-user navbar-item-icon"/>} className="navbar-item-text" onActive={this.goToAccountPage}/>
+                <Tab label="Chat" value={2} icon={<i className="fas fa-users navbar-item-icon"/>} className="navbar-item-text" onActive={this.goToChatroomPage}/>
+                <Tab label="Account" value={3} icon={<i className="far fa-user navbar-item-icon"/>} className="navbar-item-text" onActive={this.goToAccountPage}/>
             </Tabs>
         );
     }

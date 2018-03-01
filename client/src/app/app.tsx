@@ -11,7 +11,8 @@ import Navbar from '../navbar/navbar';
 export enum NAV_PAGE {
     HOME = '/',
     MENU = '/menu',
-    ACCOUNT = '/account'
+    ACCOUNT = '/account',
+    CHATROOM = '/chat'
 }
 
 interface IAppProps {
