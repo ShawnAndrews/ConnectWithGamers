@@ -1,37 +1,73 @@
 const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
-export function validateCredentials(username: string, password: string, email?: string, remember?: boolean): ResponseModel {
-    const response: ResponseModel = {errors: [], data: undefined};
-
-    // username validation
+export function validateUsername(username: string): string {
     if (username === undefined) {
-        response.errors.push(`Username not found.`);
+        return `Username not found.`;
     } else if (username.length > MAX_USER_LEN) {
-        response.errors.push(`Username too long. Must be at most ${MAX_USER_LEN} characters.`);
+        return `Username too long. Must be at most ${MAX_USER_LEN} characters.`;
     } else if (username.length < MIN_USER_LEN) {
-        response.errors.push(`Username too short. Must be at least ${MIN_USER_LEN} characters.`);
+        return `Username too short. Must be at least ${MIN_USER_LEN} characters.`;
+    } else {
+        return undefined;
     }
+}
 
-    // password validation
+export function validatePassword(password: string): string {
     if (password === undefined) {
-        response.errors.push(`Password not found.`);
+        return `Password not found.`;
     } else if (password.length > MAX_PASS_LEN) {
-        response.errors.push(`Password too long. Must be at most ${MAX_PASS_LEN} characters.`);
+        return `Password too long. Must be at most ${MAX_PASS_LEN} characters.`;
     } else if (password.length < MIN_PASS_LEN) {
-        response.errors.push(`Password too short. Must be at least ${MIN_PASS_LEN} characters.`);
+        return `Password too short. Must be at least ${MIN_PASS_LEN} characters.`;
+    } else {
+        return undefined;
     }
+}
 
-    // email validation
+export function validateEmail(email: string): string {
     if (email !== undefined) {
         if (email !== ``) {
             const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             if (!re.test(email.toLowerCase())) {
-                response.errors.push(`Email is not in a valid format.`);
+                return `Email is not in a valid format.`;
             }
         } else {
-            response.errors.push(`No email address provided.`);
+            return `No email address provided.`;
         }
+    }
+    return undefined;
+}
+
+export function validateURL(url: string): string {
+    const pattern = new RegExp(`^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$`);
+    if (!pattern.test(url)) {
+        return `Invalid URL entered.`;
+    } else {
+        return undefined;
+    }
+}
+
+export function validateCredentials(username: string, password: string, email?: string, remember?: boolean): ResponseModel {
+    const response: ResponseModel = {errors: [], data: undefined};
+    let error;
+
+    // username validation
+    error = validateUsername(username);
+    if (error) {
+        response.errors.push(error);
+    }
+
+    // password validation
+    error = validatePassword(password);
+    if (error) {
+        response.errors.push(error);
+    }
+
+    // email validation
+    error = validateEmail(email);
+    if (error) {
+        response.errors.push(error);
     }
 
     // remember me validation

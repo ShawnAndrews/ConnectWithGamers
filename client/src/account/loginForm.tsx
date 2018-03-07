@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import Spinner from '../loader/spinner';
 import { validateCredentials, ResponseModel } from '../../../client/client-server-common/common';
 import * as AccountService from '../service/account/main';
+import AccountIcons from './accountIcons';
 
 interface ILoginFormProps {
     history: any;
@@ -70,34 +71,41 @@ class LoginForm extends React.Component<ILoginFormProps, any> {
     render() {
 
         if (this.state.isLoading) {
-            return <Spinner loadingMsg="Logging in..." />;
+            return (
+                <div className="account-center">
+                    <Spinner loadingMsg="Logging in..." />
+                </div>
+            );
         }
 
         return (
             <div>
-                <div className="account-logo"/>
-                <form className="account-form" onSubmit={this.onClickLogin}>
-                    <input type="text" className="account-form underline top-md-padding" placeholder="Username" onChange={this.usernameChanged} />
-                    <input type="password" className=" account-form underline top-md-padding" placeholder="Password" onChange={this.passwordChanged} />
-                    <label className="account-form top-sm-padding">
-                        <div className="div-center">
-                            <span className="account-rememberme">Remember me</span>
-                            <input className="account-checkbox" type="checkbox" onChange={this.remembermeChanged}/>
-                        </div>
-                    </label>
-                    <button type="submit" className="account-form-login top-sm-padding">
-                        <span>
-                            <i className="fas fa-sign-in-alt"/>
-                            &nbsp;Login
-                        </span>
-                    </button>
-                    <button type="button" className="account-form-signup top-sm-padding" onClick={this.onClickSignUp}>
-                        <span>
-                            <i className="fas fa-user-plus"/>
-                            &nbsp;Sign Up
-                        </span>
-                    </button>
-                </form>
+                <div className="account-center">
+                    <div className="account-logo"/>
+                    <form className="account-form" onSubmit={this.onClickLogin}>
+                        <input type="text" className="account-form underline top-md-padding" placeholder="Username" onChange={this.usernameChanged} />
+                        <input type="password" className=" account-form underline top-md-padding" placeholder="Password" onChange={this.passwordChanged} />
+                        <label className="account-form top-sm-padding">
+                            <div className="div-center">
+                                <span className="account-rememberme">Remember me</span>
+                                <input className="account-checkbox" type="checkbox" onChange={this.remembermeChanged}/>
+                            </div>
+                        </label>
+                        <button type="submit" className="account-form-login top-sm-padding">
+                            <span>
+                                <i className="fas fa-sign-in-alt"/>
+                                &nbsp;Login
+                            </span>
+                        </button>
+                        <button type="button" className="account-form-signup top-sm-padding" onClick={this.onClickSignUp}>
+                            <span>
+                                <i className="fas fa-user-plus"/>
+                                &nbsp;Sign Up
+                            </span>
+                        </button>
+                    </form>
+                </div>
+                <AccountIcons/>
             </div>
         );
     }

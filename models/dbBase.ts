@@ -35,17 +35,17 @@ export default class DatabaseBase {
                 ps.prepare(sql, (err: any) => {
                     if (err) {
                         response.errors.push(err);
-                        return resolve(response);
+                        return reject(response);
                     }
                     ps.execute(columnNameValuePairs, (err: any, result: any) => {
                         if (err) {
                             response.errors.push(err);
-                            return resolve(response);
+                            return reject(response);
                         }
                         ps.unprepare((err: any) => {
                             if (err) {
                                 response.errors.push(err);
-                                return resolve(response);
+                                return reject(response);
                             }
                             response.data = result;
                             return resolve(response);
@@ -91,12 +91,12 @@ export default class DatabaseBase {
 
     }
 
-    update(tableName: string, columnNames: Array<string>, columnTypes: Array<any>, columnValues: Array<any>, conditions: string = undefined): Promise<ResponseModel> {
+    update(tableName: string, columnNames: Array<string>, columnTypes: Array<any>, columnValues: Array<any>, columnNamesToUpdate: Array<string>, conditions: string = undefined): Promise<ResponseModel> {
 
         return new Promise((resolve, reject) => {
             const columnNameValuePairs: any = {};
             const response: ResponseModel = {errors: [], data: undefined};
-            let sql = `UPDATE ${tableName} SET ${columnNames.map((i) => {return (i + "=@" + i); }).join()}`;
+            let sql = `UPDATE ${tableName} SET ${columnNamesToUpdate.map((i) => {return (i + "=@" + i); }).join()}`;
             if (conditions) {
                 sql = sql.concat(` WHERE ${conditions}`);
             }

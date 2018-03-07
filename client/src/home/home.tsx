@@ -14,8 +14,8 @@ class Home extends React.Component<IHomeProps, any> {
     render() {
 
         return (
-            <div>
-                HOME
+            <div className="menu">
+                <img src="https://i.imgur.com/qJ7gzDA.png"/>
             </div>
         );
 

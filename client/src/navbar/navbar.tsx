@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 import { NAV_PAGE } from '../app/app';
-
 import { Tabs, Tab } from 'material-ui/Tabs';
 
 interface INavbarProps {
-    page: NAV_PAGE;
     history: any;
 }
 
@@ -17,19 +15,26 @@ class Navbar extends React.Component<INavbarProps, any> {
         this.goToMenuPage = this.goToMenuPage.bind(this);
         this.goToChatroomPage = this.goToChatroomPage.bind(this);
         this.goToAccountPage = this.goToAccountPage.bind(this);
-        
-        if (this.props.page === NAV_PAGE.HOME) {
+        this.updateNavSelection = this.updateNavSelection.bind(this);
+        this.updateNavSelection(this.props.history.location.pathname);
+    }
+
+    public componentWillReceiveProps(newProps: INavbarProps) {
+        this.updateNavSelection(newProps.history.location.pathname);
+    }
+
+    private updateNavSelection(path: string): void {
+        if (path === NAV_PAGE.HOME) {
             this.state = { index: 0 };
-        } else if (this.props.page === NAV_PAGE.MENU) {
+        } else if (path.startsWith(NAV_PAGE.MENU)) {
             this.state = { index: 1 };
-        } else if (this.props.page === NAV_PAGE.CHATROOM) {
+        } else if (path.startsWith(NAV_PAGE.CHATROOM)) {
             this.state = { index: 2 };
-        } else if (this.props.page === NAV_PAGE.ACCOUNT) {
+        } else if (path.startsWith(NAV_PAGE.ACCOUNT)) {
             this.state = { index: 3 };
         } else {
             this.state = { index: -1};
         }
-        console.log(`CURRENT PAGE: ${this.props.page}`);
     }
 
     private goToHomePage(): void {

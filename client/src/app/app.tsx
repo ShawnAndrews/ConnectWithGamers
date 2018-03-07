@@ -40,18 +40,6 @@ class App extends React.Component<IAppProps, any> {
         return (document.cookie.indexOf('loginToken=') !== -1);
     }
 
-    private get currentNavPage(): NAV_PAGE {
-        console.log(this.props.history);
-        const path: string = this.props.history.location.pathname;
-        if (path.startsWith(NAV_PAGE.ACCOUNT)) {
-            return NAV_PAGE.ACCOUNT;
-        } else if (path.startsWith(NAV_PAGE.MENU)) {
-            return NAV_PAGE.MENU;
-        } else {
-            return NAV_PAGE.HOME;
-        }
-    }
-
     private get renderUnauthenticatedRedirects(): JSX.Element[] {
         if (!this.loggedIn) {
             return (
@@ -81,7 +69,7 @@ class App extends React.Component<IAppProps, any> {
                 {this.isMobileBrowser 
                     ?
                     <div>
-                        <Navbar page={this.currentNavPage}/>
+                        <Navbar/>
                         <Switch>
                             {this.renderUnauthenticatedRedirects}
                             <Route path="/account" component={Account}/>

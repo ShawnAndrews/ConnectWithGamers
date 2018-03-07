@@ -265,8 +265,7 @@ export function cacheRecentGames(): Promise<RecentGameResponse[]> {
     const date = new Date();
     const oneMonthBeforeCurrentDay = formatDate(addMonths(new Date(), -1));
     const currentDay = formatDate(new Date());
-    console.log(`gt: ${oneMonthBeforeCurrentDay}`);
-    console.log(`lt: ${currentDay}`);
+
     return new Promise((resolve: any, reject: any) => {
         igdbClient.games({
             filters: {
