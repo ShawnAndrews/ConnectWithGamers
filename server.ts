@@ -1,10 +1,12 @@
 const express = require("express");
 const app = express();
+const chatServer = require("http").Server(app);
 const path = require("path");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 import accountController from "./controllers/accountController/account";
 import igdbController from "./controllers/igdbController/igdb";
+import registerChatHandlers from "./controllers/chatroomController/chatroom";
 import config from "./config";
 import db from "./models/db";
 import logIP from "./controllers/logger/main";
@@ -35,7 +37,13 @@ app.get("/bundle.js", function(req: any, res: any) {res.sendFile(path.join(__dir
 app.get("/bundle.css", function(req: any, res: any) {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
 app.use("*", express.static(path.join(__dirname, "../client/dist")));
 
-/* listen */
+/* set chat handlers */
+registerChatHandlers(chatServer);
+
+/* start chat server */
+chatServer.listen(config.chatPort);
+
+/* start HTTP server */
 app.listen(config.serverPort, function () {
   console.log(`Example app listening on port ${config.serverPort}!`);
   console.log("Directory: " + path.join(__dirname, "client/dist"));

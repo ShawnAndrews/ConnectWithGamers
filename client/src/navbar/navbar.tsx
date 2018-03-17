@@ -67,7 +67,6 @@ class Navbar extends React.Component<INavbarProps, any> {
             'background-color': 'whitesmoke'
         };
 
-        console.log(`State: ${JSON.stringify(this.state)}`);
         return (
             <Tabs
                 inkBarStyle={underlineNav} 
@@ -76,7 +75,7 @@ class Navbar extends React.Component<INavbarProps, any> {
             >
                 <Tab label="Home" value={0} icon={<i className="fas fa-home navbar-item-icon"/>} className="navbar-item-text" onActive={this.goToHomePage}/>
                 <Tab label="Menu" value={1} icon={<i className="fas fa-bars navbar-item-icon"/>} className="navbar-item-text" onActive={this.goToMenuPage}/>
-                <Tab label="Chat" value={2} icon={<i className="fas fa-users navbar-item-icon"/>} className="navbar-item-text" onActive={this.goToChatroomPage}/>
+                <Tab label="Chat" value={2} icon={<i className="fas fa-comments navbar-item-icon"/>} className="navbar-item-text" onActive={this.goToChatroomPage}/>
                 <Tab label="Account" value={3} icon={<i className="far fa-user navbar-item-icon"/>} className="navbar-item-text" onActive={this.goToAccountPage}/>
             </Tabs>
         );

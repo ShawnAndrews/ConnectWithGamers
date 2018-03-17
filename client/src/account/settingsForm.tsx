@@ -30,7 +30,7 @@ class SettingsForm extends React.Component<ISettingsFormProps, any> {
 
         this.state = {
             isLoading: true,
-            loadingMsg: `Logging in...`
+            loadingMsg: `Loading account settings...`
         };
         this.loadSettings();
     }
@@ -38,7 +38,6 @@ class SettingsForm extends React.Component<ISettingsFormProps, any> {
     private loadSettings(): void {
         AccountService.httpAccountSettings()
             .then( (response: ResponseModel) => {
-                console.log(`Settings response: ${JSON.stringify(response)}`);
                 const username = response.data.username;
                 const email = response.data.email;
                 const discord = response.data.discord;
@@ -98,10 +97,9 @@ class SettingsForm extends React.Component<ISettingsFormProps, any> {
                 .then( () => {
                     this.setState({ isLoading: false, discord: this.state.newDiscord });
                 })
-                .catch( (response: ResponseModel) => {
-                    const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
+                .catch( (error: string) => {
                     this.setState({ isLoading: false });
-                    popupS.modal({ content: formattedErrors.join('') });
+                    popupS.modal({ content: error });
                 });
         });
     }
@@ -112,10 +110,9 @@ class SettingsForm extends React.Component<ISettingsFormProps, any> {
                 .then( () => {
                     this.setState({ isLoading: false, steam: this.state.newSteam });
                 })
-                .catch( (response: ResponseModel) => {
-                    const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
+                .catch( (error: string) => {
                     this.setState({ isLoading: false });
-                    popupS.modal({ content: formattedErrors.join('') });
+                    popupS.modal({ content: error });
                 });
         });
     }
@@ -126,10 +123,9 @@ class SettingsForm extends React.Component<ISettingsFormProps, any> {
                 .then( () => {
                     this.setState({ isLoading: false, twitch: this.state.newTwitch });
                 })
-                .catch( (response: ResponseModel) => {
-                    const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
+                .catch( (error: string) => {
                     this.setState({ isLoading: false });
-                    popupS.modal({ content: formattedErrors.join('') });
+                    popupS.modal({ content: error });
                 });
         });
     }
@@ -154,7 +150,7 @@ class SettingsForm extends React.Component<ISettingsFormProps, any> {
     } 
 
     private logout(): void {
-        document.cookie = 'loginToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         this.props.history.push(`/`);
     }
 

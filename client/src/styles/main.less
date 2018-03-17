@@ -1,10 +1,23 @@
-html, body {
+html, body, #root {
     position: relative;
     width:100%;
     height:100%;
     padding:0;
     margin:0;
     font-family: source_sans_proregular, Arial, serif;
+}
+
+.inherit {
+    height: inherit;
+}
+
+.center {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
 }
 
 @import 'util/main';
@@ -17,3 +30,4 @@ html, body {
 @import 'notice/main';
 @import 'navbar/main';
 @import 'menu/main';
+@import 'chatroom/main';

@@ -4,7 +4,7 @@
 @login-logo-URL: url("https://i.imgur.com/obqCKhX.png");
 @login-logo-width: 200px;
 @login-logo-height: 200px;
-@ribbon-primary-color: rgba(0,0,0,0.8);
+@ribbon-primary-color: rgb(15, 48, 93);
 @ribbon-secondary-color: rgba(0,0,0,0.35);
 
 .account-page {
@@ -57,6 +57,7 @@
         font-family: Source Sans Pro;
         text-align: center;
         z-index: 3;
+        
         &:before {
             position: absolute;
             content: "";
@@ -176,7 +177,7 @@
   
       .account-settings-link-icon {
         margin-right: 4%;
-        color: rgba(0,0,0,0.8);
+        color: rgb(15, 48, 93);
       }
   
       .account-settings-change {
@@ -200,10 +201,10 @@
       border: 0; 
       height: 1px;
       margin: 35px 0px 10px 0px;
-      background-image: -webkit-linear-gradient(left, transparent,whitesmoke,transparent);
-      background-image: -moz-linear-gradient(left, transparent, whitesmoke, transparent);
-      background-image: -ms-linear-gradient(left, transparent, whitesmoke, transparent);
-      background-image: -o-linear-gradient(left, transparent, whitesmoke, transparent); 
+      background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0),whitesmoke, rgba(255, 255, 255, 0));
+      background: -moz-linear-gradient(left, rgba(255, 255, 255, 0), whitesmoke, rgba(255, 255, 255, 0));
+      background: -ms-linear-gradient(left, rgba(255, 255, 255, 0), whitesmoke, rgba(255, 255, 255, 0));
+      background: -o-linear-gradient(left, rgba(255, 255, 255, 0), whitesmoke, rgba(255, 255, 255, 0)); 
     }
 
     .account-settings-logout {

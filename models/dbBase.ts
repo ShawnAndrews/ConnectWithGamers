@@ -18,12 +18,12 @@ export default class DatabaseBase {
         return this.sql.connect(connectionString);
     }
 
-    select(tableName: string, columnNames: Array<string>, columnTypes: Array<any>, columnValues: Array<any>, returnColumns: Array<string>, conditions: string = undefined): Promise<ResponseModel> {
+    select(tableName: string, columnNames: Array<string>, columnTypes: Array<any>, columnValues: Array<any>, returnColumns: Array<string>, conditions: string = undefined, numRecords: number = undefined): Promise<ResponseModel> {
 
         return new Promise( (resolve, reject) => {
                 const columnNameValuePairs: any = {};
                 const response: ResponseModel = {errors: [], data: undefined};
-                let sql = `SELECT ${returnColumns.join()} FROM ${tableName}`;
+                let sql = `SELECT ${numRecords ? `top ${numRecords}` : ``} ${returnColumns.join()} FROM ${tableName}`;
                 if (conditions) {
                     sql = sql.concat(` WHERE ${conditions}`);
                 }
@@ -67,6 +67,7 @@ export default class DatabaseBase {
                 ps.input(columnNames[i], columnTypes[i]);
                 columnNameValuePairs[columnNames[i]] = columnValues[i];
             }
+            console.log(`INSERT SQL: ${sql} || ${columnValues}`);
             ps.prepare(sql, (err: any) => {
                 if (err) {
                     response.errors.push(err);
@@ -100,7 +101,6 @@ export default class DatabaseBase {
             if (conditions) {
                 sql = sql.concat(` WHERE ${conditions}`);
             }
-            console.log("query: ", sql);
             const ps = new this.sql.PreparedStatement();
             for (let i = 0; i < columnNames.length; i++) {
                 ps.input(columnNames[i], columnTypes[i]);

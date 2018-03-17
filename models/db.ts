@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
 import config from "../config";
 import DatabaseBase from "./dbBase";
-import { ResponseModel, validateUsername, validateEmail, validateURL } from "../client/client-server-common/common";
+import { ResponseModel, validateUsername, validateEmail, validateURL, ChatHistoryResponse, SingleChatHistory, ChatroomUser } from "../client/client-server-common/common";
+import { DateTime } from "aws-sdk/clients/devicefarm";
 
 const TOKEN_LEN = 40;
 const SALT_RNDS = 10;
@@ -73,12 +74,12 @@ class DatabaseModel extends DatabaseBase {
 
     }
 
-    authorize(req: any): Promise<ResponseModel> {
+    authorize(cookie: string): Promise<ResponseModel> {
 
         return new Promise((resolve, reject) => {
 
             const response: ResponseModel = {errors: [], data: undefined};
-            const authCookieMatch: string[] = req.headers.cookie.match(new RegExp("authToken=([^;]+)"));
+            const authCookieMatch: string[] = cookie.match(new RegExp("authToken=([^;]+)"));
 
             // validate
             if (!authCookieMatch) {
@@ -87,7 +88,7 @@ class DatabaseModel extends DatabaseBase {
             }
 
             const authToken: string = authCookieMatch[1];
-
+            console.log(`AUTHENTICATING SOCKET: ${authToken}`);
             this.select(
                 "dbo.tokens",
                 ["authToken"],
@@ -101,7 +102,7 @@ class DatabaseModel extends DatabaseBase {
                         response.data = { accountid: accountid };
                         return resolve(response);
                     } else {
-                        response.errors.push(`Auth token not found in database.`);
+                        response.errors.push(`Valid auth token not found in database.`);
                         return reject(response);
                     }
                 })
@@ -174,6 +175,32 @@ class DatabaseModel extends DatabaseBase {
                     } else {
                         return reject(response);
                     }
+                })
+                .catch((err: any) => {
+                    response.errors.push(err);
+                    return reject(response);
+                });
+
+        });
+    }
+
+    getAccountUsername(accountid: string): Promise<ResponseModel> {
+
+        return new Promise( (resolve, reject) => {
+
+            const response: ResponseModel = {errors: [], data: undefined};
+
+            this.select(
+                "dbo.accounts",
+                ["accountid"],
+                [this.sql.Int],
+                [accountid],
+                ["username"],
+                "accountid=@accountid")
+                .then((dbResponse: ResponseModel) => {
+                    const username = dbResponse.data.recordsets[0][0].username;
+                    response.data = { username: username };
+                    return resolve(response);
                 })
                 .catch((err: any) => {
                     response.errors.push(err);
@@ -361,7 +388,7 @@ class DatabaseModel extends DatabaseBase {
             });
         };
 
-        const getAccountTokenPromise = (dbAccountid: number, dbSalt: string): Promise<ResponseModel> => {
+        const getAccountTokenPromise = (dbAccountid: number): Promise<ResponseModel> => {
 
             return new Promise((resolve, reject) => {
 
@@ -378,13 +405,9 @@ class DatabaseModel extends DatabaseBase {
                         if (dbResponse.errors.length > 0) {
                             return reject(response);
                         } else {
-                            if (dbResponse.data.recordsets[0].length > 0) {
-                                response.data = {tokenFound: true, dbAccountid: dbAccountid, dbSalt: dbSalt};
-                                return resolve(response);
-                            } else {
-                                response.data = {tokenFound: false, dbAccountid: dbAccountid, dbSalt: dbSalt};
-                                return resolve(response);
-                            }
+                            const tokenFound: boolean = dbResponse.data.recordsets[0].length > 0;
+                            response.data = {tokenFound: tokenFound};
+                            return resolve(response);
                         }
                     })
                     .catch((err: any) => {
@@ -395,29 +418,24 @@ class DatabaseModel extends DatabaseBase {
 
         };
 
-        const insertTokenPromise = (dbAccountid: number, dbSalt: string): Promise<ResponseModel> => {
+        const insertTokenPromise = (dbAccountid: number): Promise<ResponseModel> => {
 
             return new Promise( (resolve, reject) => {
 
                 const response: ResponseModel = {errors: [], data: undefined};
                 const authToken: string = genAuthToken();
+                const authTokenExpiration: number = remember ? Date.now() + config.token_remember_expiration : Date.now() + config.token_expiration;
 
                 this.insert(
                     "dbo.tokens",
-                    ["accountid", "authToken", "createdOn"],
-                    [this.sql.Int, this.sql.VarChar, this.sql.DateTime],
-                    [dbAccountid, authToken, Date.now()])
+                    ["accountid", "authToken", "createdOn", "expiresOn"],
+                    [this.sql.Int, this.sql.VarChar, this.sql.DateTime, this.sql.DateTime],
+                    [dbAccountid, authToken, Date.now(), authTokenExpiration])
                     .then((dbResponse: ResponseModel) => {
                         if (dbResponse.errors.length > 0) {
                             return reject(response);
                         } else {
-                            let tokenExpiration = undefined;
-                            if (remember == true) {
-                                tokenExpiration = new Date(Date.now() + config.token_remember_expiration);
-                            } else {
-                                tokenExpiration = new Date(Date.now() + config.token_expiration);
-                            }
-                            response.data = {token: authToken, tokenExpiration: tokenExpiration};
+                            response.data = {token: authToken, tokenExpiration: new Date(authTokenExpiration)};
                             return resolve(response);
                         }
                     });
@@ -426,58 +444,102 @@ class DatabaseModel extends DatabaseBase {
 
         };
 
-        const updateTokenPromise = (dbAccountid: number, dbSalt: string): Promise<ResponseModel> => {
-
-            // return promise
-            return new Promise( (resolve, reject) => {
-
-                const authToken: string = genAuthToken();
-                const response: ResponseModel = {errors: [], data: undefined};
-
-                this.update(
-                    "dbo.tokens",
-                    ["accountid", "authToken"],
-                    [this.sql.Int, this.sql.VarChar],
-                    [dbAccountid, authToken],
-                    ["authToken"],
-                    "accountid=@accountid")
-                    .then((dbResponse: ResponseModel) => {
-                        if (dbResponse.errors.length > 0) {
-                            return reject(response);
-                        } else {
-                            let tokenExpiration = undefined;
-                            if (remember == true) {
-                                tokenExpiration = new Date(Date.now() + config.token_remember_expiration);
-                            } else {
-                                tokenExpiration = new Date(Date.now() + config.token_expiration);
-                            }
-                            response.data = {token: authToken, tokenExpiration: tokenExpiration};
-                            return resolve(response);
-                        }
-                    });
-
-            });
-
-        };
+        let accountid: number = undefined;
 
         return getAccountInfoPromise()
-               .then((response) => {
-                    // look for token
-                    console.log(`looking for existing token ${JSON.stringify(response.data)}`);
-                    return getAccountTokenPromise(response.data.accountid, response.data.salt);
-               })
-               .then((response) => {
-                   if (response.data.tokenFound) {
-                    // token found, updating token
-                    console.log("token found. updating token");
-                    return updateTokenPromise(response.data.dbAccountid, response.data.dbSalt);
-                   } else {
-                    // token not found, inserting token
-                    console.log("token not found. inserting token");
-                    return insertTokenPromise(response.data.dbAccountid, response.data.dbSalt);
-                   }
+            .then((response: ResponseModel) => {
+                accountid = response.data.accountid;
+
+                // inserting token
+                console.log("Inserting token");
+                return insertTokenPromise(accountid);
+            });
+
+    }
+
+    addChatMessage(username: string, date: number, text: string): Promise<ResponseModel> {
+
+        return new Promise( (resolve, reject) => {
+
+            const response: ResponseModel = {errors: [], data: undefined};
+
+            this.insert(
+                "dbo.chatroom",
+                ["username", "date", "text"],
+                [this.sql.VarChar, this.sql.DateTime, this.sql.NVarChar],
+                [username, date, text])
+                .then((dbResponse: ResponseModel) => {
+                    if (dbResponse.errors.length > 0) {
+                        return reject(response);
+                    } else {
+                        return resolve(response);
+                    }
                 });
 
+        });
+
+    }
+
+    getChatHistory(): Promise<ChatHistoryResponse> {
+
+        return new Promise( (resolve, reject) => {
+
+            this.select(
+                "dbo.chatroom",
+                [],
+                [],
+                [],
+                ["username", "date", "text"],
+                undefined,
+                config.chatHistoryCount)
+                .then((dbResponse: ResponseModel) => {
+                    const chatHistoryResponse: ChatHistoryResponse = { name: [], date: [], text: [] };
+
+                    dbResponse.data.recordsets[0].forEach((chat: any) => {
+                        chatHistoryResponse.name.push(chat.username);
+                        chatHistoryResponse.date.push(`${new Date(chat.date).toLocaleDateString()} ${new Date(chat.date).toLocaleTimeString()}`);
+                        chatHistoryResponse.text.push(chat.text);
+                    });
+
+                    return resolve(chatHistoryResponse);
+                })
+                .catch((err: string) => {
+                    return reject(err);
+                });
+
+        });
+    }
+
+    getUserById(accountid: number): Promise<ChatroomUser> {
+
+        return new Promise( (resolve, reject) => {
+
+            this.select(
+                "dbo.accounts",
+                ["accountid"],
+                [this.sql.Int],
+                [accountid],
+                ["username", "discord", "steam", "twitch"],
+                "accountid=@accountid")
+                .then((dbResponse: ResponseModel) => {
+                    if (dbResponse.data.recordsets[0].length > 0) {
+                        const user: ChatroomUser = {
+                            username: dbResponse.data.recordsets[0][0].username,
+                            discord_url: dbResponse.data.recordsets[0][0].discord,
+                            steam_url: dbResponse.data.recordsets[0][0].steam,
+                            twitch_url: dbResponse.data.recordsets[0][0].twitch
+                        };
+                        return resolve(user);
+                    } else {
+                        return reject(accountid);
+                    }
+                })
+                .catch((err: string) => {
+                    console.log(`Database error: ${err}`);
+                    return reject(accountid);
+                });
+
+        });
     }
 
 }

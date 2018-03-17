@@ -65,7 +65,7 @@ export function httpChangeAccountUsername (newUsername: string): Promise<Respons
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/change/username`, { newUsername })
         .then((result) => {
-            if (result.data.errors.length > 0) {
+            if (result.data.errors !== []) {
                 return reject(result.data);
             } else {
                 return resolve();
@@ -82,7 +82,7 @@ export function httpChangeAccountEmail (newEmail: string): Promise<ResponseModel
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/change/email`, { newEmail })
         .then((result) => {
-            if (result.data.errors.length > 0) {
+            if (result.data.errors !== []) {
                 return reject(result.data);
             } else {
                 return resolve();
@@ -99,15 +99,10 @@ export function httpChangeAccountDiscord (newDiscord: string): Promise<ResponseM
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/change/discord`, { newDiscord })
         .then((result) => {
-            if (result.data.errors.length > 0) {
-                return reject(result.data);
-            } else {
-                return resolve();
-            }
+            return resolve();
         })
         .catch((err) => {
-            console.log(`HTTP error: ${err}. Exiting program now.`);
-            process.exit(1);
+            return resolve(`HTTP error: ${err}.`);
         });
     }); 
 }
@@ -116,15 +111,10 @@ export function httpChangeAccountSteam (newSteam: string): Promise<ResponseModel
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/change/steam`, { newSteam })
         .then((result) => {
-            if (result.data.errors.length > 0) {
-                return reject(result.data);
-            } else {
-                return resolve();
-            }
+            return resolve();
         })
         .catch((err) => {
-            console.log(`HTTP error: ${err}. Exiting program now.`);
-            process.exit(1);
+            return resolve(`HTTP error: ${err}.`);
         });
     }); 
 }
@@ -133,15 +123,10 @@ export function httpChangeAccountTwitch (newTwitch: string): Promise<ResponseMod
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/change/twitch`, { newTwitch })
         .then((result) => {
-            if (result.data.errors.length > 0) {
-                return reject(result.data);
-            } else {
-                return resolve();
-            }
+            return resolve();
         })
         .catch((err) => {
-            console.log(`HTTP error: ${err}. Exiting program now.`);
-            process.exit(1);
+            return resolve(`HTTP error: ${err}.`);
         });
     }); 
 }

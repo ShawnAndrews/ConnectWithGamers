@@ -78,8 +78,7 @@ router.post(routes.getRoute("login"), (req: any, res: any) => {
             // token success
             console.log("auth2 then: ", JSON.stringify(result));
             return res
-            .cookie("authToken", result.data.token, { expires: result.data.tokenExpiration, httpOnly: true })
-            .cookie("loginToken", "", { expires: result.data.tokenExpiration })
+            .cookie("authToken", result.data.token, { expires: result.data.tokenExpiration })
             .send();
         })
         .catch((response: ResponseModel) => {
@@ -94,7 +93,7 @@ router.post(routes.getRoute("login"), (req: any, res: any) => {
 router.post(routes.getRoute("settings"), (req: any, res: any) => {
 
     // authorize
-    db.authorize(req)
+    db.authorize(req.headers.cookie)
     .then((response: ResponseModel) => {
         return db.getAccountSettings(response.data.accountid);
     })
@@ -113,7 +112,7 @@ router.post(routes.getRoute("change/username"), (req: any, res: any) => {
     const newUsername: string = req.body.newUsername;
 
     // authorize
-    db.authorize(req)
+    db.authorize(req.headers.cookie)
     .then((response: ResponseModel) => {
         return db.changeAccountUsername(response.data.accountid, newUsername);
     })
@@ -132,7 +131,7 @@ router.post(routes.getRoute("change/email"), (req: any, res: any) => {
     const newEmail: string = req.body.newEmail;
 
     // authorize
-    db.authorize(req)
+    db.authorize(req.headers.cookie)
     .then((response: ResponseModel) => {
         return db.changeAccountEmail(response.data.accountid, newEmail);
     })
@@ -151,7 +150,7 @@ router.post(routes.getRoute("change/discord"), (req: any, res: any) => {
     const newDiscord: string = req.body.newDiscord;
 
     // authorize
-    db.authorize(req)
+    db.authorize(req.headers.cookie)
     .then((response: ResponseModel) => {
         return db.changeAccountDiscord(response.data.accountid, newDiscord);
     })
@@ -170,7 +169,7 @@ router.post(routes.getRoute("change/steam"), (req: any, res: any) => {
     const newSteam: string = req.body.newSteam;
 
     // authorize
-    db.authorize(req)
+    db.authorize(req.headers.cookie)
     .then((response: ResponseModel) => {
         return db.changeAccountSteam(response.data.accountid, newSteam);
     })
@@ -189,7 +188,7 @@ router.post(routes.getRoute("change/twitch"), (req: any, res: any) => {
     const newTwitch: string = req.body.newTwitch;
 
     // authorize
-    db.authorize(req)
+    db.authorize(req.headers.cookie)
     .then((response: ResponseModel) => {
         return db.changeAccountTwitch(response.data.accountid, newTwitch);
     })

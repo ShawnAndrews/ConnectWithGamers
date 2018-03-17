@@ -81,9 +81,28 @@ export function validateCredentials(username: string, password: string, email?: 
 
 }
 
+export interface ChatroomUser {
+    username: string;
+    steam_url?: string;
+    twitch_url?: string;
+    discord_url?: string;
+}
+
 export interface ResponseModel {
     errors: string[];
     data: any;
+}
+
+export interface SingleChatHistory {
+    name: string;
+    date: string;
+    text: string;
+}
+
+export interface ChatHistoryResponse {
+    name: string[];
+    date: string[];
+    text: string[];
 }
 
 export interface GameListEntryResponse {

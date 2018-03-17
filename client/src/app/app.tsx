@@ -3,6 +3,7 @@ import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
 import Account from '../account/main';
 import Home from '../home/home';
 import Menu from '../menu/main';
+import ChatroomMenu from '../chatroom/chatroommenu';
 import Background from '../background/background';
 import NotFound from '../notfound/notfound';
 import Notice from '../notice/notice';
@@ -27,7 +28,7 @@ class App extends React.Component<IAppProps, any> {
         console.log('App props', this.props);
 
         this.state = {
-            authenticatedRoutes: ['/account'],
+            authenticatedRoutes: ['/account', '/chat', `/chat/users`],
             unauthenticatedRedirect: '/account/login'
         };
     }
@@ -37,7 +38,7 @@ class App extends React.Component<IAppProps, any> {
     }
 
     private get loggedIn(): boolean {
-        return (document.cookie.indexOf('loginToken=') !== -1);
+        return (document.cookie.indexOf('authToken=') !== -1);
     }
 
     private get renderUnauthenticatedRedirects(): JSX.Element[] {
@@ -64,16 +65,17 @@ class App extends React.Component<IAppProps, any> {
 
         // render
         return (
-            <div>
+            <div className="inherit">
                 <Background/>
                 {this.isMobileBrowser 
                     ?
-                    <div>
+                    <div className="inherit">
                         <Navbar/>
                         <Switch>
                             {this.renderUnauthenticatedRedirects}
                             <Route path="/account" component={Account}/>
                             <Route path="/menu" component={Menu}/>
+                            <Route path="/chat" component={ChatroomMenu}/>
                             <Route exact={true} path="/" component={Home}/>
                             <Route component={NotFound}/>
                         </Switch>
