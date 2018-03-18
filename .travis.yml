@@ -1,7 +1,0 @@
-language: node_js
-node_js:
-  - "7"
-os:
-  - windows
-script:
-  - npm run server-client
