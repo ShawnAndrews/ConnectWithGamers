@@ -3,6 +3,7 @@ node_js:
   - "7"
 os:
   - windows
+  - linux
 before_script:
   - npm install
 script:
