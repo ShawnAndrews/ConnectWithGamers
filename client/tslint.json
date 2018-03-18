@@ -26,6 +26,7 @@
         "no-switch-case-fall-through": true,
         "no-trailing-whitespace": false,
         "no-unused-expression": true,
+        "no-unused-variable": true,
         "no-use-before-declare": true,
         "one-line": [
             true,
@@ -34,7 +35,7 @@
             "check-open-brace",
             "check-whitespace"
         ],
-        "quotemark": [true, "single", "jsx-double"],
+        "quotemark": [false, "single", "jsx-double"],
         "radix": true,
         "semicolon": [true, "always"],
         "switch-default": true,

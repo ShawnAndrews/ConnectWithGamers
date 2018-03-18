@@ -1,9 +1,21 @@
 @navbar-item-height: 70px;
 
-.navbar-item-text {
-    font-size: 1.0em !important;
-}
+.navbar-item-container {
 
-.navbar-item-icon {
-    font-size: 1.1em !important;
+    > div:first-child {
+        background-color: rgba(0,0,0,0.5) !important;
+        height: @navbar-item-height !important;
+    }
+
+    > div > div {
+        background-color: whitesmoke !important;
+    }
+
+    .navbar-item-text {
+        font-size: 1.0em !important;
+    }
+    
+    .navbar-item-icon {
+        font-size: 1.1em !important;
+    }
 }

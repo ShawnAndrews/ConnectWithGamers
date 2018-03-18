@@ -1,10 +1,8 @@
 const bcrypt = require("bcrypt");
 import config from "../config";
 import DatabaseBase from "./dbBase";
-import { ResponseModel, validateUsername, validateEmail, validateURL, ChatHistoryResponse, SingleChatHistory, ChatroomUser } from "../client/client-server-common/common";
-import { DateTime } from "aws-sdk/clients/devicefarm";
+import { AUTH_TOKEN_NAME, GenericResponseModel, validateUsername, validateEmail, validateURL, ChatHistoryResponse, DbAccountSettingsResponse, DbAuthorizeResponse, DbTokenResponse, DbAuthenticateResponse, ChatroomUser } from "../client/client-server-common/common";
 
-const TOKEN_LEN = 40;
 const SALT_RNDS = 10;
 
 class DatabaseModel extends DatabaseBase {
@@ -13,35 +11,30 @@ class DatabaseModel extends DatabaseBase {
         super();
     }
 
-    createAccount(username: string, email: string, password: string): Promise<ResponseModel> {
+    createAccount(username: string, email: string, password: string): Promise<null> {
 
         const salt = bcrypt.genSaltSync(SALT_RNDS);
         const hash = bcrypt.hashSync(password, salt);
 
         return new Promise( (resolve, reject) => {
 
-            const response: ResponseModel = {errors: [], data: undefined};
-
             this.insert("dbo.accounts",
                 ["username", "email", "passwordHash", "salt", "createdOn"],
                 [this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.DateTime],
                 [username, email, hash, salt, Date.now()])
                 .then(() => {
-                    return resolve(response);
+                    return resolve();
                 })
                 .catch(() => {
-                    response.errors.push("Username is taken.");
-                    return resolve(response);
+                    return reject("Username is taken.");
                 });
 
         });
     }
 
-    authenticate(username: string, password: string, remember: boolean): Promise<ResponseModel> {
+    authenticate(username: string, password: string, remember: boolean): Promise<DbAuthenticateResponse> {
 
         return new Promise((resolve, reject) => {
-
-            const response: ResponseModel = {errors: [], data: undefined};
 
             this.select(
                 "dbo.accounts",
@@ -50,76 +43,66 @@ class DatabaseModel extends DatabaseBase {
                 [username],
                 ["passwordHash"],
                 "username=@username")
-                .then((dbResponse: ResponseModel) => {
+                .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.recordsets[0].length > 0) {
                         const dbPasswordHash = dbResponse.data.recordsets[0][0].passwordHash;
                         if (bcrypt.compareSync(password, dbPasswordHash)) {
-                            response.data = {username: username, remember: remember};
+                            const response: DbAuthenticateResponse = { username: username, remember: remember };
                             return resolve(response);
                         } else {
-                            response.errors.push(`Incorrect username or password.`);
-                            return reject(response);
+                            return reject(`Incorrect username or password.`);
                         }
                     } else {
-                        response.errors.push(`Incorrect username or password.`);
-                        return reject(response);
-                    }
-                })
-                .catch((err) => {
-                    response.errors.push(err);
-                    return reject(response);
-                });
-
-        });
-
-    }
-
-    authorize(cookie: string): Promise<ResponseModel> {
-
-        return new Promise((resolve, reject) => {
-
-            const response: ResponseModel = {errors: [], data: undefined};
-            const authCookieMatch: string[] = cookie.match(new RegExp("authToken=([^;]+)"));
-
-            // validate
-            if (!authCookieMatch) {
-                response.errors.push("Auth cookie not found.");
-                return reject(response);
-            }
-
-            const authToken: string = authCookieMatch[1];
-            console.log(`AUTHENTICATING SOCKET: ${authToken}`);
-            this.select(
-                "dbo.tokens",
-                ["authToken"],
-                [this.sql.VarChar],
-                [authToken],
-                ["accountid"],
-                "authToken=@authToken")
-                .then((dbResponse: ResponseModel) => {
-                    if (dbResponse.data.recordsets[0].length > 0) {
-                        const accountid: number = Number(dbResponse.data.recordsets[0][0].accountid);
-                        response.data = { accountid: accountid };
-                        return resolve(response);
-                    } else {
-                        response.errors.push(`Valid auth token not found in database.`);
-                        return reject(response);
+                        return reject(`Incorrect username or password.`);
                     }
                 })
                 .catch((err: string) => {
-                    response.errors.push(err);
-                    return reject(response);
+                    return reject(err);
                 });
 
         });
 
     }
 
-    getAccountSettings(accountid: string): Promise<ResponseModel> {
+    authorize(cookie: string): Promise<DbAuthorizeResponse> {
+
+        return new Promise((resolve, reject) => {
+
+            const authCookieMatch: string[] = cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
+
+            // validate
+            if (!authCookieMatch) {
+                return reject("Auth cookie not found.");
+            }
+
+            const authToken: string = authCookieMatch[1];
+            this.select(
+                "dbo.tokens",
+                [AUTH_TOKEN_NAME],
+                [this.sql.VarChar],
+                [authToken],
+                ["accountid"],
+                `${AUTH_TOKEN_NAME}=@${AUTH_TOKEN_NAME}`)
+                .then((dbResponse: GenericResponseModel) => {
+                    if (dbResponse.data.recordsets[0].length > 0) {
+                        const accountid: number = Number(dbResponse.data.recordsets[0][0].accountid);
+                        const dbAuthorizeResponse: DbAuthorizeResponse = { accountid: accountid };
+                        return resolve(dbAuthorizeResponse);
+                    } else {
+                        return reject(`Valid auth token not found in database.`);
+                    }
+                })
+                .catch((error: string) => {
+                    return reject(error);
+                });
+
+        });
+
+    }
+
+    getAccountSettings(accountid: number): Promise<DbAccountSettingsResponse> {
 
         return new Promise( (resolve, reject) => {
-
-            const response: ResponseModel = {errors: [], data: undefined};
 
             this.select(
                 "dbo.accounts",
@@ -128,38 +111,34 @@ class DatabaseModel extends DatabaseBase {
                 [accountid],
                 ["username", "email", "discord", "steam", "twitch"],
                 "accountid=@accountid")
-                .then((dbResponse: ResponseModel) => {
+                .then((dbResponse: GenericResponseModel) => {
                     const username = dbResponse.data.recordsets[0][0].username;
                     const email = dbResponse.data.recordsets[0][0].email;
                     const discord = dbResponse.data.recordsets[0][0].discord || "";
                     const steam = dbResponse.data.recordsets[0][0].steam || "";
                     const twitch = dbResponse.data.recordsets[0][0].twitch || "";
-                    response.data = {
+                    const dbAccountSettingsResponse: DbAccountSettingsResponse = {
                         username: username,
                         email: email,
                         discord: discord,
                         steam: steam,
                         twitch: twitch};
-                    return resolve(response);
+                    return resolve(dbAccountSettingsResponse);
                 })
-                .catch((err) => {
-                    response.errors.push(err);
-                    return reject(response);
+                .catch((error: string) => {
+                    return reject(error);
                 });
 
         });
     }
 
-    changeAccountUsername(accountid: string, newUsername: string): Promise<ResponseModel> {
+    changeAccountUsername(accountid: number, newUsername: string): Promise<null> {
 
         return new Promise( (resolve, reject) => {
 
-            const response: ResponseModel = {errors: [], data: undefined};
-
             const usernameValidationError: string = validateUsername(newUsername);
             if (usernameValidationError) {
-                response.errors.push(usernameValidationError);
-                return reject(response);
+                return reject(usernameValidationError);
             }
 
             this.update(
@@ -169,57 +148,27 @@ class DatabaseModel extends DatabaseBase {
                 [accountid, newUsername],
                 ["username"],
                 "accountid=@accountid")
-                .then((dbResponse: ResponseModel) => {
+                .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.rowsAffected[0] == 1) {
-                        return resolve(response);
+                        return resolve();
                     } else {
-                        return reject(response);
+                        return reject(`Username is already taken.`);
                     }
                 })
-                .catch((err: any) => {
-                    response.errors.push(err);
-                    return reject(response);
+                .catch((error: any) => {
+                    return reject(`Username is already taken.`);
                 });
 
         });
     }
 
-    getAccountUsername(accountid: string): Promise<ResponseModel> {
+    changeAccountEmail(accountid: number, newEmail: string): Promise<null> {
 
         return new Promise( (resolve, reject) => {
-
-            const response: ResponseModel = {errors: [], data: undefined};
-
-            this.select(
-                "dbo.accounts",
-                ["accountid"],
-                [this.sql.Int],
-                [accountid],
-                ["username"],
-                "accountid=@accountid")
-                .then((dbResponse: ResponseModel) => {
-                    const username = dbResponse.data.recordsets[0][0].username;
-                    response.data = { username: username };
-                    return resolve(response);
-                })
-                .catch((err: any) => {
-                    response.errors.push(err);
-                    return reject(response);
-                });
-
-        });
-    }
-
-    changeAccountEmail(accountid: string, newEmail: string): Promise<ResponseModel> {
-
-        return new Promise( (resolve, reject) => {
-
-            const response: ResponseModel = {errors: [], data: undefined};
 
             const emailValidationError: string = validateEmail(newEmail);
             if (emailValidationError) {
-                response.errors.push(emailValidationError);
-                return reject(response);
+                return reject(emailValidationError);
             }
 
             this.update(
@@ -229,29 +178,26 @@ class DatabaseModel extends DatabaseBase {
                 [accountid, newEmail],
                 ["email"],
                 "accountid=@accountid")
-                .then((dbResponse: ResponseModel) => {
+                .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.rowsAffected[0] == 1) {
-                        return resolve(response);
+                        return resolve();
                     } else {
-                        return reject(response);
+                        return reject(`Email is already taken.`);
                     }
                 })
-                .catch((err: any) => {
-                    response.errors.push(err);
-                    return reject(response);
+                .catch((error: string) => {
+                    return reject(`Email is already taken.`);
                 });
 
         });
     }
-    changeAccountDiscord(accountid: string, newDiscord: string): Promise<ResponseModel> {
+    changeAccountDiscord(accountid: number, newDiscord: string): Promise<null> {
 
         return new Promise( (resolve, reject) => {
 
-            const response: ResponseModel = {errors: [], data: undefined};
             const discordValidationError: string = validateURL(newDiscord);
             if (discordValidationError) {
-                response.errors.push(discordValidationError);
-                return reject(response);
+                return reject(discordValidationError);
             }
 
             this.update(
@@ -261,31 +207,27 @@ class DatabaseModel extends DatabaseBase {
                 [accountid, newDiscord],
                 ["discord"],
                 "accountid=@accountid")
-                .then((dbResponse: ResponseModel) => {
+                .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.rowsAffected[0] == 1) {
-                        return resolve(response);
+                        return resolve();
                     } else {
-                        return reject(response);
+                        return reject(`Database error.`);
                     }
                 })
-                .catch((err: any) => {
-                    response.errors.push(err);
-                    return reject(response);
+                .catch((error: string) => {
+                    return reject(error);
                 });
 
         });
     }
 
-    changeAccountSteam(accountid: string, newSteam: string): Promise<ResponseModel> {
+    changeAccountSteam(accountid: number, newSteam: string): Promise<null> {
 
         return new Promise( (resolve, reject) => {
 
-            const response: ResponseModel = {errors: [], data: undefined};
-
             const discordValidationError: string = validateURL(newSteam);
             if (discordValidationError) {
-                response.errors.push(discordValidationError);
-                return reject(response);
+                return reject(discordValidationError);
             }
 
             this.update(
@@ -295,31 +237,27 @@ class DatabaseModel extends DatabaseBase {
                 [accountid, newSteam],
                 ["steam"],
                 "accountid=@accountid")
-                .then((dbResponse: ResponseModel) => {
+                .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.rowsAffected[0] == 1) {
-                        return resolve(response);
+                        return resolve();
                     } else {
-                        return reject(response);
+                        return reject(`Database error.`);
                     }
                 })
-                .catch((err: any) => {
-                    response.errors.push(err);
-                    return reject(response);
+                .catch((error: string) => {
+                    return reject(error);
                 });
 
         });
     }
 
-    changeAccountTwitch(accountid: string, newTwitch: string): Promise<ResponseModel> {
+    changeAccountTwitch(accountid: number, newTwitch: string): Promise<null> {
 
         return new Promise( (resolve, reject) => {
 
-            const response: ResponseModel = {errors: [], data: undefined};
-
             const discordValidationError: string = validateURL(newTwitch);
             if (discordValidationError) {
-                response.errors.push(discordValidationError);
-                return reject(response);
+                return reject(discordValidationError);
             }
 
             this.update(
@@ -329,22 +267,47 @@ class DatabaseModel extends DatabaseBase {
                 [accountid, newTwitch],
                 ["twitch"],
                 "accountid=@accountid")
-                .then((dbResponse: ResponseModel) => {
+                .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.rowsAffected[0] == 1) {
-                        return resolve(response);
+                        return resolve();
                     } else {
-                        return reject(response);
+                        return reject(`Database error.`);
                     }
                 })
-                .catch((err: any) => {
-                    response.errors.push(err);
+                .catch((error: string) => {
+                    return reject(error);
+                });
+
+        });
+    }
+
+    getAccountUsername(accountid: number): Promise<GenericResponseModel> {
+
+        return new Promise( (resolve, reject) => {
+
+            const response: GenericResponseModel = {error: undefined, data: undefined};
+
+            this.select(
+                "dbo.accounts",
+                ["accountid"],
+                [this.sql.Int],
+                [accountid],
+                ["username"],
+                "accountid=@accountid")
+                .then((dbResponse: GenericResponseModel) => {
+                    const username = dbResponse.data.recordsets[0][0].username;
+                    response.data = { username: username };
+                    return resolve(response);
+                })
+                .catch((error: string) => {
+                    response.error = error;
                     return reject(response);
                 });
 
         });
     }
 
-    token(username: string, remember: boolean): Promise<ResponseModel> {
+    token(username: string, remember: boolean): Promise<DbTokenResponse> {
 
         const genAuthToken = (): string => {
             let text: string = "";
@@ -356,11 +319,11 @@ class DatabaseModel extends DatabaseBase {
             return text;
         };
 
-        const getAccountInfoPromise = (): Promise<ResponseModel> => {
+        const getAccountInfoPromise = (): Promise<GenericResponseModel> => {
 
             return new Promise((resolve, reject) => {
 
-                const response: ResponseModel = {errors: [], data: undefined};
+                const response: GenericResponseModel = {error: undefined, data: undefined};
 
                 this.select(
                     "dbo.accounts",
@@ -369,8 +332,8 @@ class DatabaseModel extends DatabaseBase {
                     [username],
                     ["accountid", "salt"],
                     "username=@username")
-                    .then((dbResponse: ResponseModel) => {
-                        if (dbResponse.errors.length > 0) {
+                    .then((dbResponse: GenericResponseModel) => {
+                        if (dbResponse.error) {
                             return reject(response);
                         } else {
                             if (dbResponse.data.recordsets[0].length > 0) {
@@ -379,7 +342,7 @@ class DatabaseModel extends DatabaseBase {
                                 response.data = { accountid: accountid, salt: salt };
                                 return resolve(response);
                             } else {
-                                response.errors.push(`Incorrect username or password.`);
+                                response.error = `Incorrect username or password.`;
                                 return reject(response);
                             }
                         }
@@ -388,41 +351,11 @@ class DatabaseModel extends DatabaseBase {
             });
         };
 
-        const getAccountTokenPromise = (dbAccountid: number): Promise<ResponseModel> => {
-
-            return new Promise((resolve, reject) => {
-
-                const response: ResponseModel = {errors: [], data: undefined};
-
-                this.select(
-                    "dbo.tokens",
-                    ["accountid"],
-                    [this.sql.Int],
-                    [dbAccountid],
-                    ["accountid"],
-                    "accountid=@accountid")
-                    .then((dbResponse: ResponseModel) => {
-                        if (dbResponse.errors.length > 0) {
-                            return reject(response);
-                        } else {
-                            const tokenFound: boolean = dbResponse.data.recordsets[0].length > 0;
-                            response.data = {tokenFound: tokenFound};
-                            return resolve(response);
-                        }
-                    })
-                    .catch((err: any) => {
-                        return reject(err);
-                    });
-
-            });
-
-        };
-
-        const insertTokenPromise = (dbAccountid: number): Promise<ResponseModel> => {
+        const insertTokenPromise = (dbAccountid: number): Promise<GenericResponseModel> => {
 
             return new Promise( (resolve, reject) => {
 
-                const response: ResponseModel = {errors: [], data: undefined};
+                const response: GenericResponseModel = {error: undefined, data: undefined};
                 const authToken: string = genAuthToken();
                 const authTokenExpiration: number = remember ? Date.now() + config.token_remember_expiration : Date.now() + config.token_expiration;
 
@@ -431,9 +364,9 @@ class DatabaseModel extends DatabaseBase {
                     ["accountid", "authToken", "createdOn", "expiresOn"],
                     [this.sql.Int, this.sql.VarChar, this.sql.DateTime, this.sql.DateTime],
                     [dbAccountid, authToken, Date.now(), authTokenExpiration])
-                    .then((dbResponse: ResponseModel) => {
-                        if (dbResponse.errors.length > 0) {
-                            return reject(response);
+                    .then((dbResponse: GenericResponseModel) => {
+                        if (dbResponse.error) {
+                            return reject(dbResponse.error);
                         } else {
                             response.data = {token: authToken, tokenExpiration: new Date(authTokenExpiration)};
                             return resolve(response);
@@ -444,33 +377,40 @@ class DatabaseModel extends DatabaseBase {
 
         };
 
-        let accountid: number = undefined;
+        return new Promise( (resolve, reject) => {
 
-        return getAccountInfoPromise()
-            .then((response: ResponseModel) => {
-                accountid = response.data.accountid;
-
+            getAccountInfoPromise()
+            .then((response: GenericResponseModel) => {
                 // inserting token
-                console.log("Inserting token");
+                const accountid = response.data.accountid;
                 return insertTokenPromise(accountid);
+            })
+            .then((response: GenericResponseModel) => {
+                const dbTokenResponse: DbTokenResponse = {token: response.data.token, tokenExpiration: response.data.tokenExpiration};
+                return resolve(dbTokenResponse);
+            })
+            .catch((error: string) => {
+                return reject(error);
             });
+
+        });
 
     }
 
-    addChatMessage(username: string, date: number, text: string): Promise<ResponseModel> {
+    addChatMessage(username: string, date: number, text: string): Promise<GenericResponseModel> {
 
         return new Promise( (resolve, reject) => {
 
-            const response: ResponseModel = {errors: [], data: undefined};
+            const response: GenericResponseModel = {error: undefined, data: undefined};
 
             this.insert(
                 "dbo.chatroom",
                 ["username", "date", "text"],
                 [this.sql.VarChar, this.sql.DateTime, this.sql.NVarChar],
                 [username, date, text])
-                .then((dbResponse: ResponseModel) => {
-                    if (dbResponse.errors.length > 0) {
-                        return reject(response);
+                .then((dbResponse: GenericResponseModel) => {
+                    if (dbResponse.error) {
+                        return reject(dbResponse.error);
                     } else {
                         return resolve(response);
                     }
@@ -492,7 +432,7 @@ class DatabaseModel extends DatabaseBase {
                 ["username", "date", "text"],
                 undefined,
                 config.chatHistoryCount)
-                .then((dbResponse: ResponseModel) => {
+                .then((dbResponse: GenericResponseModel) => {
                     const chatHistoryResponse: ChatHistoryResponse = { name: [], date: [], text: [] };
 
                     dbResponse.data.recordsets[0].forEach((chat: any) => {
@@ -521,7 +461,7 @@ class DatabaseModel extends DatabaseBase {
                 [accountid],
                 ["username", "discord", "steam", "twitch"],
                 "accountid=@accountid")
-                .then((dbResponse: ResponseModel) => {
+                .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.recordsets[0].length > 0) {
                         const user: ChatroomUser = {
                             username: dbResponse.data.recordsets[0][0].username,

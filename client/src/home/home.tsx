@@ -1,13 +1,8 @@
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
 
-interface IHomeProps {
-    history: any;
-}
+class Home extends React.Component<any, any> {
 
-class Home extends React.Component<IHomeProps, any> {
-
-    constructor(props: IHomeProps) {
+    constructor(props: any) {
         super(props);
     }
 
@@ -15,7 +10,7 @@ class Home extends React.Component<IHomeProps, any> {
 
         return (
             <div className="menu">
-                <img src="https://i.imgur.com/qJ7gzDA.png"/>
+                <img src="https://i.imgur.com/10UUUmo.png"/>
             </div>
         );
 
@@ -23,4 +18,4 @@ class Home extends React.Component<IHomeProps, any> {
 
 }
 
-export default withRouter(Home);
+export default Home;

@@ -8,6 +8,7 @@ import Background from '../background/background';
 import NotFound from '../notfound/notfound';
 import Notice from '../notice/notice';
 import Navbar from '../navbar/navbar';
+import { AUTH_TOKEN_NAME } from '../../client-server-common/common';
 
 export enum NAV_PAGE {
     HOME = '/',
@@ -38,7 +39,7 @@ class App extends React.Component<IAppProps, any> {
     }
 
     private get loggedIn(): boolean {
-        return (document.cookie.indexOf('authToken=') !== -1);
+        return (document.cookie.indexOf(`${AUTH_TOKEN_NAME}=`) !== -1);
     }
 
     private get renderUnauthenticatedRedirects(): JSX.Element[] {

@@ -1,25 +1,23 @@
 import axios from 'axios';
-import { ResponseModel } from '../../../../client/client-server-common/common';
+import { GenericResponseModel } from '../../../../client/client-server-common/common';
 
-export function httpAccountSettings (): Promise<ResponseModel> {
+export function httpAccountSettings (): Promise<GenericResponseModel> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/account/settings')
         .then((result) => {
-            console.log(`LEN: ${result.data.errors.length}`);
-            if (result.data.errors.length === 0) {
-                return resolve(result.data);
+            if (result.data.error) {
+                return reject(`Failed to retrieve account settings.`);
             } else {
-                return reject(result.data);
+                return resolve(result.data);
             }
         })
-        .catch((err) => {
-            console.log(`HTTP error: ${err}. Exiting program now.`);
-            process.exit(1);
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
         });
     }); 
 }
 
-export function httpLogin (username: string, password: string, remember: boolean): Promise<ResponseModel> {
+export function httpLogin (username: string, password: string, remember: boolean): Promise<null> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/account/login', {
             username: username,
@@ -27,20 +25,19 @@ export function httpLogin (username: string, password: string, remember: boolean
             remember: remember
         })
         .then((result) => {
-            if (result.data === ``) {
-                return resolve(result.data);
+            if (result.data.error) {
+                return reject(result.data.error);
             } else {
-                return reject(result.data);
+                return resolve();
             }
         })
-        .catch((err) => {
-            console.log(`HTTP error: ${err}. Exiting program now.`);
-            process.exit(1);
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
         });
     }); 
 }
 
-export function httpSignup (username: string, password: string, email: string): Promise<ResponseModel> {
+export function httpSignup (username: string, password: string, email: string): Promise<null> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/account/signup', {
             username: username,
@@ -48,85 +45,94 @@ export function httpSignup (username: string, password: string, email: string): 
             email: email
         })
         .then((result) => {
-            if (result.data.errors.length > 0) {
-                return reject(result.data);
+            if (result.data.error) {
+                return reject(result.data.error);
             } else {
-                return resolve(result.data);
+                return resolve();
             }
         })
-        .catch((err) => {
-            console.log(`HTTP error: ${err}. Exiting program now.`);
-            process.exit(1);
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
         });
     }); 
 }
 
-export function httpChangeAccountUsername (newUsername: string): Promise<ResponseModel> {
+export function httpChangeAccountUsername (newUsername: string): Promise<GenericResponseModel> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/change/username`, { newUsername })
         .then((result) => {
-            if (result.data.errors !== []) {
-                return reject(result.data);
+            if (result.data.error) {
+                return reject(result.data.error);
             } else {
                 return resolve();
             }
         })
-        .catch((err) => {
-            console.log(`HTTP error: ${err}. Exiting program now.`);
-            process.exit(1);
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
         });
     }); 
 }
 
-export function httpChangeAccountEmail (newEmail: string): Promise<ResponseModel> {
+export function httpChangeAccountEmail (newEmail: string): Promise<GenericResponseModel> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/change/email`, { newEmail })
         .then((result) => {
-            if (result.data.errors !== []) {
-                return reject(result.data);
+            if (result.data.error) {
+                return reject(result.data.error);
             } else {
                 return resolve();
             }
         })
-        .catch((err) => {
-            console.log(`HTTP error: ${err}. Exiting program now.`);
-            process.exit(1);
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
         });
     }); 
 }
 
-export function httpChangeAccountDiscord (newDiscord: string): Promise<ResponseModel> {
+export function httpChangeAccountDiscord (newDiscord: string): Promise<GenericResponseModel> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/change/discord`, { newDiscord })
         .then((result) => {
-            return resolve();
+            if (result.data.error) {
+                return reject(result.data.error);
+            } else {
+                return resolve();
+            }
         })
-        .catch((err) => {
-            return resolve(`HTTP error: ${err}.`);
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
         });
     }); 
 }
 
-export function httpChangeAccountSteam (newSteam: string): Promise<ResponseModel> {
+export function httpChangeAccountSteam (newSteam: string): Promise<GenericResponseModel> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/change/steam`, { newSteam })
         .then((result) => {
-            return resolve();
+            if (result.data.error) {
+                return reject(result.data.error);
+            } else {
+                return resolve();
+            }
         })
-        .catch((err) => {
-            return resolve(`HTTP error: ${err}.`);
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
         });
     }); 
 }
 
-export function httpChangeAccountTwitch (newTwitch: string): Promise<ResponseModel> {
+export function httpChangeAccountTwitch (newTwitch: string): Promise<GenericResponseModel> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/change/twitch`, { newTwitch })
         .then((result) => {
-            return resolve();
+            if (result.data.error) {
+                return reject(result.data.error);
+            } else {
+                return resolve();
+            }
         })
-        .catch((err) => {
-            return resolve(`HTTP error: ${err}.`);
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
         });
     }); 
 }

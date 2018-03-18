@@ -8,7 +8,7 @@ import FontIcon from 'material-ui/FontIcon';
 import Avatar from 'material-ui/Avatar';
 import ChatMessage, { IChatMessageProps } from './chatmessage';
 import * as ChatroomService from '../service/chatroom/main';
-import { ResponseModel, ChatHistoryResponse, SingleChatHistory } from '../../../client/client-server-common/common';
+import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory } from '../../../client/client-server-common/common';
 
 interface IChatroomProps {
     history: any;
@@ -23,10 +23,10 @@ class Chatroom extends React.Component<IChatroomProps, any> {
         this.onNewMessage = this.onNewMessage.bind(this);
         this.onNewUsercount = this.onNewUsercount.bind(this);
         this.scrollChatToMostRecent = this.scrollChatToMostRecent.bind(this);
-        const socket = io(`${window.location.hostname}:81`);
+        const socket = io(`${window.location.hostname}:${CHAT_SERVER_PORT}`);
         this.state = { text: '', chatLog: [], userCount: 0, socket: socket };
-        socket.on('new-message', this.onNewMessage);
-        socket.on('new-usercount', this.onNewUsercount);
+        socket.on(CHATROOM_EVENTS.Message, this.onNewMessage);
+        socket.on(CHATROOM_EVENTS.Usercount, this.onNewUsercount);
     }
 
     componentDidMount(): void {
@@ -40,10 +40,8 @@ class Chatroom extends React.Component<IChatroomProps, any> {
     }
 
     private onNewMessage(chat: SingleChatHistory) {
-        console.log(`New message! ${JSON.stringify(chat)}`);
-
         const newChatLog: Array<IChatMessageProps> = this.state.chatLog;
-        newChatLog.push({ name: chat.name, date: chat.date, text: chat.text, isChatLogEmpty: false });
+        newChatLog.push({ name: chat.name, date: chat.date, text: chat.text });
         this.setState({ text: '', chatLog: newChatLog }, () => {
             this.scrollChatToMostRecent();
         });
@@ -58,29 +56,11 @@ class Chatroom extends React.Component<IChatroomProps, any> {
     } 
 
     private onSend(): void {
-        const authToken: string = document.cookie.match(new RegExp('authToken=([^;]+)'))[1];
-        this.state.socket.emit('post-message', { authToken: authToken, text: this.state.text });
+        const authToken: string = document.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`))[1];
+        this.state.socket.emit(CHATROOM_EVENTS.PostMessage, { authToken: authToken, text: this.state.text });
     }
     
     render() {
-
-        const settingStyle = {
-            floatingLabel: { 
-                'color': 'rgba(255,255,255,0.35)' 
-            },
-            floatingLabelFocus: { 
-                'color': 'whitesmoke'
-            },
-            input: { 
-                'color': 'whitesmoke'
-            },
-            hint: { 
-                'color': 'whitesmoke'
-            },
-            underlineFocus: {
-                'border-bottom': '2px solid rgba(255,255,255,0.2)'
-            }
-        };
 
         return (
             <div className="chatroom">
@@ -106,21 +86,13 @@ class Chatroom extends React.Component<IChatroomProps, any> {
                                     name={x.name}
                                     date={x.date}
                                     text={x.text}
-                                    isChatLogEmpty={false}
                                 />
                             );
                         })}
-                    {this.state.chatLog.length === 0 && 
-                        <ChatMessage
-                            isChatLogEmpty={true} 
-                        />}
                 </div>
                 <div className="chatroom-input" >
                     <TextField
                         className="chatroom-input-textfield"
-                        inputStyle={settingStyle.input}
-                        hintStyle={settingStyle.hint}
-                        underlineFocusStyle={settingStyle.underlineFocus}
                         value={this.state.text}
                         onChange={this.onTextChanged}
                         hintText="Enter a message"

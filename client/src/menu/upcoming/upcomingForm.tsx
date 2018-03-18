@@ -1,20 +1,14 @@
 const popupS = require('popups');
 import * as React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import { withRouter } from 'react-router-dom';
 import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
 import Spinner from '../../loader/spinner';
 import ThumbnailGame from '../thumbnailGame';
-import { ResponseModel, UpcomingGameResponse } from '../../../../client/client-server-common/common';
+import { UpcomingGameResponse } from '../../../../client/client-server-common/common';
 
-interface IUpcomingFormProps {
-    history: any;
-}
+class UpcomingForm extends React.Component<any, any> {
 
-class UpcomingForm extends React.Component<IUpcomingFormProps, any> {
-
-    constructor(props: IUpcomingFormProps) {
+    constructor(props: any) {
         super(props);
         this.state = { isLoading: true };
         this.loadUpcomingGames = this.loadUpcomingGames.bind(this);
@@ -75,4 +69,4 @@ class UpcomingForm extends React.Component<IUpcomingFormProps, any> {
 
 }
 
-export default withRouter(UpcomingForm);
+export default UpcomingForm;

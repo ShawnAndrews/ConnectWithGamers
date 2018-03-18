@@ -1,10 +1,6 @@
 const socketIO = require("socket.io");
-const express = require("express");
-const router = express.Router();
-import { ResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser } from "../../client/client-server-common/common";
-import routeModel from "../../models/routemodel";
+import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbAuthorizeResponse } from "../../client/client-server-common/common";
 import db from "../../models/db";
-import { DateTime } from "aws-sdk/clients/ssm";
 
 export default function registerChatHandlers(chatServer: any): void {
     const chatHandler = socketIO(chatServer);
@@ -49,26 +45,27 @@ export default function registerChatHandlers(chatServer: any): void {
 
         // authorize
         db.authorize(socket.handshake.headers.cookie)
-        .then((response: ResponseModel) => {
-            const accountid: number = response.data.accountid;
+        .then((response: DbAuthorizeResponse) => {
+            const accountid: number = response.accountid;
             refreshUserActivity(accountid);
             const usercount: number = getUserCount();
-            socket.emit("new-usercount", usercount);
-            socket.broadcast.emit("new-usercount", usercount);
+            socket.emit(CHATROOM_EVENTS.Usercount, usercount);
+            socket.broadcast.emit(CHATROOM_EVENTS.Usercount, usercount);
             db.getChatHistory()
             .then((chats: ChatHistoryResponse) => {
                 for (let i = 0; i < chats.name.length; i++) {
                     const chat: SingleChatHistory = { name: chats.name[i], date: chats.date[i], text: chats.text[i] };
-                    socket.emit("new-message", chat);
+                    socket.emit(CHATROOM_EVENTS.Message, chat);
                 }
             })
-            .catch((response: ResponseModel) => {
-                console.log(`Error retrieving chat history.`);
+            .catch((error: string) => {
+                console.log(`Error retrieving chat history: ${error}`);
             });
 
             next();
         })
-        .catch((response: ResponseModel) => {
+        .catch((error: string) => {
+            console.log(`Chat error authorizing: ${error}`);
             socket.disconnect();
         });
 
@@ -76,30 +73,31 @@ export default function registerChatHandlers(chatServer: any): void {
 
     chatHandler.on("connection", (socket: any) => {
 
-        socket.on("disconnect", function() {
+        socket.on("disconnect", () => {
             // authorize
             db.authorize(socket.handshake.headers.cookie)
-            .then((response: ResponseModel) => {
-                const accountid: number = response.data.accountid;
+            .then((response: DbAuthorizeResponse) => {
+                const accountid: number = response.accountid;
                 refreshUserActivity(accountid);
                 const usercount: number = getUserCount();
-                socket.emit("new-usercount", usercount);
-                socket.broadcast.emit("new-usercount", usercount);
+                socket.emit(CHATROOM_EVENTS.Usercount, usercount);
+                socket.broadcast.emit(CHATROOM_EVENTS.Usercount, usercount);
             })
-            .catch((response: ResponseModel) => {
+            .catch((error: string) => {
+                console.log(`Chat error authorizing disconnection: ${error}`);
                 socket.disconnect();
             });
         });
 
-        socket.on("request-userlist", (data: any) => {
+        socket.on(CHATROOM_EVENTS.Usercount, (data: any) => {
             // authorize
             db.authorize(socket.handshake.headers.cookie)
-            .then((response: ResponseModel) => {
+            .then((response: DbAuthorizeResponse) => {
                 const userAccountIds: number[] = usersInChat.map((x: any) => { return x.accountid; });
                 userAccountIds.forEach((accountId: number) => {
                     db.getUserById(accountId)
                     .then((user: ChatroomUser) => {
-                        socket.emit("new-user", user);
+                        socket.emit(CHATROOM_EVENTS.User, user);
                     })
                     .catch((id: number) => {
                         console.log(`Account id #${id} not found in database.`);
@@ -107,23 +105,24 @@ export default function registerChatHandlers(chatServer: any): void {
                     });
                 });
             })
-            .catch((response: ResponseModel) => {
+            .catch((error: string) => {
+                console.log(`Chat error authorizing for usercount: ${error}`);
                 socket.disconnect();
             });
         });
 
-        socket.on("post-message", (data: any) => {
+        socket.on(CHATROOM_EVENTS.PostMessage, (data: any) => {
             let username: string = undefined;
             let date: number = undefined;
             let text: string = undefined;
 
             // authorize
             db.authorize(socket.handshake.headers.cookie)
-            .then((response: ResponseModel) => {
-                refreshUserActivity(response.data.accountid);
-                return db.getAccountUsername(response.data.accountid);
+            .then((response: DbAuthorizeResponse) => {
+                refreshUserActivity(response.accountid);
+                return db.getAccountUsername(response.accountid);
             })
-            .then((response: ResponseModel) => {
+            .then((response: GenericResponseModel) => {
                 username = response.data.username;
                 date = Date.now();
                 text = data.text;
@@ -133,10 +132,11 @@ export default function registerChatHandlers(chatServer: any): void {
             .then(() => {
                 const formattedDate: string = `${new Date(date).toLocaleDateString()} ${new Date(date).toLocaleTimeString()}`;
                 const newChat: SingleChatHistory = { name: username, date: formattedDate, text: text };
-                socket.emit("new-message", newChat);
-                socket.broadcast.emit("new-message", newChat);
+                socket.emit(CHATROOM_EVENTS.Message, newChat);
+                socket.broadcast.emit(CHATROOM_EVENTS.Message, newChat);
             })
-            .catch((response: ResponseModel) => {
+            .catch((error: string) => {
+                console.log(`Chat error trying to post message: ${error}`);
                 socket.disconnect();
             });
         });

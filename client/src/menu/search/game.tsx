@@ -6,11 +6,9 @@ import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
 import Spinner from '../../loader/spinner';
 import Slideshow from './slideshow';
-import { ResponseModel, GameResponse } from '../../../../client/client-server-common/common';
+import { GameResponse } from '../../../../client/client-server-common/common';
 
 interface IGameProps {
-    history: any;
-
     gameId: string;
 }
 
@@ -152,4 +150,4 @@ class Game extends React.Component<IGameProps, any> {
 
 }
 
-export default withRouter(Game);
+export default Game;

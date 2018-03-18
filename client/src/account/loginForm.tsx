@@ -2,7 +2,7 @@ const popupS = require('popups');
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 import Spinner from '../loader/spinner';
-import { validateCredentials, ResponseModel } from '../../../client/client-server-common/common';
+import { validateCredentials, GenericResponseModel } from '../../../client/client-server-common/common';
 import * as AccountService from '../service/account/main';
 import AccountIcons from './accountIcons';
 
@@ -44,22 +44,20 @@ class LoginForm extends React.Component<ILoginFormProps, any> {
         event.preventDefault();
         
         // validate
-        const response: ResponseModel = validateCredentials(this.state.username, this.state.password);
-        if (response.errors.length > 0) {
-            const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
-            popupS.modal({ content: formattedErrors.join('') });
+        const error: string = validateCredentials(this.state.username, this.state.password);
+        if (error) {
+            popupS.modal({ content: `<div>• ${error}</div>` });
             return;
         }
 
         this.setState({isLoading: true});
         AccountService.httpLogin(this.state.username, this.state.password, this.state.rememberme)
-            .then( (response: ResponseModel) => {
+            .then( () => {
                 this.props.history.push('/');
             })
-            .catch( (response: ResponseModel) => {
-                const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
+            .catch( (error: string) => {
                 this.setState({ username: '', email: '', rememberme: false, isLoading: false });
-                popupS.modal({ content: formattedErrors.join('') });
+                popupS.modal({ content:  `<div>• ${error}</div>` });
             });
 
     }

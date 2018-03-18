@@ -32,9 +32,9 @@ app.use("/account", accountController);
 app.use("/igdb", igdbController);
 
 /* client */
-app.get("/favicon.ico", function(req: any, res: any) {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });
-app.get("/bundle.js", function(req: any, res: any) {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
-app.get("/bundle.css", function(req: any, res: any) {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
+app.get("/favicon.ico", (req: any, res: any) => {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });
+app.get("/bundle.js", (req: any, res: any) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
+app.get("/bundle.css", (req: any, res: any) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
 app.use("*", express.static(path.join(__dirname, "../client/dist")));
 
 /* set chat handlers */
@@ -44,17 +44,15 @@ registerChatHandlers(chatServer);
 chatServer.listen(config.chatPort);
 
 /* start HTTP server */
-app.listen(config.serverPort, function () {
-  console.log(`Example app listening on port ${config.serverPort}!`);
-  console.log("Directory: " + path.join(__dirname, "client/dist"));
+app.listen(config.serverPort, () => {
 
   // connect to db
   db.connect(config.connectionStrings["local"])
-    .then((res: any) => {
+    .then(() => {
       console.log(`Successfully connected to database.`);
     })
-    .catch((err: any) => {
-      console.log(`Error connecting to db: ${err}. Shutting down now.`);
+    .catch((error: any) => {
+      console.log(`Error connecting to db: ${error}. Shutting down now.`);
       process.exit();
     });
 

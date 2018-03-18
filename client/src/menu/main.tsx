@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { withRouter } from 'react-router-dom';
 import MenuForm from './menuForm';
 import SearchForm from './search/searchForm';
 import UpcomingForm from './upcoming/upcomingForm';
@@ -8,13 +7,9 @@ import PlatformForm from './platform/platformForm';
 import PlatformGameListForm from './platform/platformGameListForm';
 import RecentForm from './recent/recentForm';
 
-interface IMenuProps {
-    history: any;
-}
+class Menu extends React.Component<any, any> {
 
-class Menu extends React.Component<IMenuProps, any> {
-
-    constructor(props: IMenuProps) {
+    constructor(props: any) {
         super(props);
     }
 
@@ -38,4 +33,4 @@ class Menu extends React.Component<IMenuProps, any> {
 
 }
 
-export default withRouter(Menu);
+export default Menu;

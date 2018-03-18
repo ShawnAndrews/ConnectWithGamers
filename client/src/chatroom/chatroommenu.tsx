@@ -1,16 +1,12 @@
 import * as React from 'react';
-import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
+import { Route, Redirect, Switch } from 'react-router-dom';
 import Chatroom from '../chatroom/chatroom';
 import UserList from '../chatroom/userlist';
 import NotFound from '../notfound/notfound';
 
-interface IChatroomMenuProps {
-    history: any;
-}
+class ChatroomMenu extends React.Component<any, any> {
 
-class ChatroomMenu extends React.Component<IChatroomMenuProps, any> {
-
-    constructor(props: IChatroomMenuProps) {
+    constructor(props: any) {
         super(props);
         this.state = {};
     }
@@ -30,4 +26,4 @@ class ChatroomMenu extends React.Component<IChatroomMenuProps, any> {
 
 }
 
-export default withRouter(ChatroomMenu);
+export default ChatroomMenu;

@@ -1,10 +1,5 @@
 const mssql = require("mssql/msnodesqlv8");
-import config from "../config";
-import { Object } from "aws-sdk/clients/s3";
-import { ResponseModel } from "../client/client-server-common/common";
-
-const TOKEN_LEN = 40;
-const SALT_RNDS = 10;
+import { GenericResponseModel } from "../client/client-server-common/common";
 
 export default class DatabaseBase {
 
@@ -18,11 +13,11 @@ export default class DatabaseBase {
         return this.sql.connect(connectionString);
     }
 
-    select(tableName: string, columnNames: Array<string>, columnTypes: Array<any>, columnValues: Array<any>, returnColumns: Array<string>, conditions: string = undefined, numRecords: number = undefined): Promise<ResponseModel> {
+    select(tableName: string, columnNames: Array<string>, columnTypes: Array<any>, columnValues: Array<any>, returnColumns: Array<string>, conditions: string = undefined, numRecords: number = undefined): Promise<GenericResponseModel> {
 
         return new Promise( (resolve, reject) => {
                 const columnNameValuePairs: any = {};
-                const response: ResponseModel = {errors: [], data: undefined};
+                const response: GenericResponseModel = {error: undefined, data: undefined};
                 let sql = `SELECT ${numRecords ? `top ${numRecords}` : ``} ${returnColumns.join()} FROM ${tableName}`;
                 if (conditions) {
                     sql = sql.concat(` WHERE ${conditions}`);
@@ -34,18 +29,15 @@ export default class DatabaseBase {
                 }
                 ps.prepare(sql, (err: any) => {
                     if (err) {
-                        response.errors.push(err);
-                        return reject(response);
+                        return reject(err);
                     }
                     ps.execute(columnNameValuePairs, (err: any, result: any) => {
                         if (err) {
-                            response.errors.push(err);
-                            return reject(response);
+                            return reject(err);
                         }
                         ps.unprepare((err: any) => {
                             if (err) {
-                                response.errors.push(err);
-                                return reject(response);
+                                return reject(err);
                             }
                             response.data = result;
                             return resolve(response);
@@ -56,32 +48,28 @@ export default class DatabaseBase {
 
     }
 
-    insert(tableName: string, columnNames: Array<string>, columnTypes: Array<any>, columnValues: Array<any>): Promise<ResponseModel> {
+    insert(tableName: string, columnNames: Array<string>, columnTypes: Array<any>, columnValues: Array<any>): Promise<GenericResponseModel> {
 
         return new Promise((resolve, reject) => {
             const columnNameValuePairs: any = {};
-            const response: ResponseModel = {errors: [], data: undefined};
+            const response: GenericResponseModel = {error: undefined, data: undefined};
             const sql = `INSERT INTO ${tableName} (${columnNames.join()}) VALUES (${columnNames.map((i) => {return ("@" + i); }).join()})`;
             const ps = new this.sql.PreparedStatement();
             for (let i = 0; i < columnNames.length; i++) {
                 ps.input(columnNames[i], columnTypes[i]);
                 columnNameValuePairs[columnNames[i]] = columnValues[i];
             }
-            console.log(`INSERT SQL: ${sql} || ${columnValues}`);
             ps.prepare(sql, (err: any) => {
                 if (err) {
-                    response.errors.push(err);
-                    return resolve(response);
+                    return resolve(err);
                 }
                 ps.execute(columnNameValuePairs, (err: any, result: any) => {
                     if (err) {
-                        response.errors.push(err);
-                        return resolve(response);
+                        return resolve(err);
                     }
                     ps.unprepare((err: any) => {
                         if (err) {
-                            response.errors.push(err);
-                            return resolve(response);
+                            return resolve(err);
                         }
                         response.data = result;
                         return resolve(response);
@@ -92,11 +80,11 @@ export default class DatabaseBase {
 
     }
 
-    update(tableName: string, columnNames: Array<string>, columnTypes: Array<any>, columnValues: Array<any>, columnNamesToUpdate: Array<string>, conditions: string = undefined): Promise<ResponseModel> {
+    update(tableName: string, columnNames: Array<string>, columnTypes: Array<any>, columnValues: Array<any>, columnNamesToUpdate: Array<string>, conditions: string = undefined): Promise<GenericResponseModel> {
 
         return new Promise((resolve, reject) => {
             const columnNameValuePairs: any = {};
-            const response: ResponseModel = {errors: [], data: undefined};
+            const response: GenericResponseModel = {error: undefined, data: undefined};
             let sql = `UPDATE ${tableName} SET ${columnNamesToUpdate.map((i) => {return (i + "=@" + i); }).join()}`;
             if (conditions) {
                 sql = sql.concat(` WHERE ${conditions}`);
@@ -108,18 +96,15 @@ export default class DatabaseBase {
             }
             ps.prepare(sql, (err: any) => {
                 if (err) {
-                    response.errors.push(err);
-                    return resolve(response);
+                    return resolve(err);
                 }
                 ps.execute(columnNameValuePairs, (err: any, result: any) => {
                     if (err) {
-                        response.errors.push(err);
-                        return resolve(response);
+                        return resolve(err);
                     }
                     ps.unprepare((err: any) => {
                         if (err) {
-                            response.errors.push(err);
-                            return resolve(response);
+                            return resolve(err);
                         }
                         response.data = result;
                         return resolve(response);

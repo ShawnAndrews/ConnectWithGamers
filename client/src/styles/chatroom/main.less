@@ -1,3 +1,5 @@
+@userlist-height: 52px;
+@userlist-content-height: @userlist-height - 4px;
 
 .chatroom {
     position: relative;
@@ -119,11 +121,6 @@
                     background-color: rgba(19, 75, 115, 0.78) !important;
                 }
             }
-
-            .chatroom-message-empty {
-                text-align: center;
-                font-size: 1.5em;
-            }
         }
 
         .fadeIn{
@@ -151,6 +148,14 @@
         
         .chatroom-input-textfield {
             width: 73% !important;
+
+            > div, input {
+                color: whitesmoke !important;
+            }
+
+            hr {
+                border-bottom: 2px solid rgba(255,255,255,0.2);
+            }
         }
 
         .chatroom-input-enter {
@@ -171,53 +176,64 @@
     }
 } 
 
-.avatar-chip {
-    width: 48px !important;
-    height: 48px !important;
-    margin-top: 2px !important;
-    margin-left: 5px !important;
-    background-color: rgba(13, 47, 97, 0.8) !important;
-}
+.userlist {
 
-.avatar-link {
-    color: rgba(13, 47, 97, 0.8) !important;
-    vertical-align: middle !important;
-    margin-top: 3px !important;
-    margin-left: 7px !important;
-}
-
-.invis-background {
-    background-color: transparent !important;
-}
-
-.pull-right {
-    float: right !important;
-}
-
-.avatar-span {
-    line-height: 50px;
-    font-size: 1.3em;
-    font-weight: 600;
-}
-
-.chip-container {
-    background-color: rgba(255, 255, 255, 0.46) !important;
+    .userlist-header {
+        color: whitesmoke;
+        text-align: center;
+        padding: 15px;
+        font-size: 1.7em;
+        background: rgba(0,0,0,0.3);
     
-    > span {
-        width: calc(~"100% -" 48px) !important;
+        strong {
+            opacity: 0.8;
+            color: rgba(255,255,255,0.8);
+            letter-spacing: 1px;
+        }
     }
-}
 
-.chip-header {
-    color: whitesmoke;
-    text-align: center;
-    padding: 15px;
-    font-size: 1.7em;
-    background: rgba(0,0,0,0.3);
+    .userlist-content {
+        width: 90% !important;
+        margin: 20px 5% 0 5% !important;
+        height: @userlist-height !important;
+        background-color: rgba(255, 255, 255, 0.46) !important;
+        
+        > span {
+            width: calc(~"100% -" @userlist-content-height) !important;
+        }
 
-    strong {
-        opacity: 0.8;
-        color: rgba(255,255,255,0.8);
-        letter-spacing: 1px;
+        .userlist-content-name-chip {
+            width: @userlist-content-height !important;
+            height: @userlist-content-height !important;
+            margin-top: 2px !important;
+            margin-left: 5px !important;
+            background-color: rgba(13, 47, 97, 0.8) !important;
+        }
+        
+        .userlist-content-name {
+            line-height: @userlist-height;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .userlist-content-link-chip {
+            width: @userlist-content-height !important;
+            height: @userlist-content-height !important;
+    
+            .userlist-content-link {
+                color: rgba(13, 47, 97, 0.8) !important;
+                vertical-align: middle !important;
+                margin-top: 3px !important;
+                margin-left: 7px !important;
+            }
+        }
+    }
+    
+    .invis-background {
+        background-color: transparent !important;
+    }
+    
+    .pull-right {
+        float: right !important;
     }
 }

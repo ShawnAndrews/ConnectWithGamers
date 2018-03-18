@@ -45,6 +45,18 @@
   .account-settings {
     padding: 15px;
 
+    input {
+      color: whitesmoke !important;
+    }
+
+    label {
+      color: rgba(255, 255, 255, 0.35) !important;
+    }
+
+    hr {
+      border-bottom: 2px solid rgba(255,255,255,0.2) !important;
+    }
+
     .account-settings-title {
       text-align: center;
 
@@ -204,7 +216,8 @@
       background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0),whitesmoke, rgba(255, 255, 255, 0));
       background: -moz-linear-gradient(left, rgba(255, 255, 255, 0), whitesmoke, rgba(255, 255, 255, 0));
       background: -ms-linear-gradient(left, rgba(255, 255, 255, 0), whitesmoke, rgba(255, 255, 255, 0));
-      background: -o-linear-gradient(left, rgba(255, 255, 255, 0), whitesmoke, rgba(255, 255, 255, 0)); 
+      background: -o-linear-gradient(left, rgba(255, 255, 255, 0), whitesmoke, rgba(255, 255, 255, 0));
+      border-bottom: none !important;
     }
 
     .account-settings-logout {
@@ -213,6 +226,12 @@
       background-color: transparent !important;
       bottom: 0;
       left: 0;
+
+      span {
+        font-size: 1.2em !important; 
+        letter-spacing: 3px !important; 
+        font-weight: 700 !important;
+      }
 
       > button {
         background-color: rgba(0, 0, 0, 0.3) !important;

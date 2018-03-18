@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { ResponseModel } from '../../../../client/client-server-common/common';
+import { GenericResponseModel } from '../../../../client/client-server-common/common';
 
-export function httpLoadChatHistory (): Promise<ResponseModel> {
+export function httpLoadChatHistory (): Promise<GenericResponseModel> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/chatroom/history')
         .then((result) => {
-            if (result.data.errors.length === 0) {
+            if (result.data.error) {
                 return resolve(result.data);
             } else {
                 return reject(result.data);

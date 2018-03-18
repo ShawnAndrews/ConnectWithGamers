@@ -14,7 +14,6 @@ const igdbClient = igdb(config.igdb.key);
 
 const ONE_DAY: number = 60 * 60 * 24;
 const ONE_WEEK: number = 60 * 60 * 24 * 7;
-const INFINITE: number = -1;
 
 const igdbGenreNames: any = {};
 igdbGenreNames[2] = `Point-and-click`;
@@ -51,11 +50,6 @@ export const redisCache: IGDBCacheEntry[] = [
     {key: "recentgames", expiry: ONE_DAY},
 ];
 
-// register redis error handler
-redisClient.on("error", function (err: any) {
-    console.log("Error " + err);
-});
-
 /**
  *  UPCOMING GAMES
  */
@@ -63,11 +57,9 @@ export function upcomingGamesKeyExists(): Promise<boolean> {
     const cacheEntry: IGDBCacheEntry = redisCache[0];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.exists(cacheEntry.key, (err: any, value: boolean) => {
-            console.log(`err: ${err}`);
-            console.log(`value: ${JSON.stringify(value)}`);
-            if (err) {
-                return reject(err);
+        redisClient.exists(cacheEntry.key, (error: string, value: boolean) => {
+            if (error) {
+                return reject(error);
             }
             return resolve(value);
         });
@@ -79,11 +71,9 @@ export function getCachedUpcomingGames(): Promise<UpcomingGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[0];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.lrange(cacheEntry.key, 0, -1, (err: any, stringifiedUpcomingGames: string) => {
-            console.log(`err: ${err}`);
-            console.log(`value: ${stringifiedUpcomingGames}`);
-            if (err) {
-                return reject(err);
+        redisClient.lrange(cacheEntry.key, 0, -1, (error: string, stringifiedUpcomingGames: string) => {
+            if (error) {
+                return reject(error);
             }
             return resolve(JSON.parse("[" + stringifiedUpcomingGames + "]"));
         });
@@ -93,7 +83,6 @@ export function getCachedUpcomingGames(): Promise<UpcomingGameResponse[]> {
 
 export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[0];
-    const date = new Date();
     const currentDay = formatDate(new Date());
     const oneMonthAfterCurrentDay = formatDate(addMonths(new Date(), 1));
 
@@ -136,8 +125,6 @@ export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
                         return 0;
                     })
                     .map((releaseDate: any) => { return releaseDate; });
-
-                console.log(`#${id} sorted dates: ${JSON.stringify(sortedReleaseDates)}`);
 
                 if (sortedReleaseDates.length > 0) {
                     let genres: string;
@@ -218,7 +205,7 @@ export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
 
             return resolve(sortedUpcomingGames);
         })
-        .catch( (error: any) => {
+        .catch( (error: string) => {
             return reject(error);
         });
     });
@@ -232,11 +219,9 @@ export function recentGamesKeyExists(): Promise<boolean> {
     const cacheEntry: IGDBCacheEntry = redisCache[4];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.exists(cacheEntry.key, (err: any, value: boolean) => {
-            console.log(`err: ${err}`);
-            console.log(`value: ${JSON.stringify(value)}`);
-            if (err) {
-                return reject(err);
+        redisClient.exists(cacheEntry.key, (error: string, value: boolean) => {
+            if (error) {
+                return reject(error);
             }
             return resolve(value);
         });
@@ -248,11 +233,9 @@ export function getCachedRecentGames(): Promise<RecentGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[4];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.lrange(cacheEntry.key, 0, -1, (err: any, stringifiedRecentGames: string) => {
-            console.log(`err: ${err}`);
-            console.log(`value: ${stringifiedRecentGames}`);
-            if (err) {
-                return reject(err);
+        redisClient.lrange(cacheEntry.key, 0, -1, (error: string, stringifiedRecentGames: string) => {
+            if (error) {
+                return reject(error);
             }
             return resolve(JSON.parse("[" + stringifiedRecentGames + "]"));
         });
@@ -262,7 +245,6 @@ export function getCachedRecentGames(): Promise<RecentGameResponse[]> {
 
 export function cacheRecentGames(): Promise<RecentGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[4];
-    const date = new Date();
     const oneMonthBeforeCurrentDay = formatDate(addMonths(new Date(), -1));
     const currentDay = formatDate(new Date());
 
@@ -390,9 +372,9 @@ export function platformGamesKeyExists(platformId: number): Promise<boolean> {
     const cacheEntry: IGDBCacheEntry = redisCache[3];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.hexists(cacheEntry.key, platformId, (err: any, value: boolean) => {
-            if (err) {
-                return reject(err);
+        redisClient.hexists(cacheEntry.key, platformId, (error: string, value: boolean) => {
+            if (error) {
+                return reject(error);
             }
             return resolve(value);
         });
@@ -404,11 +386,9 @@ export function getCachedPlatformGames(platformId: number): Promise<PlatformGame
     const cacheEntry: IGDBCacheEntry = redisCache[3];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.hget(cacheEntry.key, platformId, (err: any, stringifiedUpcomingGames: string) => {
-            console.log(`err: ${err}`);
-            console.log(`value: ${stringifiedUpcomingGames}`);
-            if (err) {
-                return reject(err);
+        redisClient.hget(cacheEntry.key, platformId, (error: string, stringifiedUpcomingGames: string) => {
+            if (error) {
+                return reject(error);
             }
             return resolve(JSON.parse(stringifiedUpcomingGames));
         });
@@ -495,9 +475,9 @@ export function gameKeyExists(gameId: number): Promise<boolean> {
     const cacheEntry: IGDBCacheEntry = redisCache[1];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.hexists(cacheEntry.key, gameId, (err: any, value: boolean) => {
-            if (err) {
-                return reject(err);
+        redisClient.hexists(cacheEntry.key, gameId, (error: string, value: boolean) => {
+            if (error) {
+                return reject(error);
             }
             return resolve(value);
         });
@@ -509,9 +489,9 @@ export function getCachedGame(gameId: number): Promise<GameResponse> {
     const cacheEntry: IGDBCacheEntry = redisCache[1];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.hget(cacheEntry.key, gameId, (err: any, stringifiedGame: string) => {
-            if (err) {
-                return reject(err);
+        redisClient.hget(cacheEntry.key, gameId, (error: string, stringifiedGame: string) => {
+            if (error) {
+                return reject(error);
             }
             console.log(`GETTING CACHED GAME #${gameId}`);
             return resolve(JSON.parse(stringifiedGame));
@@ -600,7 +580,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
 
                         resolve({platforms: platformsNames, platforms_release_dates: platformsReleaseDates});
                     })
-                    .catch ( (error: any) => {
+                    .catch ( (error: string) => {
                         reject(error);
                     });
                 } else {
@@ -615,7 +595,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                         .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse) => {
                             return resolve(steamAPIGetPriceInfoResponse);
                         })
-                        .catch ( (error: any) => {
+                        .catch ( (error: string) => {
                             return reject(error);
                         });
                 } else {
@@ -643,8 +623,8 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                 console.log(`CACHEING GAME #${gameId}`);
                 return resolve(game);
             })
-            .catch((error: any) => {
-                throw(error);
+            .catch((error: string) => {
+                return reject(error);
             });
 
         });
@@ -660,7 +640,7 @@ export function searchGamesKeyExists(query: string): Promise<boolean> {
     const cacheEntry: IGDBCacheEntry = redisCache[2];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.hexists(cacheEntry.key, query, (err: any, value: boolean) => {
+        redisClient.hexists(cacheEntry.key, query, (err: string, value: boolean) => {
             if (err) {
                 return reject(err);
             }
@@ -674,11 +654,10 @@ export function getCachedSearchGames(query: string): Promise<GameListEntryRespon
     const cacheEntry: IGDBCacheEntry = redisCache[2];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.hget(cacheEntry.key, query, (err: any, stringifiedGameIds: string) => {
-            if (err) {
-                return reject(err);
+        redisClient.hget(cacheEntry.key, query, (error: string, stringifiedGameIds: string) => {
+            if (error) {
+                return reject(error);
             }
-            console.log(`GETTING CACHED GAMESLIST.`);
             return resolve(JSON.parse(stringifiedGameIds));
         });
     });
@@ -704,8 +683,7 @@ export function cacheSearchGames(query: string): Promise<GameListEntryResponse[]
             }
             resolve(games);
         })
-        .catch((error: any) => {
-            console.log(`Error: ${error}`);
+        .catch((error: string) => {
             return reject(error);
         });
 

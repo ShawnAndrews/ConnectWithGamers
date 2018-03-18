@@ -1,13 +1,9 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-interface IAccountIconsProps {
-    
-}
+class AccountIcons extends React.Component<any, any> {
 
-class AccountIcons extends React.Component<IAccountIconsProps, any> {
-
-    constructor(props: IAccountIconsProps) {
+    constructor(props: any) {
         super(props);
     }
 

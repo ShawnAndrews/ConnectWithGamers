@@ -58,19 +58,10 @@ class Navbar extends React.Component<INavbarProps, any> {
     }
 
     render() {
-        const translucentNav = {
-            'background-color': 'rgba(0,0,0,0.5)',
-            'height': '70px'
-        };
-
-        const underlineNav = {
-            'background-color': 'whitesmoke'
-        };
 
         return (
             <Tabs
-                inkBarStyle={underlineNav} 
-                tabItemContainerStyle={translucentNav}
+                className="navbar-item-container"
                 value={this.state.index}
             >
                 <Tab label="Home" value={0} icon={<i className="fas fa-home navbar-item-icon"/>} className="navbar-item-text" onActive={this.goToHomePage}/>

@@ -1,6 +1,38 @@
 const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
+export interface Config {
+    serverPort: number;
+    chatPort: number;
+    chatHistoryCount: number;
+    connectionStrings: {
+        local: string,
+        remote: string
+    };
+    token_expiration: number; // 15m
+    token_remember_expiration: number; // 1day
+    token_length: number; // 32characters
+    igdb: {
+        key: string,
+        pageLimit: number
+    };
+    steam: {
+        apiURL: string,
+        appURL: string
+    };
+}
+
+export const enum CHATROOM_EVENTS {
+    Usercount = "usercount",
+    Message = "message",
+    PostMessage = "post-message",
+    User = "user",
+}
+
+export const AUTH_TOKEN_NAME = `authToken`;
+
+export const CHAT_SERVER_PORT = 81;
+
 export function validateUsername(username: string): string {
     if (username === undefined) {
         return `Username not found.`;
@@ -48,36 +80,35 @@ export function validateURL(url: string): string {
     }
 }
 
-export function validateCredentials(username: string, password: string, email?: string, remember?: boolean): ResponseModel {
-    const response: ResponseModel = {errors: [], data: undefined};
+export function validateCredentials(username: string, password: string, email?: string, remember?: boolean): string {
     let error;
 
     // username validation
     error = validateUsername(username);
     if (error) {
-        response.errors.push(error);
+        return error;
     }
 
     // password validation
     error = validatePassword(password);
     if (error) {
-        response.errors.push(error);
+        return error;
     }
 
     // email validation
     error = validateEmail(email);
     if (error) {
-        response.errors.push(error);
+        return error;
     }
 
     // remember me validation
     if (remember) {
         if (!Boolean(remember)) {
-            response.errors.push(`Remember me is not a boolean.`);
+            return `Remember me is not a boolean.`;
         }
     }
 
-    return response;
+    return undefined;
 
 }
 
@@ -88,8 +119,34 @@ export interface ChatroomUser {
     discord_url?: string;
 }
 
-export interface ResponseModel {
-    errors: string[];
+export interface DatelessResponse {
+    error: string;
+}
+
+export interface DbAuthenticateResponse {
+    username: string;
+    remember: boolean;
+}
+
+export interface DbTokenResponse {
+    token: string;
+    tokenExpiration: Date;
+}
+
+export interface DbAuthorizeResponse {
+    accountid: number;
+}
+
+export interface DbAccountSettingsResponse {
+    username: string;
+    email: string;
+    discord: string;
+    steam: string;
+    twitch: string;
+}
+
+export interface GenericResponseModel {
+    error: string;
     data: any;
 }
 
@@ -97,6 +154,17 @@ export interface SingleChatHistory {
     name: string;
     date: string;
     text: string;
+}
+
+export interface AccountSettingsResponse {
+    error: string;
+    data?: {
+        username: string;
+        email: string;
+        discord: string;
+        steam: string;
+        twitch: string;
+    };
 }
 
 export interface ChatHistoryResponse {
@@ -110,10 +178,14 @@ export interface GameListEntryResponse {
     id: number;
 }
 
+export interface SearchGamesResponse {
+    error: string;
+    data?: GameListEntryResponse[];
+}
+
 export const GameListEntryResponseFields: string[] = [`id`, `name`];
 
 export interface GameResponse {
-
     name: string;
     rating?: number;
     rating_count?: number;
@@ -131,6 +203,11 @@ export interface GameResponse {
 
 export const GameResponseFields: string[] = [`name`, `release_dates`, `cover`, `total_rating`, `total_rating_count`, `summary`, `genres`, `platforms`, `screenshots`, `external`];
 
+export interface SingleGameResponse {
+    error: string;
+    data?: GameResponse;
+}
+
 export interface UpcomingGameResponse {
 
     id: number;
@@ -143,6 +220,11 @@ export interface UpcomingGameResponse {
 }
 
 export const UpcomingGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`, `genres`, `platforms`, `external`];
+
+export interface UpcomingGamesResponse {
+    error: string;
+    data?: UpcomingGameResponse[];
+}
 
 export interface RecentGameResponse {
 
@@ -157,6 +239,11 @@ export interface RecentGameResponse {
 
 export const RecentGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`, `genres`, `platforms`, `external`];
 
+export interface RecentGamesResponse {
+    error: string;
+    data?: RecentGameResponse[];
+}
+
 export interface PlatformGameResponse {
 
     id: number;
@@ -169,3 +256,8 @@ export interface PlatformGameResponse {
 }
 
 export const PlatformGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`, `genres`, `platforms`, `external`];
+
+export interface PlatformGamesResponse {
+    error: string;
+    data?: PlatformGameResponse[];
+}

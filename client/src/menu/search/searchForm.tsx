@@ -1,18 +1,10 @@
 const popupS = require('popups');
 import * as React from 'react';
-import { Route, Switch } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
 import Spinner from '../../loader/spinner';
-import { ResponseModel } from '../../../../client/client-server-common/common';
 import Game from '../search/game';
-
-interface Game {
-    name: string;
-    imageUrl: string;
-
-}
 
 interface ISearchFormProps {
     history: any;

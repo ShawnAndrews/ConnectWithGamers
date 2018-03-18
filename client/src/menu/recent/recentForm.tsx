@@ -1,20 +1,15 @@
 const popupS = require('popups');
 import * as React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import { withRouter } from 'react-router-dom';
 import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
 import Spinner from '../../loader/spinner';
 import ThumbnailGame from '../thumbnailGame';
-import { ResponseModel, UpcomingGameResponse, RecentGameResponse } from '../../../../client/client-server-common/common';
+import { UpcomingGameResponse, RecentGameResponse } from '../../../../client/client-server-common/common';
+import { AnyTypeAnnotation } from 'babel-types';
 
-interface IRecentFormProps {
-    history: any;
-}
+class RecentForm extends React.Component<any, any> {
 
-class RecentForm extends React.Component<IRecentFormProps, any> {
-
-    constructor(props: IRecentFormProps) {
+    constructor(props: AnyTypeAnnotation) {
         super(props);
         this.state = { isLoading: true };
         this.loadRecentlyReleasedGames = this.loadRecentlyReleasedGames.bind(this);
@@ -32,9 +27,8 @@ class RecentForm extends React.Component<IRecentFormProps, any> {
                 const uniqueReleaseDates: string[] = uniqueArray(response.map((x: any) => { return x.last_release_date; }));
                 this.setState({ isLoading: false, upcomingGames: response, uniqueReleaseDates: uniqueReleaseDates });
             })
-            .catch( (response: any) => {
-                const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
-                popupS.modal({ content: formattedErrors.join('') });
+            .catch( (error: string) => {
+                popupS.modal({ content: `<div>• ${error}</div>` });
             });
     }
 
@@ -73,4 +67,4 @@ class RecentForm extends React.Component<IRecentFormProps, any> {
 
 }
 
-export default withRouter(RecentForm);
+export default RecentForm;

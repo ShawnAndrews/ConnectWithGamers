@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 import * as io from 'socket.io-client';
-import FontIcon from 'material-ui/FontIcon';
 import Avatar from 'material-ui/Avatar';
 
 export interface IChatMessageProps {
-    name?: string;
-    date?: string;
-    text?: string;
-    isChatLogEmpty: boolean;
+    name: string;
+    date: string;
+    text: string;
 }
 
 class ChatMessage extends React.Component<IChatMessageProps, any> {
@@ -18,16 +16,6 @@ class ChatMessage extends React.Component<IChatMessageProps, any> {
     }
 
     render() {
-
-        if (this.props.isChatLogEmpty) {
-            return (
-                <div className="chatroom-message">
-                    <strong className="chatroom-message-empty center">
-                        No messages
-                    </strong>
-                </div>
-            );
-        }
 
         return (
             <div className="chatroom-message fadeIn">

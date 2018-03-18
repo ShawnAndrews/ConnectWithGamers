@@ -1,10 +1,5 @@
-const popupS = require('popups');
 import * as React from 'react';
-import { Route, Switch } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
-import Select from 'react-select';
-import * as IGDBService from '../../service/igdb/main';
-import { ResponseModel } from '../../../../client/client-server-common/common';
 import { PlatformOption, platformOptions } from './platformGameListForm';
 
 interface IPlatformMenuItem {
