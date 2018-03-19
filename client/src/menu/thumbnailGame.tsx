@@ -27,7 +27,7 @@ class ThumbnailGame extends React.Component<IThumbnailGameProps, any> {
         return (
             <Card className="menu-game-thumbnail">
                 <CardMedia>
-                    <img src={this.props.game.cover ? this.props.game.cover : 'https://i.imgur.com/TPRlZkd.png'} onClick={() => { this.props.history.push(`/menu/search/${this.props.game.id}`); }} alt="Game cover" />
+                    <img src={this.props.game.cover ? this.props.game.cover : 'https://i.imgur.com/WcPkTiF.png'} onClick={() => { this.props.history.push(`/menu/search/${this.props.game.id}`); }} alt="Game cover" />
                 </CardMedia>
                 <CardTitle titleColor="rgba(255,255,255,0.6)" subtitleColor="rgba(255,255,255,0.7)" title={this.props.game.name} subtitle={this.props.game.genres} />
                 <CardText className="menu-game-thumbnail-icons">
