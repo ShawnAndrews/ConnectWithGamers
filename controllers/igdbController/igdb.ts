@@ -39,7 +39,7 @@ router.post(routes.getRoute("searchgames"), (req: any, res: any) => {
                 getCachedSearchGames(query)
                 .then((gamesList: GameListEntryResponse[]) => {
                     searchGamesResponse.data = gamesList;
-                    return res.send(gamesList);
+                    return res.send(searchGamesResponse);
                 })
                 .catch((error: string) => {
                     searchGamesResponse.error = error;
@@ -71,7 +71,6 @@ router.post(routes.getRoute("upcominggames"), (req: any, res: any) => {
     upcomingGamesKeyExists()
         .then((exists: boolean) => {
             if (exists) {
-                console.log(`Getting cached upcominggames...`);
                 getCachedUpcomingGames()
                 .then((upcomingGames: UpcomingGameResponse[]) => {
                     upcomingGamesResponse.data = upcomingGames;
@@ -82,7 +81,6 @@ router.post(routes.getRoute("upcominggames"), (req: any, res: any) => {
                     return res.send(upcomingGamesResponse);
                 });
             } else {
-                console.log(`Cacheing upcominggames...`);
                 cacheUpcomingGames()
                 .then((upcomingGames: UpcomingGameResponse[]) => {
                     upcomingGamesResponse.data = upcomingGames;
@@ -108,7 +106,6 @@ router.post(routes.getRoute("recentgames"), (req: any, res: any) => {
     recentGamesKeyExists()
         .then((exists: boolean) => {
             if (exists) {
-                console.log(`Getting cached recentgames...`);
                 getCachedRecentGames()
                 .then((recentGames: RecentGameResponse[]) => {
                     recentGamesResponse.data = recentGames;
@@ -119,7 +116,6 @@ router.post(routes.getRoute("recentgames"), (req: any, res: any) => {
                     return res.send(recentGamesResponse);
                 });
             } else {
-                console.log(`Cacheing recentgames...`);
                 cacheRecentGames()
                 .then((recentGames: RecentGameResponse[]) => {
                     recentGamesResponse.data = recentGames;
@@ -146,7 +142,6 @@ router.post(routes.getRoute("platformgames"), (req: any, res: any) => {
     platformGamesKeyExists(platformId)
         .then((exists: boolean) => {
             if (exists) {
-                console.log(`Getting cached platformgames...`);
                 getCachedPlatformGames(platformId)
                 .then((platformGames: PlatformGameResponse[]) => {
                     platformGamesResponse.data = platformGames;
@@ -157,7 +152,6 @@ router.post(routes.getRoute("platformgames"), (req: any, res: any) => {
                     return res.send(platformGamesResponse);
                 });
             } else {
-                console.log(`Cacheing platformgames...`);
                 cachePlatformGames(platformId)
                 .then((platformGames: PlatformGameResponse[]) => {
                     platformGamesResponse.data = platformGames;

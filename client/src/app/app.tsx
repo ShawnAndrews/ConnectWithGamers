@@ -26,7 +26,6 @@ class App extends React.Component<IAppProps, any> {
 
     constructor(props: IAppProps) {
         super(props);
-        console.log('App props', this.props);
 
         this.state = {
             authenticatedRoutes: ['/account', '/chat', `/chat/users`],
@@ -62,7 +61,6 @@ class App extends React.Component<IAppProps, any> {
     }
 
     render() {
-        console.log('App rendered with props ', this.props);
 
         // render
         return (

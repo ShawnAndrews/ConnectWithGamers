@@ -4,7 +4,7 @@ import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
 import Spinner from '../../loader/spinner';
 import ThumbnailGame from '../thumbnailGame';
-import { UpcomingGameResponse } from '../../../../client/client-server-common/common';
+import { UpcomingGameResponse, UpcomingGamesResponse } from '../../../../client/client-server-common/common';
 
 class UpcomingForm extends React.Component<any, any> {
 
@@ -17,16 +17,14 @@ class UpcomingForm extends React.Component<any, any> {
 
     private loadUpcomingGames(): void {
         IGDBService.httpGetUpcomingGamesList()
-            .then( (response: any) => {
-                console.log(`response data: ${response}`);
+            .then( (response: UpcomingGamesResponse) => {
                 const uniqueArray = function(arrArg: any) {
                     return arrArg.filter(function(elem: string, pos: number, arr: string[]) {
                         return arr.indexOf(elem) === pos;
                     });
                 };
-                const uniqueReleaseDates: string[] = uniqueArray(response.map((x: any) => { return x.next_release_date; }));
-                console.log(`Unique release dates (${uniqueReleaseDates.length}): ${JSON.stringify(uniqueReleaseDates)}`);
-                this.setState({ isLoading: false, upcomingGames: response, uniqueReleaseDates: uniqueReleaseDates });
+                const uniqueReleaseDates: string[] = uniqueArray(response.data.map((x: any) => { return x.next_release_date; }));
+                this.setState({ isLoading: false, upcomingGames: response.data, uniqueReleaseDates: uniqueReleaseDates });
             })
             .catch( (response: any) => {
                 const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });

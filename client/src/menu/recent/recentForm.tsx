@@ -4,7 +4,7 @@ import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
 import Spinner from '../../loader/spinner';
 import ThumbnailGame from '../thumbnailGame';
-import { UpcomingGameResponse, RecentGameResponse } from '../../../../client/client-server-common/common';
+import { UpcomingGameResponse, RecentGameResponse, RecentGamesResponse } from '../../../../client/client-server-common/common';
 import { AnyTypeAnnotation } from 'babel-types';
 
 class RecentForm extends React.Component<any, any> {
@@ -18,14 +18,14 @@ class RecentForm extends React.Component<any, any> {
 
     private loadRecentlyReleasedGames(): void {
         IGDBService.httpGetRecentlyReleasedGamesList()
-            .then( (response: any) => {
+            .then( (response: RecentGamesResponse) => {
                 const uniqueArray = function(arrArg: any) {
                     return arrArg.filter(function(elem: string, pos: number, arr: string[]) {
                         return arr.indexOf(elem) === pos;
                     });
                 };
-                const uniqueReleaseDates: string[] = uniqueArray(response.map((x: any) => { return x.last_release_date; }));
-                this.setState({ isLoading: false, upcomingGames: response, uniqueReleaseDates: uniqueReleaseDates });
+                const uniqueReleaseDates: string[] = uniqueArray(response.data.map((x: any) => { return x.last_release_date; }));
+                this.setState({ isLoading: false, upcomingGames: response.data, uniqueReleaseDates: uniqueReleaseDates });
             })
             .catch( (error: string) => {
                 popupS.modal({ content: `<div>• ${error}</div>` });

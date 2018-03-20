@@ -2,7 +2,7 @@ const popupS = require('popups');
 import * as React from 'react';
 import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
-import { GenericResponseModel, PlatformGameResponse } from '../../../../client/client-server-common/common';
+import { GenericResponseModel, PlatformGameResponse, PlatformGamesResponse } from '../../../../client/client-server-common/common';
 import ThumbnailGame from '../thumbnailGame';
 import Spinner from '../../loader/spinner';
 
@@ -38,9 +38,9 @@ class PlatformGameListForm extends React.Component<IPlatformGameListFormProps, a
     private loadPlatformGames(): void {
         const platformId: number = Number(this.props.match.params.id);
         IGDBService.httpGetPlatformGamesList(platformId)
-            .then( (response: any) => {
-                const platform: PlatformOption = platformOptions.find((x: PlatformOption) => { console.log(`${typeof x.id} === ${typeof platformId}`); return x.id === platformId; });
-                this.setState({ isLoading: false, platform: platform, platformGames: response });
+            .then( (response: PlatformGamesResponse) => {
+                const platform: PlatformOption = platformOptions.find((x: PlatformOption) => { return x.id === platformId; });
+                this.setState({ isLoading: false, platform: platform, platformGames: response.data });
             })
             .catch( (response: any) => {
                 const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
@@ -49,7 +49,6 @@ class PlatformGameListForm extends React.Component<IPlatformGameListFormProps, a
     }
 
     render() {
-        console.log(`RERENDERING GAMELIST: ${JSON.stringify(this.state)}`);
         
         if (this.state.isLoading) {
             return (

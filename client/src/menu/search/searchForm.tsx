@@ -5,6 +5,7 @@ import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
 import Spinner from '../../loader/spinner';
 import Game from '../search/game';
+import { SearchGamesResponse } from '../../../client-server-common/common';
 
 interface ISearchFormProps {
     history: any;
@@ -20,11 +21,9 @@ class SearchForm extends React.Component<ISearchFormProps, any> {
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.loadGamesList = this.loadGamesList.bind(this);
         this.handleRawInputChange = this.handleRawInputChange.bind(this);
-        console.log(`Routed id: #${this.props.match.params.id}`);
     }
 
     private handleChange(selectedGame: any) {
-        console.log(`Input changed to ${JSON.stringify(selectedGame)}`);
         this.props.history.push(`/menu/search/${selectedGame.value}`);
     }
 
@@ -44,9 +43,9 @@ class SearchForm extends React.Component<ISearchFormProps, any> {
 
         this.setState({ isLoading: true });
         IGDBService.httpGetSearchGames(query)
-            .then( (response: any) => {
-                if (response) {
-                    this.setState({ gameslist: response.map((x: any) => { return {value: x.id, label: x.name}; }), isLoading: false });
+            .then( (response: SearchGamesResponse) => {
+                if (response.data) {
+                    this.setState({ gameslist: response.data.map((x: any) => { return {value: x.id, label: x.name}; }), isLoading: false });
                 } else {
                     this.setState({ gameslist: [], isLoading: false });
                 }
@@ -59,6 +58,7 @@ class SearchForm extends React.Component<ISearchFormProps, any> {
     }
 
     render() {
+
         return (
             <div>
                 <Select

@@ -6,7 +6,7 @@ import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
 import Spinner from '../../loader/spinner';
 import Slideshow from './slideshow';
-import { GameResponse } from '../../../../client/client-server-common/common';
+import { SingleGameResponse } from '../../../../client/client-server-common/common';
 
 interface IGameProps {
     gameId: string;
@@ -18,7 +18,7 @@ class Game extends React.Component<IGameProps, any> {
         super(props);
         this.state = {};
         this.loadGame = this.loadGame.bind(this);
-        console.log(`Passed game #${this.props.gameId}`);
+        
         // load game
         if (this.props.gameId) {
             this.state = { isLoading: true };
@@ -36,8 +36,8 @@ class Game extends React.Component<IGameProps, any> {
 
     private loadGame(id: string): void {
         IGDBService.httpGetGame(id)
-            .then( (response: GameResponse) => {
-                this.setState({ isLoading: false, game: response });
+            .then( (response: SingleGameResponse) => {
+                this.setState({ isLoading: false, game: response.data });
             })
             .catch( (response: any) => {
                 const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div > • ${errorMsg}</div > `; });
@@ -46,7 +46,6 @@ class Game extends React.Component<IGameProps, any> {
     }
 
     render() {
-
         if (this.state.isLoading) {
             return (
                 <div className="menu-center">
@@ -56,7 +55,6 @@ class Game extends React.Component<IGameProps, any> {
         }
         
         if (!this.props.gameId) {
-            console.log(`RENDERING START!`);
             return (
                 <div className="menu-choose-game">
                     <i className="fas fa-arrow-right fa-6x menu-choose-game-arrow" data-fa-transform="rotate-270"/>
@@ -64,7 +62,6 @@ class Game extends React.Component<IGameProps, any> {
                 </div>
             );
         }
-        console.log(`RENDERING GAME!`);
         return (
             <div>
                 {this.props.gameId && 

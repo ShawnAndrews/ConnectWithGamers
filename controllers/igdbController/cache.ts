@@ -196,7 +196,6 @@ export function cacheUpcomingGames(): Promise<UpcomingGameResponse[]> {
                 });
 
             sortedUpcomingGames.forEach((x: UpcomingGameResponse) => {
-                console.log(`Caching upcoming game id #${x.id}`);
                 redisClient.rpush(cacheEntry.key, JSON.stringify(x));
             });
             if (cacheEntry.expiry !== -1) {
@@ -349,7 +348,6 @@ export function cacheRecentGames(): Promise<RecentGameResponse[]> {
                 });
 
             sortedRecentGames.forEach((x: RecentGameResponse) => {
-                console.log(`Caching recent game id #${x.id}`);
                 redisClient.rpush(cacheEntry.key, JSON.stringify(x));
             });
             if (cacheEntry.expiry !== -1) {
@@ -421,7 +419,6 @@ export function cachePlatformGames(platformId: number): Promise<PlatformGameResp
                 }
                 let platformIcons: string[];
                 if (x.platforms) {
-                    console.log(`Platform ids: ${JSON.stringify(x.platforms)}`);
                     platformIcons = x.platforms
                     .map((platformId: number) => {
                         if (platformId === 48 || platformId === 45) {
@@ -459,8 +456,6 @@ export function cachePlatformGames(platformId: number): Promise<PlatformGameResp
                 redisClient.expire(cacheEntry.key, cacheEntry.expiry);
             }
 
-            console.log(`Platform games: ${JSON.stringify(response.body)}`);
-
             return resolve(response.body);
         });
 
@@ -493,7 +488,6 @@ export function getCachedGame(gameId: number): Promise<GameResponse> {
             if (error) {
                 return reject(error);
             }
-            console.log(`GETTING CACHED GAME #${gameId}`);
             return resolve(JSON.parse(stringifiedGame));
         });
     });
@@ -620,7 +614,6 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                     redisClient.expire(cacheEntry.key, cacheEntry.expiry);
                 }
 
-                console.log(`CACHEING GAME #${gameId}`);
                 return resolve(game);
             })
             .catch((error: string) => {
@@ -675,7 +668,6 @@ export function cacheSearchGames(query: string): Promise<GameListEntryResponse[]
             search: query
         }, GameListEntryResponseFields)
         .then((result: any) => {
-            console.log(`Recieved games list response.`);
             const games: GameListEntryResponse[] = result.body;
             redisClient.hset(cacheEntry.key, query, JSON.stringify(games));
             if (cacheEntry.expiry !== -1) {
