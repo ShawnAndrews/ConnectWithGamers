@@ -17,11 +17,11 @@
 
 <div align="center">
   <h3>
-    <a href="https://www.connectwithgamers.com">
+    <a href="http://www.connectwithgamers.com">
       Website
     </a>
     <span> | </span>
-    <a href="https://www.saportfolio.ca">
+    <a href="http://www.saportfolio.ca">
       Portfolio
     </a>
   </h3>
