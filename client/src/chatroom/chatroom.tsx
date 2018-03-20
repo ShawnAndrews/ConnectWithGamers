@@ -7,7 +7,6 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
 import Avatar from 'material-ui/Avatar';
 import ChatMessage, { IChatMessageProps } from './chatmessage';
-import * as ChatroomService from '../service/chatroom/main';
 import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory } from '../../../client/client-server-common/common';
 
 interface IChatroomProps {
