@@ -1,5 +1,5 @@
 const express = require("express");
-const RateLimit = require("express-rate-limit");
+// const RateLimit = require("express-rate-limit");
 const router = express.Router();
 import { AUTH_TOKEN_NAME, validateCredentials, DatelessResponse, AccountSettingsResponse, DbAccountSettingsResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
@@ -18,13 +18,13 @@ routes.addRoute("change/steam", "/change/steam");
 routes.addRoute("change/twitch", "/change/twitch");
 
 // limit account creation requests to 5acc/1hr
-const createAccountLimiter = new RateLimit({
-    windowMs: 60 * 60 * 1000,
-    max: 5,
-    delayMs: 0
-});
+// const createAccountLimiter = new RateLimit({
+//     windowMs: 60 * 60 * 1000,
+//     max: 5,
+//     delayMs: 0
+// });
 
-router.post(routes.getRoute("signup"), createAccountLimiter);
+// router.post(routes.getRoute("signup"), createAccountLimiter);
 router.post(routes.getRoute("signup"), (req: any, res: any) => {
 
     const datelessResponse: DatelessResponse = { error: undefined };

@@ -72,7 +72,7 @@ class SignupForm extends React.Component<ISignupFormProps, any> {
         if (this.state.isLoading) {
             return (
                 <div className="account-center">
-                    <Spinner loadingMsg="Logging in..." />
+                    <Spinner loadingMsg="Creating account..." />
                 </div>
             );
         }

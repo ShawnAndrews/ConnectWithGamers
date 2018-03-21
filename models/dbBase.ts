@@ -61,15 +61,15 @@ export default class DatabaseBase {
             }
             ps.prepare(sql, (err: any) => {
                 if (err) {
-                    return resolve(err);
+                    return reject(err);
                 }
                 ps.execute(columnNameValuePairs, (err: any, result: any) => {
                     if (err) {
-                        return resolve(err);
+                        return reject(err);
                     }
                     ps.unprepare((err: any) => {
                         if (err) {
-                            return resolve(err);
+                            return reject(err);
                         }
                         response.data = result;
                         return resolve(response);
@@ -96,15 +96,15 @@ export default class DatabaseBase {
             }
             ps.prepare(sql, (err: any) => {
                 if (err) {
-                    return resolve(err);
+                    return reject(err);
                 }
                 ps.execute(columnNameValuePairs, (err: any, result: any) => {
                     if (err) {
-                        return resolve(err);
+                        return reject(err);
                     }
                     ps.unprepare((err: any) => {
                         if (err) {
-                            return resolve(err);
+                            return reject(err);
                         }
                         response.data = result;
                         return resolve(response);
