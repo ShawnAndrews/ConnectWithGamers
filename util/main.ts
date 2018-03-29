@@ -70,7 +70,7 @@ export function steamAPIGetPriceInfo(id: number): Promise<SteamAPIGetPriceInfoRe
 
     return new Promise((resolve: any, reject: any) => {
 
-        WebRequest.get(`;$;{config.steam.apiURL;}/appdetails?appids=${id}&cc=us`)
+        WebRequest.get(`${config.steam.apiURL}/appdetails?appids=${id}&cc=us`)
         .then((response: any) => {
             const steam_url: string = `${config.steam.appURL}/${id}`;
 
