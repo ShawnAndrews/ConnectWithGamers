@@ -5,6 +5,7 @@ import Spinner from '../loader/spinner';
 import { validateCredentials, GenericResponseModel } from '../../../client/client-server-common/common';
 import * as AccountService from '../service/account/main';
 import AccountIcons from './accountIcons';
+import RaisedButton from 'material-ui/RaisedButton';
 
 interface ISignupFormProps {
     history: any;
@@ -85,8 +86,8 @@ class SignupForm extends React.Component<ISignupFormProps, any> {
                         <input type="text" className="account-form underline top-md-padding" placeholder="Username" onChange={this.usernameChanged} />
                         <input type="email" className="account-form underline top-md-padding" placeholder="Email" onChange={this.emailChanged} />
                         <input type="password" className="account-form underline top-md-padding" placeholder="Password" onChange={this.passwordChanged} />
-                        <button type="submit" className="account-form-create top-sm-padding" ><i className="fas fa-user-plus" />&nbsp;Sign up</button>
-                        <button type="button" className="account-form-back top-sm-padding" onClick={this.onClickBack}><i className="fas fa-arrow-left" />&nbsp;Back</button>
+                        <RaisedButton className="account-form-create top-sm-padding" label="Create" primary={true} onClick={this.onClickCreate}/>
+                        <RaisedButton className="account-form-back top-sm-padding" label="Back" primary={true} onClick={this.onClickBack}/>
                     </form>
                 </div>
                 <AccountIcons/>

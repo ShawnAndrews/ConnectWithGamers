@@ -1,12 +1,12 @@
 import axios from 'axios';
-import { GenericResponseModel } from '../../../../client/client-server-common/common';
+import { GenericResponseModel, AccountImageResponse } from '../../../../client/client-server-common/common';
 
 export function httpAccountSettings (): Promise<GenericResponseModel> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/account/settings')
         .then((result) => {
             if (result.data.error) {
-                return reject(`Failed to retrieve account settings.`);
+                return reject(`Failed to retrieve account settings. ${result.data.error}`);
             } else {
                 return resolve(result.data);
             }
@@ -57,9 +57,9 @@ export function httpSignup (username: string, password: string, email: string): 
     }); 
 }
 
-export function httpChangeAccountUsername (newUsername: string): Promise<GenericResponseModel> {
+export function httpChangeAccountSettings (newSettings: any): Promise<null> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post(`/account/change/username`, { newUsername })
+        axios.post(`/account/settings/change`, { newSettings })
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);
@@ -73,14 +73,15 @@ export function httpChangeAccountUsername (newUsername: string): Promise<Generic
     }); 
 }
 
-export function httpChangeAccountEmail (newEmail: string): Promise<GenericResponseModel> {
+export function httpChangeAccountImage (imageBase64: string): Promise<AccountImageResponse> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post(`/account/change/email`, { newEmail })
+        axios.post(`/account/settings/image/change`, encodeURIComponent(imageBase64))
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);
             } else {
-                return resolve();
+                const accountImageResponse: AccountImageResponse = result.data;
+                return resolve(accountImageResponse);
             }
         })
         .catch((err: string) => {
@@ -89,46 +90,15 @@ export function httpChangeAccountEmail (newEmail: string): Promise<GenericRespon
     }); 
 }
 
-export function httpChangeAccountDiscord (newDiscord: string): Promise<GenericResponseModel> {
+export function httpDeleteAccountImage (): Promise<AccountImageResponse> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post(`/account/change/discord`, { newDiscord })
+        axios.post(`/account/settings/image/delete`, {})
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);
             } else {
-                return resolve();
-            }
-        })
-        .catch((err: string) => {
-            return reject(`HTTP error: ${err}.`);
-        });
-    }); 
-}
-
-export function httpChangeAccountSteam (newSteam: string): Promise<GenericResponseModel> {
-    return new Promise((resolve: any, reject: any) => {
-        axios.post(`/account/change/steam`, { newSteam })
-        .then((result) => {
-            if (result.data.error) {
-                return reject(result.data.error);
-            } else {
-                return resolve();
-            }
-        })
-        .catch((err: string) => {
-            return reject(`HTTP error: ${err}.`);
-        });
-    }); 
-}
-
-export function httpChangeAccountTwitch (newTwitch: string): Promise<GenericResponseModel> {
-    return new Promise((resolve: any, reject: any) => {
-        axios.post(`/account/change/twitch`, { newTwitch })
-        .then((result) => {
-            if (result.data.error) {
-                return reject(result.data.error);
-            } else {
-                return resolve();
+                const accountImageResponse: AccountImageResponse = result.data;
+                return resolve(accountImageResponse);
             }
         })
         .catch((err: string) => {

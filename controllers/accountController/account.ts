@@ -1,7 +1,7 @@
 const express = require("express");
 // const RateLimit = require("express-rate-limit");
 const router = express.Router();
-import { AUTH_TOKEN_NAME, validateCredentials, DatelessResponse, AccountSettingsResponse, DbAccountSettingsResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse } from "../../client/client-server-common/common";
+import { AUTH_TOKEN_NAME, validateCredentials, DatelessResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import db from "../../models/db";
 
@@ -11,11 +11,9 @@ const routes = new routeModel();
 routes.addRoute("signup", "/signup");
 routes.addRoute("login", "/login");
 routes.addRoute("settings", "/settings");
-routes.addRoute("change/username", "/change/username");
-routes.addRoute("change/email", "/change/email");
-routes.addRoute("change/discord", "/change/discord");
-routes.addRoute("change/steam", "/change/steam");
-routes.addRoute("change/twitch", "/change/twitch");
+routes.addRoute("settings/change", "/settings/change");
+routes.addRoute("settings/image/change", "/settings/image/change");
+routes.addRoute("settings/image/delete", "/settings/image/delete");
 
 // limit account creation requests to 5acc/1hr
 // const createAccountLimiter = new RateLimit({
@@ -106,7 +104,8 @@ router.post(routes.getRoute("settings"), (req: any, res: any) => {
             email: response.email,
             steam: response.steam,
             discord: response.discord,
-            twitch: response.twitch
+            twitch: response.twitch,
+            image: response.image
         };
         return res
         .send(accountSettingsResponse);
@@ -119,18 +118,50 @@ router.post(routes.getRoute("settings"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("change/username"), (req: any, res: any) => {
+router.post(routes.getRoute("settings/change"), (req: any, res: any) => {
     const datelessResponse: DatelessResponse = { error: undefined };
-    const newUsername: string = req.body.newUsername;
+    const newSettings: any = req.body.newSettings;
 
     // authorize
     db.authorize(req.headers.cookie)
     .then((response: DbAuthorizeResponse) => {
-        return db.changeAccountUsername(response.accountid, newUsername);
-    })
-    .then(() => {
-        return res
-        .send(datelessResponse);
+        const changePromises: Promise<null>[] = [];
+
+        if (newSettings.username) {
+            changePromises.push(db.changeAccountUsername(response.accountid, newSettings.username));
+        }
+
+        if (newSettings.email) {
+            changePromises.push(db.changeAccountEmail(response.accountid, newSettings.email));
+        }
+
+        if (newSettings.password) {
+            changePromises.push(db.changeAccountPassword(response.accountid, newSettings.password));
+        }
+
+        if (newSettings.steam) {
+            changePromises.push(db.changeAccountSteam(response.accountid, newSettings.steam));
+        }
+
+        if (newSettings.discord) {
+            changePromises.push(db.changeAccountDiscord(response.accountid, newSettings.discord));
+        }
+
+        if (newSettings.twitch) {
+            changePromises.push(db.changeAccountTwitch(response.accountid, newSettings.twitch));
+        }
+
+        Promise.all(changePromises)
+        .then((vals: any) => {
+            return res
+            .send(datelessResponse);
+        })
+        .catch((error: string) => {
+            datelessResponse.error = error;
+            return res
+            .send(datelessResponse);
+        });
+
     })
     .catch((error: string) => {
         datelessResponse.error = error;
@@ -140,86 +171,45 @@ router.post(routes.getRoute("change/username"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("change/email"), (req: any, res: any) => {
-    const datelessResponse: DatelessResponse = { error: undefined };
-    const newEmail: string = req.body.newEmail;
+router.post(routes.getRoute("settings/image/change"), (req: any, res: any) => {
+    const accountImageResponse: AccountImageResponse = { error: undefined };
+    const imageBase64: string = Object.keys(req.body)[0].split(",")[1];
 
     // authorize
     db.authorize(req.headers.cookie)
     .then((response: DbAuthorizeResponse) => {
-        return db.changeAccountEmail(response.accountid, newEmail);
+        return db.changeAccountImage(response.accountid, imageBase64);
     })
-    .then(() => {
+    .then((response: DbAccountImageResponse) => {
+        accountImageResponse.link = response.link;
         return res
-        .send(datelessResponse);
+        .send(accountImageResponse);
     })
     .catch((error: string) => {
-        datelessResponse.error = error;
+        accountImageResponse.error = error;
         return res
-        .send(datelessResponse);
+        .send(accountImageResponse);
     });
 
 });
 
-router.post(routes.getRoute("change/discord"), (req: any, res: any) => {
-    const datelessResponse: DatelessResponse = { error: undefined };
-    const newDiscord: string = req.body.newDiscord;
+router.post(routes.getRoute("settings/image/delete"), (req: any, res: any) => {
+    const accountImageResponse: AccountImageResponse = { error: undefined };
 
     // authorize
     db.authorize(req.headers.cookie)
     .then((response: DbAuthorizeResponse) => {
-        return db.changeAccountDiscord(response.accountid, newDiscord);
+        return db.deleteAccountImage(response.accountid);
     })
-    .then(() => {
+    .then((response: DbAccountImageResponse) => {
+        accountImageResponse.link = response.link;
         return res
-        .send(datelessResponse);
-    })
-    .catch((error: string) => {
-        datelessResponse.error = error;
-        return res
-        .send(datelessResponse);
-    });
-
-});
-
-router.post(routes.getRoute("change/steam"), (req: any, res: any) => {
-    const datelessResponse: DatelessResponse = { error: undefined };
-    const newSteam: string = req.body.newSteam;
-
-    // authorize
-    db.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return db.changeAccountSteam(response.accountid, newSteam);
-    })
-    .then(() => {
-        return res
-        .send(datelessResponse);
+        .send(accountImageResponse);
     })
     .catch((error: string) => {
-        datelessResponse.error = error;
+        accountImageResponse.error = error;
         return res
-        .send(datelessResponse);
-    });
-
-});
-
-router.post(routes.getRoute("change/twitch"), (req: any, res: any) => {
-    const datelessResponse: DatelessResponse = { error: undefined };
-    const newTwitch: string = req.body.newTwitch;
-
-    // authorize
-    db.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return db.changeAccountTwitch(response.accountid, newTwitch);
-    })
-    .then(() => {
-        return res
-        .send(datelessResponse);
-    })
-    .catch((error: string) => {
-        datelessResponse.error = error;
-        return res
-        .send(datelessResponse);
+        .send(accountImageResponse);
     });
 
 });

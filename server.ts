@@ -12,7 +12,8 @@ import db from "./models/db";
 import logIP from "./controllers/logger/main";
 
 /* parse post body */
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({limit: "50mb"}));
+app.use(bodyParser.urlencoded({limit: "50mb", extended: false }));
 app.use(bodyParser.json());
 
 /* enable cookies  */

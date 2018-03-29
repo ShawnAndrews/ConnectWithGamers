@@ -1,11 +1,8 @@
-@import "checkboxSwitch";
-
 @login-form-col: whitesmoke;
 @login-logo-URL: url("https://i.imgur.com/obqCKhX.png");
 @login-logo-width: 200px;
 @login-logo-height: 200px;
-@ribbon-primary-color: rgb(15, 48, 93);
-@ribbon-secondary-color: rgba(0,0,0,0.35);
+@title-chip-size: 60px;
 
 .account-page {
 
@@ -14,15 +11,15 @@
   }
 
   .top-xs-padding {
-    margin: 10px auto auto auto;
+    margin: 10px auto auto auto !important;
   }
 
   .top-sm-padding {
-    margin: 16px auto auto auto;
+    margin: 16px auto auto auto !important;
   }
 
   .top-md-padding {
-    margin: 20px auto auto auto;
+    margin: 20px auto auto auto !important;
   }
 
   .account-center {
@@ -43,6 +40,12 @@
   }
 
   .account-settings {
+    position: absolute;
+    top: @navbar-item-height;
+    left: 0;
+    height: calc(~"100% -" @navbar-item-height);
+    width: 100%;
+    box-sizing: border-box;
     padding: 15px;
 
     input {
@@ -50,182 +53,182 @@
     }
 
     label {
-      color: rgba(255, 255, 255, 0.35) !important;
-    }
-
-    hr {
-      border-bottom: 2px solid rgba(255,255,255,0.2) !important;
+      color: rgba(255, 255, 255, 0.55) !important;
     }
 
     .account-settings-title {
-      text-align: center;
+      position: relative;
+      height: 140px !important;
 
-      .ribbon {
+      .account-settings-title-container {
         position: relative;
-        background: @ribbon-primary-color;
-        display: block;
-        width: 60%;
-        margin: 0 auto;
-        font-family: Source Sans Pro;
-        text-align: center;
-        z-index: 3;
-        
-        &:before {
-            position: absolute;
-            content: "";
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 12px 12px 0;
-            border-color: transparent @ribbon-secondary-color transparent transparent;
-            left: -1px;
-            bottom: -12px;
-            z-index: 1;
+        width: @title-chip-size;
+        height: @title-chip-size;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        .account-settings-title-chip {
+          position: absolute !important;
+          height: inherit !important;
+          width: inherit !important;
+          font-size: 30px !important;
+          background-color: rgba(255, 255, 255, 0.3)!important
         }
-        &:after {
-            position: absolute;
-            content: "";
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 12px 12px 0 0;
-            border-color: @ribbon-secondary-color transparent transparent transparent;
-            right: -1px;
-            bottom: -12px;
-            z-index: 1;
+  
+        .account-settings-title-input {
+          position: absolute !important;
+          height: inherit !important;
+          width: inherit !important;
+          display: inline-block;
+          padding: calc(@title-chip-size + 10px) 0 0 0;
+          overflow: hidden;
+          -webkit-box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          box-sizing: border-box;
+          background: none;
+          border-radius: 50%;
+          outline: none;
         }
-        .left-fold {
-          background: @ribbon-secondary-color;
+
+        .account-settings-title-overlay-container {
           position: absolute;
-          height: 40px;
-          width: 25px;
-          left: -15px;
-          bottom: -12px;
-          display: block;
-          margin: 0;
-          border-right: 1px solid @ribbon-secondary-color;
-          &:before {
-            position: absolute;
-            content: "";
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 15px 20px 0;
-            border-color: transparent @ribbon-secondary-color transparent transparent;
-            left: -15px;
-            top: 0;
-          }
-          &:after {
-            position: absolute;
-            content: "";
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 0 20px 15px;
-            border-color: transparent transparent @ribbon-secondary-color transparent;
-            left: -15px;
-            bottom: 0;
-          }
-       }
-        h1 {
-          z-index: 2;
-          position: relative;
-          color: rgba(255,255,255,0.8);
           width: 100%;
-          display: block;
-          font-size: 1.3em;
-          line-height: 1.7em;
-          font-weight: 600;
-          letter-spacing: 0.5px;
+          height: 100%;
+          color: rgba(255,255,255,0.4);
+          border-radius: 50%;
+          box-shadow: 3px 4px rgba(0,0,0,0.3);
+          -moz-box-shadow: 3px 4px rgba(0,0,0,0.3);
+          -webkit-box-shadow: 3px 4px rgba(0,0,0,0.3);
+          -o-box-shadow: 3px 4px rgba(0,0,0,0.3);
+
+          .account-settings-title-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: inline-flex;
+
+            .account-settings-title-image {
+              position: relative;
+              color: rgba(15, 46, 91,0.5);
+              font-size: 1.5em;
+            }
+
+            .account-settings-title-plus {
+              position: relative;
+              color: rgba(15, 46, 91,0.5);
+              margin: auto auto auto 2px;
+            }
+          }
         }
-        .right-fold {
-          background: @ribbon-secondary-color;
+
+      }
+
+      .account-settings-title-discard-container {
+        position: relative;
+        width: @title-chip-size / 2;
+        height: @title-chip-size / 2;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        .account-settings-title-chip-discard {
+          position: absolute !important;
+          height: inherit !important;
+          width: inherit !important;
+          font-size: 30px !important;
+          background-color: rgba(255, 255, 255, 0.3)!important
+        }
+  
+        .account-settings-title-input {
+          position: absolute !important;
+          height: inherit !important;
+          width: inherit !important;
+          display: inline-block;
+          padding: calc(@title-chip-size + 10px) 0 0 0;
+          overflow: hidden;
+          -webkit-box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          box-sizing: border-box;
+          background: none;
+          border-radius: 50%;
+          outline: none;
+        }
+
+        .account-settings-title-overlay-container {
           position: absolute;
-          height: 40px;
-          width: 25px;
-          right: -15px;
-          bottom: -12px;
-          display: block;
-          margin: 0;
-          border-left: 1px solid @ribbon-secondary-color;
-          &:before {
+          width: 100%;
+          height: 100%;
+          color: rgba(255,255,255,0.4);
+          border-radius: 50%;
+          box-shadow: 3px 4px rgba(0,0,0,0.3);
+          -moz-box-shadow: 3px 4px rgba(0,0,0,0.3);
+          -webkit-box-shadow: 3px 4px rgba(0,0,0,0.3);
+          -o-box-shadow: 3px 4px rgba(0,0,0,0.3);
+
+          .account-settings-title-center {
             position: absolute;
-            content: "";
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 20px 15px 0 0;
-            border-color:  @ribbon-secondary-color transparent transparent transparent;
-            right: -15px;
-            top: 0;
-          }
-          &:after {
-            position: absolute;
-            content: "";
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 20px 0 0 15px;
-            border-color: transparent transparent transparent @ribbon-secondary-color;
-            right: -15px;
-            bottom: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: inline-flex;
+
+            .account-settings-title-image {
+              position: relative;
+              color: rgba(15, 46, 91,0.5);
+              font-size: 1em;
+            }
+
+            .account-settings-title-plus {
+              position: relative;
+              color: rgba(15, 46, 91,0.5);
+              margin: auto auto auto 2px;
+            }
           }
         }
+
       }
     }
 
-    .account-settings-username, .account-settings-email {
-      width: 60% !important;
+    .account-settings-username, .account-settings-email, .account-settings-password, .account-settings-showlinks {
+      width: 100% !important;
       font-size: 1.2em !important;
+
+      > div > hr {
+        border-bottom-color: rgba(255,255,255,0.35) !important;
+      }
+    }
+
+    .account-settings-showlinks {
+      margin-top: 20px;
     }
 
     .account-settings-container {
       position: relative;
 
       .account-settings-link {
-        width: 45% !important;
+        width: auto !important;
         font-size: 1.2em !important;
+
+        > div > hr {
+          border-bottom-color: rgba(255,255,255,0.35) !important;
+        }
       }
   
       .account-settings-link-icon {
         margin-right: 4%;
         color: rgb(15, 48, 93);
       }
-  
-      .account-settings-change {
-        position: absolute;
-        bottom: 0px;
-        right: 0px;
-        display: inline-block !important;
-        margin-left: 10%;
-        margin-bottom: 10px;
-        width: 30% !important;
-        background-color: transparent !important;
-  
-        > button {
-          background-color: rgba(0, 0, 0, 0.3) !important;
-        }
-      }
-    }
-
-    .account-settings-hr {
-      display: block;
-      border: 0; 
-      height: 1px;
-      margin: 35px 0px 10px 0px;
-      background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0),whitesmoke, rgba(255, 255, 255, 0));
-      background: -moz-linear-gradient(left, rgba(255, 255, 255, 0), whitesmoke, rgba(255, 255, 255, 0));
-      background: -ms-linear-gradient(left, rgba(255, 255, 255, 0), whitesmoke, rgba(255, 255, 255, 0));
-      background: -o-linear-gradient(left, rgba(255, 255, 255, 0), whitesmoke, rgba(255, 255, 255, 0));
-      border-bottom: none !important;
     }
 
     .account-settings-logout {
-      position: absolute;
+      position: relative;
       width: 100%;
       background-color: transparent !important;
       bottom: 0;
       left: 0;
+      margin-top: 20px;
 
       span {
         font-size: 1.2em !important; 
@@ -235,6 +238,26 @@
 
       > button {
         background-color: rgba(0, 0, 0, 0.3) !important;
+        height: 60px !important;
+      }
+    }
+
+    .account-settings-savechanges {
+      position: fixed;
+      width: 100%;
+      background-color: transparent !important;
+      bottom: 0;
+      left: 0;
+      margin-top: 20px;
+
+      span {
+        font-size: 1.2em !important; 
+        letter-spacing: 3px !important; 
+        font-weight: 700 !important;
+      }
+
+      > button {
+        background-color: rgb(216, 182, 29)!important;
         height: 60px !important;
       }
     }
@@ -255,55 +278,61 @@
       width: 60%;
       font-size: 1.2em;
       border-width: 0px 0px 2px 0px;
-      color: transparent;
-      text-shadow: 0 0 0 @login-form-col;
+      color: rgba(255,255,255,0.7);
       transition: border-bottom 0.35s ease-in-out;
     }
   
     .account-form:focus {
       border-bottom: 1px solid @login-form-col;
     }
-    
-    .account-rememberme {
-      opacity: 0.8;
-    }
 
-    input[type=checkbox]:checked.account-checkbox {
-      background-color: transparent;
-      box-shadow: inset 0 0 0 13px transparent;
-      border: 1px solid whitesmoke;
+    .account-checkbox {
+      opacity: 0.8;
+      font-weight: 700;
+
+      * {
+        color: white !important;
+      }
+
+      :focus {
+        outline:none;
+      }
     }
 
     .account-form-login, .account-form-create {
-      display: block;
-      background: transparent;
-      letter-spacing: 2px;
-      border: 1px solid @login-form-col;
-      border-radius: 10px;
-      color: @login-form-col;
-      font-weight: bold;
-      font-size: 1.6em;
-      line-height: 40px;
-      text-align: center;
-      text-transform: uppercase;
-      border-bottom: 5px solid rgba(255, 255, 255, 0.85);
-      width: 60%;
+      position: relative;
+      display: block !important;
+      width: 70%;
+      background-color: transparent !important;
+
+      span {
+        font-size: 1.2em !important; 
+        letter-spacing: 3px !important; 
+        font-weight: 700 !important;
+      }
+
+      > button {
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        height: 50px !important;
+      }
     }
   
     .account-form-signup, .account-form-back {
       position: relative;
-      display: block;
-      background: transparent;
-      border: 1px solid @login-form-col;
-      border-radius: 10px;
-      color: @login-form-col;
-      font-weight: bold;
-      font-size: 1em;
-      line-height: 32px;
-      text-align: center;
-      text-transform: uppercase;
-      border-bottom: 5px solid rgba(255, 255, 255, 0.85);
-      width: 35%;
+      display: block !important;
+      width: 40%;
+      background-color: transparent !important;
+
+      span {
+        font-size: 1.2em !important; 
+        letter-spacing: 3px !important; 
+        font-weight: 700 !important;
+      }
+
+      > button {
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        height: 50px !important;
+      }
     }
   
     button > i {
@@ -388,6 +417,40 @@
           opacity: 1.0;
         }
       }
+    }
+  }
+
+  .large-checkbox {
+
+    > div {
+    
+      > label {
+        line-height: 38px !important;
+      }
+
+      > div {
+        width: 50px !important;
+
+        > div > div > span {
+          background-color: transparent !important;
+        }
+
+        > div {
+          height: 28px !important;
+          border-radius: 30px !important;
+          background-color: rgba(15, 51, 94,0.4) !important;
+        }
+
+        > div > div {
+          top: -3px !important;
+          width: 30px !important;
+          height: 30px !important;
+          line-height: 30px !important;
+          background-color: whitesmoke !important;
+          border-radius: 50% !important;
+        }
+      }
+      
     }
   }
 }

@@ -1,9 +1,12 @@
 const bcrypt = require("bcrypt");
+const imgur = require("imgur");
 import config from "../config";
 import DatabaseBase from "./dbBase";
-import { AUTH_TOKEN_NAME, GenericResponseModel, validateUsername, validateEmail, validateURL, ChatHistoryResponse, DbAccountSettingsResponse, DbAuthorizeResponse, DbTokenResponse, DbAuthenticateResponse, ChatroomUser } from "../client/client-server-common/common";
+import { AUTH_TOKEN_NAME, GenericResponseModel, validateUsername, validateEmail, validateURL, ChatHistoryResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthorizeResponse, DbTokenResponse, DbAuthenticateResponse, ChatroomUser, validatePassword } from "../client/client-server-common/common";
 
 const SALT_RNDS = 10;
+
+imgur.setClientId(config.imgur.clientId);
 
 class DatabaseModel extends DatabaseBase {
 
@@ -68,6 +71,10 @@ class DatabaseModel extends DatabaseBase {
 
         return new Promise((resolve, reject) => {
 
+            if (!cookie) {
+                return reject("Cookie not found.");
+            }
+
             const authCookieMatch: string[] = cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
 
             // validate
@@ -109,7 +116,7 @@ class DatabaseModel extends DatabaseBase {
                 ["accountid"],
                 [this.sql.Int],
                 [accountid],
-                ["username", "email", "discord", "steam", "twitch"],
+                ["username", "email", "discord", "steam", "twitch", "image"],
                 "accountid=@accountid")
                 .then((dbResponse: GenericResponseModel) => {
                     const username = dbResponse.data.recordsets[0][0].username;
@@ -117,18 +124,74 @@ class DatabaseModel extends DatabaseBase {
                     const discord = dbResponse.data.recordsets[0][0].discord || "";
                     const steam = dbResponse.data.recordsets[0][0].steam || "";
                     const twitch = dbResponse.data.recordsets[0][0].twitch || "";
+                    const image = dbResponse.data.recordsets[0][0].image;
                     const dbAccountSettingsResponse: DbAccountSettingsResponse = {
                         username: username,
                         email: email,
                         discord: discord,
                         steam: steam,
-                        twitch: twitch};
+                        twitch: twitch,
+                        image: image};
                     return resolve(dbAccountSettingsResponse);
                 })
                 .catch((error: string) => {
                     return reject(error);
                 });
 
+        });
+    }
+
+    changeAccountImage(accountid: number, imageBase64: string): Promise<DbAccountImageResponse> {
+        return new Promise( (resolve, reject) => {
+            imgur.uploadBase64(imageBase64)
+                .then((response: any) => {
+                    const link: string = response.data.link;
+                    this.update(
+                        "dbo.accounts",
+                        ["accountid", "image"],
+                        [this.sql.Int, this.sql.VarChar],
+                        [accountid, link],
+                        ["image"],
+                        "accountid=@accountid")
+                        .then((dbResponse: GenericResponseModel) => {
+                            if (dbResponse.data.rowsAffected[0] == 1) {
+                                const dbAccountImageResponse: DbAccountImageResponse = { link: link };
+                                return resolve(dbAccountImageResponse);
+                            } else {
+                                return reject(`Database error.`);
+                            }
+                        })
+                        .catch((error: any) => {
+                            return reject(`Database error.`);
+                        });
+                })
+                .catch((error: string) => {
+                    return reject(`Error changing account image. ${error}`);
+                });
+
+        });
+    }
+
+    deleteAccountImage(accountid: number): Promise<DbAccountImageResponse> {
+        return new Promise( (resolve, reject) => {
+            this.update(
+                "dbo.accounts",
+                ["accountid", "image"],
+                [this.sql.Int, this.sql.VarChar],
+                [accountid, undefined],
+                ["image"],
+                "accountid=@accountid")
+                .then((dbResponse: GenericResponseModel) => {
+                    if (dbResponse.data.rowsAffected[0] == 1) {
+                        const dbAccountImageResponse: DbAccountImageResponse = { link: undefined };
+                        return resolve(dbAccountImageResponse);
+                    } else {
+                        return reject(`Database error.`);
+                    }
+                })
+                .catch((error: any) => {
+                    return reject(`Database error.`);
+                });
         });
     }
 
@@ -191,6 +254,40 @@ class DatabaseModel extends DatabaseBase {
 
         });
     }
+
+    changeAccountPassword(accountid: number, newPassword: string): Promise<null> {
+
+        return new Promise( (resolve, reject) => {
+
+            const passwordValidationError: string = validatePassword(newPassword);
+            if (passwordValidationError) {
+                return reject(passwordValidationError);
+            }
+
+            const salt = bcrypt.genSaltSync(SALT_RNDS);
+            const hash = bcrypt.hashSync(newPassword, salt);
+
+            this.update(
+                "dbo.accounts",
+                ["accountid", "passwordHash", "salt"],
+                [this.sql.Int, this.sql.VarChar, this.sql.VarChar],
+                [accountid, hash, salt],
+                ["passwordHash", "salt"],
+                "accountid=@accountid")
+                .then((dbResponse: GenericResponseModel) => {
+                    if (dbResponse.data.rowsAffected[0] == 1) {
+                        return resolve();
+                    } else {
+                        return reject(`Database error already taken.`);
+                    }
+                })
+                .catch((error: string) => {
+                    return reject(`Internal error changing password.`);
+                });
+
+        });
+    }
+
     changeAccountDiscord(accountid: number, newDiscord: string): Promise<null> {
 
         return new Promise( (resolve, reject) => {
@@ -307,6 +404,29 @@ class DatabaseModel extends DatabaseBase {
         });
     }
 
+    getAccountImage(accountid: number): Promise<DbAccountImageResponse> {
+
+        return new Promise( (resolve, reject) => {
+
+            this.select(
+                "dbo.accounts",
+                ["accountid"],
+                [this.sql.Int],
+                [accountid],
+                ["image"],
+                "accountid=@accountid")
+                .then((dbResponse: GenericResponseModel) => {
+                    const dbAccountImageResponse: DbAccountImageResponse = { link: dbResponse.data.recordsets[0][0].image };
+                    return resolve(dbAccountImageResponse);
+                })
+                .catch((error: string) => {
+                    return reject(`Database error. ${error}`);
+                });
+
+        });
+    }
+
+
     token(username: string, remember: boolean): Promise<DbTokenResponse> {
 
         const genAuthToken = (): string => {
@@ -397,7 +517,7 @@ class DatabaseModel extends DatabaseBase {
 
     }
 
-    addChatMessage(username: string, date: number, text: string): Promise<GenericResponseModel> {
+    addChatMessage(username: string, date: number, text: string, image: string): Promise<GenericResponseModel> {
 
         return new Promise( (resolve, reject) => {
 
@@ -405,9 +525,9 @@ class DatabaseModel extends DatabaseBase {
 
             this.insert(
                 "dbo.chatroom",
-                ["username", "date", "text"],
-                [this.sql.VarChar, this.sql.DateTime, this.sql.NVarChar],
-                [username, date, text])
+                ["username", "date", "text", "image"],
+                [this.sql.VarChar, this.sql.DateTime, this.sql.NVarChar, this.sql.VarChar],
+                [username, date, text, image])
                 .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.error) {
                         return reject(dbResponse.error);
@@ -429,16 +549,17 @@ class DatabaseModel extends DatabaseBase {
                 [],
                 [],
                 [],
-                ["username", "date", "text"],
+                ["username", "date", "text", "image"],
                 undefined,
                 config.chatHistoryCount)
                 .then((dbResponse: GenericResponseModel) => {
-                    const chatHistoryResponse: ChatHistoryResponse = { name: [], date: [], text: [] };
+                    const chatHistoryResponse: ChatHistoryResponse = { name: [], date: [], text: [], image: [] };
 
                     dbResponse.data.recordsets[0].forEach((chat: any) => {
                         chatHistoryResponse.name.push(chat.username);
                         chatHistoryResponse.date.push(`${new Date(chat.date).toLocaleDateString()} ${new Date(chat.date).toLocaleTimeString()}`);
                         chatHistoryResponse.text.push(chat.text);
+                        chatHistoryResponse.image.push(chat.image);
                     });
 
                     return resolve(chatHistoryResponse);

@@ -1,4 +1,3 @@
-const popupS = require('popups');
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 import * as io from 'socket.io-client';
@@ -8,6 +7,7 @@ import FontIcon from 'material-ui/FontIcon';
 import Avatar from 'material-ui/Avatar';
 import ChatMessage, { IChatMessageProps } from './chatmessage';
 import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory } from '../../../client/client-server-common/common';
+import { popupBasic } from './../common';
 
 interface IChatroomProps {
     history: any;
@@ -40,7 +40,7 @@ class Chatroom extends React.Component<IChatroomProps, any> {
 
     private onNewMessage(chat: SingleChatHistory) {
         const newChatLog: Array<IChatMessageProps> = this.state.chatLog;
-        newChatLog.push({ name: chat.name, date: chat.date, text: chat.text });
+        newChatLog.push({ name: chat.name, date: chat.date, text: chat.text, image: chat.image });
         this.setState({ text: '', chatLog: newChatLog }, () => {
             this.scrollChatToMostRecent();
         });
@@ -55,8 +55,15 @@ class Chatroom extends React.Component<IChatroomProps, any> {
     } 
 
     private onSend(): void {
-        const authToken: string = document.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`))[1];
-        this.state.socket.emit(CHATROOM_EVENTS.PostMessage, { authToken: authToken, text: this.state.text });
+        const cookieMatch: string[] = document.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
+        if (cookieMatch) {
+            const authToken: string = cookieMatch[1];
+            this.state.socket.emit(CHATROOM_EVENTS.PostMessage, { authToken: authToken, text: this.state.text });   
+        } else {
+            popupBasic(`Login session expired. Please login again.`, () => {
+                this.props.history.push(`/account/login`);
+            });
+        }
     }
     
     render() {
@@ -85,6 +92,7 @@ class Chatroom extends React.Component<IChatroomProps, any> {
                                     name={x.name}
                                     date={x.date}
                                     text={x.text}
+                                    image={x.image}
                                 />
                             );
                         })}

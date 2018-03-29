@@ -5,6 +5,8 @@ import Spinner from '../loader/spinner';
 import { validateCredentials, GenericResponseModel } from '../../../client/client-server-common/common';
 import * as AccountService from '../service/account/main';
 import AccountIcons from './accountIcons';
+import Toggle from 'material-ui/Toggle';
+import RaisedButton from 'material-ui/RaisedButton';
 
 interface ILoginFormProps {
     history: any;
@@ -36,8 +38,8 @@ class LoginForm extends React.Component<ILoginFormProps, any> {
         this.setState({password: event.target.value});
     }
 
-    remembermeChanged(event: any) {
-        this.setState({rememberme: event.target.checked});
+    remembermeChanged(event: any, isInputChecked: boolean) {
+        this.setState({rememberme: isInputChecked});
     }
 
     onClickLogin(event: any) {
@@ -85,22 +87,15 @@ class LoginForm extends React.Component<ILoginFormProps, any> {
                         <input type="password" className=" account-form underline top-md-padding" placeholder="Password" onChange={this.passwordChanged} />
                         <label className="account-form top-sm-padding">
                             <div className="div-center">
-                                <span className="account-rememberme">Remember me</span>
-                                <input className="account-checkbox" type="checkbox" onChange={this.remembermeChanged}/>
+                                <Toggle
+                                    className="account-checkbox large-checkbox"
+                                    label="Remember me"
+                                    onToggle={this.remembermeChanged}
+                                />
                             </div>
                         </label>
-                        <button type="submit" className="account-form-login top-sm-padding">
-                            <span>
-                                <i className="fas fa-sign-in-alt"/>
-                                &nbsp;Login
-                            </span>
-                        </button>
-                        <button type="button" className="account-form-signup top-sm-padding" onClick={this.onClickSignUp}>
-                            <span>
-                                <i className="fas fa-user-plus"/>
-                                &nbsp;Sign Up
-                            </span>
-                        </button>
+                        <RaisedButton className="account-form-login top-sm-padding" label="Login" primary={true} onClick={this.onClickLogin}/>
+                        <RaisedButton className="account-form-signup top-sm-padding" label="Sign Up" primary={true} onClick={this.onClickSignUp}/>
                     </form>
                 </div>
                 <AccountIcons/>

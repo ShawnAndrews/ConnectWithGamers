@@ -20,6 +20,9 @@ export interface Config {
         apiURL: string,
         appURL: string
     };
+    imgur: {
+        clientId: string
+    };
 }
 
 export const enum CHATROOM_EVENTS {
@@ -74,7 +77,7 @@ export function validateEmail(email: string): string {
 export function validateURL(url: string): string {
     const pattern = new RegExp(`^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$`);
     if (!pattern.test(url)) {
-        return `Invalid URL entered.`;
+        return `Invalid URL link entered.`;
     } else {
         return undefined;
     }
@@ -143,6 +146,11 @@ export interface DbAccountSettingsResponse {
     discord: string;
     steam: string;
     twitch: string;
+    image: string;
+}
+
+export interface DbAccountImageResponse {
+    link: string;
 }
 
 export interface GenericResponseModel {
@@ -152,8 +160,9 @@ export interface GenericResponseModel {
 
 export interface SingleChatHistory {
     name: string;
-    date: string;
+    date: Date;
     text: string;
+    image: string;
 }
 
 export interface AccountSettingsResponse {
@@ -164,13 +173,20 @@ export interface AccountSettingsResponse {
         discord: string;
         steam: string;
         twitch: string;
+        image: string;
     };
+}
+
+export interface AccountImageResponse {
+    error: string;
+    link?: string;
 }
 
 export interface ChatHistoryResponse {
     name: string[];
     date: string[];
     text: string[];
+    image: string[];
 }
 
 export interface GameListEntryResponse {

@@ -24,8 +24,8 @@ class Home extends React.Component<IHomeProps, any> {
                     <div className="menu-home-uptodate" onClick={() => { this.props.history.push("/menu/search"); }}/>
                     <div className="menu-home-discover" onClick={() => { this.props.history.push("/menu/search"); }}/>
                     <div className="menu-home-review" onClick={() => { this.props.history.push("/menu/search"); }}/>
-                    <div className="menu-home-chatroom" onClick={() => { this.props.history.push("/menu/chat"); }}/>
-                    <div className="menu-home-chatroomlinks" onClick={() => { this.props.history.push("/menu/account"); }}/>
+                    <div className="menu-home-chatroom" onClick={() => { this.props.history.push("/chat"); }}/>
+                    <div className="menu-home-chatroomlinks" onClick={() => { this.props.history.push("/account"); }}/>
                 </div>
             </div>
         );
