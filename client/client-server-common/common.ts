@@ -28,6 +28,7 @@ export interface Config {
 export const enum CHATROOM_EVENTS {
     Usercount = "usercount",
     Message = "message",
+    MessageHistory = "message-history",
     PostMessage = "post-message",
     User = "user",
 }
@@ -117,9 +118,19 @@ export function validateCredentials(username: string, password: string, email?: 
 
 export interface ChatroomUser {
     username: string;
+    last_active: number;
     steam_url?: string;
     twitch_url?: string;
     discord_url?: string;
+    image?: string;
+}
+
+export interface DbUserResponse {
+    username: string;
+    steam_url?: string;
+    twitch_url?: string;
+    discord_url?: string;
+    image?: string;
 }
 
 export interface DatelessResponse {

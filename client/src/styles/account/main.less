@@ -37,6 +37,16 @@
       width: @login-logo-width;
       opacity: 0.85;
     }
+
+    @media (max-height:650px) {
+      .account-logo {
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: @login-logo-width * 0.75 @login-logo-height * 0.75;
+        height: @login-logo-height * 0.75;
+        width: @login-logo-width * 0.75;
+      }
+    }
   }
 
   .account-settings {
@@ -312,7 +322,7 @@
       }
 
       > button {
-        background-color: rgba(0, 0, 0, 0.3) !important;
+        background-color: rgba(0, 0, 0, 0.2) !important;
         height: 50px !important;
       }
     }
@@ -330,7 +340,7 @@
       }
 
       > button {
-        background-color: rgba(0, 0, 0, 0.3) !important;
+        background-color: rgba(0, 0, 0, 0.2) !important;
         height: 50px !important;
       }
     }

@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const imgur = require("imgur");
 import config from "../config";
 import DatabaseBase from "./dbBase";
-import { AUTH_TOKEN_NAME, GenericResponseModel, validateUsername, validateEmail, validateURL, ChatHistoryResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthorizeResponse, DbTokenResponse, DbAuthenticateResponse, ChatroomUser, validatePassword } from "../client/client-server-common/common";
+import { AUTH_TOKEN_NAME, GenericResponseModel, validateUsername, validateEmail, validateURL, ChatHistoryResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthorizeResponse, DbTokenResponse, DbAuthenticateResponse, DbUserResponse, validatePassword } from "../client/client-server-common/common";
 
 const SALT_RNDS = 10;
 
@@ -571,7 +571,7 @@ class DatabaseModel extends DatabaseBase {
         });
     }
 
-    getUserById(accountid: number): Promise<ChatroomUser> {
+    getUserById(accountid: number): Promise<DbUserResponse> {
 
         return new Promise( (resolve, reject) => {
 
@@ -580,17 +580,18 @@ class DatabaseModel extends DatabaseBase {
                 ["accountid"],
                 [this.sql.Int],
                 [accountid],
-                ["username", "discord", "steam", "twitch"],
+                ["username", "discord", "steam", "twitch", "image"],
                 "accountid=@accountid")
                 .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.recordsets[0].length > 0) {
-                        const user: ChatroomUser = {
+                        const dbUser: DbUserResponse = {
                             username: dbResponse.data.recordsets[0][0].username,
                             discord_url: dbResponse.data.recordsets[0][0].discord,
                             steam_url: dbResponse.data.recordsets[0][0].steam,
-                            twitch_url: dbResponse.data.recordsets[0][0].twitch
+                            twitch_url: dbResponse.data.recordsets[0][0].twitch,
+                            image: dbResponse.data.recordsets[0][0].image
                         };
-                        return resolve(user);
+                        return resolve(dbUser);
                     } else {
                         return reject(accountid);
                     }

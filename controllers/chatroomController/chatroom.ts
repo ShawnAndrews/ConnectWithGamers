@@ -1,11 +1,20 @@
 const socketIO = require("socket.io");
-import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbAuthorizeResponse, DbAccountImageResponse } from "../../client/client-server-common/common";
+import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbAuthorizeResponse, DbUserResponse, DbAccountImageResponse } from "../../client/client-server-common/common";
 import db from "../../models/db";
 
 export default function registerChatHandlers(chatServer: any): void {
     const chatHandler = socketIO(chatServer);
-    const usersActivityRefreshMins: number = 15;
+    const usersActivityRefreshMins: number = 30;
     const usersInChat: any[] = [];
+
+    const getExpiresOnFromId = (accountId: number): Date => {
+        for (let i = 0; i < usersInChat.length; i++) {
+            if (usersInChat[i].accountid === accountId ) {
+                return usersInChat[i].expiresOn;
+            }
+        }
+        return new Date();
+    };
 
     const getUserCount = (): number => {
         // delete inactive users
@@ -53,10 +62,7 @@ export default function registerChatHandlers(chatServer: any): void {
             socket.broadcast.emit(CHATROOM_EVENTS.Usercount, usercount);
             db.getChatHistory()
             .then((chats: ChatHistoryResponse) => {
-                for (let i = 0; i < chats.name.length; i++) {
-                    const chat: SingleChatHistory = { name: chats.name[i], date: new Date(chats.date[i]), text: chats.text[i], image: chats.image[i] };
-                    socket.emit(CHATROOM_EVENTS.Message, chat);
-                }
+                socket.emit(CHATROOM_EVENTS.MessageHistory, chats);
             })
             .catch((error: string) => {
                 console.log(`Error retrieving chat history: ${error}`);
@@ -77,8 +83,6 @@ export default function registerChatHandlers(chatServer: any): void {
             // authorize
             db.authorize(socket.handshake.headers.cookie)
             .then((response: DbAuthorizeResponse) => {
-                const accountid: number = response.accountid;
-                refreshUserActivity(accountid);
                 const usercount: number = getUserCount();
                 socket.emit(CHATROOM_EVENTS.Usercount, usercount);
                 socket.broadcast.emit(CHATROOM_EVENTS.Usercount, usercount);
@@ -96,8 +100,14 @@ export default function registerChatHandlers(chatServer: any): void {
                 const userAccountIds: number[] = usersInChat.map((x: any) => { return x.accountid; });
                 userAccountIds.forEach((accountId: number) => {
                     db.getUserById(accountId)
-                    .then((user: ChatroomUser) => {
-                        socket.emit(CHATROOM_EVENTS.User, user);
+                    .then((dbUser: DbUserResponse) => {
+                        const now: any = new Date();
+                        const userExpiresOn: any = getExpiresOnFromId(accountId);
+                        const minutesDiff: number = Math.round((((userExpiresOn - now) % 86400000) % 3600000) / 60000);
+                        const lastActiveMinutesAgo: number = usersActivityRefreshMins - minutesDiff;
+                        const chatroomUser: ChatroomUser = {...dbUser, last_active: lastActiveMinutesAgo};
+                        console.log(`id = ${accountId}, ${userExpiresOn} ${now} ${minutesDiff} ${lastActiveMinutesAgo} minute ago`);
+                        socket.emit(CHATROOM_EVENTS.User, chatroomUser);
                     })
                     .catch((id: number) => {
                         console.log(`Account id #${id} not found in database.`);

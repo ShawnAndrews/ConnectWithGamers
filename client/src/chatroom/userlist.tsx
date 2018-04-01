@@ -39,8 +39,11 @@ class UserList extends React.Component<any, any> {
                                     key={index}
                                     className="userlist-content"
                                 >
-                                    <Avatar className="userlist-content-name-chip">{x.username.slice(0, 2).toUpperCase()}</Avatar>
+                                    {x.image
+                                        ? <Avatar className="userlist-content-name-chip no-background" src={x.image}/>
+                                        : <Avatar className="userlist-content-name-chip">{x.username.slice(0, 2).toUpperCase()}</Avatar>}
                                     <span className="userlist-content-name">{x.username}</span>
+                                    <span className="userlist-content-activity">Last active {x.last_active === 0 ? `seconds ago` : `${x.last_active} minutes ago`}</span>
                                     {x.steam_url && 
                                         <Avatar className="invis-background pull-right userlist-content-link-chip">
                                             <a href={x.steam_url} className="userlist-content-link"><i className="fab fa-steam-square fa-2x" /></a>

@@ -14,6 +14,8 @@ class ChatMessage extends React.Component<IChatMessageProps, any> {
 
     constructor(props: IChatMessageProps) {
         super(props);
+        this.changeTimeVisibility = this.changeTimeVisibility.bind(this);
+        this.state = { timeVisible: false };
     }
 
     /**
@@ -37,30 +39,28 @@ class ChatMessage extends React.Component<IChatMessageProps, any> {
         }
     }
 
+    private changeTimeVisibility(): void {
+        this.setState({ timeVisible: !this.state.timeVisible });
+    }
+
     render() {
         const formattedDate = this.getFormattedDate(new Date(this.props.date));
         const formattedTime = new Date(this.props.date).toLocaleTimeString();
         const formattedDateTime: string = `${formattedDate} ${formattedTime}`;
 
         return (
-            <div className="chatroom-message fadeIn">
-                <div className="chatroom-message-icon-container">
-                    {this.props.image
-                    ? <Avatar className="chatroom-message-icon-transparent center" src={this.props.image}/>
-                    : <Avatar className="chatroom-message-icon center">{this.props.name.slice(0, 2).toUpperCase()}</Avatar>}
-                </div>
-                <div className="chatroom-message-header">
-                    <strong className="chatroom-message-header-username">
-                        {this.props.name}
-                    </strong>
-                    <strong className="chatroom-message-header-time">
-                        {formattedDateTime}
-                    </strong>
-                </div> 
+            <div className={this.state.timeVisible ? "chatroom-message time-visible fadeIn" : "chatroom-message time-invisible fadeIn"} onClick={this.changeTimeVisibility}>
                 <div className="chatroom-message-text-container">
                     <div className="chatroom-message-text">
-                         {this.props.text}
+                        {this.props.text}
                     </div>
+                    <div className="chatroom-message-icon-container">
+                        {this.props.image
+                        ? <Avatar className="chatroom-message-icon-transparent" src={this.props.image}/>
+                        : <Avatar className="chatroom-message-icon">{this.props.name.slice(0, 2).toUpperCase()}</Avatar>}
+                    </div>
+                    <strong className="chatroom-message-username">{this.props.name}</strong>
+                    {this.state.timeVisible && <strong className="chatroom-message-time fadeIn">{formattedDateTime}</strong>}
                 </div>
             </div>
         );

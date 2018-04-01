@@ -1,5 +1,6 @@
-@userlist-height: 52px;
+@userlist-height: 70px;
 @userlist-content-height: @userlist-height - 4px;
+@chatroom-messagebox-height: 65px;
 
 .chatroom {
     position: relative;
@@ -7,7 +8,8 @@
     height: calc(~"100% -" @navbar-item-height);
 
     .chatroom-user {
-        height: 7.5%;
+        position: relative;
+        height: 10%;
         width: 100%;
         background-color: rgba(0,0,0,0.25);
 
@@ -15,32 +17,38 @@
             position: absolute;
             top:0;
             left:0;
-            width: 25%;
-            height: inherit;
+            width: 100%;
+            height: 40%;
             text-align: center;
             color: rgba(255,255,255,0.6);
             letter-spacing: 0.5px;
+            font-size: 1em;
         }
 
         .chatroom-user-list {
             position: absolute;
-            top:0;
-            left:25%;
-            width: 75%;
-            height: 7.5%;
+            top:40%;
+            left:0%;
+            width: 100%;
+            height: 60%;
             background: none !important;
             text-align: center;
             vertical-align: middle;
-    
+
             > button {
                 height: 100% !important;
+                line-height: normal !important;
                 background-color: rgba(255,255,255,0.1)!important;
                 font-family: source_sans_proregular, Arial, serif !important;
-    
+
+                > div > div {
+                    height: auto !important;
+                }
+
                 span {
                     color: rgba(255,255,255,0.6) !important;
-                    font-size: 1.2em !important;
                     letter-spacing: 0.5px !important;
+                    font-size: 1.2em !important;
                     font-weight: 700 !important;
                 }
             }
@@ -50,80 +58,176 @@
     
     .chatroom-messages {
         position: absolute;
-        top:7.5%;
+        top:10%;
         left:0;
-        height: 82.5%;
+        height: calc(~"100% - 10% - " @chatroom-messagebox-height);
         width: 100%;
         box-sizing: border-box;
         color: rgba(19, 75, 115, 0.78);
-        
-        .chatroom-message {
-            position: relative;
-            min-height: 70px;
-            height: 70px; 
+        padding: 10px;
+
+        .chatroom-messages-loading {
+            position: absolute;
+            z-index: 10;
             width: 100%;
-            margin: 10px 0;
-            box-sizing: border-box;
-            background: rgba(255,255,255,0.3);
-            display: table;
-
-            .chatroom-message-header {
-                position: absolute;
-                display: inline-block;
-                width: 85%;
-
-                .chatroom-message-header-username {
-                    position: absolute;
-                    top: 5px;
-                    left: 5px;
-                }
-
-                .chatroom-message-header-time {
-                    position: absolute;
-                    top: 5px;
-                    right: 5px;
-                }
-            }
-
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .chatroom-message:nth-child(even) {
+            position: relative;
+            float: left;
+            clear: both;
+            
             .chatroom-message-text-container {
-                padding: 10px;
-                word-wrap: break-word;
-                width: inherit;
-                
+                position: relative;
+                display: inline-block;
+                max-width: 60%;
+                min-width: 52%;
+                margin-left: 60px;
+                background: rgba(255,255,255,0.3);
+                display: table;
+                border-radius:25px;
+                word-break: break-all;
+
                 .chatroom-message-text {
                     position: relative;
-                    width: 85%;
-                    top: 0;
-                    left: 15%;
-                    margin-top: 1em;
+                    word-wrap: break-word;
+                    padding: 17px;
+                    box-sizing: border-box;
+
+                    &:after {
+                        position: absolute;
+                        content: '';
+                        background: url(
+                            "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='15.515px' height='17.5px' viewBox='32.485 17.5 15.515 17.5' enable-background='new 32.485 17.5 15.515 17.5'><path fill='rgb(255,255,255)' fill-opacity='0.3' d='M48,35c-7-4-6-8.75-6-17.5C28,17.5,29,35,48,35z'/></svg>"
+                            ) no-repeat;
+                        width: 15.515px;
+                        height: 17.5px;
+                        left: -3px;
+                        bottom: -3px;
+                        -webkit-clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
+                        clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
+                        transform: scale(-1, 1);
+                    }
+                }
+
+                .chatroom-message-username {
+                    position: absolute;
+                    bottom: -50px;
+                    left: -55px;
+                    color: rgba(255,255,255,0.3);
+                }
+
+                .chatroom-message-time {
+                    position: absolute;
+                    bottom: -25px;
+                    left: 10px;
+                    white-space: nowrap;
+                    color: rgba(255,255,255,0.3);
+                }
+
+                .chatroom-message-icon-container {
+                    position: absolute;
+                    left: -55px;
+                    bottom: -25px;
+                    width: 40px;
+                    height: 40px;
+                    color: whitesmoke;
+                    
+                    .chatroom-message-icon {
+                        background-color: rgba(19, 75, 115, 0.78) !important;
+                    }
+    
+                    .chatroom-message-icon-transparent {
+                        background-color: transparent !important;
+                    }
                 }
             }
+        }
 
-            .chatroom-message-text {
+        .chatroom-message:nth-child(odd) {
+            position: relative;
+            float: right;
+            clear: both;
+
+            .chatroom-message-text-container {
                 position: relative;
-                width: 85%;
-                top: 0;
-                left: 15%;
-                margin-top: 1em;
-            }
+                max-width: 60%;
+                min-width: 52%;
+                margin-right: 60px;
+                background: rgba(255,255,255,0.3);
+                display: table;
+                border-radius:25px;
+                word-break: break-all;
+                float: right;
 
-            .chatroom-message-icon-container {
-                position: relative;
-                display: inline-block;
-                width: 15%;
-                height: 100%;
-                color: whitesmoke;
+                .chatroom-message-text {
+                    position: relative;
+                    word-wrap: break-word;
+                    padding: 17px;
+                    box-sizing: border-box;
 
-                .chatroom-message-icon {
-                    margin-top: 15px !important;
-                    background-color: rgba(19, 75, 115, 0.78) !important;
+                    &:after {
+                        position: absolute;
+                        content: '';
+                        background: url(
+                            "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='15.515px' height='17.5px' viewBox='32.485 17.5 15.515 17.5' enable-background='new 32.485 17.5 15.515 17.5'><path fill='rgb(255,255,255)' fill-opacity='0.3' d='M48,35c-7-4-6-8.75-6-17.5C28,17.5,29,35,48,35z'/></svg>"
+                            ) no-repeat;
+                        width: 15.515px;
+                        height: 17.5px;
+                        right: -3px;
+                        bottom: -3px;
+                        -webkit-clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
+                        clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
+                    }
                 }
 
-                .chatroom-message-icon-transparent {
-                    margin-top: 15px !important;
-                    background-color: transparent !important;
+                .chatroom-message-username {
+                    position: absolute;
+                    bottom: -50px;
+                    right: -55px;
+                    color: rgba(255,255,255,0.3);
+                }
+
+                .chatroom-message-time {
+                    position: absolute;
+                    bottom: -25px;
+                    right: 10px;
+                    white-space: nowrap;
+                    color: rgba(255,255,255,0.3);
+                }
+
+                .chatroom-message-icon-container {
+                    position: absolute;
+                    right: -55px;
+                    bottom: -25px;
+                    width: 40px;
+                    height: 40px;
+                    color: whitesmoke;
+                    
+                    .chatroom-message-icon {
+                        background-color: rgba(19, 75, 115, 0.78) !important;
+                    }
+    
+                    .chatroom-message-icon-transparent {
+                        background-color: transparent !important;
+                    }
                 }
             }
+        }
+
+        .chatroom-message:nth-child(odd), .chatroom-message:nth-child(even) {
+
+            &.time-visible {
+                margin-bottom: 40px;
+            }
+
+            &.time-invisible {
+                margin-bottom: 15px;
+            }
+
         }
 
         .fadeIn{
@@ -140,40 +244,23 @@
 
     .chatroom-input {
         position: absolute;
-        top:90%;
+        bottom:0;
         left:0;
-        background: rgba(0,0,0,0.25);
-        height: 10%;
+        background: linear-gradient(transparent, rgba(0,0,0,0.2));
+        height: @chatroom-messagebox-height;
         width: 100%;
         padding: 10px;
         box-sizing: border-box;
-        border-radius: 0px 15px 15px 0px;
         
         .chatroom-input-textfield {
-            width: 73% !important;
+            width: 100% !important;
 
             > div, input {
                 color: whitesmoke !important;
-            }
 
-            hr {
-                border-bottom: 2px solid rgba(255,255,255,0.2);
-            }
-        }
-
-        .chatroom-input-enter {
-            position: absolute;
-            right: 0;
-            top: 0;
-            color: rgba(255,255,255,0.6);
-            background: none !important;
-            vertical-align: middle;
-            height: 100%;
-
-            > button {
-                height: 100% !important;
-                background-color: rgba(255,255,255,0.2) !important;
-                border-radius: 0 15px 15px 0 !important;
+                > hr {
+                    border-bottom: 2px solid rgba(255,255,255,0.7) !important;
+                }
             }
         }
     }
@@ -196,33 +283,55 @@
     }
 
     .userlist-content {
-        width: 90% !important;
-        margin: 20px 5% 0 5% !important;
+        width: 100% !important;
         height: @userlist-height !important;
-        background-color: rgba(255, 255, 255, 0.46) !important;
+        border-radius: 0px !important;
+        background-color: transparent !important;
+        background: -moz-linear-gradient(top, rgba(0,0,0,0) 85%, rgba(0,0,0,0) 87%, rgba(0,0,0,0.31) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(top, rgba(0,0,0,0) 85%,rgba(0,0,0,0) 87%,rgba(0,0,0,0.31) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to bottom, rgba(0,0,0,0) 85%,rgba(0,0,0,0) 87%,rgba(0,0,0,0.31) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#4f000000',GradientType=0 ); /* IE6-9 */
         
         > span {
             width: calc(~"100% -" @userlist-content-height) !important;
         }
 
         .userlist-content-name-chip {
-            width: @userlist-content-height !important;
-            height: @userlist-content-height !important;
-            margin-top: 2px !important;
-            margin-left: 5px !important;
+            width: 50px !important;
+            height: 50px !important;
+            margin: auto 15px !important;
             background-color: rgba(13, 47, 97, 0.8) !important;
         }
         
+        .no-background {
+            background-color: transparent !important;
+        }
+
         .userlist-content-name {
-            line-height: @userlist-height;
+            position: absolute;
+            left: 75px;
+            top: 0px;
             font-size: 1.3em;
             font-weight: 600;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .userlist-content-activity {
+            position: absolute;
+            left: 75px;
+            bottom: 0;
+            margin-bottom: 10px;
+            font-size: 0.8em;
+            font-weight: 1000;
+            color: rgba(255,255,255,.3);
         }
 
         .userlist-content-link-chip {
-            width: @userlist-content-height !important;
-            height: @userlist-content-height !important;
-    
+            width: 40px !important;
+            height: 40px !important;
+            margin-top: 15px !important;
+
             .userlist-content-link {
                 color: rgba(13, 47, 97, 0.8) !important;
                 vertical-align: middle !important;
