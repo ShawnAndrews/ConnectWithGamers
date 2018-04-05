@@ -106,7 +106,6 @@ export default function registerChatHandlers(chatServer: any): void {
                         const minutesDiff: number = Math.round((((userExpiresOn - now) % 86400000) % 3600000) / 60000);
                         const lastActiveMinutesAgo: number = usersActivityRefreshMins - minutesDiff;
                         const chatroomUser: ChatroomUser = {...dbUser, last_active: lastActiveMinutesAgo};
-                        console.log(`id = ${accountId}, ${userExpiresOn} ${now} ${minutesDiff} ${lastActiveMinutesAgo} minute ago`);
                         socket.emit(CHATROOM_EVENTS.User, chatroomUser);
                     })
                     .catch((id: number) => {
