@@ -33,6 +33,7 @@
 
 ## Table of Contents
 - [Features](#features)
+- [Updates](#updates)
 - [Config](#config)
 - [Dependencies](#dependencies)
 - [Installation](#installation)
@@ -54,6 +55,46 @@
 <br/>
 
 ![alt text](https://i.imgur.com/10UUUmo.png "infographic")
+
+## Updates
+
+<h3>Version 1.0<h3>
+
+Initial release
+
+<h3>Version 1.1<h3>
+
+<h4>Account login</h4>
+
+- Updated login, signup button
+- Updated Remember Me slider
+
+<h4>Account Settings</h4>
+
+ - Added ability to change password
+- Changed saving individual settings into one save button
+- Added ability to Add/Update/Delete profile pictures
+    - Using Imgur image hosting
+- Added slider to expand and collapse gaming links
+
+<h4>Chatroom</h4>
+
+- Added text to show if message was Today, Yesterday, etc for improved readability
+- Added iMessage chat bubbles
+    - Clickable to show time stamp
+- Updated send bar to send messages
+- Updated screen to view users in chatroom
+    - Updated UI
+    - Added text to show how long ago was the last activity of a user
+
+<h4>Menu</h4>
+
+- Added Game Trailer vidoes
+- Added Steam Reviews
+- Added ability to search games by genre
+- Changed Popular Games By Platform to Exclusive Games By Platform
+- Added Read More for long summaries for improved readability
+- Added clickable platforms and genres
 
 ## Config
 Create a git-ignored file called ``config.ts`` in the ``/`` directory with the following contents, including the requried properties of the Config interface.
