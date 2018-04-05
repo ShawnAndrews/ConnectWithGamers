@@ -56,6 +56,8 @@
 
 ![alt text](https://i.imgur.com/10UUUmo.png "infographic")
 
+![alt text](https://i.imgur.com/wWbjAJK.png "screenshots")
+
 ## Updates
 
 <h3>Version 1.0</h3>
