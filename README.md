@@ -58,9 +58,9 @@
 
 ## Updates
 
-<h3>Version 1.0<h3>
+<h3>Version 1.0</h3>
 
-Initial release
+- Initial release
 
 <h3>Version 1.1<h3>
 
