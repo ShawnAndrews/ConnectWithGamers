@@ -29,6 +29,7 @@ class SearchForm extends React.Component<ISearchFormProps, any> {
 
     private handleKeyDown(event: any) {
         if (event.keyCode === 13) {
+            event.preventDefault();
             if (this.state.rawInput !== '') {
                 this.loadGamesList(this.state.rawInput);
             }
@@ -50,9 +51,9 @@ class SearchForm extends React.Component<ISearchFormProps, any> {
                     this.setState({ gameslist: [], isLoading: false });
                 }
             })
-            .catch( (response: any) => {
-                const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
-                popupS.modal({ content: formattedErrors.join('') });
+            .catch( (error: string) => {
+                popupS.modal({ content: error });
+                this.setState({ isLoading: false });
             });
 
     }

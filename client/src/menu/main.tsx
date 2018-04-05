@@ -6,6 +6,8 @@ import UpcomingForm from './upcoming/upcomingForm';
 import PlatformForm from './platform/platformForm';
 import PlatformGameListForm from './platform/platformGameListForm';
 import RecentForm from './recent/recentForm';
+import GenreForm from './genre/genreForm';
+import GenreGameListForm from './genre/genreGameListForm';
 
 class Menu extends React.Component<any, any> {
 
@@ -25,6 +27,8 @@ class Menu extends React.Component<any, any> {
                     <Route exact={true} path="/menu/platform/:id" component={PlatformGameListForm} />
                     <Route exact={true} path="/menu/platform" component={PlatformForm} />
                     <Route exact={true} path="/menu/recent" component={RecentForm} />
+                    <Route exact={true} path="/menu/genre/:id" component={GenreGameListForm} />
+                    <Route exact={true} path="/menu/genre" component={GenreForm} />
                 </Switch>
             </div>
         );

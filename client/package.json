@@ -7,6 +7,7 @@
     "@types/react-router": "^4.0.22",
     "@types/react-router-dom": "^4.2.4",
     "@types/react-select": "^1.2.3",
+    "@types/react-truncate": "^2.3.2",
     "@types/socket.io-client": "^1.4.32",
     "axios": "^0.17.1",
     "css-loader": "^0.28.10",
@@ -22,6 +23,7 @@
     "react-router-dom": "^4.2.2",
     "react-scripts-ts": "2.8.0",
     "react-select": "^1.2.1",
+    "react-truncate": "^2.3.0",
     "socket.io": "^2.0.4",
     "ts-loader": "^3.5.0"
   },

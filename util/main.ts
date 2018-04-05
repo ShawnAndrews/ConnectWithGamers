@@ -1,5 +1,6 @@
 import * as WebRequest from "web-request";
 import config from "./../config";
+import { SteamAPIReview } from "../client/client-server-common/common";
 
 /**
  * Convert Date->YYYY-MM-DD.
@@ -66,6 +67,14 @@ export interface SteamAPIGetPriceInfoResponse {
     discount_percent: number;
     steam_url: string;
 }
+
+/**
+ * Returns Steam reviews from Steam id.
+ */
+export interface SteamAPIGetReviewsResponse {
+    reviews?: SteamAPIReview[];
+}
+
 export function steamAPIGetPriceInfo(id: number): Promise<SteamAPIGetPriceInfoResponse> {
 
     return new Promise((resolve: any, reject: any) => {
@@ -83,6 +92,39 @@ export function steamAPIGetPriceInfo(id: number): Promise<SteamAPIGetPriceInfoRe
 
                 return resolve({ price: price, discount_percent: discount_percent, steam_url: steam_url });
             }
+        })
+        .catch((error: any): any => {
+            console.log(`Error retrieving Steam price info: ${error}`);
+            return reject(error);
+        });
+
+    });
+
+}
+
+/**
+ * Returns an array of X Steam reviews from given steam id.
+ */
+export function steamAPIGetReviews(id: number): Promise<SteamAPIGetReviewsResponse> {
+
+    const steamAPIGetReviewsResponse: SteamAPIGetReviewsResponse = {};
+
+    return new Promise((resolve: any, reject: any) => {
+
+        WebRequest.get(`${config.steam.nonApiURL}/appreviews/${id}?json=1&filter=all&cc=us`)
+        .then((response: any) => {
+            const rawReviews: any = JSON.parse(response.message.body).reviews;
+            if (rawReviews) {
+                if (rawReviews.length > 0) {
+                    steamAPIGetReviewsResponse.reviews = [];
+                }
+                rawReviews.forEach((rawReview: any) => {
+                    const steamReview: SteamAPIReview = { hours_played: rawReview.author.playtime_forever, text: rawReview.review, up_votes: rawReview.votes_up };
+                    steamAPIGetReviewsResponse.reviews.push(steamReview);
+                });
+            }
+
+            return resolve(steamAPIGetReviewsResponse);
         })
         .catch((error: any): any => {
             console.log(`Error retrieving Steam price info: ${error}`);

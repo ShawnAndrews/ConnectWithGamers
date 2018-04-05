@@ -120,6 +120,16 @@
         transform: translate(-50%, -50%);
     }
 
+    .menu-item-text {
+        position: absolute;
+        z-index: 10;
+        width: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.5em;
+    }
+
     .menu-center {
         position: absolute;
         z-index: 10;
@@ -177,13 +187,14 @@
         }
 
         * {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255,255,255,0.7) !important;
         }
 
     }
 
     .menu-game {
-        position: absolute;
+        position: relative;
+        overflow: auto;
         background-color: rgba(0,0,0,0.2) !important;
 
         * {
@@ -219,6 +230,10 @@
 
             .menu-game-summary-text {
                 margin: 5px 0 0 0;
+
+                > i {
+                    color: rgba(0,0,0,0.8);
+                }
             }
         }
 
@@ -226,8 +241,17 @@
             opacity: 0.65;
             margin: 10px;
             
+            .menu-game-genres-name {
+                margin-bottom: 5px !important;
+                background-color: rgba(255, 255, 255, 0.7) !important;
+
+                > button {
+                    background-color: transparent !important;
+                }
+            }
+
             .menu-game-genres-header {
-                display: inline;
+                display: block;
             }
         }
 
@@ -239,21 +263,38 @@
                 margin-bottom: 0px;
             }
 
-            li {
-                margin-bottom: 8px;
+            ul {
+                padding-left: 25px !important;
 
-                .menu-game-platforms-name {
-                    display: inline-block;
-                    white-space: nowrap;
-                    width: 60%;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
+                li {
+                    margin-bottom: 8px;
+                    list-style-type: none;
+    
+                    .menu-game-platforms-name-container {
+                        display: inline-block;
+                        width: 60%;
+                        overflow: hidden;
+                    
+                        .menu-game-platforms-name {
+                            float: left;
+                            background-color: rgba(255, 255, 255, 0.7) !important;
 
-                .menu-game-platforms-releasedate {
-                    float: right;
+                            > button {
+                                background-color: transparent !important;
+                            }
+
+                            span {
+                                font-size: 0.78em !important;
+                            }
+                        }
+                    }
+    
+                    .menu-game-platforms-releasedate {
+                        float: right;
+                    }
                 }
             }
+            
         }
 
         .menu-game-releasedate, .menu-game-price {
@@ -270,15 +311,115 @@
             }
         }
 
-        .menu-game-screenshots {
+        .menu-game-screenshots, .menu-game-video {
             position: relative;
             font-size: 1.2em;
 
-            .menu-game-screenshots-header {
+            .menu-game-screenshots-header, .menu-game-video-header {
                 opacity: 0.65;
                 margin-left: 10px;
             }
         }
+
+        .menu-game-reviews {
+            position: relative;
+            font-size: 1.2em;
+
+            .menu-game-reviews-header {
+                opacity: 0.65;
+                margin-left: 10px;
+            }
+
+            .menu-game-reviews-btn {
+                position: relative;
+                width: 90%;
+                margin: 0 5% 15px 5%;
+                background-color: rgba(255,255,255,.4)!important;
+    
+                > button {
+                    background-color: transparent !important;
+                    height: 50px !important;
+    
+                    div > div {
+
+                        > i {
+                            margin-left: 5px;
+                        }
+
+                        > span {
+                            color: rgba(0, 0, 0, 0.55) !important;
+                            font-size: 1.2em !important;
+                        }
+                    }
+                }
+            }
+
+            .menu-game-reviews-padding {
+                padding: 15px;
+
+                .menu-game-reviews-container {
+                    position: relative;
+
+                    .menu-game-review-header-container {
+                        position: relative;
+                        width: 100%;
+                        height: 2em;
+                        background-color: rgba(0,0,0,0.5);
+    
+                        .menu-game-review-header {
+                            position: relative;
+                            padding: 0px 15px 15px 15px;
+    
+                            > div {
+    
+                                .icon-hoursplayed {
+                                    margin-right: 7px;
+                                }
+    
+                                .icon-upvotes {
+                                    margin-left: 7px;
+                                }
+                            }
+    
+                            .border-bottom {
+                                position: absolute;
+                                top: 39px;
+                                left: 0;
+                                border-bottom: 1px solid #f5f5f5;
+                                width: 100%;
+                            }
+    
+                            .menu-game-review-header-hoursplayed {
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                margin: 10px;
+                            }
+    
+                            .menu-game-review-header-upvotes {
+                                position: absolute;
+                                top: 0;
+                                right: 0;
+                                margin: 10px;
+                            }
+                        }
+                    }
+
+                    .menu-game-review-body-container {
+                        position: relative;
+                        width: 100%;
+                        background-color: rgba(0,0,0,0.5);
+                        box-sizing: border-box;
+                        padding: 10px;
+                        margin-bottom: 15px;
+                    }
+
+                }
+
+                
+            }
+
+        }        
 
         .menu-game-upcoming-name {
             position: absolute;

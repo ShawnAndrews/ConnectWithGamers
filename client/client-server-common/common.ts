@@ -18,6 +18,7 @@ export interface Config {
     };
     steam: {
         apiURL: string,
+        nonApiURL: string,
         appURL: string
     };
     imgur: {
@@ -212,6 +213,12 @@ export interface SearchGamesResponse {
 
 export const GameListEntryResponseFields: string[] = [`id`, `name`];
 
+export interface SteamAPIReview {
+    text: string;
+    hours_played: number;
+    up_votes: number;
+}
+
 export interface GameResponse {
     name: string;
     rating?: number;
@@ -221,14 +228,21 @@ export interface GameResponse {
     steam_url?: string;
     cover?: string;
     summary?: string;
+    genre_ids?: number;
     genres?: string[];
+    platform_ids?: number[];
     platforms?: string[];
     platforms_release_dates?: string[];
     next_release_date?: string;
     screenshots?: string[];
+    video?: {
+        name: string;
+        youtube_link: string;
+    };
+    reviews?: SteamAPIReview[];
 }
 
-export const GameResponseFields: string[] = [`name`, `release_dates`, `cover`, `total_rating`, `total_rating_count`, `summary`, `genres`, `platforms`, `screenshots`, `external`];
+export const GameResponseFields: string[] = [`name`, `release_dates`, `cover`, `total_rating`, `total_rating_count`, `summary`, `genres`, `platforms`, `screenshots`, `videos`, `external`];
 
 export interface SingleGameResponse {
     error: string;
@@ -241,7 +255,7 @@ export interface UpcomingGameResponse {
     name: string;
     next_release_date: string;
     genres: string;
-    platformIcons: string[];
+    linkIcons: string[];
     steam_url?: string;
     cover?: string;
 }
@@ -259,7 +273,7 @@ export interface RecentGameResponse {
     name: string;
     last_release_date: string;
     genres: string;
-    platformIcons: string[];
+    linkIcons: string[];
     steam_url?: string;
     cover?: string;
 }
@@ -271,20 +285,58 @@ export interface RecentGamesResponse {
     data?: RecentGameResponse[];
 }
 
-export interface PlatformGameResponse {
+export interface GenrePair {
+    id: number;
+    name: string;
+}
+
+export interface GenreListResponse {
+    error: string;
+    data?: GenrePair[];
+}
+
+export interface PlatformGamesResponse {
+    error: string;
+    data?: DbPlatformGamesResponse;
+}
+
+export interface DbPlatformGamesResponse {
+    platformName: string;
+    platformGames: PlatformGame[];
+}
+
+export interface PlatformGame {
 
     id: number;
     name: string;
     rating: string;
     genres: string;
-    platformIcons: string[];
+    linkIcons: string[];
     steam_url?: string;
     cover?: string;
 }
 
 export const PlatformGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`, `genres`, `platforms`, `external`];
 
-export interface PlatformGamesResponse {
+export interface GenreGamesResponse {
     error: string;
-    data?: PlatformGameResponse[];
+    data?: DbGenreGamesResponse;
 }
+
+export interface DbGenreGamesResponse {
+    genreName: string;
+    genreGames: GenreGame[];
+}
+
+export interface GenreGame {
+
+    id: number;
+    name: string;
+    rating: string;
+    genres: string;
+    linkIcons: string[];
+    steam_url?: string;
+    cover?: string;
+}
+
+export const GenreGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`, `genres`, `platforms`, `external`];

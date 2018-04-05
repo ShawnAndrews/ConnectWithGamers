@@ -2,7 +2,7 @@ const popupS = require('popups');
 import * as React from 'react';
 import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
-import { GenericResponseModel, PlatformGameResponse, PlatformGamesResponse } from '../../../../client/client-server-common/common';
+import { GenericResponseModel, DbPlatformGamesResponse, PlatformGame, PlatformGamesResponse } from '../../../../client/client-server-common/common';
 import ThumbnailGame from '../thumbnailGame';
 import Spinner from '../../loader/spinner';
 
@@ -39,12 +39,12 @@ class PlatformGameListForm extends React.Component<IPlatformGameListFormProps, a
         const platformId: number = Number(this.props.match.params.id);
         IGDBService.httpGetPlatformGamesList(platformId)
             .then( (response: PlatformGamesResponse) => {
-                const platform: PlatformOption = platformOptions.find((x: PlatformOption) => { return x.id === platformId; });
-                this.setState({ isLoading: false, platform: platform, platformGames: response.data });
+                const platformName: string = response.data.platformName;
+                this.setState({ isLoading: false, platformName: platformName, platformGames: response.data.platformGames });
             })
-            .catch( (response: any) => {
-                const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
-                popupS.modal({ content: formattedErrors.join('') });
+            .catch( (error: string) => {
+                popupS.modal({ content: error });
+                this.setState({ isLoading: false });
             });
     }
 
@@ -60,13 +60,13 @@ class PlatformGameListForm extends React.Component<IPlatformGameListFormProps, a
 
         return (
             <div>
-                {this.state.platform &&
+                {this.state.platformName &&
                     <div className="menu-game-table-header">
-                        <strong>Most popular games for {this.state.platform.name}</strong>
+                        <strong>Exclusive games for {this.state.platformName}</strong>
                     </div>}
                 {this.state.platformGames && 
                     this.state.platformGames
-                    .map((platformGame: PlatformGameResponse) => {
+                    .map((platformGame: PlatformGame) => {
                         return <ThumbnailGame key={platformGame.id} className="menu-game-table-game" game={platformGame}/>;
                     })}
             </div>

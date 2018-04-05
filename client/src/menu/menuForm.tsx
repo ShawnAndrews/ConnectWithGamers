@@ -24,9 +24,10 @@ class MenuForm extends React.Component<IMenuFormProps, any> {
         const menuItems: IMenuItem[] = [];
 
         menuItems.push({name: 'Search Games', faIcon: 'fas fa-search fa-4x', redirectURL: '/menu/search'});
-        menuItems.push({name: 'Popular Games By Platform', faIcon: 'fas fa-desktop fa-4x', redirectURL: '/menu/platform'});
+        menuItems.push({name: 'Exclusive Platform Games', faIcon: 'fas fa-desktop fa-4x', redirectURL: '/menu/platform'});
         menuItems.push({name: 'Upcoming Games', faIcon: 'fa fa-calendar-alt fa-4x', redirectURL: '/menu/upcoming'});
         menuItems.push({name: 'Recently Released Games', faIcon: 'far fa-clock fa-4x', redirectURL: '/menu/recent'});
+        menuItems.push({name: 'Genres', faIcon: 'fas fa-gamepad fa-4x', redirectURL: '/menu/genre'});
 
         this.state = {menuItems: menuItems};
     }

@@ -6,10 +6,13 @@ import Select from 'react-select';
 import * as IGDBService from '../../service/igdb/main';
 import Spinner from '../../loader/spinner';
 import Slideshow from './slideshow';
-import { SingleGameResponse } from '../../../../client/client-server-common/common';
+import { SingleGameResponse, SteamAPIReview } from '../../../../client/client-server-common/common';
+import RaisedButton from 'material-ui/RaisedButton';
+import Truncate from 'react-truncate';
 
 interface IGameProps {
     gameId: string;
+    history: any;
 }
 
 class Game extends React.Component<IGameProps, any> {
@@ -21,7 +24,7 @@ class Game extends React.Component<IGameProps, any> {
         
         // load game
         if (this.props.gameId) {
-            this.state = { isLoading: true };
+            this.state = { isLoading: true, summaryExpanded: false, reviewsExpanded: false };
             this.loadGame(this.props.gameId);
         }
     }
@@ -39,10 +42,22 @@ class Game extends React.Component<IGameProps, any> {
             .then( (response: SingleGameResponse) => {
                 this.setState({ isLoading: false, game: response.data });
             })
-            .catch( (response: any) => {
-                const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div > • ${errorMsg}</div > `; });
-                popupS.modal({ content: formattedErrors.join('') });
+            .catch( (error: string) => {
+                popupS.modal({ content: error });
+                this.setState({ isLoading: false });
             });
+    }
+
+    private handlePlatformClick(index: number): void {
+        this.props.history.push(`/menu/platform/${this.state.game.platform_ids[index]}`);
+    }
+    
+    private handleGenreClick(index: number): void {
+        this.props.history.push(`/menu/genre/${this.state.game.genre_ids[index]}`);
+    }
+
+    private handleReadReviewsClick(): void {
+        this.setState({ reviewsExpanded: !this.state.reviewsExpanded });
     }
 
     render() {
@@ -98,7 +113,7 @@ class Game extends React.Component<IGameProps, any> {
                                     : this.state.game.rating === -1 && <i className="far fa-star fa-2x"/>}
                             </span>}
                             {this.state.game.rating_count !== undefined && 
-                                <span className="menu-game-rating-count">({this.state.game.rating_count} reviews)</span>}
+                                <span className="menu-game-rating-count">({this.state.game.rating_count} ratings)</span>}
                             {this.state.game.price && 
                                 <div className="menu-game-price">
                                     <h2 className="menu-game-price-header">Price: </h2>
@@ -118,7 +133,7 @@ class Game extends React.Component<IGameProps, any> {
                                     {this.state.game.platforms
                                         .map((x: string, index: number) => {
                                             return (
-                                                <li key={x}><span className="menu-game-platforms-name">{x}</span> <i className="menu-game-platforms-releasedate">({this.state.game.platforms_release_dates[index]})</i></li>
+                                                <li key={x}><div className="menu-game-platforms-name-container"><RaisedButton className="menu-game-platforms-name" label={x} onClick={() => { this.handlePlatformClick(index); }}/></div><i className="menu-game-platforms-releasedate">({this.state.game.platforms_release_dates[index] !== `undefined. NaN, NaN` ? this.state.game.platforms_release_dates[index] : `N/A`})</i></li>
                                             );
                                         })}
                                     </ul>
@@ -126,17 +141,65 @@ class Game extends React.Component<IGameProps, any> {
                             {this.state.game.genres && 
                                 <div className="menu-game-genres">
                                     <h2 className="menu-game-genres-header">Genres: </h2>
-                                    <i>{this.state.game.genres}</i>
+                                    {this.state.game.genres
+                                        .map((x: string, index: number) => {
+                                            return (
+                                                <span key={x}><RaisedButton className="menu-game-genres-name" label={x} onClick={() => { this.handleGenreClick(index); }}/>{index !== (this.state.game.genres.length - 1) && ` , `}</span>
+                                            );
+                                        })}
                                 </div>}
                             {this.state.game.summary && 
                                 <div className="menu-game-summary">
                                     <h2>Summary:</h2>
-                                    <div className="menu-game-summary-text">{this.state.game.summary}</div>
+                                    <div className="menu-game-summary-text">
+                                        {!this.state.summaryExpanded
+                                        ? <Truncate lines={5} ellipsis={<i onClick={() => { this.setState({ summaryExpanded: true }); }}> ... Read more</i>}>{this.state.game.summary}</Truncate>
+                                        : this.state.game.summary}
+                                    </div>
+                                </div>}
+                            {this.state.game.video && 
+                                <div className="menu-game-video">
+                                    <h2 className="menu-game-video-header">{this.state.game.video.name}:</h2>
+                                    <iframe width="100%" height="400px" frameBorder="0" allowFullScreen={true} src={this.state.game.video.youtube_link} />
                                 </div>}
                             {this.state.game.screenshots && 
                                 <div className="menu-game-screenshots">
                                     <h2 className="menu-game-screenshots-header">Screenshots:</h2>
                                     <Slideshow images={this.state.game.screenshots}/>
+                                </div>}
+                            {this.state.game.reviews && 
+                                <div className="menu-game-reviews">
+                                    <h2 className="menu-game-reviews-header">Reviews:</h2>
+                                    <RaisedButton className="menu-game-reviews-btn" onClick={() => { this.handleReadReviewsClick(); }}>
+                                        {this.state.reviewsExpanded ? "Collapse reviews" : "Read reviews"}
+                                        {this.state.reviewsExpanded ? <i className="fas fa-chevron-circle-up"/> : <i className="fas fa-chevron-circle-down"/>}
+                                    </RaisedButton>
+                                    {this.state.reviewsExpanded && 
+                                        <div className="menu-game-reviews-padding">
+                                            {this.state.game.reviews.map((review: SteamAPIReview, index: number) => {
+                                                return (
+                                                    <div key={index} className="menu-game-reviews-container">
+                                                        <div className="menu-game-review-header-container">
+                                                            <div className="menu-game-review-header">
+                                                                <div className="menu-game-review-header-hoursplayed">
+                                                                    <i className="far fa-clock icon-hoursplayed"/>
+                                                                    {review.hours_played} hours played
+                                                                </div>
+                                                                <div className="menu-game-review-header-upvotes">
+                                                                    {review.up_votes}
+                                                                    <i className="far fa-thumbs-up icon-upvotes"/>
+                                                                </div>
+                                                                <div className="border-bottom"/>
+                                                            </div>
+                                                        </div>
+                                                        <div className="menu-game-review-body-container">
+                                                            {review.text}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>}
+                                    
                                 </div>}
                     </div>
                     }
@@ -147,4 +210,4 @@ class Game extends React.Component<IGameProps, any> {
 
 }
 
-export default Game;
+export default withRouter(Game);

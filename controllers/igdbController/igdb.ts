@@ -5,19 +5,25 @@ import {
     GameResponse,
     UpcomingGameResponse,
     RecentGameResponse,
-    PlatformGameResponse,
+    DbPlatformGamesResponse,
     SearchGamesResponse,
     UpcomingGamesResponse,
     RecentGamesResponse,
     PlatformGamesResponse,
-    SingleGameResponse } from "../../client/client-server-common/common";
+    SingleGameResponse,
+    GenreListResponse,
+    GenrePair,
+    GenreGamesResponse,
+    DbGenreGamesResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import {
     upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames,
     recentGamesKeyExists, getCachedRecentGames, cacheRecentGames,
     platformGamesKeyExists, getCachedPlatformGames, cachePlatformGames,
     gameKeyExists, getCachedGame, cacheGame,
-    searchGamesKeyExists, getCachedSearchGames, cacheSearchGames } from "./cache";
+    searchGamesKeyExists, getCachedSearchGames, cacheSearchGames,
+    genreListKeyExists, getCachedGenreList, cacheGenreList,
+    genreGamesKeyExists, getCachedGenreGames, cacheGenreGames } from "./cache";
 
 const routes = new routeModel();
 
@@ -26,6 +32,8 @@ routes.addRoute("searchgames", "/games/search/:query");
 routes.addRoute("upcominggames", "/games/upcoming");
 routes.addRoute("recentgames", "/games/recent");
 routes.addRoute("platformgames", "/games/platform/:id");
+routes.addRoute("genregames", "/games/genre/:id");
+routes.addRoute("genrelist", "/games/genrelist");
 routes.addRoute("game", "/game/:id");
 
 router.post(routes.getRoute("searchgames"), (req: any, res: any) => {
@@ -143,7 +151,7 @@ router.post(routes.getRoute("platformgames"), (req: any, res: any) => {
         .then((exists: boolean) => {
             if (exists) {
                 getCachedPlatformGames(platformId)
-                .then((platformGames: PlatformGameResponse[]) => {
+                .then((platformGames: DbPlatformGamesResponse) => {
                     platformGamesResponse.data = platformGames;
                     return res.send(platformGamesResponse);
                 })
@@ -153,7 +161,7 @@ router.post(routes.getRoute("platformgames"), (req: any, res: any) => {
                 });
             } else {
                 cachePlatformGames(platformId)
-                .then((platformGames: PlatformGameResponse[]) => {
+                .then((platformGames: DbPlatformGamesResponse) => {
                     platformGamesResponse.data = platformGames;
                     return res.send(platformGamesResponse);
                 })
@@ -166,6 +174,76 @@ router.post(routes.getRoute("platformgames"), (req: any, res: any) => {
         .catch((error: string) => {
             platformGamesResponse.error = error;
             return res.send(platformGamesResponse);
+        });
+
+});
+
+router.post(routes.getRoute("genregames"), (req: any, res: any) => {
+
+    const genreGamesResponse: GenreGamesResponse = { error: undefined };
+    const genreId: number = Number(req.params.id);
+    genreGamesKeyExists(genreId)
+        .then((exists: boolean) => {
+            if (exists) {
+                getCachedGenreGames(genreId)
+                .then((genreGames: DbGenreGamesResponse) => {
+                    genreGamesResponse.data = genreGames;
+                    return res.send(genreGamesResponse);
+                })
+                .catch((error: string) => {
+                    genreGamesResponse.error = error;
+                    return res.send(genreGamesResponse);
+                });
+            } else {
+                cacheGenreGames(genreId)
+                .then((genreGames: DbGenreGamesResponse) => {
+                    genreGamesResponse.data = genreGames;
+                    return res.send(genreGamesResponse);
+                })
+                .catch((error: string) => {
+                    genreGamesResponse.error = error;
+                    return res.send(genreGamesResponse);
+                });
+            }
+        })
+        .catch((error: string) => {
+            genreGamesResponse.error = error;
+            return res.send(genreGamesResponse);
+        });
+
+});
+
+router.post(routes.getRoute("genrelist"), (req: any, res: any) => {
+
+    const genreListResponse: GenreListResponse = { error: undefined };
+
+    genreListKeyExists()
+        .then((exists: boolean) => {
+            if (exists) {
+                getCachedGenreList()
+                .then((genreList: GenrePair[]) => {
+                    genreListResponse.data = genreList;
+                    return res.send(genreListResponse);
+                })
+                .catch((error: string) => {
+                    genreListResponse.error = error;
+                    return res.send(genreListResponse);
+                });
+            } else {
+                cacheGenreList()
+                .then((genreList: GenrePair[]) => {
+                    genreListResponse.data = genreList;
+                    return res.send(genreListResponse);
+                })
+                .catch((error: string) => {
+                    genreListResponse.error = error;
+                    return res.send(genreListResponse);
+                });
+            }
+        })
+        .catch((error: string) => {
+            genreListResponse.error = error;
+            return res.send(genreListResponse);
         });
 
 });

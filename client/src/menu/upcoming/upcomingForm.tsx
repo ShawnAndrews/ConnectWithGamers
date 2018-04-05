@@ -26,9 +26,9 @@ class UpcomingForm extends React.Component<any, any> {
                 const uniqueReleaseDates: string[] = uniqueArray(response.data.map((x: any) => { return x.next_release_date; }));
                 this.setState({ isLoading: false, upcomingGames: response.data, uniqueReleaseDates: uniqueReleaseDates });
             })
-            .catch( (response: any) => {
-                const formattedErrors: string[] = response.errors.map((errorMsg: string) => { return `<div>• ${errorMsg}</div>`; });
-                popupS.modal({ content: formattedErrors.join('') });
+            .catch( (error: string) => {
+                popupS.modal({ content: error });
+                this.setState({ isLoading: false });
             });
     }
 
