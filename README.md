@@ -2,7 +2,7 @@
 
   ![alt text](https://i.imgur.com/obqCKhX.png "logo")
 
-  <h1>Connect With Gamers</h1>
+  <h1>Connect With Gamers (v1.1)</h1>
 </div>
 
 <div align="center">
@@ -73,10 +73,12 @@ Apart from the included NPM packages, there are a couple extra components requir
 - Redis: This is required to save API calls to IGDB in memory.
 - SQL Server: This is required to save Accounts, Authenticaiton Tokens, and Chatroom Messages.
 - IGDB: You are required to have an IGDB account with a valid API key present in the config file to perform API queries.
+- Imgur: You are required to have a valid Imgur API key.
+- Steam: No API key is required for the current application's requests.
 
 ## Installation
 How do i run this website on my own?
-- Make sure your SQL Server database is running on the default port and you imported the schema from [here](http://www.saportfolio.ca/cwgschema.bacpac).
+- Make sure your SQL Server database is running on the default port and you imported the schema from [v1.0](http://www.saportfolio.ca/ConnectWithGamersv10.bacpac) or [v1.1](http://www.saportfolio.ca/ConnectWithGamersv11.bak).
 - Make sure your Redis server is up and running.
 - Make sure your HTTP and Chat server ports are forwarded. This is defaulted to 80 and 81, respectively.
 - You may now access the website via ``localhost``.
@@ -87,13 +89,14 @@ Start running the HTTP and Chat server by executing the following command in the
 ```npm run server-client```
 
 This will build the production version of the client and server in the respective ``/dist`` folder then run the server.
+You are now listening on port 80 and 81.
 
 ## FAQ
 ### Why is it called Connect With Gamers?
 This website was desgigned to encourage fellow gamers to meet by talking in chat, viewing each others gaming profile, and giving them a library of games to talk discuss.
 
 ### Do you have other projects i can check out?
-Of course! You can check them out on my portfolio website at [saortfolio.ca](http://www.saportfolio.ca/cwgschema.bacpac)
+Of course! You can check them out on my portfolio website at [saortfolio.ca](http://www.saportfolio.ca)
 
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)
