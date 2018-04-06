@@ -56,7 +56,7 @@
 
 ![alt text](https://i.imgur.com/10UUUmo.png "infographic")
 
-![alt text](https://i.imgur.com/wWbjAJK.png "screenshots")
+![alt text](https://i.imgur.com/aSaLFQp.png "screenshots")
 
 ## Updates
 
