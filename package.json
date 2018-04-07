@@ -7,6 +7,7 @@
   "scripts": {
     "server-client": "npm run build-ts && npm run tslint && npm run client-prod --prefix client/ && node dist/server.js",
     "server-prod": "npm run build-ts && npm run tslint",
+    "client-prod": "npm run client-prod --prefix client/",
     "server": "node dist/server.js",
     "build-ts": "tsc",
     "tslint": "tslint -c tslint.json -p tsconfig.json"
