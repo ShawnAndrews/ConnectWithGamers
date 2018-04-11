@@ -5,7 +5,7 @@ export default function logIP(rawIp: string): void {
   fs.exists(pathToFile, function (exists: boolean) {
     if (exists) {
       const formattedIp: string = rawIp.replace(/^.*:/, ``);
-      if (formattedIp !== "1") {
+      if (formattedIp !== "1" && !formattedIp.startsWith("172.")) {
         const today: Date = new Date();
         const data: string = `${today.toLocaleString()} | ${formattedIp}\n`;
         fs.appendFile(`${pathToFile}`, data, function(err: any) {

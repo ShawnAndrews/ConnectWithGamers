@@ -59,22 +59,19 @@ export function addMonths(dateToAdd: Date, numMonthsToAdd: number) {
     return dateToAdd;
 }
 
-/**
- * Returns Steam price info from Steam id.
- */
 export interface SteamAPIGetPriceInfoResponse {
     price: string;
     discount_percent: number;
     steam_url: string;
 }
 
-/**
- * Returns Steam reviews from Steam id.
- */
 export interface SteamAPIGetReviewsResponse {
     reviews?: SteamAPIReview[];
 }
 
+/**
+ * Returns Steam price info from Steam id.
+ */
 export function steamAPIGetPriceInfo(id: number): Promise<SteamAPIGetPriceInfoResponse> {
 
     return new Promise((resolve: any, reject: any) => {

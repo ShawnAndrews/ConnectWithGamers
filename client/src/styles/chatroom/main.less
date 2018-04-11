@@ -7,53 +7,44 @@
     width: 100%;
     height: calc(~"100% -" @navbar-item-height);
 
-    .chatroom-user {
+    .chatroom-appbar {
         position: relative;
         height: 10%;
         width: 100%;
-        background-color: rgba(0,0,0,0.25);
+        background-color: rgba(0,0,0,0.25) !important;
 
-        .chatroom-user-count {
-            position: absolute;
-            top:0;
-            left:0;
-            width: 100%;
-            height: 40%;
-            text-align: center;
-            color: rgba(255,255,255,0.6);
-            letter-spacing: 0.5px;
-            font-size: 1em;
-        }
+        > div {
+            height: 100% !important;
+            line-height: 100% !important;
+            margin-top: -2px !important;
 
-        .chatroom-user-list {
-            position: absolute;
-            top:40%;
-            left:0%;
-            width: 100%;
-            height: 60%;
-            background: none !important;
-            text-align: center;
-            vertical-align: middle;
-
-            > button {
-                height: 100% !important;
-                line-height: normal !important;
-                background-color: rgba(255,255,255,0.1)!important;
-                font-family: source_sans_proregular, Arial, serif !important;
-
-                > div > div {
-                    height: auto !important;
-                }
-
-                span {
-                    color: rgba(255,255,255,0.6) !important;
-                    letter-spacing: 0.5px !important;
-                    font-size: 1.2em !important;
-                    font-weight: 700 !important;
-                }
+            > div {
+                position: absolute;
+                z-index: 10;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);    
             }
-
+            
+            svg {
+                color: rgba(255,255,255,0.7) !important;
+            }
         }
+
+        > h1 {
+            position: absolute;
+            z-index: 10;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0.75;
+            margin-top: 2px !important;
+            letter-spacing: 1px;
+            font-size: 1.4em !important;
+            font-weight: 600 !important;
+        }
+
     }
     
     .chatroom-messages {
@@ -79,6 +70,7 @@
             position: relative;
             float: left;
             clear: both;
+            -webkit-tap-highlight-color: rgba(255,255,255,0);
             
             .chatroom-message-text-container {
                 position: relative;
@@ -90,12 +82,14 @@
                 display: table;
                 border-radius:25px;
                 word-break: break-all;
+                -webkit-tap-highlight-color: rgba(255,255,255,0);
 
                 .chatroom-message-text {
                     position: relative;
                     word-wrap: break-word;
                     padding: 17px;
                     box-sizing: border-box;
+                    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
 
                     &:after {
                         position: absolute;
@@ -151,7 +145,8 @@
             position: relative;
             float: right;
             clear: both;
-
+            -webkit-tap-highlight-color: rgba(255,255,255,0);
+            
             .chatroom-message-text-container {
                 position: relative;
                 max-width: 60%;
@@ -162,12 +157,14 @@
                 border-radius:25px;
                 word-break: break-all;
                 float: right;
+                -webkit-tap-highlight-color: rgba(255,255,255,0);
 
                 .chatroom-message-text {
                     position: relative;
                     word-wrap: break-word;
                     padding: 17px;
                     box-sizing: border-box;
+                    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
 
                     &:after {
                         position: absolute;
@@ -267,18 +264,44 @@
 } 
 
 .userlist {
+    height: 100%;
 
-    .userlist-header {
-        color: whitesmoke;
-        text-align: center;
-        padding: 15px;
-        font-size: 1.7em;
-        background: rgba(0,0,0,0.3);
-    
-        strong {
-            opacity: 0.8;
-            color: rgba(255,255,255,0.8);
+    .userlist-appbar {
+        position: relative;
+        height: 10%;
+        width: 100%;
+        background-color: rgba(0,0,0,0.25) !important;
+
+        > div {
+            height: 100% !important;
+            line-height: 100% !important;
+            margin-top: -2px !important;
+
+            > svg {
+                position: relative;
+                z-index: 10;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);    
+            }
+            
+            svg {
+                color: rgba(255,255,255,0.7) !important;
+            }
+        }
+
+        > h1 {
+            position: absolute;
+            z-index: 10;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0.75;
+            margin-top: 2px !important;
             letter-spacing: 1px;
+            font-size: 1.4em !important;
+            font-weight: 600 !important;
         }
     }
 
@@ -287,10 +310,7 @@
         height: @userlist-height !important;
         border-radius: 0px !important;
         background-color: transparent !important;
-        background: -moz-linear-gradient(top, rgba(0,0,0,0) 85%, rgba(0,0,0,0) 87%, rgba(0,0,0,0.31) 100%); /* FF3.6-15 */
-        background: -webkit-linear-gradient(top, rgba(0,0,0,0) 85%,rgba(0,0,0,0) 87%,rgba(0,0,0,0.31) 100%); /* Chrome10-25,Safari5.1-6 */
-        background: linear-gradient(to bottom, rgba(0,0,0,0) 85%,rgba(0,0,0,0) 87%,rgba(0,0,0,0.31) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#4f000000',GradientType=0 ); /* IE6-9 */
+        border-bottom: 1px solid rgba(0, 0, 0, 0.27) !important;
         
         > span {
             width: calc(~"100% -" @userlist-content-height) !important;
@@ -347,5 +367,19 @@
     
     .pull-right {
         float: right !important;
+    }
+}
+
+body {
+    > div:not(.popupS-base):last-child {
+        > div {
+            background-color: rgba(255,255,255,0.8) !important;
+
+            hr {
+                background-color: rgba(0, 0, 0, 0.26) !important;
+                margin: 7px auto 8px !important;
+                width: 85% !important;
+            }
+        }
     }
 }

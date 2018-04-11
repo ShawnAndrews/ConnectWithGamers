@@ -46,6 +46,7 @@ class SettingsForm extends React.Component<ISettingsFormProps, any> {
                 const steam = response.data.steam;
                 const twitch = response.data.twitch;
                 const image = response.data.image;
+                const emailVerified = response.data.emailVerified;
                 this.setState({ 
                     isLoading: false, 
                     username: username, 
@@ -60,7 +61,8 @@ class SettingsForm extends React.Component<ISettingsFormProps, any> {
                     newDiscord: discord,
                     newSteam: steam,
                     newTwitch: twitch,
-                    image: image});
+                    image: image,
+                    emailVerified: emailVerified});
             })
             .catch( (error: string) => {
                 this.setState({ isLoading: false });
@@ -98,9 +100,24 @@ class SettingsForm extends React.Component<ISettingsFormProps, any> {
         this.props.history.push(`/`);
     }
 
+    private resend(): void {
+        this.setState({ isLoading: true, loadingMsg: `Sending verification email...` }, () => {
+            AccountService.httpResendAccountEmail()
+                .then( () => {
+                    this.setState({ isLoading: false });
+                    popupS.modal({ content: `<div>Verification email sent to ${this.state.email}! Please check your email and spam folder.</div>` });
+                })
+                .catch( (error: string) => {
+                    this.setState({ isLoading: false });
+                    popupS.modal({ content: `<div>• ${error}</div>` });
+                });
+        });
+    }
+
     private saveChanges(): void {
         const newSettings: any  = {};
-        
+        const emailChanged: boolean = this.state.email !== this.state.newEmail;
+
         if (this.state.username !== this.state.newUsername) {
             newSettings.username = this.state.newUsername;
         }
@@ -136,7 +153,8 @@ class SettingsForm extends React.Component<ISettingsFormProps, any> {
                         newPassword: ``,
                         discord: this.state.newDiscord,
                         steam: this.state.newSteam,
-                        twitch: this.state.newTwitch });
+                        twitch: this.state.newTwitch,
+                        emailVerified: emailChanged ? false : true });
                 })
                 .catch( (error: string) => {
                     this.setState({ 
@@ -256,11 +274,13 @@ class SettingsForm extends React.Component<ISettingsFormProps, any> {
                 </div>
                 <div className="account-settings-container">
                     <TextField
-                        className="account-settings-email"
+                        className={this.state.emailVerified ? "account-settings-email" : "account-settings-email-unverified"} 
                         defaultValue={this.state.email}
                         onChange={this.onEmailChanged}
-                        floatingLabelText="Email"
+                        floatingLabelText={!this.state.emailVerified ? "Email (Unverified)" : "Email"}
                     />
+                    {!this.state.emailVerified && 
+                        <RaisedButton className="account-settings-email-unverified-btn" label="Resend" primary={true} onClick={() => { this.resend(); }}/>}
                 </div>
                 <div className="account-settings-container">
                     <TextField

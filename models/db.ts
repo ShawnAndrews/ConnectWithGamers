@@ -2,11 +2,23 @@ const bcrypt = require("bcrypt");
 const imgur = require("imgur");
 import config from "../config";
 import DatabaseBase from "./dbBase";
-import { AUTH_TOKEN_NAME, GenericResponseModel, validateUsername, validateEmail, validateURL, ChatHistoryResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthorizeResponse, DbTokenResponse, DbAuthenticateResponse, DbUserResponse, validatePassword } from "../client/client-server-common/common";
+import { sendVerificationEmail } from "./nodemailer";
+import { AUTH_TOKEN_NAME, GenericResponseModel, validateUsername, validateEmail, validateURL, ChatHistoryResponse, DbVerifyEmailResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthorizeResponse, DbTokenResponse, DbAuthenticateResponse, DbUserResponse, validatePassword } from "../client/client-server-common/common";
 
 const SALT_RNDS = 10;
+const EMAIL_VERIFICATION_LEN = 15;
 
 imgur.setClientId(config.imgur.clientId);
+
+const genRandStr = (length: number): string => {
+    let text: string = "";
+    const possible: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (let i = 0; i < length; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+};
 
 class DatabaseModel extends DatabaseBase {
 
@@ -18,18 +30,25 @@ class DatabaseModel extends DatabaseBase {
 
         const salt = bcrypt.genSaltSync(SALT_RNDS);
         const hash = bcrypt.hashSync(password, salt);
+        const emailVerification = genRandStr(EMAIL_VERIFICATION_LEN);
 
         return new Promise( (resolve, reject) => {
 
             this.insert("dbo.accounts",
-                ["username", "email", "passwordHash", "salt", "createdOn"],
-                [this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.DateTime],
-                [username, email, hash, salt, Date.now()])
+                ["username", "email", "passwordHash", "salt", "createdOn", "emailVerification"],
+                [this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.DateTime, this.sql.VarChar],
+                [username, email, hash, salt, Date.now(), emailVerification])
                 .then(() => {
-                    return resolve();
+                    sendVerificationEmail(email, `http://www.connectwithgamers.com/account/verify/${emailVerification}`)
+                    .then(() => {
+                        return resolve();
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
                 })
-                .catch(() => {
-                    return reject("Username is taken.");
+                .catch((error: string) => {
+                    return reject(`Error: ${error}`);
                 });
 
         });
@@ -116,7 +135,7 @@ class DatabaseModel extends DatabaseBase {
                 ["accountid"],
                 [this.sql.Int],
                 [accountid],
-                ["username", "email", "discord", "steam", "twitch", "image"],
+                ["username", "email", "discord", "steam", "twitch", "image", "emailVerification"],
                 "accountid=@accountid")
                 .then((dbResponse: GenericResponseModel) => {
                     const username = dbResponse.data.recordsets[0][0].username;
@@ -125,13 +144,15 @@ class DatabaseModel extends DatabaseBase {
                     const steam = dbResponse.data.recordsets[0][0].steam || "";
                     const twitch = dbResponse.data.recordsets[0][0].twitch || "";
                     const image = dbResponse.data.recordsets[0][0].image;
+                    const emailVerified = dbResponse.data.recordsets[0][0].emailVerification === null;
                     const dbAccountSettingsResponse: DbAccountSettingsResponse = {
                         username: username,
                         email: email,
                         discord: discord,
                         steam: steam,
                         twitch: twitch,
-                        image: image};
+                        image: image,
+                        emailVerified: emailVerified};
                     return resolve(dbAccountSettingsResponse);
                 })
                 .catch((error: string) => {
@@ -227,6 +248,8 @@ class DatabaseModel extends DatabaseBase {
 
     changeAccountEmail(accountid: number, newEmail: string): Promise<null> {
 
+        const emailVerification = genRandStr(EMAIL_VERIFICATION_LEN);
+
         return new Promise( (resolve, reject) => {
 
             const emailValidationError: string = validateEmail(newEmail);
@@ -236,10 +259,10 @@ class DatabaseModel extends DatabaseBase {
 
             this.update(
                 "dbo.accounts",
-                ["accountid", "email"],
-                [this.sql.Int, this.sql.VarChar],
-                [accountid, newEmail],
-                ["email"],
+                ["accountid", "email", "emailVerification"],
+                [this.sql.Int, this.sql.VarChar, this.sql.VarChar],
+                [accountid, newEmail, emailVerification],
+                ["email", "emailVerification"],
                 "accountid=@accountid")
                 .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.rowsAffected[0] == 1) {
@@ -426,18 +449,82 @@ class DatabaseModel extends DatabaseBase {
         });
     }
 
+    resendAccountEmail(accountid: number): Promise<null> {
+
+        return new Promise( (resolve, reject) => {
+
+            this.select(
+                "dbo.accounts",
+                ["accountid"],
+                [this.sql.Int],
+                [accountid],
+                ["email", "emailVerification"],
+                "accountid=@accountid")
+                .then((dbResponse: GenericResponseModel) => {
+                    const dbEmailVerification: string = dbResponse.data.recordsets[0][0].emailVerification;
+                    const dbEmail: string = dbResponse.data.recordsets[0][0].email;
+                    sendVerificationEmail(dbEmail, `http://www.connectwithgamers.com/account/verify/${dbEmailVerification}`)
+                    .then(() => {
+                        return resolve();
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+
+                })
+                .catch((error: string) => {
+                    return reject(`Error: ${error}`);
+                });
+
+        });
+    }
+
+    verifyAccountEmail(accountid: number, verificationCode: string): Promise<DbVerifyEmailResponse> {
+
+        return new Promise( (resolve, reject) => {
+
+            this.select(
+                "dbo.accounts",
+                ["accountid"],
+                [this.sql.Int],
+                [accountid],
+                ["emailVerification"],
+                "accountid=@accountid")
+                .then((dbResponse: GenericResponseModel) => {
+                    const dbEmailVerification: string = dbResponse.data.recordsets[0][0].emailVerification;
+
+                    if (dbEmailVerification !== verificationCode) {
+                        const dbVerifyEmailResponse: DbVerifyEmailResponse = { verificationSuccessful: false };
+                        return resolve(dbVerifyEmailResponse);
+                    }
+
+                    return this.update(
+                        "dbo.accounts",
+                        ["accountid", "emailVerification"],
+                        [this.sql.Int, this.sql.VarChar],
+                        [accountid, undefined],
+                        ["emailVerification"],
+                        "accountid=@accountid")
+                        .then((dbResponse: GenericResponseModel) => {
+                            if (dbResponse.data.rowsAffected[0] == 1) {
+                                const dbVerifyEmailResponse: DbVerifyEmailResponse = { verificationSuccessful: true };
+                                return resolve(dbVerifyEmailResponse);
+                            } else {
+                                return reject(`Database error: Failed to update.`);
+                            }
+                        })
+                        .catch((error: string) => {
+                            return reject(`Database error. ${error}`);
+                        });
+                })
+                .catch((error: string) => {
+                    return reject(`Database error. ${error}`);
+                });
+
+        });
+    }
 
     token(username: string, remember: boolean): Promise<DbTokenResponse> {
-
-        const genAuthToken = (): string => {
-            let text: string = "";
-            const possible: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-            for (let i = 0; i < config.token_length; i++)
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-            return text;
-        };
 
         const getAccountInfoPromise = (): Promise<GenericResponseModel> => {
 
@@ -476,7 +563,7 @@ class DatabaseModel extends DatabaseBase {
             return new Promise( (resolve, reject) => {
 
                 const response: GenericResponseModel = {error: undefined, data: undefined};
-                const authToken: string = genAuthToken();
+                const authToken: string = genRandStr(config.token_length);
                 const authTokenExpiration: number = remember ? Date.now() + config.token_remember_expiration : Date.now() + config.token_expiration;
 
                 this.insert(

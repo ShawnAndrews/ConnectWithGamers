@@ -4,11 +4,17 @@ import * as io from 'socket.io-client';
 import FontIcon from 'material-ui/FontIcon';
 import Avatar from 'material-ui/Avatar';
 import Chip from 'material-ui/Chip';
+import AppBar from 'material-ui/AppBar';
+import ChevronLeft from 'material-ui/svg-icons/navigation/chevron-left';
 import { ChatroomUser, CHATROOM_EVENTS, CHAT_SERVER_PORT } from '../../client-server-common/common';
 
-class UserList extends React.Component<any, any> {
+interface IUserListProps {
+    history: any;
+}
 
-    constructor(props: any) {
+class UserList extends React.Component<IUserListProps, any> {
+
+    constructor(props: IUserListProps) {
         super(props);
         this.onNewUser = this.onNewUser.bind(this);
         this.state = { userList: [] };
@@ -28,9 +34,11 @@ class UserList extends React.Component<any, any> {
 
         return (
             <div className="userlist">
-                <div className="userlist-header">
-                    <strong>User list</strong>
-                </div>
+                <AppBar
+                    className="userlist-appbar"
+                    title="Users in room"
+                    iconElementLeft={<ChevronLeft onClick={() => { this.props.history.goBack(); }} />}
+                />
                 <div className="scrollable chatroom-messages fadeIn" >
                     {this.state.userList
                         .map((x: ChatroomUser, index: number) => {
@@ -67,4 +75,4 @@ class UserList extends React.Component<any, any> {
 
 }
 
-export default UserList;
+export default withRouter(UserList);

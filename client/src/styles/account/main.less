@@ -210,8 +210,35 @@
       }
     }
 
+    .account-settings-email-unverified {
+      width: 65% !important;
+      font-size: 1.2em !important;
+
+      > div > hr {
+        border-bottom-color: rgba(255,255,255,0.35) !important;
+      }
+    }
+
+    .account-settings-email-unverified-btn {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background-color: transparent !important;
+
+      span {
+        font-size: 1em!important;
+        letter-spacing: 1px!important;
+      }
+
+      > button {
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        height: 50px !important;
+      }
+    }
+
     .account-settings-showlinks {
       margin-top: 20px;
+      -webkit-tap-highlight-color: rgba(255,255,255,0);
     }
 
     .account-settings-container {
@@ -299,7 +326,8 @@
     .account-checkbox {
       opacity: 0.8;
       font-weight: 700;
-
+      -webkit-tap-highlight-color: rgba(255,255,255,0);
+      
       * {
         color: white !important;
       }
@@ -461,6 +489,43 @@
         }
       }
       
+    }
+  }
+
+  .account-verify-email-container {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    .account-verify-email-text {
+      width: 90%;
+      display: block;
+      margin: auto;
+      font-size: 1.5em;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+    }
+
+    .account-verify-email-btn {
+      position: relative;
+      display: block !important;
+      width: fit-content;
+      background-color: transparent !important;
+      margin: 20px auto 0px auto;
+      
+      span {
+        font-size: 1.2em !important; 
+        letter-spacing: 3px !important; 
+        font-weight: 700 !important;
+      }
+  
+      > button {
+        background-color: rgba(0, 0, 0, 0.2) !important;
+        height: 50px !important;
+      }
     }
   }
 }

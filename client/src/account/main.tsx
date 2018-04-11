@@ -3,6 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import LoginForm from '../account/loginForm';
 import SignupForm from '../account/signupForm';
 import SettingsForm from '../account/settingsForm';
+import VerifyForm from '../account/verifyForm';
 
 class Account extends React.Component<any, any> {
 
@@ -16,6 +17,7 @@ class Account extends React.Component<any, any> {
                 <Switch>
                     <Route path="/account/login" component={LoginForm}/>
                     <Route path="/account/signup" component={SignupForm} />
+                    <Route path="/account/verify/:id" component={VerifyForm} />
                     <Route component={SettingsForm} />
                 </Switch>
             </div>

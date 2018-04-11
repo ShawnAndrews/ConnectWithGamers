@@ -19,7 +19,7 @@ class Slideshow extends React.Component<ISlideshowProps, any> {
         });
         
         return (
-            <Carousel showArrows={false} showThumbs={false}>
+            <Carousel className="menu-game-screenshots-feed" showArrows={false} showThumbs={false}>
                 {slideshowImages}
             </Carousel>
         );

@@ -160,7 +160,7 @@ class Game extends React.Component<IGameProps, any> {
                             {this.state.game.video && 
                                 <div className="menu-game-video">
                                     <h2 className="menu-game-video-header">{this.state.game.video.name}:</h2>
-                                    <iframe width="100%" height="400px" frameBorder="0" allowFullScreen={true} src={this.state.game.video.youtube_link} />
+                                    <iframe className="menu-game-video-feed" height="400px" frameBorder="0" allowFullScreen={true} src={this.state.game.video.youtube_link} />
                                 </div>}
                             {this.state.game.screenshots && 
                                 <div className="menu-game-screenshots">

@@ -9,7 +9,7 @@
 .menu {
     position: absolute;
     width: 100%;
-    height: calc(~"100% -" @navbar-item-height);
+    height: fit-content;
     top: @navbar-item-height;
     overflow-y: auto;
     overflow-x: hidden;
@@ -21,74 +21,74 @@
         opacity: 0.9;
     }
 
-    .menu-home {
+    .menu-home-header {
         position: absolute;
         width: 100%;
-        height: 200px;
+        height: 12%;
         top: 0px;
+    }
 
-        .menu-home-searchgames {
-            position: inherit;
-            width: inherit;
-            height: inherit;
-            top: 200px;
-        }
+    .menu-home-searchgames {
+        position: inherit;
+        width: inherit;
+        height: 10%;
+        top: 12%;
+    }
 
-        .menu-home-recentgames {
-            position: inherit;
-            width: inherit;
-            height: 150px;
-            top: 400px;
-        }
+    .menu-home-recentgames {
+        position: inherit;
+        width: inherit;
+        height: 9%;
+        top: 22%;
+    }
 
-        .menu-home-upcominggames {
-            position: inherit;
-            width: inherit;
-            height: 150px;
-            top: 550px;
-        }
+    .menu-home-upcominggames {
+        position: inherit;
+        width: inherit;
+        height: 8%;
+        top: 31%;
+    }
 
-        .menu-home-populargames {
-            position: inherit;
-            width: inherit;
-            height: inherit;
-            top: 700px;
-        }
+    .menu-home-populargames {
+        position: inherit;
+        width: inherit;
+        height: 10%;
+        top: 39%;
+    }
 
-        .menu-home-uptodate {
-            position: inherit;
-            width: inherit;
-            height: 150px;
-            top: 900px;
-        }
+    .menu-home-uptodate {
+        position: inherit;
+        width: inherit;
+        height: 8%;
+        top: 49%;
+    }
 
-        .menu-home-discover {
-            position: inherit;
-            width: inherit;
-            height: 150px;
-            top: 1050px;
-        }
+    .menu-home-discover {
+        position: inherit;
+        width: inherit;
+        height: 10%;
+        top: 57%;
+    }
 
-        .menu-home-review {
-            position: inherit;
-            width: inherit;
-            height: 200px;
-            top: 1200px;
-        }
+    .menu-home-review {
+        position: inherit;
+        width: inherit;
+        height: 10%;
+        top: 67%;
+    }
 
-        .menu-home-chatroom {
-            position: inherit;
-            width: inherit;
-            height: 200px;
-            top: 1400px;
-        }
+    .menu-home-chatroom {
+        position: inherit;
+        width: inherit;
+        height: 10%;
+        top: 77%;
+    }
 
-        .menu-home-chatroomlinks {
-            position: inherit;
-            width: inherit;
-            height: 200px;
-            top: 1600px;
-        }
+    .menu-home-chatroomlinks {
+        position: inherit;
+        width: inherit;
+        height: 13%;
+        top: 87%;
     }
     
     .menu-item {
@@ -319,6 +319,11 @@
                 opacity: 0.65;
                 margin-left: 10px;
             }
+
+            .menu-game-screenshots-feed, .menu-game-video-feed {
+                width: calc(~"100% -" 20px) !important;
+                margin: 0 10px !important;
+            }
         }
 
         .menu-game-reviews {
@@ -334,7 +339,7 @@
                 position: relative;
                 width: 90%;
                 margin: 0 5% 15px 5%;
-                background-color: rgba(255,255,255,.4)!important;
+                background-color: rgba(255,255,255,.25)!important;
     
                 > button {
                     background-color: transparent !important;
@@ -364,7 +369,7 @@
                         position: relative;
                         width: 100%;
                         height: 2em;
-                        background-color: rgba(0,0,0,0.5);
+                        background-color: rgba(255,255,255,0.25);
     
                         .menu-game-review-header {
                             position: relative;
@@ -385,7 +390,7 @@
                                 position: absolute;
                                 top: 39px;
                                 left: 0;
-                                border-bottom: 1px solid #f5f5f5;
+                                border-bottom: 1px solid rgba(255,255,255,0.5);
                                 width: 100%;
                             }
     
@@ -408,7 +413,7 @@
                     .menu-game-review-body-container {
                         position: relative;
                         width: 100%;
-                        background-color: rgba(0,0,0,0.5);
+                        background-color: rgba(255,255,255,0.25);
                         box-sizing: border-box;
                         padding: 10px;
                         margin-bottom: 15px;

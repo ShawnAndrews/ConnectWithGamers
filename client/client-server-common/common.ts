@@ -24,6 +24,12 @@ export interface Config {
     imgur: {
         clientId: string
     };
+    smtp: {
+        host: string,
+        secure: boolean,
+        username: string,
+        password: string
+    };
 }
 
 export const enum CHATROOM_EVENTS {
@@ -134,7 +140,7 @@ export interface DbUserResponse {
     image?: string;
 }
 
-export interface DatelessResponse {
+export interface DatalessResponse {
     error: string;
 }
 
@@ -152,6 +158,10 @@ export interface DbAuthorizeResponse {
     accountid: number;
 }
 
+export interface DbVerifyEmailResponse {
+    verificationSuccessful: boolean;
+}
+
 export interface DbAccountSettingsResponse {
     username: string;
     email: string;
@@ -159,6 +169,7 @@ export interface DbAccountSettingsResponse {
     steam: string;
     twitch: string;
     image: string;
+    emailVerified: boolean;
 }
 
 export interface DbAccountImageResponse {
@@ -186,6 +197,14 @@ export interface AccountSettingsResponse {
         steam: string;
         twitch: string;
         image: string;
+        emailVerified: boolean;
+    };
+}
+
+export interface EmailVerifyResponse {
+    error: string;
+    data?: {
+        verificationSuccessful: boolean;
     };
 }
 

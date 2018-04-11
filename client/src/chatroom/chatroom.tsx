@@ -5,6 +5,13 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import FontIcon from 'material-ui/FontIcon';
 import Avatar from 'material-ui/Avatar';
+import AppBar from 'material-ui/AppBar';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import Divider from 'material-ui/Divider';
+import IconButton from 'material-ui/IconButton';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import People from 'material-ui/svg-icons/social/people';
 import Spinner from '../loader/spinner';
 import ChatMessage, { IChatMessageProps } from './chatmessage';
 import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory } from '../../../client/client-server-common/common';
@@ -83,21 +90,29 @@ class Chatroom extends React.Component<IChatroomProps, any> {
     }
     
     render() {
+        const MenuList = (props: any) => (
+            <IconMenu
+              className="appbar-menu"
+              {...props}
+              iconButtonElement={
+                <IconButton><MoreVertIcon/></IconButton>
+              }
+              targetOrigin={{horizontal: 'left', vertical: 'top'}}
+              anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+            >
+              <MenuItem className="appbar-menu-item" primaryText="User List" onClick={() => { this.props.history.push(`/chat/users`); }} />
+              <Divider />
+              <MenuItem className="appbar-menu-item" primaryText={this.state.userCountLoading ? "Loading users..." : `${this.state.userCount} users online`} leftIcon={<People/>} />
+            </IconMenu>
+          );
+
         return (
             <div className="chatroom">
-                <div className="chatroom-user" >
-                    <div className="chatroom-user-count">
-                        <span className="center">{this.state.userCountLoading ? "Loading users..." : `${this.state.userCount} users online`}</span>
-                    </div>
-                    <RaisedButton
-                        className="chatroom-user-list"
-                        label="View users in room"
-                        labelPosition="before"
-                        primary={true}
-                        onClick={() => { this.props.history.push(`/chat/users`); }}
-                        icon={<FontIcon className="fas fa-users" />}
-                    />
-                </div>
+                <AppBar
+                    className="chatroom-appbar"
+                    title="Chatroom"
+                    iconElementLeft={<MenuList />}
+                />
                 <div className="scrollable chatroom-messages" >
                     {this.state.messagesLoading && 
                         <div className="chatroom-messages-loading">

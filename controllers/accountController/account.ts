@@ -1,7 +1,7 @@
 const express = require("express");
 // const RateLimit = require("express-rate-limit");
 const router = express.Router();
-import { AUTH_TOKEN_NAME, validateCredentials, DatelessResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse } from "../../client/client-server-common/common";
+import { AUTH_TOKEN_NAME, validateCredentials, DatalessResponse, DbVerifyEmailResponse, EmailVerifyResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import db from "../../models/db";
 
@@ -14,8 +14,10 @@ routes.addRoute("settings", "/settings");
 routes.addRoute("settings/change", "/settings/change");
 routes.addRoute("settings/image/change", "/settings/image/change");
 routes.addRoute("settings/image/delete", "/settings/image/delete");
+routes.addRoute("email/resend", "/email/resend");
+routes.addRoute("email/verify", "/email/verify");
 
-// limit account creation requests to 5acc/1hr
+// limit account creation requests to 5acc/1hr per ip
 // const createAccountLimiter = new RateLimit({
 //     windowMs: 60 * 60 * 1000,
 //     max: 5,
@@ -25,7 +27,7 @@ routes.addRoute("settings/image/delete", "/settings/image/delete");
 // router.post(routes.getRoute("signup"), createAccountLimiter);
 router.post(routes.getRoute("signup"), (req: any, res: any) => {
 
-    const datelessResponse: DatelessResponse = { error: undefined };
+    const datalessResponse: DatalessResponse = { error: undefined };
     const signupData = {
         username: req.body.username,
         password: req.body.password,
@@ -35,35 +37,35 @@ router.post(routes.getRoute("signup"), (req: any, res: any) => {
     // validate
     const error: string = validateCredentials(signupData.username, signupData.password, signupData.email);
     if (error) {
-        datelessResponse.error = error;
+        datalessResponse.error = error;
         return res
-        .send(datelessResponse);
+        .send(datalessResponse);
     }
 
     // create account in db
     db.createAccount(signupData.username, signupData.email, signupData.password)
         .then(() => {
             return res
-            .send(datelessResponse);
+            .send(datalessResponse);
         })
         .catch((error: string) => {
-            datelessResponse.error = error;
+            datalessResponse.error = error;
             return res
-            .send(datelessResponse);
+            .send(datalessResponse);
         });
 
 });
 
 router.post(routes.getRoute("login"), (req: any, res: any) => {
 
-    const datelessResponse: DatelessResponse = { error: undefined };
+    const datalessResponse: DatalessResponse = { error: undefined };
 
     // validate credentials
     const error: string = validateCredentials(req.body.username, req.body.password, undefined, req.body.remember);
     if (error) {
-        datelessResponse.error = error;
+        datalessResponse.error = error;
         return res
-        .send(datelessResponse);
+        .send(datalessResponse);
     }
 
     // authenticate
@@ -78,13 +80,13 @@ router.post(routes.getRoute("login"), (req: any, res: any) => {
             const newTokenExpiration: Date = response.tokenExpiration;
             return res
             .cookie(AUTH_TOKEN_NAME, newToken, { expires: newTokenExpiration })
-            .send(datelessResponse);
+            .send(datalessResponse);
         })
         .catch((error: string) => {
             // authentication or token failure
-            datelessResponse.error = error;
+            datalessResponse.error = error;
             return res
-            .send(datelessResponse);
+            .send(datalessResponse);
         });
 
 });
@@ -105,7 +107,8 @@ router.post(routes.getRoute("settings"), (req: any, res: any) => {
             steam: response.steam,
             discord: response.discord,
             twitch: response.twitch,
-            image: response.image
+            image: response.image,
+            emailVerified: response.emailVerified
         };
         return res
         .send(accountSettingsResponse);
@@ -119,7 +122,7 @@ router.post(routes.getRoute("settings"), (req: any, res: any) => {
 });
 
 router.post(routes.getRoute("settings/change"), (req: any, res: any) => {
-    const datelessResponse: DatelessResponse = { error: undefined };
+    const datalessResponse: DatalessResponse = { error: undefined };
     const newSettings: any = req.body.newSettings;
 
     // authorize
@@ -154,19 +157,19 @@ router.post(routes.getRoute("settings/change"), (req: any, res: any) => {
         Promise.all(changePromises)
         .then((vals: any) => {
             return res
-            .send(datelessResponse);
+            .send(datalessResponse);
         })
         .catch((error: string) => {
-            datelessResponse.error = error;
+            datalessResponse.error = error;
             return res
-            .send(datelessResponse);
+            .send(datalessResponse);
         });
 
     })
     .catch((error: string) => {
-        datelessResponse.error = error;
+        datalessResponse.error = error;
         return res
-        .send(datelessResponse);
+        .send(datalessResponse);
     });
 
 });
@@ -189,6 +192,48 @@ router.post(routes.getRoute("settings/image/change"), (req: any, res: any) => {
         accountImageResponse.error = error;
         return res
         .send(accountImageResponse);
+    });
+
+});
+
+router.post(routes.getRoute("email/resend"), (req: any, res: any) => {
+    const datalessResponse: DatalessResponse = { error: undefined };
+
+    // authorize
+    db.authorize(req.headers.cookie)
+    .then((response: DbAuthorizeResponse) => {
+        return db.resendAccountEmail(response.accountid);
+    })
+    .then(() => {
+        return res
+        .send();
+    })
+    .catch((error: string) => {
+        datalessResponse.error = error;
+        return res
+        .send(datalessResponse);
+    });
+
+});
+
+router.post(routes.getRoute("email/verify"), (req: any, res: any) => {
+    const verifyEmailResponse: EmailVerifyResponse = { error: undefined };
+    const verificationCode: any = req.body.verificationCode;
+
+    // authorize
+    db.authorize(req.headers.cookie)
+    .then((response: DbAuthorizeResponse) => {
+        return db.verifyAccountEmail(response.accountid, verificationCode);
+    })
+    .then((response: DbVerifyEmailResponse) => {
+        verifyEmailResponse.data = { verificationSuccessful: response.verificationSuccessful };
+        return res
+        .send(verifyEmailResponse);
+    })
+    .catch((error: string) => {
+        verifyEmailResponse.error = error;
+        return res
+        .send(verifyEmailResponse);
     });
 
 });
