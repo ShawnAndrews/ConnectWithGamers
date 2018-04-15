@@ -1,12 +1,7 @@
 import * as React from 'react';
 
-class Background extends React.Component<any, any> {
+const Background: React.SFC<any> = () => {
 
-    constructor(props: any) {
-        super(props);
-    }
-
-  render() {
     return (
         <div className="background">
             <ul className="background-floats">
@@ -23,8 +18,6 @@ class Background extends React.Component<any, any> {
             </ul>
         </div>
     );
-  }
-
-}
+};
 
 export default Background;

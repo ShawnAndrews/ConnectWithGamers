@@ -1,29 +1,23 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import LoginForm from '../account/loginForm';
-import SignupForm from '../account/signupForm';
-import SettingsForm from '../account/settingsForm';
-import VerifyForm from '../account/verifyForm';
+import LoginFormContainer from '../account/login/LoginFormContainer';
+import SignupFormContainer from '../account/signup/SignupFormContainer';
+import SettingsFormContainer from '../account/settings/SettingsFormsContainer';
+import VerifyFormContainer from '../account//verify/verifyFormContainer';
 
-class Account extends React.Component<any, any> {
+const Account: React.SFC<any> = () => {
 
-    constructor(props: any) {
-        super(props);
-    }
+    return (
+        <div className="account-page">
+            <Switch>
+                <Route path="/account/login" component={LoginFormContainer}/>
+                <Route path="/account/signup" component={SignupFormContainer} />
+                <Route path="/account/verify/:id" component={VerifyFormContainer} />
+                <Route component={SettingsFormContainer} />
+            </Switch>
+        </div>
+    );
 
-    render() {
-        return (
-            <div className="account-page">
-                <Switch>
-                    <Route path="/account/login" component={LoginForm}/>
-                    <Route path="/account/signup" component={SignupForm} />
-                    <Route path="/account/verify/:id" component={VerifyForm} />
-                    <Route component={SettingsForm} />
-                </Switch>
-            </div>
-        );
-    }
-
-}
+};
 
 export default Account;

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
 import Account from '../account/main';
-import Home from '../home/home';
+import HomePage from '../home/HomePage';
 import Menu from '../menu/main';
-import ChatroomMenu from '../chatroom/chatroommenu';
+import ChatroomMenu from '../chat/main';
 import Background from '../background/background';
-import NotFound from '../notfound/notfound';
-import Notice from '../notice/notice';
-import Navbar from '../navbar/navbar';
+import NotFoundPageContainer from '../notfound/NotFoundPageContainer';
+import NoticePage from '../notice/NoticePage';
+import NavbarContainer from '../nav/NavbarContainer';
 import { AUTH_TOKEN_NAME } from '../../client-server-common/common';
 
 export enum NAV_PAGE {
@@ -33,15 +33,15 @@ class App extends React.Component<IAppProps, any> {
         };
     }
 
-    private get isMobileBrowser(): boolean {
+    get isMobileBrowser(): boolean {
         return (window.innerWidth <= 800 && window.innerHeight <= 1000);
     }
 
-    private get loggedIn(): boolean {
+    get loggedIn(): boolean {
         return (document.cookie.indexOf(`${AUTH_TOKEN_NAME}=`) !== -1);
     }
 
-    private get renderUnauthenticatedRedirects(): JSX.Element[] {
+    get renderUnauthenticatedRedirects(): JSX.Element[] {
         if (!this.loggedIn) {
             return (
                 this.state.authenticatedRoutes
@@ -62,25 +62,24 @@ class App extends React.Component<IAppProps, any> {
 
     render() {
 
-        // render
         return (
             <div className="inherit">
                 <Background/>
                 {this.isMobileBrowser 
                     ?
                     <div className="inherit">
-                        <Navbar/>
+                        <NavbarContainer/>
                         <Switch>
                             {this.renderUnauthenticatedRedirects}
                             <Route path="/account" component={Account}/>
                             <Route path="/menu" component={Menu}/>
                             <Route path="/chat" component={ChatroomMenu}/>
-                            <Route exact={true} path="/" component={Home}/>
-                            <Route component={NotFound}/>
+                            <Route exact={true} path="/" component={HomePage}/>
+                            <Route component={NotFoundPageContainer}/>
                         </Switch>
                     </div>
                     :
-                    <Notice message="Sorry! This application is only available on mobile devices."/>
+                    <NoticePage message="Sorry! This application is only available on mobile devices."/>
                     }
                 
             </div>

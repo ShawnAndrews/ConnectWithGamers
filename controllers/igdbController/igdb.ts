@@ -16,14 +16,13 @@ import {
     GenreGamesResponse,
     DbGenreGamesResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
-import {
-    upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames,
-    recentGamesKeyExists, getCachedRecentGames, cacheRecentGames,
-    platformGamesKeyExists, getCachedPlatformGames, cachePlatformGames,
-    gameKeyExists, getCachedGame, cacheGame,
-    searchGamesKeyExists, getCachedSearchGames, cacheSearchGames,
-    genreListKeyExists, getCachedGenreList, cacheGenreList,
-    genreGamesKeyExists, getCachedGenreGames, cacheGenreGames } from "./cache";
+import { upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames } from "./cache/upcomingGames/main";
+import { recentGamesKeyExists, getCachedRecentGames, cacheRecentGames } from "./cache/recentlyReleased/main";
+import { platformGamesKeyExists, getCachedPlatformGames, cachePlatformGames } from "./cache/platformGames/main";
+import { genreGamesKeyExists, getCachedGenreGames, cacheGenreGames } from "./cache/genreGames/main";
+import { gameKeyExists, getCachedGame, cacheGame } from "./cache/games/main";
+import { searchGamesKeyExists, getCachedSearchGames, cacheSearchGames } from "./cache/searchGames/main";
+import { genreListKeyExists, getCachedGenreList, cacheGenreList } from "./cache/genreList/main";
 
 const routes = new routeModel();
 
@@ -36,6 +35,7 @@ routes.addRoute("genregames", "/games/genre/:id");
 routes.addRoute("genrelist", "/games/genrelist");
 routes.addRoute("game", "/game/:id");
 
+/* search games */
 router.post(routes.getRoute("searchgames"), (req: any, res: any) => {
 
     const searchGamesResponse: SearchGamesResponse = { error: undefined };
@@ -72,6 +72,7 @@ router.post(routes.getRoute("searchgames"), (req: any, res: any) => {
 
 });
 
+/* upcoming games */
 router.post(routes.getRoute("upcominggames"), (req: any, res: any) => {
 
     const upcomingGamesResponse: UpcomingGamesResponse = { error: undefined };
@@ -107,6 +108,7 @@ router.post(routes.getRoute("upcominggames"), (req: any, res: any) => {
 
 });
 
+/* recent games */
 router.post(routes.getRoute("recentgames"), (req: any, res: any) => {
 
     const recentGamesResponse: RecentGamesResponse = { error: undefined };
@@ -142,6 +144,7 @@ router.post(routes.getRoute("recentgames"), (req: any, res: any) => {
 
 });
 
+/* platform games */
 router.post(routes.getRoute("platformgames"), (req: any, res: any) => {
 
     const platformGamesResponse: PlatformGamesResponse = { error: undefined };
@@ -178,6 +181,7 @@ router.post(routes.getRoute("platformgames"), (req: any, res: any) => {
 
 });
 
+/* genre games */
 router.post(routes.getRoute("genregames"), (req: any, res: any) => {
 
     const genreGamesResponse: GenreGamesResponse = { error: undefined };
@@ -213,6 +217,7 @@ router.post(routes.getRoute("genregames"), (req: any, res: any) => {
 
 });
 
+/* genre list */
 router.post(routes.getRoute("genrelist"), (req: any, res: any) => {
 
     const genreListResponse: GenreListResponse = { error: undefined };
@@ -248,6 +253,7 @@ router.post(routes.getRoute("genrelist"), (req: any, res: any) => {
 
 });
 
+/* games */
 router.post(routes.getRoute("game"), (req: any, res: any) => {
 
     const singleGameResponse: SingleGameResponse = { error: undefined };

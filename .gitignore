@@ -7,5 +7,10 @@ node_modules
 # Ignore built ts files
 dist/**/*
 
+# Ignore SSL keys and certificates
+certificate.crt
+key.pem
+bundle.ca-bundle
+
 # Readme
 README.md

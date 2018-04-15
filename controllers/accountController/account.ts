@@ -3,7 +3,10 @@ const express = require("express");
 const router = express.Router();
 import { AUTH_TOKEN_NAME, validateCredentials, DatalessResponse, DbVerifyEmailResponse, EmailVerifyResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
-import db from "../../models/db";
+import { accountModel } from "../../models/db/account/main";
+import { securityModel } from "../../models/db/security/main";
+import { settingsModel } from "../../models/db/settings/main";
+import { verificationModel } from "../../models/db/verification/main";
 
 const routes = new routeModel();
 
@@ -43,7 +46,7 @@ router.post(routes.getRoute("signup"), (req: any, res: any) => {
     }
 
     // create account in db
-    db.createAccount(signupData.username, signupData.email, signupData.password)
+    accountModel.createAccount(signupData.username, signupData.email, signupData.password)
         .then(() => {
             return res
             .send(datalessResponse);
@@ -69,10 +72,10 @@ router.post(routes.getRoute("login"), (req: any, res: any) => {
     }
 
     // authenticate
-    db.authenticate(req.body.username, req.body.password, req.body.remember)
+    securityModel.authenticate(req.body.username, req.body.password, req.body.remember)
         .then((response: DbAuthenticateResponse) => {
             // authentication success
-            return db.token(response.username, response.remember);
+            return securityModel.token(response.username, response.remember);
         })
         .then((response: DbTokenResponse) => {
             // token success
@@ -96,9 +99,9 @@ router.post(routes.getRoute("settings"), (req: any, res: any) => {
     const accountSettingsResponse: AccountSettingsResponse = { error: undefined };
 
     // authorize
-    db.authorize(req.headers.cookie)
+    securityModel.authorize(req.headers.cookie)
     .then((response: DbAuthorizeResponse) => {
-        return db.getAccountSettings(response.accountid);
+        return settingsModel.getAccountSettings(response.accountid);
     })
     .then((response: DbAccountSettingsResponse) => {
         accountSettingsResponse.data = {
@@ -126,32 +129,32 @@ router.post(routes.getRoute("settings/change"), (req: any, res: any) => {
     const newSettings: any = req.body.newSettings;
 
     // authorize
-    db.authorize(req.headers.cookie)
+    securityModel.authorize(req.headers.cookie)
     .then((response: DbAuthorizeResponse) => {
         const changePromises: Promise<null>[] = [];
 
         if (newSettings.username) {
-            changePromises.push(db.changeAccountUsername(response.accountid, newSettings.username));
+            changePromises.push(settingsModel.changeAccountUsername(response.accountid, newSettings.username));
         }
 
         if (newSettings.email) {
-            changePromises.push(db.changeAccountEmail(response.accountid, newSettings.email));
+            changePromises.push(settingsModel.changeAccountEmail(response.accountid, newSettings.email));
         }
 
         if (newSettings.password) {
-            changePromises.push(db.changeAccountPassword(response.accountid, newSettings.password));
+            changePromises.push(settingsModel.changeAccountPassword(response.accountid, newSettings.password));
         }
 
         if (newSettings.steam) {
-            changePromises.push(db.changeAccountSteam(response.accountid, newSettings.steam));
+            changePromises.push(settingsModel.changeAccountSteam(response.accountid, newSettings.steam));
         }
 
         if (newSettings.discord) {
-            changePromises.push(db.changeAccountDiscord(response.accountid, newSettings.discord));
+            changePromises.push(settingsModel.changeAccountDiscord(response.accountid, newSettings.discord));
         }
 
         if (newSettings.twitch) {
-            changePromises.push(db.changeAccountTwitch(response.accountid, newSettings.twitch));
+            changePromises.push(settingsModel.changeAccountTwitch(response.accountid, newSettings.twitch));
         }
 
         Promise.all(changePromises)
@@ -179,9 +182,9 @@ router.post(routes.getRoute("settings/image/change"), (req: any, res: any) => {
     const imageBase64: string = Object.keys(req.body)[0].split(",")[1];
 
     // authorize
-    db.authorize(req.headers.cookie)
+    securityModel.authorize(req.headers.cookie)
     .then((response: DbAuthorizeResponse) => {
-        return db.changeAccountImage(response.accountid, imageBase64);
+        return settingsModel.changeAccountImage(response.accountid, imageBase64);
     })
     .then((response: DbAccountImageResponse) => {
         accountImageResponse.link = response.link;
@@ -200,9 +203,9 @@ router.post(routes.getRoute("email/resend"), (req: any, res: any) => {
     const datalessResponse: DatalessResponse = { error: undefined };
 
     // authorize
-    db.authorize(req.headers.cookie)
+    securityModel.authorize(req.headers.cookie)
     .then((response: DbAuthorizeResponse) => {
-        return db.resendAccountEmail(response.accountid);
+        return verificationModel.resendAccountEmail(response.accountid);
     })
     .then(() => {
         return res
@@ -221,9 +224,9 @@ router.post(routes.getRoute("email/verify"), (req: any, res: any) => {
     const verificationCode: any = req.body.verificationCode;
 
     // authorize
-    db.authorize(req.headers.cookie)
+    securityModel.authorize(req.headers.cookie)
     .then((response: DbAuthorizeResponse) => {
-        return db.verifyAccountEmail(response.accountid, verificationCode);
+        return verificationModel.verifyAccountEmail(response.accountid, verificationCode);
     })
     .then((response: DbVerifyEmailResponse) => {
         verifyEmailResponse.data = { verificationSuccessful: response.verificationSuccessful };
@@ -242,9 +245,9 @@ router.post(routes.getRoute("settings/image/delete"), (req: any, res: any) => {
     const accountImageResponse: AccountImageResponse = { error: undefined };
 
     // authorize
-    db.authorize(req.headers.cookie)
+    securityModel.authorize(req.headers.cookie)
     .then((response: DbAuthorizeResponse) => {
-        return db.deleteAccountImage(response.accountid);
+        return settingsModel.deleteAccountImage(response.accountid);
     })
     .then((response: DbAccountImageResponse) => {
         accountImageResponse.link = response.link;

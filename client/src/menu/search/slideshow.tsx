@@ -5,26 +5,19 @@ interface ISlideshowProps {
     images: string[];
 }
 
-class Slideshow extends React.Component<ISlideshowProps, any> {
+const Slideshow: React.SFC<ISlideshowProps> = (props: ISlideshowProps) => {
 
-    constructor(props: ISlideshowProps) {
-        super(props);
-    }
+    const deviceWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+    const slideshowImages: JSX.Element[] = props.images.map((x: any, index: number) => {
+        return <img key={index} height={deviceWidth} width={deviceWidth} src={x} alt={`Game screenshot ${index}`}/>;
+    });
+    
+    return (
+        <Carousel className="menu-game-screenshots-feed" showArrows={false} showThumbs={false}>
+            {slideshowImages}
+        </Carousel>
+    );
 
-    render() {
-
-        const deviceWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-        const slideshowImages: JSX.Element[] = this.props.images.map((x: any, index: number) => {
-            return <img key={index} height={deviceWidth} width={deviceWidth} src={x} alt={`Game screenshot ${index}`}/>;
-        });
-        
-        return (
-            <Carousel className="menu-game-screenshots-feed" showArrows={false} showThumbs={false}>
-                {slideshowImages}
-            </Carousel>
-        );
-    }
-
-}
+};
 
 export default Slideshow;

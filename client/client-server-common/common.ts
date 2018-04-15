@@ -2,7 +2,9 @@ const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
 export interface Config {
-    serverPort: number;
+    useStrictlyHttps: boolean;
+    httpPort: number;
+    httpsPort: number;
     chatPort: number;
     chatHistoryCount: number;
     connectionStrings: {
@@ -29,6 +31,11 @@ export interface Config {
         secure: boolean,
         username: string,
         password: string
+    };
+    https?: {
+        key: string,
+        cert: string,
+        ca: string;
     };
 }
 
@@ -132,7 +139,7 @@ export interface ChatroomUser {
     image?: string;
 }
 
-export interface DbUserResponse {
+export interface DbAccountInfoResponse {
     username: string;
     steam_url?: string;
     twitch_url?: string;
@@ -359,3 +366,13 @@ export interface GenreGame {
 }
 
 export const GenreGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`, `genres`, `platforms`, `external`];
+
+export interface SteamAPIGetPriceInfoResponse {
+    price: string;
+    discount_percent: number;
+    steam_url: string;
+}
+
+export interface SteamAPIGetReviewsResponse {
+    reviews?: SteamAPIReview[];
+}

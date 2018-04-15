@@ -1,40 +1,34 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import MenuForm from './menuForm';
-import SearchForm from './search/searchForm';
-import UpcomingForm from './upcoming/upcomingForm';
-import PlatformForm from './platform/platformForm';
-import PlatformGameListForm from './platform/platformGameListForm';
-import RecentForm from './recent/recentForm';
-import GenreForm from './genre/genreForm';
-import GenreGameListForm from './genre/genreGameListForm';
+import MenuListContainer from './list/MenuListContainer';
+import SearchListContainer from './search/SearchListContainer';
+import UpcomingGameListContainer from './upcoming/UpcomingGameListContainer';
+import PlatformGameListContainer from './platform/PlatformGameListContainer';
+import PlatformListContainer from './platform/PlatformListContainer';
+import RecentGameListContainer from './recent/RecentGameListContainer';
+import GenreListContainer from './genre/GenreListContainer';
+import GenreGameListContainer from './genre/GenreGameListContainer';
+import NotFoundPageContainer from '../notfound/NotFoundPageContainer';
 
-class Menu extends React.Component<any, any> {
+const Menu: React.SFC<any> = () => {
 
-    constructor(props: any) {
-        super(props);
-    }
+    return (
+        <div className="menu">
+            <Switch>
+                <Route exact={true} path="/menu" component={MenuListContainer}/>
+                <Route exact={true} path="/menu/search/:id" component={SearchListContainer} />
+                <Route exact={true} path="/menu/search" component={SearchListContainer} />
+                <Route exact={true} path="/menu/upcoming" component={UpcomingGameListContainer} />
+                <Route exact={true} path="/menu/platform/:id" component={PlatformListContainer} />
+                <Route exact={true} path="/menu/platform" component={PlatformGameListContainer} />
+                <Route exact={true} path="/menu/recent" component={RecentGameListContainer} />
+                <Route exact={true} path="/menu/genre/:id" component={GenreListContainer} />
+                <Route exact={true} path="/menu/genre" component={GenreGameListContainer} />
+                <Route component={NotFoundPageContainer}/>
+            </Switch>
+        </div>
+    );
 
-    render() {
-
-        return (
-            <div className="menu">
-                <Switch>
-                    <Route exact={true} path="/menu" component={MenuForm}/>
-                    <Route exact={true} path="/menu/search/:id" component={SearchForm} />
-                    <Route exact={true} path="/menu/search" component={SearchForm} />
-                    <Route exact={true} path="/menu/upcoming" component={UpcomingForm} />
-                    <Route exact={true} path="/menu/platform/:id" component={PlatformGameListForm} />
-                    <Route exact={true} path="/menu/platform" component={PlatformForm} />
-                    <Route exact={true} path="/menu/recent" component={RecentForm} />
-                    <Route exact={true} path="/menu/genre/:id" component={GenreGameListForm} />
-                    <Route exact={true} path="/menu/genre" component={GenreForm} />
-                </Switch>
-            </div>
-        );
-
-    }
-
-}
+};
 
 export default Menu;

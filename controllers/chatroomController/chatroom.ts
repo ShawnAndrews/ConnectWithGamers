@@ -1,9 +1,11 @@
 const socketIO = require("socket.io");
-import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbAuthorizeResponse, DbUserResponse, DbAccountImageResponse } from "../../client/client-server-common/common";
-import db from "../../models/db";
+import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbAuthorizeResponse, DbAccountInfoResponse, DbAccountImageResponse } from "../../client/client-server-common/common";
+import { securityModel } from "../../models/db/security/main";
+import { chatroomModel } from "../../models/db/chatroom/main";
+import { accountModel } from "../../models/db/account/main";
 
 export default function registerChatHandlers(chatServer: any): void {
-    const chatHandler = socketIO(chatServer);
+    const chatHandler = socketIO.listen(chatServer);
     const usersActivityRefreshMins: number = 30;
     const usersInChat: any[] = [];
 
@@ -53,14 +55,14 @@ export default function registerChatHandlers(chatServer: any): void {
     chatHandler.use((socket: any, next: any) => {
 
         // authorize
-        db.authorize(socket.handshake.headers.cookie)
+        securityModel.authorize(socket.handshake.headers.cookie)
         .then((response: DbAuthorizeResponse) => {
             const accountid: number = response.accountid;
             refreshUserActivity(accountid);
             const usercount: number = getUserCount();
             socket.emit(CHATROOM_EVENTS.Usercount, usercount);
             socket.broadcast.emit(CHATROOM_EVENTS.Usercount, usercount);
-            db.getChatHistory()
+            chatroomModel.getChatHistory()
             .then((chats: ChatHistoryResponse) => {
                 socket.emit(CHATROOM_EVENTS.MessageHistory, chats);
             })
@@ -81,7 +83,7 @@ export default function registerChatHandlers(chatServer: any): void {
 
         socket.on("disconnect", () => {
             // authorize
-            db.authorize(socket.handshake.headers.cookie)
+            securityModel.authorize(socket.handshake.headers.cookie)
             .then((response: DbAuthorizeResponse) => {
                 const usercount: number = getUserCount();
                 socket.emit(CHATROOM_EVENTS.Usercount, usercount);
@@ -95,12 +97,12 @@ export default function registerChatHandlers(chatServer: any): void {
 
         socket.on(CHATROOM_EVENTS.Usercount, (data: any) => {
             // authorize
-            db.authorize(socket.handshake.headers.cookie)
+            securityModel.authorize(socket.handshake.headers.cookie)
             .then((response: DbAuthorizeResponse) => {
                 const userAccountIds: number[] = usersInChat.map((x: any) => { return x.accountid; });
                 userAccountIds.forEach((accountId: number) => {
-                    db.getUserById(accountId)
-                    .then((dbUser: DbUserResponse) => {
+                    accountModel.getAccountInfo(accountId)
+                    .then((dbUser: DbAccountInfoResponse) => {
                         const now: any = new Date();
                         const userExpiresOn: any = getExpiresOnFromId(accountId);
                         const minutesDiff: number = Math.round((((userExpiresOn - now) % 86400000) % 3600000) / 60000);
@@ -128,22 +130,22 @@ export default function registerChatHandlers(chatServer: any): void {
             let image: string = undefined;
 
             // authorize
-            db.authorize(socket.handshake.headers.cookie)
+            securityModel.authorize(socket.handshake.headers.cookie)
             .then((response: DbAuthorizeResponse) => {
                 accountid = response.accountid;
                 refreshUserActivity(accountid);
-                return db.getAccountUsername(accountid);
+                return accountModel.getAccountUsername(accountid);
             })
             .then((response: GenericResponseModel) => {
                 username = response.data.username;
-                return db.getAccountImage(accountid);
+                return accountModel.getAccountImage(accountid);
             })
             .then((response: DbAccountImageResponse) => {
                 date = Date.now();
                 text = data.text;
                 image = response.link;
 
-                return db.addChatMessage(username, date, text, image);
+                return chatroomModel.addChatMessage(username, date, text, image);
             })
             .then(() => {
                 const newChat: SingleChatHistory = { name: username, date: new Date(date), text: text, image: image };

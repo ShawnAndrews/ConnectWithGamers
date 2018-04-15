@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { SingleGameResponse, PlatformGamesResponse, RecentGamesResponse, UpcomingGamesResponse, SearchGamesResponse, GenreListResponse, GenreGamesResponse } from '../../../client-server-common/common';
 
+/**
+ * HTTP request to get search games.
+ */
 export function httpGetSearchGames(query: string): Promise<SearchGamesResponse> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/igdb/games/search/${query}`)
@@ -17,6 +20,9 @@ export function httpGetSearchGames(query: string): Promise<SearchGamesResponse> 
     }); 
 }
 
+/**
+ * HTTP request to get upcoming games.
+ */
 export function httpGetUpcomingGamesList(): Promise<UpcomingGamesResponse> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/igdb/games/upcoming')
@@ -33,6 +39,9 @@ export function httpGetUpcomingGamesList(): Promise<UpcomingGamesResponse> {
     }); 
 }
 
+/**
+ * HTTP request to get recent games.
+ */
 export function httpGetRecentlyReleasedGamesList(): Promise<RecentGamesResponse> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/igdb/games/recent')
@@ -49,6 +58,9 @@ export function httpGetRecentlyReleasedGamesList(): Promise<RecentGamesResponse>
     }); 
 }
 
+/**
+ * HTTP request to get platform games.
+ */
 export function httpGetPlatformGamesList(platformId: number): Promise<PlatformGamesResponse> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/igdb/games/platform/${platformId}`)
@@ -65,6 +77,9 @@ export function httpGetPlatformGamesList(platformId: number): Promise<PlatformGa
     }); 
 }
 
+/**
+ * HTTP request to get genre games.
+ */
 export function httpGetGenreGamesList(genreId: number): Promise<GenreGamesResponse> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/igdb/games/genre/${genreId}`)
@@ -81,6 +96,9 @@ export function httpGetGenreGamesList(genreId: number): Promise<GenreGamesRespon
     }); 
 }
 
+/**
+ * HTTP request to get genre list.
+ */
 export function httpGetGenreList(): Promise<GenreListResponse> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/igdb/games/genrelist`)
@@ -97,6 +115,9 @@ export function httpGetGenreList(): Promise<GenreListResponse> {
     }); 
 }
 
+/**
+ * HTTP request to get a specific game.
+ */
 export function httpGetGame(id: string): Promise<SingleGameResponse> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/igdb/game/${id}`)

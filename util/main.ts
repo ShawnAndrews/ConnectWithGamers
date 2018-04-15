@@ -1,6 +1,6 @@
 import * as WebRequest from "web-request";
 import config from "./../config";
-import { SteamAPIReview } from "../client/client-server-common/common";
+import { SteamAPIReview, SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse } from "../client/client-server-common/common";
 
 /**
  * Convert Date->YYYY-MM-DD.
@@ -57,16 +57,6 @@ export function addMonths(dateToAdd: Date, numMonthsToAdd: number) {
     dateToAdd.setMonth(dateToAdd.getMonth() + numMonthsToAdd);
     dateToAdd.setDate(Math.min(d, getDaysInMonth(dateToAdd)));
     return dateToAdd;
-}
-
-export interface SteamAPIGetPriceInfoResponse {
-    price: string;
-    discount_percent: number;
-    steam_url: string;
-}
-
-export interface SteamAPIGetReviewsResponse {
-    reviews?: SteamAPIReview[];
 }
 
 /**
@@ -143,4 +133,17 @@ export function ArrayClean(arr: any[], deleteValue: any): any[] {
         }
     }
     return arr;
+}
+
+/**
+ * Return a psuedo-randomly generated string of a given length.
+ */
+export function genRandStr(length: number) {
+    let text: string = "";
+    const possible: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (let i = 0; i < length; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
 }
