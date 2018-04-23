@@ -1,5 +1,3 @@
-const bcrypt = require("bcrypt");
-const imgur = require("imgur");
 import config from "../../../config";
 import { genRandStr } from "../../../util/main";
 import DatabaseBase from "../base/dbBase";
@@ -7,6 +5,8 @@ import { EMAIL_VERIFICATION_LEN, SALT_RNDS } from "../account/main";
 import {
     validateUsername, validateEmail, validateURL, validatePassword,
     GenericResponseModel, DbAccountSettingsResponse, DbAccountImageResponse } from "../../../client/client-server-common/common";
+const bcrypt = require("bcrypt");
+const imgur = require("imgur");
 
 imgur.setClientId(config.imgur.clientId);
 

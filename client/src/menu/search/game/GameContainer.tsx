@@ -1,9 +1,9 @@
 const popupS = require('popups');
 import * as React from 'react';
-import * as IGDBService from '../../service/igdb/main';
+import * as IGDBService from '../../../service/igdb/main';
 import { withRouter } from 'react-router-dom';
 import Game from './Game';
-import { SingleGameResponse, SteamAPIReview, GameResponse } from '../../../../client/client-server-common/common';
+import { SingleGameResponse, SteamAPIReview, GameResponse } from '../../../../../client/client-server-common/common';
 
 interface IGameContainerProps {
     gameId: string;

@@ -6,6 +6,7 @@ import * as io from 'socket.io-client';
 import { ChatroomUser, CHATROOM_EVENTS, CHAT_SERVER_PORT } from '../../../../client/client-server-common/common';
 
 interface IUserlistContainerProps {
+    sidebarActive: boolean;
     history: any;
 }
 
@@ -35,6 +36,7 @@ class UserlistContainer extends React.Component<IUserlistContainerProps, any> {
     render() {
         return (
             <Userlist
+                sidebarActive={this.props.sidebarActive}
                 userlist={this.state.userlist}
                 goBack={this.goBack}
             />
