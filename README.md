@@ -2,7 +2,7 @@
 
   ![alt text](https://i.imgur.com/obqCKhX.png "logo")
 
-  <h1>Connect With Gamers (v1.1)</h1>
+  <h1>Connect With Gamers (v1.2)</h1>
 </div>
 
 <div align="center">
@@ -56,7 +56,7 @@
 
 ![alt text](https://i.imgur.com/10UUUmo.png "infographic")
 
-![alt text](https://i.imgur.com/aSaLFQp.png "screenshots")
+![alt text](https://i.imgur.com/HDz7PYf.png "screenshots")
 
 ## Updates
 
@@ -66,6 +66,8 @@
 
 <h3>Version 1.1<h3>
 
+<details> 
+  <summary>Expand to read patch notes</summary>
 <h4>Account login</h4>
 
 - Updated login, signup button
@@ -73,7 +75,7 @@
 
 <h4>Account Settings</h4>
 
- - Added ability to change password
+- Added ability to change password
 - Changed saving individual settings into one save button
 - Added ability to Add/Update/Delete profile pictures
     - Using Imgur image hosting
@@ -97,7 +99,39 @@
 - Changed Popular Games By Platform to Exclusive Games By Platform
 - Added Read More for long summaries for improved readability
 - Added clickable platforms and genres
+</details>
 
+<h3>Version 1.2<h3>
+
+<details> 
+  <summary>Expand to read patch notes</summary>
+<h4>Chatroom</h4>
+
+- Added top and side nav bar
+- Moved User List to side nav
+    - Updated user list UI
+    - Added multi-bubble for subsequent messages from the same person
+    - Added ability to use pictures in messages
+
+<h4>Menu</h4>
+
+- Updated Game Screen UI
+
+<h4>Account</h4>
+
+- Added email verification
+    - Email sent on account creation and resend
+    - When changing emails, set new verification code
+    
+<h4>Other</h4>
+    
+- Added SSL support
+- Code cleanup
+    - Add comments
+    - Split heavy files into smaller ones
+    - Seperate components into container and presentational components
+</details>
+    
 ## Config
 Create a git-ignored file called ``config.ts`` in the ``/`` directory with the following contents, including the requried properties of the Config interface.
 
@@ -111,6 +145,8 @@ const config: Config = {
 export default config;
 ```
 
+SSL information: If you plan to use SSL set "useStrictlyHttps:true" and "https: { key: `keyPath.pem`, cert: `certPath.crt`, ca: `bundlePath.ca-bundle` }" to the appropriate paths in the config properties.
+
 ## Dependencies
 Apart from the included NPM packages, there are a couple extra components required to run Connect With Gamers without error.
 - Redis: This is required to save API calls to IGDB in memory.
@@ -118,21 +154,22 @@ Apart from the included NPM packages, there are a couple extra components requir
 - IGDB: You are required to have an IGDB account with a valid API key present in the config file to perform API queries.
 - Imgur: You are required to have a valid Imgur API key.
 - Steam: No API key is required for the current application's requests.
+- SMTP: For account email verification you must set valid SMTP account credentials via the config property "smtp".
 
 ## Installation
 How do i run this website on my own?
 - Make sure your SQL Server database is running on the default port and you imported the schema from [v1.0](http://www.saportfolio.ca/ConnectWithGamersv10.bacpac) or [v1.1](http://www.saportfolio.ca/ConnectWithGamersv11.bak).
 - Make sure your Redis server is up and running.
-- Make sure your HTTP and Chat server ports are forwarded. This is defaulted to 80 and 81, respectively.
+- Make sure your HTTP, HTTPS(if enabled) and Chat server ports are forwarded, if using on a live site.
 - You may now access the website via ``localhost``.
 
 ## Run
-Start running the HTTP and Chat server by executing the following command in the ``/`` directory.
+Start running the HTTP and Chat server by executing "npm install" then the following command in the ``/`` directory:
 
 ```npm run server-client```
 
 This will build the production version of the client and server in the respective ``/dist`` folder then run the server.
-You are now listening on port 80 and 81.
+You may now access the site via localhost.
 
 ## FAQ
 ### Why is it called Connect With Gamers?
