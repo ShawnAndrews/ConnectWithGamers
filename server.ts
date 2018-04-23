@@ -1,4 +1,5 @@
 import accountController from "./controllers/accountController/account";
+import { router as chatroomController } from "./controllers/chatroomController/chatroom";
 import igdbController from "./controllers/igdbController/igdb";
 import registerChatHandlers from "./controllers/chatroomController/chatroom";
 import config from "./config";
@@ -38,10 +39,13 @@ app.use((req: any, res: any, next: any) => {
   next();
 });
 
+/* chatroom controller */
+app.use("/chatroom", chatroomController);
+
 /* account authentication controller */
 app.use("/account", accountController);
 
-/* igdb api controller */
+/* igdb controller */
 app.use("/igdb", igdbController);
 
 /* client */

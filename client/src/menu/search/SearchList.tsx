@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import Select from 'react-select';
 import Spinner from '../../spinner/main';
 import { SearchGameOption } from './SearchListContainer';
-import GameContainer from './GameContainer';
+import GameContainer from './game/GameContainer';
 
 interface ISearchListProps {
     gameId: string;

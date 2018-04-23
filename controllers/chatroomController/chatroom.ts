@@ -1,8 +1,38 @@
 const socketIO = require("socket.io");
-import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbAuthorizeResponse, DbAccountInfoResponse, DbAccountImageResponse } from "../../client/client-server-common/common";
+const express = require("express");
+const router = express.Router();
+import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbAuthorizeResponse, DbAccountInfoResponse, DbAccountImageResponse, DbChatroomAttachmentResponse, ChatroomAttachmentResponse } from "../../client/client-server-common/common";
+import routeModel from "../../models/routemodel";
 import { securityModel } from "../../models/db/security/main";
 import { chatroomModel } from "../../models/db/chatroom/main";
 import { accountModel } from "../../models/db/account/main";
+
+const routes = new routeModel();
+
+/* routes */
+routes.addRoute("attachment/upload", "/attachment/upload");
+
+router.post(routes.getRoute("attachment/upload"), (req: any, res: any) => {
+    const chatroomAttachmentResponse: ChatroomAttachmentResponse = { error: undefined };
+    const imageBase64: string = Object.keys(req.body)[0].split(",")[1];
+
+    // authorize
+    securityModel.authorize(req.headers.cookie)
+    .then((response: DbAuthorizeResponse) => {
+        return chatroomModel.uploadAttachment(imageBase64);
+    })
+    .then((response: DbChatroomAttachmentResponse) => {
+        chatroomAttachmentResponse.link = response.link;
+        return res
+        .send(chatroomAttachmentResponse);
+    })
+    .catch((error: string) => {
+        chatroomAttachmentResponse.error = error;
+        return res
+        .send(chatroomAttachmentResponse);
+    });
+
+});
 
 export default function registerChatHandlers(chatServer: any): void {
     const chatHandler = socketIO.listen(chatServer);
@@ -128,6 +158,7 @@ export default function registerChatHandlers(chatServer: any): void {
             let date: number = undefined;
             let text: string = undefined;
             let image: string = undefined;
+            let attachment: string = undefined;
 
             // authorize
             securityModel.authorize(socket.handshake.headers.cookie)
@@ -144,11 +175,11 @@ export default function registerChatHandlers(chatServer: any): void {
                 date = Date.now();
                 text = data.text;
                 image = response.link;
-
-                return chatroomModel.addChatMessage(username, date, text, image);
+                attachment = data.attachment;
+                return chatroomModel.addChatMessage(username, date, text, image, attachment);
             })
             .then(() => {
-                const newChat: SingleChatHistory = { name: username, date: new Date(date), text: text, image: image };
+                const newChat: SingleChatHistory = { name: username, date: new Date(date), text: text, image: image, attachment: attachment };
                 socket.emit(CHATROOM_EVENTS.Message, newChat);
                 socket.broadcast.emit(CHATROOM_EVENTS.Message, newChat);
             })
@@ -159,3 +190,5 @@ export default function registerChatHandlers(chatServer: any): void {
         });
     });
 }
+
+export { router };

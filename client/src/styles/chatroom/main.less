@@ -1,36 +1,79 @@
 @userlist-height: 70px;
 @userlist-content-height: @userlist-height - 4px;
-@chatroom-messagebox-height: 65px;
+@chatroom-messagebox-height: 55px;
 
 .chatroom {
     position: relative;
     width: 100%;
     height: calc(~"100% -" @navbar-item-height);
     top: @navbar-item-height;
+    overflow-x: hidden;
 
     .chatroom-appbar {
         position: relative;
-        height: 10%;
+        height: 7%;
         width: 100%;
         background-color: rgba(0,0,0,0.25) !important;
 
-        > div {
-            height: 100% !important;
-            line-height: 100% !important;
-            margin-top: -2px !important;
+        .chatroom-appbar-btn-container {
+            position: relative;
+            z-index: 10;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);   
 
-            > div {
-                position: absolute;
-                z-index: 10;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);    
-            }
-            
-            svg {
-                color: rgba(255,255,255,0.7) !important;
+            .chatroom-appbar-btn {
+                position: relative;
+                width: fit-content;
+                height: fit-content;
+                margin-left: 20px;
+    
+                .bar1, .bar2, .bar3 {
+                    position: relative;
+                    font-size: 10px;
+                    width: 35px;
+                    height: 5px;
+                    border-radius: 7px;
+                    background-color: rgba(255,255,255,0.5);
+                    transition: all 0.2s ease-in;
+                    -webkit-transition: all 0.2s ease-in;
+                    transform: rotate(0deg);
+                    -webkit-transform: rotate(0deg);
+                }
+                
+                .bar1, .bar2 {
+                    margin-bottom: 4px;
+                }
+                
+                .bar1.active {
+                    top: 8px;
+                    -webkit-transform: rotate(135deg);
+                    -moz-transform: rotate(135deg);
+                    -o-transform: rotate(135deg);
+                    transform: rotate(135deg);
+                    transition: all 0.2s ease-in;
+                    -webkit-transition: all 0.2s ease-in;
+                }
+    
+                .bar2.active{
+                    opacity: 0;
+                    left: -60px;
+                    transition: all 0.2s ease-in;
+                    -webkit-transition: all 0.2s ease-in;
+                }
+    
+                .bar3.active{
+                    top: -10px;
+                    -webkit-transform: rotate(-135deg);
+                    -moz-transform: rotate(-135deg);
+                    -o-transform: rotate(-135deg);
+                    transform: rotate(-135deg);
+                    transition: all 0.2s ease-in;
+                    -webkit-transition: all 0.2s ease-in;
+                }
             }
         }
+        
 
         > h1 {
             position: absolute;
@@ -41,22 +84,25 @@
             text-align: center;
             opacity: 0.75;
             margin-top: 2px !important;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             font-size: 1.4em !important;
             font-weight: 600 !important;
+            color: rgba(255,255,255,0.7);
         }
 
     }
     
     .chatroom-messages {
         position: absolute;
-        top:10%;
+        top:7%;
         left:0;
-        height: calc(~"100% - 10% - " @chatroom-messagebox-height);
+        height: calc(~"100% - 7% - " @chatroom-messagebox-height);
         width: 100%;
         box-sizing: border-box;
         color: rgba(19, 75, 115, 0.78);
         padding: 10px;
+        transition: all 0.3s ease-in;
+        -webkit-transition: all 0.3s ease-in;
 
         .chatroom-messages-loading {
             position: absolute;
@@ -67,7 +113,7 @@
             transform: translate(-50%, -50%);
         }
         
-        .chatroom-message:nth-child(even) {
+        .chatroom-message-left {
             position: relative;
             float: left;
             clear: both;
@@ -82,30 +128,29 @@
                 background: rgba(255,255,255,0.3);
                 display: table;
                 border-radius:25px;
-                word-break: break-all;
+                word-break: break-word;
                 -webkit-tap-highlight-color: rgba(255,255,255,0);
 
-                .chatroom-message-text {
+                .chatroom-message-text, .chatroom-message-text-repeat {
                     position: relative;
-                    word-wrap: break-word;
                     padding: 17px;
                     box-sizing: border-box;
-                    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
+                    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+                }
 
-                    &:after {
-                        position: absolute;
-                        content: '';
-                        background: url(
-                            "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='15.515px' height='17.5px' viewBox='32.485 17.5 15.515 17.5' enable-background='new 32.485 17.5 15.515 17.5'><path fill='rgb(255,255,255)' fill-opacity='0.3' d='M48,35c-7-4-6-8.75-6-17.5C28,17.5,29,35,48,35z'/></svg>"
-                            ) no-repeat;
-                        width: 15.515px;
-                        height: 17.5px;
-                        left: -3px;
-                        bottom: -3px;
-                        -webkit-clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
-                        clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
-                        transform: scale(-1, 1);
-                    }
+                .chatroom-message-text:after {
+                    position: absolute;
+                    content: '';
+                    background: url(
+                        "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='15.515px' height='17.5px' viewBox='32.485 17.5 15.515 17.5' enable-background='new 32.485 17.5 15.515 17.5'><path fill='rgb(255,255,255)' fill-opacity='0.3' d='M48,35c-7-4-6-8.75-6-17.5C28,17.5,29,35,48,35z'/></svg>"
+                        ) no-repeat;
+                    width: 15.515px;
+                    height: 17.5px;
+                    left: -3px;
+                    bottom: -3px;
+                    -webkit-clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
+                    clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
+                    transform: scale(-1, 1);
                 }
 
                 .chatroom-message-username {
@@ -142,7 +187,7 @@
             }
         }
 
-        .chatroom-message:nth-child(odd) {
+        .chatroom-message-right {
             position: relative;
             float: right;
             clear: both;
@@ -156,32 +201,31 @@
                 background: rgba(255,255,255,0.3);
                 display: table;
                 border-radius:25px;
-                word-break: break-all;
+                word-break: break-word;
                 float: right;
                 -webkit-tap-highlight-color: rgba(255,255,255,0);
 
-                .chatroom-message-text {
+                .chatroom-message-text, .chatroom-message-text-repeat {
                     position: relative;
-                    word-wrap: break-word;
                     padding: 17px;
                     box-sizing: border-box;
-                    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
-
-                    &:after {
-                        position: absolute;
-                        content: '';
-                        background: url(
-                            "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='15.515px' height='17.5px' viewBox='32.485 17.5 15.515 17.5' enable-background='new 32.485 17.5 15.515 17.5'><path fill='rgb(255,255,255)' fill-opacity='0.3' d='M48,35c-7-4-6-8.75-6-17.5C28,17.5,29,35,48,35z'/></svg>"
-                            ) no-repeat;
-                        width: 15.515px;
-                        height: 17.5px;
-                        right: -3px;
-                        bottom: -3px;
-                        -webkit-clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
-                        clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
-                    }
+                    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
                 }
 
+                .chatroom-message-text:after {
+                    position: absolute;
+                    content: '';
+                    background: url(
+                        "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='15.515px' height='17.5px' viewBox='32.485 17.5 15.515 17.5' enable-background='new 32.485 17.5 15.515 17.5'><path fill='rgb(255,255,255)' fill-opacity='0.3' d='M48,35c-7-4-6-8.75-6-17.5C28,17.5,29,35,48,35z'/></svg>"
+                        ) no-repeat;
+                    width: 15.515px;
+                    height: 17.5px;
+                    right: -3px;
+                    bottom: -3px;
+                    -webkit-clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
+                    clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
+                }
+                
                 .chatroom-message-username {
                     position: absolute;
                     bottom: -50px;
@@ -216,7 +260,7 @@
             }
         }
 
-        .chatroom-message:nth-child(odd), .chatroom-message:nth-child(even) {
+        .chatroom-message-left, .chatroom-message-right {
 
             &.time-visible {
                 margin-bottom: 40px;
@@ -240,27 +284,140 @@
         }
     }
 
+    .chatroom-messages.active {
+        left: 105px;
+        transition: all 0.3s ease-in;
+        -webkit-transition: all 0.3s ease-in;
+    }
+
+    .chatroom-menu {
+        position: absolute;
+        top: 7%;
+        left: -105px;
+        height: calc(~"100% - 7% - " @chatroom-messagebox-height);
+        width: 105px;
+        background-color: rgba(0,0,0,0.25);
+        transition: all 0.3s ease-in;
+        -webkit-transition: all 0.3s ease-in;
+        padding: 20px 0;
+
+        &.chatroom-input-height {
+            height: calc(~"100% - 7%");
+        }
+
+        .chatroom-menu-item {
+            color: whitesmoke;
+            opacity: 0.3;
+
+            &.active {
+                opacity: 0.8;
+            }
+
+            > svg {
+                width: 64px;
+                margin: 0 20px;
+            }
+        }
+
+        .chatroom-menu-item-title {
+            text-align: center;
+            font-size: 1em;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            color: whitesmoke;
+            opacity: 0.3;
+
+            &.active {
+                opacity: 0.8;
+            }
+        }
+
+        .chatroom-menu-item-divider {
+            position: relative;
+            height: 10px;
+
+            &:before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 5%;
+                right: 5%;
+                width: 90%;
+                height: 1px;
+                background-image: linear-gradient(to right, transparent, rgba(255,255,255,0.7), transparent);
+            }
+        }
+
+    }
+
+    .chatroom-menu.active {
+        left: 0px;
+        transition: all 0.3s ease-in;
+        -webkit-transition: all 0.3s ease-in;
+    }
+
     .chatroom-input {
         position: absolute;
         bottom:0;
         left:0;
-        background: linear-gradient(transparent, rgba(0,0,0,0.2));
+        background-color: rgba(0,0,0,0.25);
         height: @chatroom-messagebox-height;
         width: 100%;
-        padding: 10px;
         box-sizing: border-box;
         
+        .chatroom-input-icon-container {
+            display: inline;
+
+            > i {
+                color: rgba(255,255,255,0.7);
+                position: relative;
+                margin-right: 15px;
+                margin-left: 15px;
+                vertical-align: baseline;
+            }
+
+            .chatroom-input-icon-input {
+                display: none;
+            }            
+
+        }
+
         .chatroom-input-textfield {
-            width: 100% !important;
+            width: calc(~"100% -" 162px) !important;
+            height: 100% !important;
+            top: -5px;
 
             > div, input {
-                color: whitesmoke !important;
+                color: rgba(255,255,255,0.5) !important;
 
                 > hr {
                     border-bottom: 2px solid rgba(255,255,255,0.7) !important;
                 }
             }
         }
+
+        .chatroom-input-send {
+            position: absolute;
+            width: 100px;
+            height: @chatroom-messagebox-height;
+            top: 0;
+            right: 0;
+            background-color: transparent !important;
+
+            span {
+                font-size: 1.05em !important; 
+                letter-spacing: 3px !important; 
+                font-weight: 700 !important;
+            }
+
+            > button {
+                background-color: rgba(0, 0, 0, 0.2) !important;
+                height: @chatroom-messagebox-height !important;
+            }
+        }
+
     }
 } 
 
@@ -268,7 +425,16 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    top: 70px;
+    top: 0;
+    left: 0;
+    transition: all 0.3s ease-in;
+    -webkit-transition: all 0.3s ease-in;
+
+    &.active {
+        left: 105px;
+        transition: all 0.3s ease-in;
+        -webkit-transition: all 0.3s ease-in;
+    }
 
     .userlist-appbar {
         position: relative;
@@ -304,7 +470,7 @@
             opacity: 0.75;
             margin-top: 2px !important;
             letter-spacing: 1px;
-            font-size: 1.4em !important;
+            font-size: 1.6em !important;
             font-weight: 600 !important;
         }
     }
@@ -315,7 +481,8 @@
         border-radius: 0px !important;
         background-color: transparent !important;
         border-bottom: 1px solid rgba(0, 0, 0, 0.27) !important;
-        
+        top: 7%;
+
         > span {
             width: calc(~"100% -" @userlist-content-height) !important;
         }

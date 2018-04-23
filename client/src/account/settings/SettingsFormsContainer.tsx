@@ -23,6 +23,7 @@ class SettingsFormContainer extends React.Component<ISettingsFormContainerProps,
         this.showLinksChanged = this.showLinksChanged.bind(this);
         this.handleImageChange = this.handleImageChange.bind(this);
         this.handleImageDelete = this.handleImageDelete.bind(this);
+        this.resend = this.resend.bind(this);
         this.logout = this.logout.bind(this);
         this.saveChanges = this.saveChanges.bind(this);
 

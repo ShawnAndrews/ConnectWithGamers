@@ -183,6 +183,10 @@ export interface DbAccountImageResponse {
     link: string;
 }
 
+export interface DbChatroomAttachmentResponse {
+    link: string;
+}
+
 export interface GenericResponseModel {
     error: string;
     data: any;
@@ -193,6 +197,7 @@ export interface SingleChatHistory {
     date: Date;
     text: string;
     image: string;
+    attachment: string;
 }
 
 export interface AccountSettingsResponse {
@@ -220,11 +225,17 @@ export interface AccountImageResponse {
     link?: string;
 }
 
+export interface ChatroomAttachmentResponse {
+    error: string;
+    link?: string;
+}
+
 export interface ChatHistoryResponse {
     name: string[];
     date: string[];
     text: string[];
     image: string[];
+    attachment: string[];
 }
 
 export interface GameListEntryResponse {

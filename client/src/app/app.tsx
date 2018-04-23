@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
 import Account from '../account/main';
-import HomePage from '../home/HomePage';
+import HomePageContainer from '../home/HomePageContainer';
 import Menu from '../menu/main';
-import ChatroomMenu from '../chat/main';
+import ChatroomMenuContainer from '../chat/ChatroomMenuContainer';
 import Background from '../background/background';
 import NotFoundPageContainer from '../notfound/NotFoundPageContainer';
 import NoticePage from '../notice/NoticePage';
@@ -73,8 +73,8 @@ class App extends React.Component<IAppProps, any> {
                             {this.renderUnauthenticatedRedirects}
                             <Route path="/account" component={Account}/>
                             <Route path="/menu" component={Menu}/>
-                            <Route path="/chat" component={ChatroomMenu}/>
-                            <Route exact={true} path="/" component={HomePage}/>
+                            <Route path="/chat" component={ChatroomMenuContainer}/>
+                            <Route exact={true} path="/" component={HomePageContainer}/>
                             <Route component={NotFoundPageContainer}/>
                         </Switch>
                     </div>
