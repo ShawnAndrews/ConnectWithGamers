@@ -5,6 +5,7 @@ import { EMAIL_VERIFICATION_LEN, SALT_RNDS } from "../account/main";
 import {
     validateUsername, validateEmail, validateURL, validatePassword,
     GenericResponseModel, DbAccountSettingsResponse, DbAccountImageResponse } from "../../../client/client-server-common/common";
+import axios from "axios";
 const bcrypt = require("bcrypt");
 const imgur = require("imgur");
 
@@ -226,50 +227,19 @@ class SettingsModel extends DatabaseBase {
 
         return new Promise( (resolve, reject) => {
 
-            const discordValidationError: string = validateURL(newDiscord);
-            if (discordValidationError) {
-                return reject(discordValidationError);
+            if (newDiscord !== "") {
+                const discordValidationError: string = validateURL(newDiscord);
+                if (discordValidationError) {
+                    return reject(discordValidationError);
+                }
             }
 
             this.update(
                 "dbo.accounts",
                 ["accountid", "discord"],
                 [this.sql.Int, this.sql.VarChar],
-                [accountid, newDiscord],
+                [accountid, newDiscord === "" ? undefined : newDiscord],
                 ["discord"],
-                "accountid=@accountid")
-                .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.rowsAffected[0] == 1) {
-                        return resolve();
-                    } else {
-                        return reject(`Database error.`);
-                    }
-                })
-                .catch((error: string) => {
-                    return reject(error);
-                });
-
-        });
-    }
-
-    /**
-     * Change the account's Steam link.
-     */
-    changeAccountSteam(accountid: number, newSteam: string): Promise<null> {
-
-        return new Promise( (resolve, reject) => {
-
-            const discordValidationError: string = validateURL(newSteam);
-            if (discordValidationError) {
-                return reject(discordValidationError);
-            }
-
-            this.update(
-                "dbo.accounts",
-                ["accountid", "steam"],
-                [this.sql.Int, this.sql.VarChar],
-                [accountid, newSteam],
-                ["steam"],
                 "accountid=@accountid")
                 .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.rowsAffected[0] == 1) {
@@ -290,19 +260,81 @@ class SettingsModel extends DatabaseBase {
      */
     changeAccountTwitch(accountid: number, newTwitch: string): Promise<null> {
 
+        const updatePromise = (): Promise<null> => {
+            return new Promise( (resolve, reject) => {
+                this.update(
+                    "dbo.accounts",
+                    ["accountid", "twitch"],
+                    [this.sql.Int, this.sql.VarChar],
+                    [accountid, newTwitch === "" ? undefined : newTwitch],
+                    ["twitch"],
+                    "accountid=@accountid")
+                    .then((dbResponse: GenericResponseModel) => {
+                        if (dbResponse.data.rowsAffected[0] == 1) {
+                            return resolve();
+                        } else {
+                            return reject("Database error.");
+                        }
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+            });
+        };
+
         return new Promise( (resolve, reject) => {
 
-            const discordValidationError: string = validateURL(newTwitch);
-            if (discordValidationError) {
-                return reject(discordValidationError);
+            if (newTwitch === "") {
+                return updatePromise()
+                    .then(() => {
+                        return resolve();
+                    })
+                    .catch((err: string) => {
+                        return reject(err);
+                    });
             }
 
-            this.update(
+            axios
+            .get(`https://api.twitch.tv/helix/users?login=${newTwitch}`,
+            {
+                headers: {
+                    "Client-ID": config.twitch.clientId,
+                    "Accept": "application/vnd.twitchtv.v5+json"
+                }
+            })
+            .then((result: any) => {
+                if (result.data.data.length > 0) {
+                    return updatePromise()
+                        .then(() => {
+                            return resolve();
+                        })
+                        .catch((err: string) => {
+                            return reject(err);
+                        });
+                } else {
+                    return reject("Twitch username does not exist.");
+                }
+            })
+            .catch((err: string) => {
+                return reject(err);
+            });
+
+        });
+    }
+
+    /**
+     * Change the account's Steam link.
+     */
+    changeAccountSteam(accountid: number, newSteam: string): Promise<null> {
+
+        const updatePromise = (): Promise<null> => {
+            return new Promise( (resolve, reject) => {
+                this.update(
                 "dbo.accounts",
-                ["accountid", "twitch"],
+                ["accountid", "steam"],
                 [this.sql.Int, this.sql.VarChar],
-                [accountid, newTwitch],
-                ["twitch"],
+                [accountid, newSteam === "" ? undefined : newSteam],
+                ["steam"],
                 "accountid=@accountid")
                 .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.rowsAffected[0] == 1) {
@@ -314,6 +346,39 @@ class SettingsModel extends DatabaseBase {
                 .catch((error: string) => {
                     return reject(error);
                 });
+           });
+        };
+
+        return new Promise( (resolve, reject) => {
+
+            if (newSteam === "") {
+                return updatePromise()
+                    .then(() => {
+                        return resolve();
+                    })
+                    .catch((err: string) => {
+                        return reject(err);
+                    });
+            }
+
+            axios
+            .get(`https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1?key=${config.steam.key}&vanityurl=${newSteam}`)
+            .then((result: any) => {
+                if (result.data.response.steamid) {
+                    return updatePromise()
+                        .then(() => {
+                            return resolve();
+                        })
+                        .catch((err: string) => {
+                            return reject(err);
+                        });
+                } else {
+                    return reject("Steam username does not exist.");
+                }
+            })
+            .catch((err: string) => {
+                return reject(err);
+            });
 
         });
     }

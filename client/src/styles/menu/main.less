@@ -1,4 +1,6 @@
 @menu-item-height: 150px;
+@menu-gaming-height: 70px;
+@searchbar-height: 26px;
 
 .scrollable {
     overflow-y: auto;
@@ -14,6 +16,83 @@
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+
+    .discord-page {
+        position: absolute;
+        z-index: 10;
+        width: 80%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+
+        .discord-page-content {
+            font-weight: 700;
+            font-size: 1.4em;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .discord-page-link {
+            color: hsla(0,0%,100%,.5);
+            letter-spacing: 1px;
+            border: 2px solid #fff;
+            margin: 20px 0;
+            font-size: 1.2em;
+            font-weight: 700;
+            width: 100%;
+            background-color: transparent;
+            white-space: normal;
+            text-align: justify;
+            -moz-text-align-last: center;
+            text-align-last: center;
+            overflow: auto;
+            outline: none;
+            -webkit-box-shadow: none;
+            -moz-box-shadow: none;
+            box-shadow: none;
+        }
+
+        .discord-page-copy-btn {
+            background-color: transparent !important;
+
+            span {
+                font-size: 1.2em !important; 
+                letter-spacing: 3px !important; 
+                font-weight: 700 !important;
+            }
+    
+            > button {
+                background-color: rgba(0, 0, 0, 0.2) !important;
+                height: 50px !important;
+            }
+        }
+
+    }
+
+    .social-not-set {
+        position: absolute;
+        top: @menu-gaming-height;
+        margin: 20px;
+        color: rgba(255,255,255,0.6);
+        font-size: 1.2em;
+    }
+
+    .profile-private {
+        margin-top: 60px;
+        color: hsla(0,0%,100%,.6);
+        font-size: 1.4em;
+        text-align: center;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .friends-list {
+        position: fixed;
+        color: rgba(255,255,255,0.8);
+        width: 100%;
+        height: calc(~"100% -" @menu-gaming-height + @navbar-item-height + @searchbar-height);
+        top: @menu-gaming-height + @navbar-item-height + @searchbar-height;
+    }
 
     .menu-scrolling {
         position: absolute;
@@ -106,6 +185,252 @@
         opacity: 0.5;
     }
 
+    .gaming-menu-item {
+        position: relative;
+        height: auto;
+        border-bottom: 1px solid rgba(0,0,0,0.4);
+
+        .profile-picture-overlay {
+            position: absolute;
+            z-index: 2000;
+            width: 96px;
+            height: 96px;
+            top: 15px;
+            background: -moz-linear-gradient(180deg,transparent 55%,transparent 70%,rgba(0,0,0,.80));
+            background: -webkit-linear-gradient(180deg,transparent 55%,transparent 70%,rgba(0,0,0,.80));
+            background: linear-gradient(180deg,transparent 55%,transparent 70%,rgba(0,0,0,.80));
+        }
+
+        .profile-picture {
+            display: inline-block;
+            margin: 15px;
+
+            > img {
+                opacity: 0.7;
+                width: 96px;
+                height: 96px;
+            }
+
+            .online-text {
+                position: absolute;
+                z-index: 2001;
+                bottom: 14px;
+                left: 15px;
+                background-color: rgba(0,255,20,.65);
+                width: 16px;
+                height: 16px;
+            }
+    
+            .offline-text {
+                position: absolute;
+                z-index: 2001;
+                bottom: 14px;
+                left: 15px;
+                background-color: rgba(255,0,20,0.65);
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        .profile-streampreview {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        
+            > img {
+                opacity: 0.9;
+                width: 64px;
+                height: 44px;
+            }
+        }
+
+        .profile-emotes {
+            position: relative;
+            height: 100px;
+        }
+
+        .profile-more {
+            position: relative;
+            bottom: 5px;
+            left: 15px;
+            background-color: transparent !important;
+            min-width: calc(~"100% - 30px") !important;
+            height: 25px!important;
+
+            span {
+                font-size: 0.8em !important; 
+                letter-spacing: 1px !important; 
+                font-weight: 700 !important;
+            }
+    
+            > button {
+                background-color: rgba(0, 0, 0, 0.2) !important;
+                height: 25px !important;
+
+                > div > div {
+                    margin-top: -7px !important;
+                }
+            }
+        }
+
+        .profile-expand {
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.2) !important;
+            width: calc(~"100% - 30px") !important;
+            margin: 0 15px 20px 15px !important;
+            padding: 10px !important;
+            text-align: center;
+
+            .profile-expand-title {
+                position: relative;
+                text-align: center;
+                color: rgba(255,255,255,0.85);
+                font-weight: 600;
+                font-size: 1.1em;
+                margin-bottom: 10px;
+            }
+
+            .profile-expand-emotes-container {
+                position: relative;
+                margin-top: 15px;
+
+                .profile-expand-emote {
+                    display: inline-block;
+                    margin: 8px;
+                    color: rgba(255,255,255,0.7);
+    
+                    img {
+                        width: 32px;
+                        height: 32px;
+                    }
+                }
+            }
+            
+        }
+
+        .profile-stream {
+            position: absolute;
+            top: 44px;
+            right: 0px;
+            background-color: transparent !important;
+            min-width: 64px!important;
+            height: 20px!important;
+
+            span {
+                font-size: 0.7em !important; 
+                letter-spacing: 1px !important; 
+                font-weight: 700 !important;
+                padding-left: 11px !important;
+            }
+    
+            > button {
+                background-color: rgba(0, 0, 0, 0.2) !important;
+                height: 20px !important;
+                width: 64px !important;
+
+                > div > div {
+                    margin-top: -7px !important;
+                }
+            }
+        }
+        
+        .profile-name {
+            position: absolute;
+            top: 15px;
+            display: inline-block;
+            opacity: 0.8;
+
+            .name {
+                display: inline-block;
+                margin-right: 10px;
+            }
+
+            .link {
+                display: inline-block;
+            }
+
+            > figure {
+                display: inline-block;
+                vertical-align: middle !important;
+
+                > svg {
+                    fill: white;
+                }
+            }
+
+        }
+
+        .profile-streamtitle {
+            position: absolute;
+            top: 40px;
+            display: inline-block;
+            opacity: 0.8;
+            font-size: 1em;
+            width: ~"calc(100% - 210px)";
+            height: 2.6em;
+            overflow: hidden;
+        }
+
+        .profile-recentlyplayed, .profile-currentlyplaying {
+            position: absolute;
+            top: 90px;
+            display: inline-block;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.8em;
+
+            > img {
+                width: 16px;
+                height: 16px;
+                margin-left: 5px;
+                margin-bottom: 2px;
+            }
+        }
+
+        .profile-recentlyplayed {
+            width: ~"calc(100% - 170px)";
+        }
+
+        .profile-currentlyplaying {
+            width: ~"calc(100% - 260px)";
+        }
+
+        .profile-viewercount {
+            position: absolute;
+            top: 90px;
+            right: 15px;
+            opacity: 0.8;
+
+            .profile-viewercount-indicator {
+                position: relative;
+                background: #ec1313;
+                border-radius: 50%;
+                width: 0.7em;
+                height: 0.7em;
+                display: inline-block;
+            }
+        }
+
+        .profile-countryflag {
+            position: absolute;
+            width: 24px;
+            height: 16px;
+            top: 16px;
+            right: 16px;
+        }
+
+        .last-online-time {
+            position: absolute;
+            top: 65px;
+            display: inline-block;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+    }
+
     .menu-item-overlay {
         position: absolute;
         z-index: 2000;
@@ -124,6 +449,10 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
+
+        > i {
+            margin: 0 10px;    
+        }
 
         > p {
             margin-top: 10px;
@@ -153,6 +482,16 @@
 
     .menu-grid-center {
         position: relative;
+        z-index: 10;
+        width: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1em;
+    }
+
+    .menu-grid-center-abs {
+        position: absolute;
         z-index: 10;
         width: 100%;
         top: 50%;
@@ -592,6 +931,27 @@
     .Select-menu-outer .Select-option {
         background: rgba(0,0,0,0.4) !important;
     }
+}
+
+.gaming-searchbar {
+    position: fixed;
+    width: 100%;
+    top: @menu-gaming-height + @navbar-item-height;
+    z-index: 10000;
+    outline: none;
+    background: rgba(0,0,0,0.4);
+    border-color: whitesmoke !important;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-bottom: 2px solid whitesmoke;
+    color: whitesmoke !important;
+    border-radius: 0px;
+    padding-left: 5px;
+}
+
+.gaming-searchbar::-webkit-input-placeholder {
+    color: whitesmoke !important;
 }
 
 .Select-control {

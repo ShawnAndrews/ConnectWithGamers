@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GenericResponseModel, AccountImageResponse, EmailVerifyResponse } from '../../../../client/client-server-common/common';
+import { GenericResponseModel, AccountImageResponse, EmailVerifyResponse, TwitchIdResponse, SteamIdResponse, DiscordLinkResponse, SteamFriendsResponse, TwitchFollowersResponse } from '../../../../client/client-server-common/common';
 
 /**
  * HTTP request to get account settings.
@@ -156,6 +156,111 @@ export function httpDeleteAccountImage (): Promise<AccountImageResponse> {
             } else {
                 const accountImageResponse: AccountImageResponse = result.data;
                 return resolve(accountImageResponse);
+            }
+        })
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
+        });
+    }); 
+}
+
+/**
+ * HTTP request to get an account's Twitch id.
+ */
+
+export function httpGetAccountTwitchId(): Promise<TwitchIdResponse> {
+    return new Promise((resolve: any, reject: any) => {
+        axios.post(`/account/settings/twitchId`, {})
+        .then((result) => {
+            if (result.data.error) {
+                return reject(result.data.error);
+            } else {
+                const twitchIdResponse: TwitchIdResponse = result.data;
+                return resolve(twitchIdResponse);
+            }
+        })
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
+        });
+    }); 
+}
+
+/**
+ * HTTP request to get an account's Twitch id.
+ */
+
+export function httpGetAccountTwitchFollowers(): Promise<TwitchFollowersResponse> {
+    return new Promise((resolve: any, reject: any) => {
+        axios.post(`/account/settings/twitchFollowers`, {})
+        .then((result) => {
+            if (result.data.error) {
+                return reject(result.data.error);
+            } else {
+                const twitchFollowersResponse: TwitchFollowersResponse = result.data;
+                return resolve(twitchFollowersResponse);
+            }
+        })
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
+        });
+    }); 
+}
+
+/**
+ * HTTP request to get an account's Steam id.
+ */
+
+export function httpGetAccountSteamId(): Promise<SteamIdResponse> {
+    return new Promise((resolve: any, reject: any) => {
+        axios.post(`/account/settings/steamId`, {})
+        .then((result) => {
+            if (result.data.error) {
+                return reject(result.data.error);
+            } else {
+                const steamIdResponse: SteamIdResponse = result.data;
+                return resolve(steamIdResponse);
+            }
+        })
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
+        });
+    }); 
+}
+
+/**
+ * HTTP request to get an account's Steam id.
+ */
+
+export function httpGetAccountSteamFriends(): Promise<SteamFriendsResponse> {
+    return new Promise((resolve: any, reject: any) => {
+        axios.post(`/account/settings/steamFriends`, {})
+        .then((result) => {
+            if (result.data.error) {
+                return reject(result.data.error);
+            } else {
+                const steamFriendsResponse: SteamFriendsResponse = result.data;
+                return resolve(steamFriendsResponse);
+            }
+        })
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
+        });
+    }); 
+}
+
+/**
+ * HTTP request to get an account's Discord link.
+ */
+
+export function httpGetAccountDiscordLink(): Promise<DiscordLinkResponse> {
+    return new Promise((resolve: any, reject: any) => {
+        axios.post(`/account/settings/discordLink`, {})
+        .then((result) => {
+            if (result.data.error) {
+                return reject(result.data.error);
+            } else {
+                const discordLinkResponse: DiscordLinkResponse = result.data;
+                return resolve(discordLinkResponse);
             }
         })
         .catch((err: string) => {

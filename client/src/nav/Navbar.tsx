@@ -14,7 +14,7 @@ const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
 
     return (
         <Tabs
-            className="navbar-item-container"
+            className="navbar-item-container fixed-container"
             value={props.index}
         >
             <Tab label="Home" value={0} icon={<i className="fas fa-home navbar-item-icon"/>} className="navbar-item-text" onActive={props.goToHomePage}/>

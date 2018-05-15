@@ -21,7 +21,11 @@ export interface Config {
     steam: {
         apiURL: string,
         nonApiURL: string,
-        appURL: string
+        appURL: string,
+        key: string
+    };
+    twitch: {
+        clientId: string;
     };
     imgur: {
         clientId: string
@@ -145,6 +149,18 @@ export interface DbAccountInfoResponse {
     twitch_url?: string;
     discord_url?: string;
     image?: string;
+}
+
+export interface DbTwitchIdResponse {
+    twitchId: number;
+}
+
+export interface DbSteamIdResponse {
+    steamId: number;
+}
+
+export interface DbDiscordLinkResponse {
+    discordLink: string;
 }
 
 export interface DatalessResponse {
@@ -316,6 +332,95 @@ export interface RecentGameResponse {
 }
 
 export const RecentGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`, `genres`, `platforms`, `external`];
+
+export interface TwitchFollowersResponse {
+    error: string;
+    data?: TwitchUser[];
+}
+
+export interface TwitchIdResponse {
+
+    error: string;
+    data?: TwitchId;
+}
+
+export interface TwitchId {
+
+    twitchId: number;
+}
+
+export interface SteamIdResponse {
+
+    error: string;
+    data?: SteamId;
+}
+
+export interface SteamId {
+
+    steamId: number;
+}
+
+export interface DbSteamFriendsResponse {
+
+    friends: SteamFriend[];
+}
+
+export interface SteamFriendsResponse {
+
+    error: string;
+    data?: SteamFriend[];
+}
+
+export interface SteamFriend {
+
+    id: number;
+    name: string;
+    online: boolean;
+    lastOnline?: string;
+    profilePicture: string;
+    profileLink: string;
+    recentlyPlayedName?: string;
+    recentlyPlayedImageLink?: string;
+    countryFlagLink?: string;
+}
+
+export interface TwitchUser {
+    id: string;
+    name: string;
+    viewerCount: number;
+    gameName: string;
+    profilePicLink: string;
+    profileLink: string;
+    streamPreviewLink: string;
+    cheerEmotes: TwitchEmote[];
+    subEmotes: TwitchEmote[];
+    badgeEmotes: TwitchEmote[];
+    partnered: boolean;
+    streamTitle: string;
+}
+
+export interface TwitchPair {
+    id: number;
+    name: string;
+}
+
+export interface TwitchEmote {
+    name: string;
+    link: string;
+}
+
+export interface DbTwitchFollowsResponse {
+    follows: TwitchUser[];
+}
+
+export interface DiscordLinkResponse {
+    error: string;
+    data?: DiscordLink;
+}
+
+export interface DiscordLink {
+    link: string;
+}
 
 export interface RecentGamesResponse {
     error: string;

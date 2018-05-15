@@ -1,7 +1,7 @@
 const express = require("express");
 // const RateLimit = require("express-rate-limit");
 const router = express.Router();
-import { AUTH_TOKEN_NAME, validateCredentials, DatalessResponse, DbVerifyEmailResponse, EmailVerifyResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse } from "../../client/client-server-common/common";
+import { AUTH_TOKEN_NAME, validateCredentials, DatalessResponse, DbVerifyEmailResponse, EmailVerifyResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse, TwitchIdResponse, DbTwitchIdResponse, SteamIdResponse, DbSteamIdResponse, DbSteamFriendsResponse, SteamFriendsResponse, DiscordLinkResponse, DbDiscordLinkResponse, TwitchFollowersResponse, DbTwitchFollowsResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { accountModel } from "../../models/db/account/main";
 import { securityModel } from "../../models/db/security/main";
@@ -15,6 +15,11 @@ routes.addRoute("signup", "/signup");
 routes.addRoute("login", "/login");
 routes.addRoute("settings", "/settings");
 routes.addRoute("settings/change", "/settings/change");
+routes.addRoute("settings/twitchId", "/settings/twitchId");
+routes.addRoute("settings/twitchFollowers", "/settings/twitchFollowers");
+routes.addRoute("settings/steamId", "/settings/steamId");
+routes.addRoute("settings/steamFriends", "/settings/steamFriends");
+routes.addRoute("settings/discordLink", "/settings/discordLink");
 routes.addRoute("settings/image/change", "/settings/image/change");
 routes.addRoute("settings/image/delete", "/settings/image/delete");
 routes.addRoute("email/resend", "/email/resend");
@@ -145,15 +150,15 @@ router.post(routes.getRoute("settings/change"), (req: any, res: any) => {
             changePromises.push(settingsModel.changeAccountPassword(response.accountid, newSettings.password));
         }
 
-        if (newSettings.steam) {
+        if (newSettings.steam || newSettings.steam === "") {
             changePromises.push(settingsModel.changeAccountSteam(response.accountid, newSettings.steam));
         }
 
-        if (newSettings.discord) {
+        if (newSettings.discord || newSettings.discord === "") {
             changePromises.push(settingsModel.changeAccountDiscord(response.accountid, newSettings.discord));
         }
 
-        if (newSettings.twitch) {
+        if (newSettings.twitch || newSettings.twitch === "") {
             changePromises.push(settingsModel.changeAccountTwitch(response.accountid, newSettings.twitch));
         }
 
@@ -173,6 +178,115 @@ router.post(routes.getRoute("settings/change"), (req: any, res: any) => {
         datalessResponse.error = error;
         return res
         .send(datalessResponse);
+    });
+
+});
+
+router.post(routes.getRoute("settings/twitchId"), (req: any, res: any) => {
+    const twitchIdResponse: TwitchIdResponse = { error: undefined };
+
+    // authorize
+    securityModel.authorize(req.headers.cookie)
+    .then((response: DbAuthorizeResponse) => {
+        return accountModel.getTwitchId(response.accountid);
+    })
+    .then((response: DbTwitchIdResponse) => {
+        twitchIdResponse.data = { twitchId: response.twitchId };
+        return res
+        .send(twitchIdResponse);
+    })
+    .catch((error: string) => {
+        twitchIdResponse.error = error;
+        return res
+        .send(twitchIdResponse);
+    });
+
+});
+
+router.post(routes.getRoute("settings/twitchFollowers"), (req: any, res: any) => {
+    const twitchFollowersResponse: TwitchFollowersResponse = { error: undefined };
+
+    // authorize
+    securityModel.authorize(req.headers.cookie)
+    .then((response: DbAuthorizeResponse) => {
+        return accountModel.getTwitchFollows(response.accountid);
+    })
+    .then((response: DbTwitchFollowsResponse) => {
+        twitchFollowersResponse.data = response.follows;
+        return res
+        .send(twitchFollowersResponse);
+    })
+    .catch((error: string) => {
+        twitchFollowersResponse.error = error;
+        return res
+        .send(twitchFollowersResponse);
+    });
+
+});
+
+router.post(routes.getRoute("settings/steamId"), (req: any, res: any) => {
+    const steamIdResponse: SteamIdResponse = { error: undefined };
+
+    // authorize
+    securityModel.authorize(req.headers.cookie)
+    .then((response: DbAuthorizeResponse) => {
+        return accountModel.getSteamId(response.accountid);
+    })
+    .then((response: DbSteamIdResponse) => {
+        steamIdResponse.data = { steamId: response.steamId};
+        return res
+        .send(steamIdResponse);
+    })
+    .catch((error: string) => {
+        steamIdResponse.error = error;
+        return res
+        .send(steamIdResponse);
+    });
+
+});
+
+router.post(routes.getRoute("settings/discordLink"), (req: any, res: any) => {
+    const discordLinkResponse: DiscordLinkResponse = { error: undefined };
+
+    // authorize
+    securityModel.authorize(req.headers.cookie)
+    .then((response: DbAuthorizeResponse) => {
+        return accountModel.getDiscordLink(response.accountid);
+    })
+    .then((response: DbDiscordLinkResponse) => {
+        discordLinkResponse.data = { link: response.discordLink };
+        return res
+        .send(discordLinkResponse);
+    })
+    .catch((error: string) => {
+        discordLinkResponse.error = error;
+        return res
+        .send(discordLinkResponse);
+    });
+
+});
+
+router.post(routes.getRoute("settings/steamFriends"), (req: any, res: any) => {
+    const steamFriendsResponse: SteamFriendsResponse = { error: undefined };
+
+    // authorize
+    securityModel.authorize(req.headers.cookie)
+    .then((response: DbAuthorizeResponse) => {
+        return accountModel.getSteamId(response.accountid);
+    })
+    .then((response: DbSteamIdResponse) => {
+        const steamId: number = response.steamId;
+        return accountModel.getSteamFriends(steamId);
+    })
+    .then((response: DbSteamFriendsResponse) => {
+        steamFriendsResponse.data = response.friends;
+        return res
+        .send(steamFriendsResponse);
+    })
+    .catch((error: string) => {
+        steamFriendsResponse.error = error;
+        return res
+        .send(steamFriendsResponse);
     });
 
 });

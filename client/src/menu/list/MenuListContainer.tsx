@@ -5,7 +5,7 @@ import MenuList from './MenuList';
 
 export interface IMenuItem {
     name: string;
-    faIcon: string;
+    faIcons: string[];
     redirectURL: string;
 }
 
@@ -25,11 +25,12 @@ class MenuListContainer extends React.Component<IMenuListContainerProps, any> {
     setDefaultState(): void {
         const menuItems: IMenuItem[] = [];
 
-        menuItems.push({name: 'Search Games', faIcon: 'fas fa-search fa-4x', redirectURL: '/menu/search'});
-        menuItems.push({name: 'Platform Exclusive Games', faIcon: 'fas fa-desktop fa-4x', redirectURL: '/menu/platform'});
-        menuItems.push({name: 'Upcoming Games', faIcon: 'fa fa-calendar-alt fa-4x', redirectURL: '/menu/upcoming'});
-        menuItems.push({name: 'Recently Released Games', faIcon: 'far fa-clock fa-4x', redirectURL: '/menu/recent'});
-        menuItems.push({name: 'Genres', faIcon: 'fas fa-gamepad fa-4x', redirectURL: '/menu/genre'});
+        menuItems.push({name: 'Gaming Profiles', faIcons: ['fab fa-twitch fa-4x', 'fab fa-steam-square fa-4x', 'fab fa-discord fa-4x'], redirectURL: '/menu/gaming'});
+        menuItems.push({name: 'Search Games', faIcons: ['fas fa-search fa-4x'], redirectURL: '/menu/search'});
+        menuItems.push({name: 'Platform Exclusive Games', faIcons: ['fas fa-desktop fa-4x'], redirectURL: '/menu/platform'});
+        menuItems.push({name: 'Upcoming Games', faIcons: ['fa fa-calendar-alt fa-4x'], redirectURL: '/menu/upcoming'});
+        menuItems.push({name: 'Recently Released Games', faIcons: ['far fa-clock fa-4x'], redirectURL: '/menu/recent'});
+        menuItems.push({name: 'Genres', faIcons: ['fas fa-gamepad fa-4x'], redirectURL: '/menu/genre'});
 
         this.state = {menuItems: menuItems};
     }

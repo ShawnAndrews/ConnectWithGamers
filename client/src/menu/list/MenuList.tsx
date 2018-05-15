@@ -16,7 +16,12 @@ const MenuList: React.SFC<IMenuListProps> = (props: IMenuListProps) => {
                         <div key={x.name} className="menu-item" onClick={() => { props.goToRedirect(x.redirectURL); }}>
                             <div className="menu-item-overlay"/>
                             <div className="menu-item-content">
-                                <i className={x.faIcon}/>
+                                {x.faIcons
+                                    .map((iconClass: string) => {
+                                        return (
+                                            <i key={iconClass} className={iconClass}/>
+                                        );
+                                    })}
                                 <p>{x.name}</p>
                             </div>
                         </div>

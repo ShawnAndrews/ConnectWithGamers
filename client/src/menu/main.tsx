@@ -9,6 +9,7 @@ import RecentGameListContainer from './recent/RecentGameListContainer';
 import GenreListContainer from './genre/GenreListContainer';
 import GenreGameListContainer from './genre/GenreGameListContainer';
 import NotFoundPageContainer from '../notfound/NotFoundPageContainer';
+import GamingSwitch from './gaming/main';
 
 const Menu: React.SFC<any> = () => {
 
@@ -24,6 +25,7 @@ const Menu: React.SFC<any> = () => {
                 <Route exact={true} path="/menu/recent" component={RecentGameListContainer} />
                 <Route exact={true} path="/menu/genre/:id" component={GenreListContainer} />
                 <Route exact={true} path="/menu/genre" component={GenreGameListContainer} />
+                <Route path="/menu/gaming" component={GamingSwitch} />
                 <Route component={NotFoundPageContainer}/>
             </Switch>
         </div>

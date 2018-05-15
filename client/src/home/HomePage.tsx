@@ -19,7 +19,7 @@ const HomePage: React.SFC<IHomePageProps> = (props: IHomePageProps) => {
                 <div className="menu-home-discover" onClick={() => { props.goToRedirect("/menu/search"); }}/>
                 <div className="menu-home-review" onClick={() => { props.goToRedirect("/menu/search"); }}/>
                 <div className="menu-home-chatroom" onClick={() => { props.goToRedirect("/chat"); }}/>
-                <div className="menu-home-chatroomlinks" onClick={() => { props.goToRedirect("/account"); }}/>
+                <div className="menu-home-chatroomlinks" onClick={() => { props.goToRedirect("/menu/gaming"); }}/>
             </div>
         </div>
     );

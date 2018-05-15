@@ -124,7 +124,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                                 className="account-settings-link"
                                 defaultValue={props.discord}
                                 onChange={props.onDiscordChanged}
-                                floatingLabelText="Discord Link"
+                                floatingLabelText="Discord Server Link"
                             />
                         </div>
                         <div className="account-settings-container">
@@ -133,7 +133,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                                 className="account-settings-link"
                                 defaultValue={props.steam}
                                 onChange={props.onSteamChanged}
-                                floatingLabelText="Steam Link"
+                                floatingLabelText="Steam name"
                             />
                         </div>
                         <div className="account-settings-container">
@@ -142,7 +142,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                                 className="account-settings-link"
                                 defaultValue={props.twitch}
                                 onChange={props.onTwitchChanged}
-                                floatingLabelText="Twitch Link"
+                                floatingLabelText="Twitch Name"
                             />
                         </div>
                     </div>}
