@@ -120,8 +120,7 @@
 <h4>Account</h4>
 
 - Added email verification
-    - Email sent on account creation and resend
-    - When changing emails, set new verification code
+    - Email sent on account creation and resent on request
     
 <h4>Other</h4>
     
