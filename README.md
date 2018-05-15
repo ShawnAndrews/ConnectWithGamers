@@ -2,7 +2,7 @@
 
   ![alt text](https://i.imgur.com/obqCKhX.png "logo")
 
-  <h1>Connect With Gamers (v1.2)</h1>
+  <h1>Connect With Gamers (v1.3)</h1>
 </div>
 
 <div align="center">
@@ -131,6 +131,18 @@
     - Split heavy files into smaller ones
     - Seperate components into container and presentational components
 </details>
+
+<h3>Version 1.3<h3>
+
+<details> 
+  <summary>Expand to read patch notes</summary>
+<h4>Menu</h4>
+
+- Added Gaming Profiles
+    - Ability to view your followed live Twitch streams
+    - Ability to view your Steam friends list
+    - Ability to copy your Discord server's link to send to friends
+</details>
     
 ## Config
 Create a git-ignored file called ``config.ts`` in the ``/`` directory with the following contents, including the requried properties of the Config interface.
@@ -176,7 +188,7 @@ You may now access the site via localhost.
 This website was desgigned to encourage fellow gamers to meet by talking in chat, viewing each others gaming profile, and giving them a library of games to talk discuss.
 
 ### Do you have other projects i can check out?
-Of course! You can check them out on my portfolio website at [saortfolio.ca](http://www.saportfolio.ca)
+Of course! You can check them out on my portfolio website at [saportfolio.ca](http://www.saportfolio.ca)
 
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)
