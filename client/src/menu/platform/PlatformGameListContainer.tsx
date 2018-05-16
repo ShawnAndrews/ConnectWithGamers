@@ -29,14 +29,14 @@ class PlatformGameListContainer extends React.Component<IPlatformGameListContain
         const platformMenuItems: IPlatformMenuItem[] = [];
         const platformURL: string = '/menu/platform';
 
-        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/1vDwtju.png', platformOption: platformOptions[0] });
-        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/FUaI1r1.png', platformOption: platformOptions[1] });
-        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/CFu1lX1.png', platformOption: platformOptions[2] });
-        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/dPd4Tqc.png', platformOption: platformOptions[3] });
-        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/aaEcKiz.png', platformOption: platformOptions[4] });
-        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/IM1Tliy.png', platformOption: platformOptions[5] });
-        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/E2RrnNw.png', platformOption: platformOptions[6] });
-        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/Hgco6Gy.png', platformOption: platformOptions[7] });
+        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/AtBFqav.jpg', platformOption: platformOptions[0] });
+        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/vRg9GYG.jpg', platformOption: platformOptions[1] });
+        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/2iodS5c.jpg', platformOption: platformOptions[2] });
+        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/pQWJdKQ.jpg', platformOption: platformOptions[3] });
+        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/5vl8BPm.jpg', platformOption: platformOptions[4] });
+        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/wHfr2Cd.jpg', platformOption: platformOptions[5] });
+        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/c38AfEV.jpg', platformOption: platformOptions[6] });
+        platformMenuItems.push({ imgSrc: 'https://i.imgur.com/3a2sKKZ.jpg', platformOption: platformOptions[7] });
 
         this.state = {platformURL: platformURL, platformMenuItems: platformMenuItems};
     }

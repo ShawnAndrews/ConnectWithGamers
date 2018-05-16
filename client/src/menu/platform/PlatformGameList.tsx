@@ -16,9 +16,7 @@ const PlatformGameList: React.SFC<IPlatformGameListProps> = (props: IPlatformGam
                     return (
                         <div key={x.imgSrc} className="menu-item" onClick={() => { props.goToPlatform(x.platformOption.id); }}>
                             <div className="menu-item-overlay"/>
-                            <div className="menu-item-content">
-                                <img src={x.imgSrc}/>
-                            </div>
+                            <img className="menu-item-img" src={x.imgSrc}/>
                         </div>
                     );
                 })}
