@@ -11,7 +11,13 @@ interface ITwitchListProps {
     goToTwitchProfile: (link: string) => void;
     handleRawInputChange: (event: any) => void;
     filter: string;
+    onVideoClick: (index: number) => void;
+    onChatClick: (index: number) => void;
+    onBothClick: (index: number) => void;
     onExpandClick: (index: number) => void;
+    showVideo: boolean[];
+    showChat: boolean[];
+    showBoth: boolean[];
     expanded: boolean[];
 }
 
@@ -62,7 +68,13 @@ const TwitchList: React.SFC<ITwitchListProps> = (props: ITwitchListProps) => {
                                 profileLink={x.profileLink}
                                 streamPreviewLink={x.streamPreviewLink}
                                 onProfileLinkClick={props.goToTwitchProfile}
+                                onVideoClick={props.onVideoClick}
+                                onChatClick={props.onChatClick}
+                                onBothClick={props.onBothClick}
                                 onExpandClick={props.onExpandClick}
+                                showVideo={props.showVideo[index]}
+                                showChat={props.showChat[index]}
+                                showBoth={props.showBoth[index]}
                                 expanded={props.expanded[index]}
                                 cheerEmotes={x.cheerEmotes}
                                 subEmotes={x.subEmotes}

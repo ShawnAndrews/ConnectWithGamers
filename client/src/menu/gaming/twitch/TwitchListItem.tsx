@@ -14,7 +14,13 @@ interface ITwitchListItemProps {
     profileLink: string;
     streamPreviewLink: string;
     onProfileLinkClick: (link: string) => void;
+    onVideoClick: (index: number) => void;
+    onChatClick: (index: number) => void;
+    onBothClick: (index: number) => void;
     onExpandClick: (index: number) => void;
+    showVideo: boolean;
+    showChat: boolean;
+    showBoth: boolean;
     expanded: boolean;
     cheerEmotes: TwitchEmote[];
     subEmotes: TwitchEmote[];
@@ -49,6 +55,43 @@ const TwitchListItem: React.SFC<ITwitchListItemProps> = (props: ITwitchListItemP
                     <img src={props.streamPreviewLink} alt="Stream preview picture"/>
                     <RaisedButton className="profile-stream" label="Watch" primary={true}/>
                 </div>
+                <div className="profile-stream-container">
+                    <RaisedButton className={`profile-stream-video ${props.showVideo ? `active` : ``}`} label="Video" primary={true} icon={<i className="fas fa-video"/>} onClick={() => { props.onVideoClick(props.index); }}/>
+                    <RaisedButton className={`profile-stream-chat ${props.showChat ? `active` : ``}`} label="Chat" primary={true} icon={<i className="fas fa-comment-alt"/>} onClick={() => { props.onChatClick(props.index); }}/>
+                    <RaisedButton className={`profile-stream-both ${props.showBoth ? `active` : ``}`} label="Both" primary={true} icon={<div className="profile-stream-both-icons"><i className="fas fa-video"/><i className={"fas fa-comment-alt"}/></div>} onClick={() => { props.onBothClick(props.index); }}/>
+                </div>
+                {props.showVideo && 
+                    <Paper className="profile-expand" zDepth={5}>
+                        <iframe
+                            className="profile-video-stream"
+                            src={`https://player.twitch.tv/?channel=${props.name}`}
+                            frameBorder="0"
+                        />
+                    </Paper>}
+                {props.showChat && 
+                    <Paper className="profile-expand" zDepth={5} >
+                        <iframe 
+                            className="profile-chat-stream"
+                            src={`https://www.twitch.tv/embed/${props.name}/chat`}
+                            frameBorder="0"
+                            scrolling="no"
+                        />
+                    </Paper>}
+                {props.showBoth && 
+                    <Paper className="profile-expand" zDepth={5} >
+                        <iframe
+                            className="profile-video-stream"
+                            src={`https://player.twitch.tv/?channel=${props.name}`}
+                            frameBorder="0"
+                        />
+                        <iframe 
+                            className="profile-chat-stream"
+                            src={`https://www.twitch.tv/embed/${props.name}/chat`}
+                            frameBorder="0"
+                            scrolling="no"
+                            allowTransparency={true}
+                        />
+                    </Paper>}
                 <RaisedButton className="profile-more" label="More" primary={true} icon={<i className={props.expanded ? "fas fa-chevron-up" : "fas fa-chevron-down"}/>} onClick={() => { props.onExpandClick(props.index); }}/>
                 {props.expanded && 
                     <Paper className="profile-expand" zDepth={5} >
