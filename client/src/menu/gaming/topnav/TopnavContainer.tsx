@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Topnav from './Topnav';
 
 export enum GAMINGNAV_PAGE {
@@ -8,10 +8,7 @@ export enum GAMINGNAV_PAGE {
     DISCORD = '/menu/gaming/discord'
 }
 
-interface ITopnavContainerProps {
-    history: any;
-    match?: any;
-}
+interface ITopnavContainerProps extends RouteComponentProps<any> { } 
 
 class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
 

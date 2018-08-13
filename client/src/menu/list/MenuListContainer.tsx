@@ -1,6 +1,6 @@
 const popupS = require('popups');
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import MenuList from './MenuList';
 
 export interface IMenuItem {
@@ -9,9 +9,7 @@ export interface IMenuItem {
     redirectURL: string;
 }
 
-interface IMenuListContainerProps {
-    history: any;
-}
+interface IMenuListContainerProps extends RouteComponentProps<any> { } 
 
 class MenuListContainer extends React.Component<IMenuListContainerProps, any> {
 

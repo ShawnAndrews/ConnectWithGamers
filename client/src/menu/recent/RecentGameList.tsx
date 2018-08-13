@@ -34,7 +34,7 @@ const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListP
                             {props.recentGames
                             .filter((x: RecentGameResponse) => { return x.last_release_date === uniqueReleaseDate; } )
                             .map((x: RecentGameResponse) => {
-                                return <ThumbnailGameContainer key={x.id} className="menu-game-table-game" game={x}/>;
+                                return <ThumbnailGameContainer key={x.id} game={x}/>;
                             })}
                         </div>
                     );

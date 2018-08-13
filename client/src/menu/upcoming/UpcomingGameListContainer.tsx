@@ -1,13 +1,11 @@
 const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import UpcomingGameList from './UpcomingGameList';
 import { UpcomingGameResponse, UpcomingGamesResponse } from '../../../../client/client-server-common/common';
 
-interface IUpcomingGameListContainerProps {
-    history: any;
-}
+interface IUpcomingGameListContainerProps extends RouteComponentProps<any> { }
 
 class UpcomingGameListContainer extends React.Component<IUpcomingGameListContainerProps, any> {
 

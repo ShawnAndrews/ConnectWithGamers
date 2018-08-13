@@ -1,13 +1,11 @@
 const popupS = require('popups');
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Sidenav from './Sidenav';
 
-interface ISidenavContainerProps {
+interface ISidenavContainerProps extends RouteComponentProps<any> {
     active: boolean;
     toggleSidebar: () => void;
-    history: any;
-    match?: any;
 }
 
 class SidenavContainer extends React.Component<ISidenavContainerProps, any> {

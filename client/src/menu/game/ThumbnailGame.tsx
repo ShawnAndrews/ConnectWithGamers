@@ -1,12 +1,12 @@
 const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
-import { ChatroomUser, UpcomingGameResponse } from '../../../../client/client-server-common/common';
+import { ChatroomUser, UpcomingGameResponse, GenreGame, RecentGameResponse, PlatformGame } from '../../../../client/client-server-common/common';
 import { Card, CardActions, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 
 interface IThumbnailGameProps {
-    game: UpcomingGameResponse;
+    game: UpcomingGameResponse | GenreGame | RecentGameResponse | PlatformGame;
     goToGame: () => void;
 }
 

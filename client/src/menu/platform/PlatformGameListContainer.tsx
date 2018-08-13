@@ -1,7 +1,7 @@
 const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import ThumbnailGameContainer from '../game/ThumbnailGameContainer';
 import { RecentGameResponse, RecentGamesResponse } from '../../../../client/client-server-common/common';
 import PlatformGameList from './PlatformGameList';
@@ -12,9 +12,7 @@ export interface IPlatformMenuItem {
     platformOption: PlatformOption;
 }
 
-interface IPlatformGameListContainerProps {
-    history: any;
-}
+interface IPlatformGameListContainerProps extends RouteComponentProps<any> { }
 
 class PlatformGameListContainer extends React.Component<IPlatformGameListContainerProps, any> {
 

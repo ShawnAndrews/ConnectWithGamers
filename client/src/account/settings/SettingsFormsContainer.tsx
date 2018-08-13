@@ -1,13 +1,11 @@
 const popupS = require('popups');
 import * as React from 'react';
 import SettingsForm from "../settings/settingsForm";
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { AUTH_TOKEN_NAME, GenericResponseModel, AccountImageResponse } from '../../../../client/client-server-common/common';
 import * as AccountService from '../../service/account/main';
 
-interface ISettingsFormContainerProps {
-    history: any;
-}
+interface ISettingsFormContainerProps extends RouteComponentProps<any> { }
 
 class SettingsFormContainer extends React.Component<ISettingsFormContainerProps, any> {
 

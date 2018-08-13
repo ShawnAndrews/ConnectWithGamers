@@ -1,7 +1,7 @@
 const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import PlatformList from './PlatformList';
 import { GenericResponseModel, DbPlatformGamesResponse, PlatformGame, PlatformGamesResponse } from '../../../../client/client-server-common/common';
 
@@ -21,9 +21,7 @@ export const platformOptions: PlatformOption[] = [
     { id: 37,  name: 'Nintendo 3DS' },
 ];
 
-interface IPlatformListContainerProps {
-    match?: any;
-}
+interface IPlatformListContainerProps extends RouteComponentProps<any> { }
 
 class PlatformListContainer extends React.Component<IPlatformListContainerProps, any> {
 

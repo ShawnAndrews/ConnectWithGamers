@@ -1,13 +1,12 @@
 const popupS = require('popups');
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
-import { UpcomingGameResponse } from '../../../../client/client-server-common/common';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { UpcomingGameResponse, GenreGame, RecentGameResponse, PlatformGame } from '../../../../client/client-server-common/common';
 import ThumbnailGame from './ThumbnailGame';
 
-interface IThumbnailGameContainerProps {
-    history: any;
-    game: UpcomingGameResponse;
-}
+interface IThumbnailGameContainerProps extends RouteComponentProps<any> {
+    game: UpcomingGameResponse | GenreGame | RecentGameResponse | PlatformGame;
+} 
 
 class ThumbnailGameContainer extends React.Component<IThumbnailGameContainerProps, any> {
 

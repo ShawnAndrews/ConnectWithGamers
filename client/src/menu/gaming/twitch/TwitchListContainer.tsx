@@ -1,7 +1,7 @@
 const popupS = require('popups');
 import * as React from 'react';
 import * as AccountService from '../../../service/account/main';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import TwitchList from './TwitchList';
 import { TwitchUser, TwitchIdResponse, TwitchFollowersResponse } from '../../../../../client/client-server-common/common';
 
@@ -10,9 +10,7 @@ export interface TwitchUserOption {
     label: string;
 }
 
-interface ITwitchListContainerProps {
-    history: any;
-}
+interface ITwitchListContainerProps extends RouteComponentProps<any> { } 
 
 class TwitchListContainer extends React.Component<ITwitchListContainerProps, any> {
 

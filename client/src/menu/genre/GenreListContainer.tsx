@@ -1,13 +1,11 @@
 const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GenreGamesResponse } from '../../../../client/client-server-common/common';
 import GenreList from './GenreList';
 
-interface IGenreListContainerProps {
-    match?: any;
-}
+interface IGenreListContainerProps extends RouteComponentProps<any> { } 
 
 class GenreListContainer extends React.Component<IGenreListContainerProps, any> {
 

@@ -34,7 +34,7 @@ const UpcomingGameList: React.SFC<IUpcomingGameListProps> = (props: IUpcomingGam
                             {props.upcomingGames
                             .filter((x: UpcomingGameResponse) => { return x.next_release_date === uniqueReleaseDate; } )
                             .map((x: UpcomingGameResponse) => {
-                                return <ThumbnailGameContainer key={x.id} className="menu-game-table-game" game={x}/>;
+                                return <ThumbnailGameContainer key={x.id} game={x}/>;
                             })}
                         </div>
                     );

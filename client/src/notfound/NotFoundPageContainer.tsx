@@ -1,11 +1,9 @@
 const popupS = require('popups');
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import NotFoundPage from './NotFoundPage';
 
-interface INotFoundPageContainerProps {
-    history: any;
-}
+interface INotFoundPageContainerProps extends RouteComponentProps<any> { } 
 
 class NotFoundPageContainer extends React.Component<INotFoundPageContainerProps, any> {
 

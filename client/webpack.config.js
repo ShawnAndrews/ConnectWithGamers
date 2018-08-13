@@ -16,8 +16,16 @@ module.exports = {
         test: /\.(less|css)$/,
         loader: ExtractTextPlugin.extract({
           fallback: 'style-loader',
-          use: [ 'css-loader', 'less-loader' ]
-        })
+          use: [
+           'css-loader',
+            { 
+            loader: 'less-loader', 
+              options: {
+                javascriptEnabled: true
+              }
+            } 
+          ]
+        }),
       },
       {
         test: /\.tsx?$/,

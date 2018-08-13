@@ -31,7 +31,7 @@ const GenreList: React.SFC<IGenreListProps> = (props: IGenreListProps) => {
             {props.genreGames && 
                 props.genreGames
                 .map((genreGame: GenreGame) => {
-                    return <ThumbnailGameContainer key={genreGame.id} className="menu-game-table-game" game={genreGame}/>;
+                    return <ThumbnailGameContainer key={genreGame.id} game={genreGame}/>;
                 })}
         </div>
     );     

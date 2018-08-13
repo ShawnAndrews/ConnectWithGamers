@@ -1,13 +1,10 @@
 const popupS = require('popups');
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { NAV_PAGE } from '../app/app';
 import Navbar from './navbar';
 
-interface INavbarContainerProps {
-    history: any;
-    match?: any;
-}
+interface INavbarContainerProps extends RouteComponentProps<any> { } 
 
 class NavbarContainer extends React.Component<INavbarContainerProps, any> {
 

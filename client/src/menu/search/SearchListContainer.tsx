@@ -1,7 +1,7 @@
 const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import SearchList from './SearchList';
 import { SearchGamesResponse } from '../../../client-server-common/common';
 
@@ -10,10 +10,7 @@ export interface SearchGameOption {
     label: string;
 }
 
-interface ISearchListContainerProps {
-    history: any;
-    match?: any;
-}
+interface ISearchListContainerProps extends RouteComponentProps<any> { }
 
 class SearchListContainer extends React.Component<ISearchListContainerProps, any> {
 
@@ -39,8 +36,9 @@ class SearchListContainer extends React.Component<ISearchListContainerProps, any
         }
     }
 
-    handleRawInputChange(newValue: string): void {
+    handleRawInputChange(newValue: string): string {
         this.setState({ rawInput: newValue });
+        return newValue;
     }
 
     loadGamesList(query: string): void {

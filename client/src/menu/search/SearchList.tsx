@@ -12,7 +12,7 @@ interface ISearchListProps {
     gameslist: SearchGameOption[];
     handleChange: (selectedGame: any) => void;
     handleKeyDown: (event: any) => void;
-    handleRawInputChange: (newValue: string) => void;
+    handleRawInputChange: (newValue: string) => string;
 }
 
 const SearchList: React.SFC<ISearchListProps> = (props: ISearchListProps) => {

@@ -1,13 +1,11 @@
 const popupS = require('popups');
 import * as React from 'react';
 import SignupForm from "./SignupForm";
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { validateCredentials, GenericResponseModel } from '../../../../client/client-server-common/common';
 import * as AccountService from '../../service/account/main';
 
-interface ISignupFormContainerProps {
-    history: any;
-}
+interface ISignupFormContainerProps extends RouteComponentProps<any> { }
 
 class SignupFormContainer extends React.Component<ISignupFormContainerProps, any> {
 

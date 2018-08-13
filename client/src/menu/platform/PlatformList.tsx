@@ -30,7 +30,7 @@ const PlatformList: React.SFC<IPlatformListProps> = (props: IPlatformListProps) 
             {props.platformGames && 
                 props.platformGames
                 .map((platformGame: PlatformGame) => {
-                    return <ThumbnailGameContainer key={platformGame.id} className="menu-game-table-game" game={platformGame}/>;
+                    return <ThumbnailGameContainer key={platformGame.id} game={platformGame}/>;
                 })}
         </div>
     );   

@@ -1,11 +1,10 @@
 import * as React from 'react';
 import * as io from 'socket.io-client';
 import Topnav from './Topnav';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
-interface ITopnavContainerProps {
+interface ITopnavContainerProps extends RouteComponentProps<any> {
     toggleSidebar: () => void;
-    history: any;
 }
 
 class TopnavContainer extends React.Component<ITopnavContainerProps, any> {

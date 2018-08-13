@@ -1,6 +1,6 @@
 const popupS = require('popups');
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as io from 'socket.io-client';
 import * as ChatroomService from '../../service/chatroom/main';
 import ChatMessageContainer, { IChatMessageContainerProps } from '../message/ChatMessageContainer';
@@ -8,11 +8,9 @@ import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse
 import { popupBasic } from '../../common';
 import Chatroom from './chatroom';
 
-interface IChatroomContainerProps {
+interface IChatroomContainerProps extends RouteComponentProps<any> {
     sidebarActive: boolean;
-    history: any;
-    match?: any;
-}
+} 
 
 class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
 

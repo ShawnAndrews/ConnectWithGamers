@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import HomePage from './HomePage';
 
-interface IHomePageContainerProps {
-    history: any;
-}
+interface IHomePageContainerProps extends RouteComponentProps<any> { } 
 
 class HomePageContainer extends React.Component<IHomePageContainerProps, any> {
 

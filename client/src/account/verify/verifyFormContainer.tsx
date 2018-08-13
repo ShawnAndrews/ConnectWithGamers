@@ -1,14 +1,11 @@
 const popupS = require('popups');
 import * as React from 'react';
 import VerifyForm from "./VerifyForm";
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as AccountService from '../../service/account/main';
 import { EmailVerifyResponse } from '../../../../client/client-server-common/common';
 
-interface IVerifyFormContainerProps {
-    history: any;
-    match?: any;
-}
+interface IVerifyFormContainerProps extends RouteComponentProps<any> { }
 
 class VerifyFormContainer extends React.Component<IVerifyFormContainerProps, any> {
 

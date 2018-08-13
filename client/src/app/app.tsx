@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
+import { Route, Redirect, Switch, withRouter, RouteComponentProps } from 'react-router-dom';
 import Account from '../account/main';
 import HomePageContainer from '../home/HomePageContainer';
 import Menu from '../menu/main';
@@ -17,10 +17,7 @@ export enum NAV_PAGE {
     CHATROOM = '/chat'
 }
 
-interface IAppProps {
-    history: any;
-    dispatch: any;
-}
+interface IAppProps extends RouteComponentProps<any> { }
 
 class App extends React.Component<IAppProps, any> {
 
