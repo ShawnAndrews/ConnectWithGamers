@@ -1,6 +1,6 @@
 <div align="center">
 
-  ![alt text](https://i.imgur.com/obqCKhX.png "logo")
+  ![alt text](https://i.imgur.com/UfeBmAp.gif "logo")
 
   <h1>Connect With Gamers (v1.3)</h1>
 </div>
