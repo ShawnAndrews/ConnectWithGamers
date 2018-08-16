@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { IMenuItem } from './MenuListContainer';
+import FooterIcons from '../../account/footer/footerIcons';
 
 interface IMenuListProps {
     menuItems: IMenuItem[];
@@ -9,24 +10,52 @@ interface IMenuListProps {
 const MenuList: React.SFC<IMenuListProps> = (props: IMenuListProps) => {
 
     return (
-        <div>
-            {props.menuItems && props.menuItems
-                .map((x: IMenuItem) => {
-                    return (
-                        <div key={x.name} className="menu-item" onClick={() => { props.goToRedirect(x.redirectURL); }}>
-                            <div className="menu-item-overlay"/>
-                            <div className="menu-item-content">
-                                {x.faIcons
-                                    .map((iconClass: string) => {
-                                        return (
-                                            <i key={iconClass} className={iconClass}/>
-                                        );
-                                    })}
-                                <p>{x.name}</p>
-                            </div>
-                        </div>
-                    );
-                })}
+        <div className="menu-items">
+            <nav className="nav" role="navigation">
+                <ul className="nav__list">
+                    {props.menuItems && props.menuItems
+                        .map((x: IMenuItem, menuIndex: number) => {
+                            return (
+                                <li key={x.name}>
+                                    <input id={`group-${menuIndex}`} type="checkbox" hidden={true} />
+                                    <label htmlFor={`group-${menuIndex}`} onClick={x.subMenuItems ? () => {} : () => { props.goToRedirect(x.redirectURL); }} >
+                                        {x.subMenuItems && <span className="fa fa-angle-right arrow"/>}
+                                        <div>
+                                            {x.faIcons
+                                                .map((iconClass: string) => {
+                                                    return (
+                                                        <i key={iconClass} className={iconClass}/>
+                                                    );
+                                                })}
+                                            <span className="group-name">{x.name}</span>
+                                        </div>
+                                    </label>
+                                    <ul className="group-list">
+                                        {x.subMenuItems && x.subMenuItems
+                                            .map((y: IMenuItem) => {
+                                                return (
+                                                    <li key={y.name}>
+                                                        <label onClick={() => { props.goToRedirect(y.redirectURL); }}>
+                                                            {y.faIcons
+                                                                .map((subIconClass: string) => {
+                                                                    return (
+                                                                        <i key={subIconClass} className={subIconClass}/>
+                                                                    );
+                                                                })}
+                                                            <span className="sub-group-name">{y.name}</span>
+                                                        </label>
+                                                    </li>
+                                                );
+                                            })}
+                                    </ul>
+                                </li>
+                            );
+                        })}
+                </ul>
+            </nav>
+            <footer>
+                <FooterIcons/>
+            </footer>
         </div>
     );
 

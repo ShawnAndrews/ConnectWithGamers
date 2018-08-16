@@ -45,7 +45,6 @@ const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
                     <RaisedButton className="account-form-signup top-sm-padding" label="Sign Up" primary={true} onClick={props.onClickSignUp}/>
                 </form>
             </div>
-            <FooterIcons/>
         </div>
     );
 

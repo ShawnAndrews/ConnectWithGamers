@@ -37,7 +37,6 @@ const SignupForm: React.SFC<ISignupFormProps> = (props: ISignupFormProps) => {
                     <RaisedButton className="account-form-back top-sm-padding" label="Back" primary={true} onClick={props.onClickBack}/>
                 </form>
             </div>
-            <FooterIcons/>
         </div>
     );
 

@@ -1,5 +1,5 @@
 @login-form-col: whitesmoke;
-@login-logo-URL: url("https://i.imgur.com/obqCKhX.png");
+@login-logo-URL: url("https://i.imgur.com/UfeBmAp.gif");
 @login-logo-width: 200px;
 @login-logo-height: 200px;
 @title-chip-size: 60px;
@@ -36,6 +36,8 @@
       height: @login-logo-height;
       width: @login-logo-width;
       opacity: 0.85;
+      margin-bottom: 70px;
+      margin-top: 35px;
     }
 
     @media (max-height:650px) {
@@ -342,6 +344,7 @@
       display: block !important;
       width: 70%;
       background-color: transparent !important;
+      border-radius: 25px !important;
 
       span {
         font-size: 1.2em !important; 
@@ -352,14 +355,16 @@
       > button {
         background-color: rgba(0, 0, 0, 0.2) !important;
         height: 50px !important;
+        border-radius: 25px !important;
       }
     }
   
     .account-form-signup, .account-form-back {
       position: relative;
       display: block !important;
-      width: 40%;
+      width: 50%;
       background-color: transparent !important;
+      border-radius: 25px !important;
 
       span {
         font-size: 1.2em !important; 
@@ -370,6 +375,7 @@
       > button {
         background-color: rgba(0, 0, 0, 0.2) !important;
         height: 50px !important;
+        border-radius: 25px !important;
       }
     }
   
@@ -431,31 +437,6 @@
       outline: none;
     }
   
-  }
-
-  .account-icons {
-    position: absolute;
-    z-index: 10;
-    bottom: 0px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-    text-align: center;
-    
-    .account-icon {
-      margin: 0 20px 5px 20px;
-
-      path {
-        color: whitesmoke;
-        opacity: 0.7;
-        text-decoration: none;
-        transition: all 0.4s ease-in-out;
-
-        &:hover {
-          opacity: 1.0;
-        }
-      }
-    }
   }
 
   .large-checkbox {
