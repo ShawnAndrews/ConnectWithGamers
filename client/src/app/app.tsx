@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Route, Redirect, Switch, withRouter, RouteComponentProps } from 'react-router-dom';
 import Account from '../account/main';
+import { loggedIn } from '../service/account/main';
 import HomePageContainer from '../home/HomePageContainer';
 import Menu from '../menu/main';
 import ChatroomMenuContainer from '../chat/ChatroomMenuContainer';
@@ -8,7 +9,6 @@ import Background from '../background/background';
 import NotFoundPageContainer from '../notfound/NotFoundPageContainer';
 import NoticePage from '../notice/NoticePage';
 import NavbarContainer from '../nav/NavbarContainer';
-import { AUTH_TOKEN_NAME } from '../../client-server-common/common';
 
 export enum NAV_PAGE {
     HOME = '/',
@@ -34,12 +34,8 @@ class App extends React.Component<IAppProps, any> {
         return (window.innerWidth <= 800 && window.innerHeight <= 1000);
     }
 
-    get loggedIn(): boolean {
-        return (document.cookie.indexOf(`${AUTH_TOKEN_NAME}=`) !== -1);
-    }
-
     get renderUnauthenticatedRedirects(): JSX.Element[] {
-        if (!this.loggedIn) {
+        if (!loggedIn()) {
             return (
                 this.state.authenticatedRoutes
                                 .map((x: string) => 

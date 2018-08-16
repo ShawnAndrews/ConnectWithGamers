@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { NAV_PAGE } from '../app/app';
 import { Tabs, Tab } from 'material-ui/Tabs';
+import { loggedIn } from '../service/account/main';
 
 interface INavbarProps {
     index: number;
@@ -14,7 +15,7 @@ const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
 
     return (
         <Tabs
-            className="navbar-item-container fixed-container"
+            className={`navbar-item-container fixed-container ${props.index === 3 && !loggedIn() && `invisible` }`}
             value={props.index}
         >
             <Tab label="Home" value={0} icon={<i className="fas fa-home navbar-item-icon"/>} className="navbar-item-text" onActive={props.goToHomePage}/>

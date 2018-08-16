@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { GenericResponseModel, AccountImageResponse, EmailVerifyResponse, TwitchIdResponse, SteamIdResponse, DiscordLinkResponse, SteamFriendsResponse, TwitchFollowersResponse } from '../../../../client/client-server-common/common';
+import { AUTH_TOKEN_NAME } from '../../../client-server-common/common';
 
 /**
  * HTTP request to get account settings.
@@ -267,4 +268,12 @@ export function httpGetAccountDiscordLink(): Promise<DiscordLinkResponse> {
             return reject(`HTTP error: ${err}.`);
         });
     }); 
+}
+
+/**
+ * Check if an account is logged in via cookie
+ */
+
+ export function loggedIn(): boolean {
+    return (document.cookie.indexOf(`${AUTH_TOKEN_NAME}=`) !== -1);
 }
