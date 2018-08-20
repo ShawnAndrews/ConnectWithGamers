@@ -1,55 +1,64 @@
 import * as React from 'react';
-import * as io from 'socket.io-client';
 import Topnav from './Topnav';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { CHATROOMS, ChatroomInfo } from '../../../client-server-common/common';
 
 interface ITopnavContainerProps extends RouteComponentProps<any> {
-    toggleSidebar: () => void;
+    
 }
 
 class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
 
     constructor(props: ITopnavContainerProps) {
         super(props);
-        this.onClickTopnavBtn = this.onClickTopnavBtn.bind(this);
-        this.getNewPathTitle = this.getNewPathTitle.bind(this);
-        this.state = { bar1Active: false, bar2Active: false, bar3Active: false, title: this.getNewPathTitle() };
+        this.getPathTitle = this.getPathTitle.bind(this);
+        this.onClickUsersIcon = this.onClickUsersIcon.bind(this);
+
+        const usersPageActive: boolean = (props.location.pathname === '/chat/users/');
+
+        this.state = { title: this.getPathTitle(props), usersPageActive: usersPageActive };
     }
 
-    componentWillReceiveProps(props: ITopnavContainerProps): void {
-        this.setState({ title: this.getNewPathTitle() });
+    componentWillReceiveProps(newProps: ITopnavContainerProps): void {
+        const usersPageActive: boolean = (newProps.location.pathname === '/chat/users/');
+        this.setState({ title: this.getPathTitle(newProps), usersPageActive: usersPageActive });
     }
 
-    onClickTopnavBtn(): void {
-        this.props.toggleSidebar();
-        this.setState({
-            bar1Active: !this.state.bar1Active,
-            bar2Active: !this.state.bar2Active,
-            bar3Active: !this.state.bar3Active
-        });
-    }
-
-    getNewPathTitle(): string {
-        const path: string = this.props.history.location.pathname;
-
-        if (path.startsWith(`/chat/users`)) {
-            return "User List";
-        } else if (path.startsWith(`/chat`)) {
-            return "Chatroom";
-        } else {
-            return "Title Error";
-        }
+    getPathTitle(props: ITopnavContainerProps): string {
+        const path: string = props.history.location.pathname;
         
+        if (path === `/chat`) {
+            return "Chatroom";
+        } else if (path.startsWith(`/chat/users`)) {
+            return "User List";
+        } else {
+            let title: string = "Title Error";
+            CHATROOMS.map((chatroomInfo: ChatroomInfo) => {
+                if (path.startsWith(chatroomInfo.redirect)) {
+                    title = chatroomInfo.name;
+                }
+            });
+            return title;
+        }
+
+    }
+
+    onClickUsersIcon(): void {
+        this.setState({ usersPageActive: !this.state.usersPageActive }, () => {
+            if (this.state.usersPageActive) {
+                this.props.history.push('/chat/users/');
+            } else {
+                this.props.history.goBack();
+            }
+        });
     }
 
     render() {
         return (
             <Topnav
                 title={this.state.title}
-                onClickTopnavBtn={this.onClickTopnavBtn}
-                bar1Active={this.state.bar1Active}
-                bar2Active={this.state.bar2Active}
-                bar3Active={this.state.bar3Active}
+                usersPageActive={this.state.usersPageActive}
+                onClickUsersIcon={this.onClickUsersIcon}
             />
         );
     }

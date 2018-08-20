@@ -8,15 +8,15 @@ import { ChatroomUser } from '../../../../client/client-server-common/common';
 import TopnavContainer from '../topnav/TopnavContainer';
 
 interface IUserlistProps {
-    sidebarActive: boolean;
     userlist: ChatroomUser[];
     goBack: () => void;
+    userlistContainerRef: React.RefObject<HTMLDivElement>;
 }
 
 const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
 
     return (
-        <div className={`userlist scrollable fadeIn ${props.sidebarActive ? "active" : ""}`}>
+        <div className={`userlist scrollable fadeIn`} ref={props.userlistContainerRef}>
             {props.userlist
                 .map((x: ChatroomUser, index: number) => {
                     return (

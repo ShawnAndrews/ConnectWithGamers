@@ -1,3 +1,4 @@
+const popupS = require('popups');
 import * as React from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -11,19 +12,16 @@ export enum MessageSide {
 }
 
 interface IChatroomProps {
-    userCount: number;
     attachmentLink: string;
     attachmentLoading: boolean;
     messagesLoading: boolean;
-    userCountLoading: boolean;
     text: string;
     chatLog: IChatMessageContainerProps[];
-    sidebarActive: boolean;
     onTextChanged: (event: object, newText: string) => void;
-    onNewUsercount: (userCount: number) => void;
     onKeyPress: (event: any) => void;
     onSend: (event: any) => void;
     handleAttachmentUpload: (event: any) => void;
+    chatroomContainerRef: React.RefObject<HTMLDivElement>;
 }
 
 const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
@@ -33,7 +31,7 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
 
     return (
         <div>
-            <div className={`scrollable chatroom-messages ${props.sidebarActive ? "active" : ""}`} >
+            <div className={`scrollable chatroom-messages`} ref={props.chatroomContainerRef}>
                 {props.messagesLoading && 
                     <div className="chatroom-messages-loading">
                         <Spinner loadingMsg="Loading chat..." />

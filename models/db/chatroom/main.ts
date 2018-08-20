@@ -15,16 +15,16 @@ class ChatroomModel extends DatabaseBase {
     /**
      * Add a chat message to the database.
      */
-    addChatMessage(username: string, date: number, text: string, image: string, attachment: string): Promise<GenericResponseModel> {
+    addChatMessage(username: string, date: number, text: string, image: string, attachment: string, chatroomid: number): Promise<GenericResponseModel> {
 
         return new Promise( (resolve, reject) => {
 
             const response: GenericResponseModel = {error: undefined, data: undefined};
             this.insert(
                 "dbo.chatroom",
-                ["username", "date", "text", "image", "attachment"],
-                [this.sql.VarChar, this.sql.DateTime, this.sql.NVarChar, this.sql.VarChar, this.sql.VarChar],
-                [username, date, text, image, attachment])
+                ["username", "date", "text", "image", "attachment", "chatroomid"],
+                [this.sql.VarChar, this.sql.DateTime, this.sql.NVarChar, this.sql.VarChar, this.sql.VarChar, this.sql.VarChar],
+                [username, date, text, image, attachment, chatroomid])
                 .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.error) {
                         return reject(dbResponse.error);
@@ -40,17 +40,17 @@ class ChatroomModel extends DatabaseBase {
     /**
      * Get the complete log of all past chatroom messages.
      */
-    getChatHistory(): Promise<ChatHistoryResponse> {
+    getChatHistory(chatroomid: number): Promise<ChatHistoryResponse> {
 
         return new Promise( (resolve, reject) => {
 
             this.select(
                 "dbo.chatroom",
-                [],
-                [],
-                [],
+                ["chatroomid"],
+                [this.sql.Int],
+                [chatroomid],
                 ["username", "date", "text", "image", "attachment"],
-                undefined,
+                "chatroomid=@chatroomid",
                 config.chatHistoryCount)
                 .then((dbResponse: GenericResponseModel) => {
                     const chatHistoryResponse: ChatHistoryResponse = { name: [], date: [], text: [], image: [], attachment: [] };
@@ -75,7 +75,7 @@ class ChatroomModel extends DatabaseBase {
     /**
      * Upload chatroom message attachment.
      */
-    uploadAttachment(imageBase64: string): Promise<DbChatroomAttachmentResponse> {
+    uploadAttachment(imageBase64: string): Promise <DbChatroomAttachmentResponse> {
         return new Promise( (resolve, reject) => {
             imgur.uploadBase64(imageBase64)
                 .then((response: any) => {

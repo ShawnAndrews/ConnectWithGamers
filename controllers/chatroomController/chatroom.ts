@@ -92,13 +92,6 @@ export default function registerChatHandlers(chatServer: any): void {
             const usercount: number = getUserCount();
             socket.emit(CHATROOM_EVENTS.Usercount, usercount);
             socket.broadcast.emit(CHATROOM_EVENTS.Usercount, usercount);
-            chatroomModel.getChatHistory()
-            .then((chats: ChatHistoryResponse) => {
-                socket.emit(CHATROOM_EVENTS.MessageHistory, chats);
-            })
-            .catch((error: string) => {
-                console.log(`Error retrieving chat history: ${error}`);
-            });
 
             next();
         })
@@ -118,6 +111,26 @@ export default function registerChatHandlers(chatServer: any): void {
                 const usercount: number = getUserCount();
                 socket.emit(CHATROOM_EVENTS.Usercount, usercount);
                 socket.broadcast.emit(CHATROOM_EVENTS.Usercount, usercount);
+            })
+            .catch((error: string) => {
+                console.log(`Chat error authorizing disconnection: ${error}`);
+                socket.disconnect();
+            });
+        });
+
+        socket.on(CHATROOM_EVENTS.GetMessageHistory, (data: any) => {
+
+            // authorize
+            securityModel.authorize(socket.handshake.headers.cookie)
+            .then((response: DbAuthorizeResponse) => {
+                const chatroomid: number = data.chatroomid;
+                chatroomModel.getChatHistory(chatroomid)
+                .then((chats: ChatHistoryResponse) => {
+                    socket.emit(CHATROOM_EVENTS.MessageHistory, chats);
+                })
+                .catch((error: string) => {
+                    console.log(`Error retrieving chat history: ${error}`);
+                });
             })
             .catch((error: string) => {
                 console.log(`Chat error authorizing disconnection: ${error}`);
@@ -159,6 +172,7 @@ export default function registerChatHandlers(chatServer: any): void {
             let text: string = undefined;
             let image: string = undefined;
             let attachment: string = undefined;
+            let chatroomid: number = undefined;
 
             // authorize
             securityModel.authorize(socket.handshake.headers.cookie)
@@ -176,10 +190,11 @@ export default function registerChatHandlers(chatServer: any): void {
                 text = data.text;
                 image = response.link;
                 attachment = data.attachment;
-                return chatroomModel.addChatMessage(username, date, text, image, attachment);
+                chatroomid = data.chatroomid;
+                return chatroomModel.addChatMessage(username, date, text, image, attachment, chatroomid);
             })
             .then(() => {
-                const newChat: SingleChatHistory = { name: username, date: new Date(date), text: text, image: image, attachment: attachment };
+                const newChat: SingleChatHistory = { name: username, date: new Date(date), text: text, image: image, attachment: attachment, chatroomid: chatroomid };
                 socket.emit(CHATROOM_EVENTS.Message, newChat);
                 socket.broadcast.emit(CHATROOM_EVENTS.Message, newChat);
             })

@@ -1,6 +1,7 @@
 @userlist-height: 70px;
 @userlist-content-height: @userlist-height - 4px;
 @chatroom-messagebox-height: 55px;
+@sidenav-width: 50px;
 
 .chatroom {
     position: relative;
@@ -14,68 +15,32 @@
         height: 7%;
         width: 100%;
         background-color: rgba(0,0,0,0.25) !important;
-        
-        .chatroom-appbar-btn-container {
-            position: relative;
-            z-index: 10;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);   
 
-            .chatroom-appbar-btn {
-                position: relative;
-                width: fit-content;
-                height: fit-content;
-                margin-left: 20px;
-    
-                .bar1, .bar2, .bar3 {
-                    position: relative;
-                    font-size: 10px;
-                    width: 35px;
-                    height: 5px;
-                    border-radius: 7px;
-                    background-color: rgba(255,255,255,0.5);
-                    transition: all 0.2s ease-in;
-                    -webkit-transition: all 0.2s ease-in;
-                    transform: rotate(0deg);
-                    -webkit-transform: rotate(0deg);
-                }
-                
-                .bar1, .bar2 {
-                    margin-bottom: 4px;
-                }
-                
-                .bar1.active {
-                    top: 8px;
-                    -webkit-transform: rotate(135deg);
-                    -moz-transform: rotate(135deg);
-                    -o-transform: rotate(135deg);
-                    transform: rotate(135deg);
-                    transition: all 0.2s ease-in;
-                    -webkit-transition: all 0.2s ease-in;
-                }
-    
-                .bar2.active{
-                    opacity: 0;
-                    left: -60px;
-                    transition: all 0.2s ease-in;
-                    -webkit-transition: all 0.2s ease-in;
-                }
-    
-                .bar3.active{
-                    top: -10px;
-                    -webkit-transform: rotate(-135deg);
-                    -moz-transform: rotate(-135deg);
-                    -o-transform: rotate(-135deg);
-                    transform: rotate(-135deg);
-                    transition: all 0.2s ease-in;
-                    -webkit-transition: all 0.2s ease-in;
-                }
+        .chatroom-appbar-users-icon {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            height: 100%;
+            width: 70px;
+            color: white;
+            opacity: 0.3;
+            text-align: center;
+
+            &.active {
+                opacity: 0.9;
+            }
+
+            > i {
+                position: absolute;
+                z-index: 10;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%,-50%);
+                text-align: center;
             }
         }
-        
 
-        > h1 {
+        > .title {
             position: absolute;
             z-index: 10;
             top: 50%;
@@ -83,19 +48,32 @@
             transform: translate(-50%, -50%);
             text-align: center;
             opacity: 0.75;
-            margin-top: 2px !important;
-            letter-spacing: 2px;
-            font-size: 1.4em !important;
+            margin-top: 1px !important;
+            letter-spacing: 1px;
             font-weight: 600 !important;
             color: rgba(255,255,255,0.7);
+            width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
     }
     
+    .chatroom-homepage {
+        position: absolute;
+        top:7%;
+        left:0px;
+        height: calc(~"100% - 7%");
+        width: 100%;
+        transition: all 0.3s ease-in;
+        -webkit-transition: all 0.3s ease-in;
+    }
+
     .chatroom-messages {
         position: absolute;
         top:7%;
-        left:0;
+        left:0px;
         height: calc(~"100% - 7% - " @chatroom-messagebox-height);
         width: 100%;
         box-sizing: border-box;
@@ -285,7 +263,7 @@
     }
 
     .chatroom-messages.active {
-        left: 105px;
+        left: @sidenav-width;
         transition: all 0.3s ease-in;
         -webkit-transition: all 0.3s ease-in;
     }
@@ -293,44 +271,32 @@
     .chatroom-menu {
         position: absolute;
         top: 7%;
-        left: -105px;
+        left: -@sidenav-width;
         height: calc(~"100% - 7% - " @chatroom-messagebox-height);
-        width: 105px;
+        width: @sidenav-width;
         background-color: rgba(0,0,0,0.25);
         transition: all 0.3s ease-in;
         -webkit-transition: all 0.3s ease-in;
-        padding: 20px 0;
 
         &.chatroom-input-height {
             height: calc(~"100% - 7%");
         }
 
-        .chatroom-menu-item {
-            color: whitesmoke;
-            opacity: 0.3;
-
-            &.active {
-                opacity: 0.8;
-            }
-
-            > svg {
-                width: 64px;
-                margin: 0 20px;
-            }
+        .chatroom-menu-item-bar {
+            position: absolute;
+            height: 32px;
+            width: 2px;
+            background-color: white;
+            opacity: 0.5;
         }
 
-        .chatroom-menu-item-title {
-            text-align: center;
-            font-size: 1em;
-            font-weight: 600;
-            letter-spacing: 2px;
-            margin-top: 5px;
-            margin-bottom: 20px;
-            color: whitesmoke;
+        .chatroom-menu-item {
+            display: block;
+            margin: 15px auto 15px auto;
             opacity: 0.3;
 
             &.active {
-                opacity: 0.8;
+                opacity: 0.9;
             }
         }
 
@@ -350,12 +316,6 @@
             }
         }
 
-    }
-
-    .chatroom-menu.active {
-        left: 0px;
-        transition: all 0.3s ease-in;
-        -webkit-transition: all 0.3s ease-in;
     }
 
     .chatroom-input {
@@ -424,14 +384,13 @@
 .userlist {
     position: absolute;
     width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
+    height: 93%;
+    bottom: 0;
     transition: all 0.3s ease-in;
     -webkit-transition: all 0.3s ease-in;
 
     &.active {
-        left: 105px;
+        left: @sidenav-width;
         transition: all 0.3s ease-in;
         -webkit-transition: all 0.3s ease-in;
     }
@@ -481,7 +440,6 @@
         border-radius: 0px !important;
         background-color: transparent !important;
         border-bottom: 1px solid rgba(0, 0, 0, 0.27) !important;
-        top: 7%;
 
         > span {
             width: calc(~"100% -" @userlist-content-height) !important;

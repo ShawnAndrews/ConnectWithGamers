@@ -3,13 +3,15 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as io from 'socket.io-client';
 import * as ChatroomService from '../../service/chatroom/main';
-import ChatMessageContainer, { IChatMessageContainerProps } from '../message/ChatMessageContainer';
 import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory, ChatroomAttachmentResponse } from '../../../../client/client-server-common/common';
 import { popupBasic } from '../../common';
 import Chatroom from './chatroom';
 
 interface IChatroomContainerProps extends RouteComponentProps<any> {
-    sidebarActive: boolean;
+    chatroomid: number;
+    sidebarWidth: number;
+    movedXPos: number;
+    expanded: boolean;
 } 
 
 class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
@@ -21,18 +23,37 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
         this.onSend = this.onSend.bind(this);
         this.onNewMessageHistory = this.onNewMessageHistory.bind(this);
         this.onNewMessage = this.onNewMessage.bind(this);
-        this.onNewUsercount = this.onNewUsercount.bind(this);
         this.scrollChatToMostRecent = this.scrollChatToMostRecent.bind(this);
         this.handleAttachmentUpload = this.handleAttachmentUpload.bind(this);
+
+        const chatroomContainerRef: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
         const socket = io(`${window.location.hostname}:${CHAT_SERVER_PORT}`);
-        this.state = { attachmentLoading: false, text: '', chatLog: [], userCountLoading: true, messagesLoading: true, socket: socket };
+
+        this.state = { chatroomContainerRef: chatroomContainerRef, chatroomid: props.chatroomid, sidebarWidth: props.sidebarWidth, chatroomContainerXPos: props.expanded ? `${props.sidebarWidth}px` : '0px', attachmentLoading: false, text: '', chatLog: [], messagesLoading: true, socket: socket };
+
         socket.on(CHATROOM_EVENTS.Message, this.onNewMessage);
-        socket.on(CHATROOM_EVENTS.Usercount, this.onNewUsercount);
         socket.on(CHATROOM_EVENTS.MessageHistory, this.onNewMessageHistory);
+        socket.emit(CHATROOM_EVENTS.GetMessageHistory, { chatroomid: props.chatroomid });
     }
 
     componentDidMount(): void {
         this.setState({ chatLogContainer: document.querySelector('.chatroom-messages') });
+        const divNode: HTMLDivElement = this.state.chatroomContainerRef.current;
+        divNode.style.left = this.state.chatroomContainerXPos;
+        if (this.state.chatroomContainerXPos === `${this.state.sidebarWidth}px`) {
+            this.setState({ chatroomContainerXPos: '0px' });
+        }
+    }
+
+    componentWillReceiveProps(newProps: IChatroomContainerProps): void {
+        const divNode: HTMLDivElement = this.state.chatroomContainerRef.current;
+        let newChatroomContainerXPos: string = parseInt( this.state.chatroomContainerXPos, 10 ) + newProps.movedXPos + "px";
+        divNode.style.left = newChatroomContainerXPos;
+        if (newProps.chatroomid !== this.state.chatroomid) {
+            this.setState({ chatroomid: newProps.chatroomid, chatLog: [], messagesLoading: true }, () => {
+                this.state.socket.emit(CHATROOM_EVENTS.GetMessageHistory, { chatroomid: newProps.chatroomid });
+            });
+        }
     }
 
     scrollChatToMostRecent(): void {
@@ -44,7 +65,7 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
     onNewMessageHistory(chats: ChatHistoryResponse): void {
         const newChatLog: Array<SingleChatHistory> = this.state.chatLog;
         for (let i = 0; i < chats.name.length; i++) {
-            const chat: SingleChatHistory = { name: chats.name[i], date: new Date(chats.date[i]), text: chats.text[i], image: chats.image[i], attachment: chats.attachment[i] };
+            const chat: SingleChatHistory = { name: chats.name[i], date: new Date(chats.date[i]), text: chats.text[i], image: chats.image[i], attachment: chats.attachment[i], chatroomid: this.state.chatroomid };
             newChatLog.push(chat);
         }
         this.setState({ text: '', messagesLoading: false, chatLog: newChatLog }, () => {
@@ -54,14 +75,10 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
 
     onNewMessage(chat: SingleChatHistory): void {
         const newChatLog: Array<SingleChatHistory> = this.state.chatLog;
-        newChatLog.push({ name: chat.name, date: chat.date, text: chat.text, image: chat.image, attachment: chat.attachment });
+        newChatLog.push({ name: chat.name, date: chat.date, text: chat.text, image: chat.image, attachment: chat.attachment, chatroomid: this.state.chatroomid });
         this.setState({ text: '', chatLog: newChatLog }, () => {
             this.scrollChatToMostRecent();
         });
-    }
-    
-    onNewUsercount(userCount: number): void {
-        this.setState({ userCountLoading: false, userCount: userCount });
     }
 
     onTextChanged(event: object, newText: string): void {
@@ -85,7 +102,7 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
         if (this.state.text !== "") {
             const cookieMatch: string[] = document.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
             const authToken: string = cookieMatch[1];
-            this.state.socket.emit(CHATROOM_EVENTS.PostMessage, { authToken: authToken, text: this.state.text, attachment: this.state.attachmentLink });
+            this.state.socket.emit(CHATROOM_EVENTS.PostMessage, { authToken: authToken, text: this.state.text, attachment: this.state.attachmentLink, chatroomid: this.state.chatroomid });
             this.setState({ attachmentLink: undefined });
         }
     }
@@ -123,19 +140,16 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
     render() {
         return (
             <Chatroom
-                userCount={this.state.userCount}
                 attachmentLink={this.state.attachmentLink}
                 attachmentLoading={this.state.attachmentLoading}
                 messagesLoading={this.state.messagesLoading}
-                userCountLoading={this.state.userCountLoading}
                 text={this.state.text}
                 chatLog={this.state.chatLog}
-                sidebarActive={this.props.sidebarActive}
                 onTextChanged={this.onTextChanged}
-                onNewUsercount={this.onNewUsercount}
                 onKeyPress={this.onKeyPress}
                 onSend={this.onSend}
                 handleAttachmentUpload={this.handleAttachmentUpload}
+                chatroomContainerRef={this.state.chatroomContainerRef}
             />
         );
     }

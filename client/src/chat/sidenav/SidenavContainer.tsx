@@ -2,46 +2,64 @@ const popupS = require('popups');
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Sidenav from './Sidenav';
+import { CHATROOMS, ChatroomInfo } from '../../../client-server-common/common';
+
+export interface SidenavOption {
+    imageUrl: string;
+    redirect: string; 
+}
 
 interface ISidenavContainerProps extends RouteComponentProps<any> {
-    active: boolean;
-    toggleSidebar: () => void;
+    sidebarWidth: number;
+    movedXPos: number;
 }
 
 class SidenavContainer extends React.Component<ISidenavContainerProps, any> {
 
     constructor(props: ISidenavContainerProps) {
         super(props);
-        this.onOption1Click = this.onOption1Click.bind(this);
-        this.onOption2Click = this.onOption2Click.bind(this);
+        this.onOptionClick = this.onOptionClick.bind(this);
+        const sideNavRef: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
+        const onUsersPage: boolean = props.location.pathname.startsWith('/chat/users');
+        const sidenavOptions: SidenavOption[] = [];
+        
+        sidenavOptions.push({ imageUrl: `https://i.imgur.com/GDbcIK8.png`, redirect: `/chat` });
+        CHATROOMS.forEach((chatroomInfo: ChatroomInfo) => {
+            sidenavOptions.push({ imageUrl: chatroomInfo.imagePath, redirect: chatroomInfo.redirect });
+        });
+        
+        this.state = { sidenavOptions: sidenavOptions, sideNavRef: sideNavRef, originalSideNavXPos: `-${props.sidebarWidth}px`, onUsersPage: onUsersPage };
     }
 
-    onOption1Click(): void {
-        this.props.history.push(`/chat`);
+    componentWillReceiveProps(newProps: ISidenavContainerProps): void {
+        const onUsersPage: boolean = newProps.location.pathname.startsWith('/chat/users');
+        const divNode: HTMLDivElement = this.state.sideNavRef.current;
+        let newSideNavXPos: string = parseInt( this.state.originalSideNavXPos, 10 ) + newProps.movedXPos + "px";
+        divNode.style.left = newSideNavXPos;
+        this.setState({ onUsersPage: onUsersPage });
     }
 
-    onOption2Click(): void {
-        this.props.history.push(`/chat/users`);
+    onOptionClick(val: number): void {
+        this.props.history.push(this.state.sidenavOptions[val].redirect);
     }
 
     render() {
         const path: string = this.props.history.location.pathname;
-        let option1Selected: boolean = false;
-        let option2Selected: boolean = false;
+        const optionSelected: boolean[] = new Array<boolean>(this.state.sidenavOptions.length).fill(false);
 
-        if (path.startsWith(`/chat/users`)) {
-            option2Selected = true;
-        } else if (path.startsWith(`/chat`)) {
-            option1Selected = true;
-        }
+        this.state.sidenavOptions.forEach((sidenavOption: SidenavOption, index: number) => {
+            if (path === sidenavOption.redirect || path.slice(0, -1) === sidenavOption.redirect) {
+                optionSelected[index] = true;
+            }
+        });
         
         return (
             <Sidenav
-                active={this.props.active}
-                option1Selected={option1Selected}
-                option2Selected={option2Selected}
-                onOption1Click={this.onOption1Click}
-                onOption2Click={this.onOption2Click}
+                optionSelected={optionSelected}
+                onOptionClick={this.onOptionClick}
+                sidenavOptions={this.state.sidenavOptions}
+                onUsersPage={this.state.onUsersPage}
+                sideNavRef={this.state.sideNavRef}
             />
         );
     }
