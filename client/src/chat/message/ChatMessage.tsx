@@ -24,7 +24,7 @@ const ChatMessage: React.SFC<IChatMessageProps> = (props: IChatMessageProps) => 
     const formattedDateTime: string = `${formattedDate} ${formattedTime}`;
 
     return (
-        <div className={`chatroom-message-${props.side === MessageSide.Left ? "left" : "right"} ${props.timeVisible ? "time-visible" : "time-invisible"} fadeIn`} onClick={props.changeTimeVisibility}>
+        <div className={`chatroom-message-left ${props.timeVisible ? "time-visible" : "time-invisible"} fadeIn`} onClick={props.changeTimeVisibility}>
             <div className="chatroom-message-text-container">
                 <div className={`chatroom-message-text${props.repeat ? "-repeat" : ""}`}>
                     {props.text}
@@ -32,7 +32,7 @@ const ChatMessage: React.SFC<IChatMessageProps> = (props: IChatMessageProps) => 
                         <img src={props.attachment} alt="Attachment" height="100%" width="100%"/>}
                 </div>
                 {!props.repeat && 
-                    <div>
+                    <div className="chatroom-message-metadata">
                         <div className="chatroom-message-icon-container">
                             {props.image
                                 ? <Avatar className="chatroom-message-icon-transparent" src={props.image}/>

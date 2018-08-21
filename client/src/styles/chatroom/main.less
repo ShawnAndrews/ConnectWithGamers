@@ -77,10 +77,18 @@
         height: calc(~"100% - 7% - " @chatroom-messagebox-height);
         width: 100%;
         box-sizing: border-box;
-        color: rgba(19, 75, 115, 0.78);
+        color: rgba(255,255,255,0.6);
         padding: 10px;
+        background-color: rgba(0,0,0,0.5);
         transition: all 0.3s ease-in;
         -webkit-transition: all 0.3s ease-in;
+
+        .divider {
+            position: relative;
+            width: 100%;
+            height: 1px;
+            background-color: rgba(255,255,255,0.2);
+        }
 
         .chatroom-messages-loading {
             position: absolute;
@@ -93,49 +101,39 @@
         
         .chatroom-message-left {
             position: relative;
-            float: left;
-            clear: both;
             -webkit-tap-highlight-color: rgba(255,255,255,0);
             
             .chatroom-message-text-container {
                 position: relative;
-                display: inline-block;
                 max-width: 60%;
                 min-width: 52%;
                 margin-left: 60px;
-                background: rgba(255,255,255,0.3);
                 display: table;
-                border-radius:25px;
                 word-break: break-word;
                 -webkit-tap-highlight-color: rgba(255,255,255,0);
 
-                .chatroom-message-text, .chatroom-message-text-repeat {
-                    position: relative;
-                    padding: 17px;
-                    box-sizing: border-box;
-                    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+                .chatroom-message-metadata {
+                    position: absolute;
+                    top: 0;
                 }
 
-                .chatroom-message-text:after {
-                    position: absolute;
-                    content: '';
-                    background: url(
-                        "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='15.515px' height='17.5px' viewBox='32.485 17.5 15.515 17.5' enable-background='new 32.485 17.5 15.515 17.5'><path fill='rgb(255,255,255)' fill-opacity='0.3' d='M48,35c-7-4-6-8.75-6-17.5C28,17.5,29,35,48,35z'/></svg>"
-                        ) no-repeat;
-                    width: 15.515px;
-                    height: 17.5px;
-                    left: -3px;
-                    bottom: -3px;
-                    -webkit-clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
-                    clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
-                    transform: scale(-1, 1);
+                .chatroom-message-text {
+                    position: relative;
+                    margin-top: 40px;
+                }
+                
+                .chatroom-message-text-repeat {
+                    position: relative;
                 }
 
                 .chatroom-message-username {
                     position: absolute;
-                    bottom: -50px;
-                    left: -55px;
-                    color: rgba(255,255,255,0.3);
+                    top: 10px;
+                    left: 0px;
+                    width: 200px;
+                    word-wrap: break-word;
+                    text-overflow: ellipsis;
+                    color: rgba(255,255,255,0.6);
                 }
 
                 .chatroom-message-time {
@@ -143,13 +141,13 @@
                     bottom: -25px;
                     left: 10px;
                     white-space: nowrap;
-                    color: rgba(255,255,255,0.3);
+                    color: rgba(255,255,255,0.6);
                 }
 
                 .chatroom-message-icon-container {
                     position: absolute;
                     left: -55px;
-                    bottom: -25px;
+                    top: 10px;
                     width: 40px;
                     height: 40px;
                     color: whitesmoke;
@@ -165,80 +163,7 @@
             }
         }
 
-        .chatroom-message-right {
-            position: relative;
-            float: right;
-            clear: both;
-            -webkit-tap-highlight-color: rgba(255,255,255,0);
-            
-            .chatroom-message-text-container {
-                position: relative;
-                max-width: 60%;
-                min-width: 52%;
-                margin-right: 60px;
-                background: rgba(255,255,255,0.3);
-                display: table;
-                border-radius:25px;
-                word-break: break-word;
-                float: right;
-                -webkit-tap-highlight-color: rgba(255,255,255,0);
-
-                .chatroom-message-text, .chatroom-message-text-repeat {
-                    position: relative;
-                    padding: 17px;
-                    box-sizing: border-box;
-                    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
-                }
-
-                .chatroom-message-text:after {
-                    position: absolute;
-                    content: '';
-                    background: url(
-                        "data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' x='0px' y='0px' width='15.515px' height='17.5px' viewBox='32.485 17.5 15.515 17.5' enable-background='new 32.485 17.5 15.515 17.5'><path fill='rgb(255,255,255)' fill-opacity='0.3' d='M48,35c-7-4-6-8.75-6-17.5C28,17.5,29,35,48,35z'/></svg>"
-                        ) no-repeat;
-                    width: 15.515px;
-                    height: 17.5px;
-                    right: -3px;
-                    bottom: -3px;
-                    -webkit-clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
-                    clip-path: polygon(23% 51%, 32% 43%, 41% 35%, 50% 24%, 59% 14%, 68% 0, 100% 0, 100% 100%, 0 100%, 0 81%, 0 64%, 12% 59%);
-                }
-                
-                .chatroom-message-username {
-                    position: absolute;
-                    bottom: -50px;
-                    right: -55px;
-                    color: rgba(255,255,255,0.3);
-                }
-
-                .chatroom-message-time {
-                    position: absolute;
-                    bottom: -25px;
-                    right: 10px;
-                    white-space: nowrap;
-                    color: rgba(255,255,255,0.3);
-                }
-
-                .chatroom-message-icon-container {
-                    position: absolute;
-                    right: -55px;
-                    bottom: -25px;
-                    width: 40px;
-                    height: 40px;
-                    color: whitesmoke;
-                    
-                    .chatroom-message-icon {
-                        background-color: rgba(19, 75, 115, 0.78) !important;
-                    }
-    
-                    .chatroom-message-icon-transparent {
-                        background-color: transparent !important;
-                    }
-                }
-            }
-        }
-
-        .chatroom-message-left, .chatroom-message-right {
+        .chatroom-message-left {
 
             &.time-visible {
                 margin-bottom: 40px;

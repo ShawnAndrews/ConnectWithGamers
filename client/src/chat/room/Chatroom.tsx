@@ -28,9 +28,10 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
 
     let lastSide: MessageSide = MessageSide.Left;
     let lastName: string = null;
+    let isLastMessageDifferentPerson: boolean = false;
 
     return (
-        <div>
+        <>
             <div className={`scrollable chatroom-messages`} ref={props.chatroomContainerRef}>
                 {props.messagesLoading && 
                     <div className="chatroom-messages-loading">
@@ -38,6 +39,8 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
                     </div>}
                 {!props.messagesLoading &&
                     props.chatLog.map((x: IChatMessageContainerProps, index: number) => {
+                        const currentName: string = x.name;
+                        const isLastMessageDifferentPerson: boolean = (lastName !== currentName);
                         let side: MessageSide = lastSide;
                         let repeat: boolean = false;
 
@@ -56,16 +59,20 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
                         lastSide = side;
 
                         return (
-                            <ChatMessageContainer
-                                key={index}
-                                name={x.name}
-                                date={x.date}
-                                text={x.text}
-                                image={x.image}
-                                attachment={x.attachment}
-                                side={side}
-                                repeat={repeat}
-                            />
+                            <>
+                                {index !== 0 && isLastMessageDifferentPerson 
+                                    && <div className="divider"/>}
+                                <ChatMessageContainer
+                                    key={index}
+                                    name={x.name}
+                                    date={x.date}
+                                    text={x.text}
+                                    image={x.image}
+                                    attachment={x.attachment}
+                                    side={side}
+                                    repeat={repeat}
+                                />
+                            </>
                         );
                     })}
             </div>
@@ -85,8 +92,8 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
                     onKeyPress={props.onKeyPress}
                 />
                 <RaisedButton className="chatroom-input-send" label="Send" primary={true} onClick={props.onSend} disabled={props.attachmentLoading} />
-            </div>;
-        </div>
+            </div>
+        </>
     );
 
 };
