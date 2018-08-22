@@ -101,7 +101,12 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
     onSend(): void {
         if (this.state.text !== "" || this.state.attachmentLink !== "") {
             const cookieMatch: string[] = document.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
-            const authToken: string = cookieMatch[1];
+            let authToken: string;
+            if (cookieMatch) {
+                authToken = cookieMatch[1];
+            } else {
+                authToken = undefined;
+            }
             this.state.socket.emit(CHATROOM_EVENTS.PostMessage, { authToken: authToken, text: this.state.text, attachment: this.state.attachmentLink, chatroomid: this.state.chatroomid });
             this.setState({ attachmentLink: undefined });
         }

@@ -48,6 +48,35 @@ class AccountModel extends DatabaseBase {
     }
 
     /**
+     * Get account id.
+     */
+    getAccountId(username: string): Promise<GenericResponseModel> {
+
+        return new Promise( (resolve, reject) => {
+
+            const response: GenericResponseModel = {error: undefined, data: undefined};
+
+            this.select(
+                "dbo.accounts",
+                ["username"],
+                [this.sql.VarChar],
+                [username],
+                ["accountid"],
+                "username=@username")
+                .then((dbResponse: GenericResponseModel) => {
+                    const accountid: number = dbResponse.data.recordsets[0][0].accountid;
+                    response.data = { accountid: accountid };
+                    return resolve(response);
+                })
+                .catch((error: string) => {
+                    response.error = error;
+                    return reject(response);
+                });
+
+        });
+    }
+
+    /**
      * Get account username.
      */
     getAccountUsername(accountid: number): Promise<GenericResponseModel> {
@@ -82,7 +111,6 @@ class AccountModel extends DatabaseBase {
     getAccountImage(accountid: number): Promise<DbAccountImageResponse> {
 
         return new Promise( (resolve, reject) => {
-
             this.select(
                 "dbo.accounts",
                 ["accountid"],

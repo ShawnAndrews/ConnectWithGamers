@@ -18,7 +18,6 @@ class ChatroomModel extends DatabaseBase {
     addChatMessage(username: string, date: number, text: string, image: string, attachment: string, chatroomid: number): Promise<GenericResponseModel> {
 
         return new Promise( (resolve, reject) => {
-
             const response: GenericResponseModel = {error: undefined, data: undefined};
             this.insert(
                 "dbo.chatroom",

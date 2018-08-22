@@ -25,7 +25,7 @@ class App extends React.Component<IAppProps, any> {
         super(props);
 
         this.state = {
-            authenticatedRoutes: ['/account', '/chat', `/chat/users`, `/menu/gaming`, `/menu/gaming/twitch`, `/menu/gaming/steam`, `/menu/gaming/discord`],
+            authenticatedRoutes: ['/account', `/menu/gaming`, `/menu/gaming/twitch`, `/menu/gaming/steam`, `/menu/gaming/discord`],
             unauthenticatedRedirect: '/account/login'
         };
     }
@@ -38,16 +38,16 @@ class App extends React.Component<IAppProps, any> {
         if (!loggedIn()) {
             return (
                 this.state.authenticatedRoutes
-                                .map((x: string) => 
-                                     (
-                                        <Route
-                                            key={x} 
-                                            exact={true}
-                                            path={x} 
-                                            render={() => (<Redirect to={this.state.unauthenticatedRedirect}/>)}
-                                        />
-                                    )
-                                )
+                    .map((x: string) => 
+                            (
+                            <Route
+                                key={x} 
+                                exact={true}
+                                path={x} 
+                                render={() => (<Redirect to={this.state.unauthenticatedRedirect}/>)}
+                            />
+                        )
+                    )
             );
         }
         return [];
