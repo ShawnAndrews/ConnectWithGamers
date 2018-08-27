@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RaisedButton } from 'material-ui';
+import Button from '@material-ui/core/Button';
 
 interface IHomePageProps {
   onClickTwitch: () => void;
@@ -12,27 +12,33 @@ const HomePage: React.SFC<IHomePageProps> = (props: IHomePageProps) => {
     return (
       <div className="centered-page">
         <div className="centered-page-info">Welcome to your gaming profiles!</div>
-            <RaisedButton
+            <Button 
+                variant="raised"
                 className="centered-page-button"
-                label="Twitch Live Streams"
-                primary={true}
-                icon={<i className="fas fa-desktop"/>}
+                color="primary"
                 onClick={props.onClickTwitch}
-            />
-            <RaisedButton
+            >
+                <span>Twitch Live Streams  </span>
+                <i className="fas fa-desktop"/>
+            </Button>
+            <Button 
+                variant="raised"
                 className="centered-page-button"
-                label="Steam Friends Online"
-                primary={true}
-                icon={<i className="fas fa-users"/>}
+                color="primary"
                 onClick={props.onClickSteam}
-            />
-            <RaisedButton
+            >
+                <span>Steam Friends Online  </span>
+                <i className="fas fa-users"/>
+            </Button>
+            <Button 
+                variant="raised"
                 className="centered-page-button"
-                label="Copy Discord Link"
-                primary={true}
-                icon={<i className="fas fa-copy"/>}
+                color="primary"
                 onClick={props.onClickDiscord}
-            />
+            >
+                <span>Copy Discord Link  </span>
+                <i className="fas fa-copy"/>
+            </Button>
       </div>
     );
 

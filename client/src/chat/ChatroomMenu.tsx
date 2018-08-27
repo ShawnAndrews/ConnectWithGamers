@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import ChatroomContainer from '../chat/room/ChatroomContainer';
 import UserListContainer from '../chat/userlist/UserlistContainer';
+import SettingsContainer from '../chat/settings/SettingsContainer';
 import TopnavContainer from './topnav/TopnavContainer';
 import SidenavContainer from './sidenav/SidenavContainer';
 import Swipeable = require('react-swipeable');
@@ -47,6 +48,8 @@ const ChatroomMenu: React.SFC<IChatroomMenuProps> = (props: IChatroomMenuProps) 
                                 />
                             );
                         })}
+                    <Route path="/chat/settings" render={() => <SettingsContainer sidebarWidth={props.sidebarWidth} movedXPos={props.movedXPos} expanded={props.expanded}/>}/>
+                    <Route path="/chat/users/:user" render={() => <UserListContainer sidebarWidth={props.sidebarWidth} movedXPos={props.movedXPos} expanded={props.expanded}/>}/>
                     <Route path="/chat/users" render={() => <UserListContainer sidebarWidth={props.sidebarWidth} movedXPos={props.movedXPos} expanded={props.expanded}/>}/>
                     <Route path="/chat" render={() => <ChatroomHomePageContainer sidebarWidth={props.sidebarWidth} movedXPos={props.movedXPos} expanded={props.expanded}/>}/>
                 </Switch>

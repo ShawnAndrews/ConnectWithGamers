@@ -69,7 +69,7 @@
 
     .account-settings-title {
       position: relative;
-      height: 140px !important;
+      height: 180px !important;
 
       .account-settings-title-container {
         position: relative;
@@ -204,7 +204,7 @@
 
     .account-settings-username, .account-settings-email, .account-settings-password, .account-settings-showlinks {
       width: 100% !important;
-      font-size: 1.2em !important;
+      margin: 18px 0px;
 
       > div > hr {
         border-bottom-color: rgba(255,255,255,0.35) !important;
@@ -224,26 +224,42 @@
       position: absolute;
       bottom: 0;
       right: 0;
-      background-color: transparent !important;
+      background-color: rgba(0,0,0,0.1) !important;
 
       span {
         font-size: 1em!important;
         letter-spacing: 1px!important;
-      }
-
-      > button {
-        background-color: rgba(0, 0, 0, 0.3) !important;
-        height: 50px !important;
       }
     }
 
     .account-settings-showlinks {
       margin-top: 20px;
       -webkit-tap-highlight-color: rgba(255,255,255,0);
+
+      span {
+        font-size: 1.2em!important;
+      }
+
+      * {
+        color: rgba(255,255,255,0.8)!important;
+      }
     }
 
     .account-settings-container {
       position: relative;
+
+      .jss102:hover:not(.jss101):not(.jss100):not(.jss103):before, .jss102:after {
+        border-bottom: 2px solid rgba(255,255,255,0.8)!important;
+      }
+
+      input {
+        font-size: 1.2em !important;
+        border-bottom: 2px solid rgba(255,255,255,0.5)!important;
+
+        &:after, &::after, &:before, &::before {
+          border-bottom: 2px solid rgba(255,255,255,0.8)!important;
+        }
+      }
 
       .account-settings-link {
         width: 80% !important;
@@ -263,20 +279,16 @@
     .account-settings-logout {
       position: relative;
       width: 100%;
-      background-color: transparent !important;
+      background-color: rgba(0,0,0,0.1)!important;
       bottom: 0;
       left: 0;
       margin-top: 20px;
+      height: 60px;
 
       span {
         font-size: 1.2em !important; 
         letter-spacing: 3px !important; 
         font-weight: 700 !important;
-      }
-
-      > button {
-        background-color: rgba(0, 0, 0, 0.3) !important;
-        height: 60px !important;
       }
     }
 
@@ -287,6 +299,8 @@
       bottom: 0;
       left: 0;
       margin-top: 20px;
+      background-color: rgb(216, 182, 29)!important;
+      height: 60px !important;
 
       span {
         font-size: 1.2em !important; 
@@ -294,14 +308,10 @@
         font-weight: 700 !important;
       }
 
-      > button {
-        background-color: rgb(216, 182, 29)!important;
-        height: 60px !important;
-      }
     }
   }
 
-  .account-form {
+  .account-form-container {
 
     .underline {
       border-bottom: 1px solid rgba(255, 255, 255, 0.4);
@@ -324,6 +334,13 @@
       border-bottom: 1px solid @login-form-col;
     }
 
+    .account-form-rememberme {
+      > * {
+        color: rgba(255,255,255,0.7);
+        font-size: 1em;
+      }
+    }
+
     .account-checkbox {
       opacity: 0.8;
       font-weight: 700;
@@ -342,7 +359,8 @@
       position: relative;
       display: block !important;
       width: 70%;
-      background-color: transparent !important;
+      height: 45px;
+      background-color: rgba(0,0,0,0.1)!important;
       border-radius: 25px !important;
 
       span {
@@ -362,7 +380,7 @@
       position: relative;
       display: block !important;
       width: 50%;
-      background-color: transparent !important;
+      background-color: rgba(0,0,0,0.1)!important;
       border-radius: 25px !important;
 
       span {

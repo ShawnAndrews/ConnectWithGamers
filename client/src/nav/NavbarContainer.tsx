@@ -10,10 +10,7 @@ class NavbarContainer extends React.Component<INavbarContainerProps, any> {
 
     constructor(props: INavbarContainerProps) {
         super(props);
-        this.goToHomePage = this.goToHomePage.bind(this);
-        this.goToMenuPage = this.goToMenuPage.bind(this);
-        this.goToChatroomPage = this.goToChatroomPage.bind(this);
-        this.goToAccountPage = this.goToAccountPage.bind(this);
+        this.onTabChange = this.onTabChange.bind(this);
         this.updateNavSelection = this.updateNavSelection.bind(this);
         this.updateNavSelection(this.props.history.location.pathname);
     }
@@ -32,38 +29,28 @@ class NavbarContainer extends React.Component<INavbarContainerProps, any> {
         } else if (path.startsWith(NAV_PAGE.ACCOUNT)) {
             this.state = { index: 3 };
         } else {
-            this.state = { index: -1};
+            this.state = { index: -1 };
         }
     }
 
-    goToHomePage(): void {
-        this.setState({ index: 0 });
-        this.props.history.push(NAV_PAGE.HOME);
-    }
-
-    goToMenuPage(): void {
-        this.setState({ index: 1 });
-        this.props.history.push(NAV_PAGE.MENU);
-    }
-
-    goToChatroomPage(): void {
-        this.setState({ index: 2 });
-        this.props.history.push(NAV_PAGE.CHATROOM);
-    }
-
-    goToAccountPage(): void {
-        this.setState({ index: 3 });
-        this.props.history.push(NAV_PAGE.ACCOUNT);
+    onTabChange(event: React.ChangeEvent<{}>, value: any): void {
+        this.setState({ index: value });
+        if (value === 0) {
+            this.props.history.push(NAV_PAGE.HOME);
+        } else if (value === 1) {
+            this.props.history.push(NAV_PAGE.MENU);
+        } else if (value === 2) {
+            this.props.history.push(NAV_PAGE.CHATROOM);
+        } else if (value === 3) {
+            this.props.history.push(NAV_PAGE.ACCOUNT);
+        }
     }
 
     render() {
         return (
             <Navbar
                 index={this.state.index}
-                goToHomePage={this.goToHomePage}
-                goToMenuPage={this.goToMenuPage}
-                goToChatroomPage={this.goToChatroomPage}
-                goToAccountPage={this.goToAccountPage}
+                onTabChange={this.onTabChange}
             />
         );
     }

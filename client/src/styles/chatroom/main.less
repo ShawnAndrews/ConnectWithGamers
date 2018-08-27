@@ -2,13 +2,14 @@
 @userlist-content-height: @userlist-height - 4px;
 @chatroom-messagebox-height: 55px;
 @sidenav-width: 50px;
+@userlist-searchbar-height: 38px;
 
 .chatroom {
     position: relative;
     width: 100%;
     height: calc(~"100% -" @navbar-item-height);
     top: @navbar-item-height;
-    overflow-x: hidden;
+    overflow: hidden;
 
     .chatroom-appbar {
         position: relative;
@@ -37,6 +38,38 @@
                 left: 50%;
                 transform: translate(-50%,-50%);
                 text-align: center;
+                
+                > svg {
+                    width: 90%;
+                }
+            }
+        }
+
+        .chatroom-appbar-cog-icon {
+            position: absolute;
+            right: 0px;
+            top: 0px;
+            height: 100%;
+            width: 70px;
+            color: white;
+            opacity: 0.3;
+            text-align: center;
+
+            &.active {
+                opacity: 0.9;
+            }
+
+            > i {
+                position: absolute;
+                z-index: 10;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%,-50%);
+                text-align: center;
+                
+                > svg {
+                    width: 70%;
+                }
             }
         }
 
@@ -68,6 +101,36 @@
         width: 100%;
         transition: all 0.3s ease-in;
         -webkit-transition: all 0.3s ease-in;
+
+        .chatroom-homepage-infographic {
+            position: relative;
+
+            .chatroom-homepage-main {
+                position: absolute;
+                top: 0;
+                left: 0px;
+            }
+
+            .chatroom-homepage-pikachu {
+                position: absolute;
+                margin-top: 195%;
+                margin-left: 56%;
+            }
+
+            .chatroom-homepage-yoshi {
+                position: absolute;
+                margin-top: 189%;
+                margin-left: 81%;
+            }
+
+            .chatroom-homepage-meme {
+                position: absolute;
+                margin-top: 179%;
+                margin-left: 63%;
+                height: 55px;
+            }
+        }
+
     }
 
     .chatroom-messages {
@@ -288,7 +351,7 @@
             height: @chatroom-messagebox-height;
             top: 0;
             right: 0;
-            background-color: transparent !important;
+            background-color: rgba(0,0,0,0.2)!important;
 
             span {
                 font-size: 1.05em !important; 
@@ -305,122 +368,231 @@
     }
 } 
 
-.userlist {
+.settings {
     position: absolute;
     width: 100%;
     height: 93%;
     bottom: 0;
     transition: all 0.3s ease-in;
     -webkit-transition: all 0.3s ease-in;
+    background-color: rgba(0,100,60,0.2);
+}
 
-    &.active {
-        left: @sidenav-width;
-        transition: all 0.3s ease-in;
-        -webkit-transition: all 0.3s ease-in;
+.userlist-container {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    transition: all 0.3s ease-in;
+    -webkit-transition: all 0.3s ease-in;
+
+    *::-webkit-input-placeholder {
+        color: rgba(255,255,255,.7)!important;
     }
 
-    .userlist-appbar {
-        position: relative;
-        height: 10%;
-        width: 100%;
-        background-color: rgba(0,0,0,0.25) !important;
+    .choose-user {
+        opacity: 0.7;
+        color: whitesmoke;
 
-        > div {
-            height: 100% !important;
-            line-height: 100% !important;
-            margin-top: -2px !important;
+        .choose-user-arrow {
+            position: absolute;
+            text-align: center;
+            top: 10%;
+            margin-top: 30px;
+            width: 100%;
 
-            > svg {
-                position: relative;
-                z-index: 10;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);    
-            }
-            
-            svg {
-                color: rgba(255,255,255,0.7) !important;
-            }
+            animation-duration: 1.7s;
+            animation-name: inf;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+            animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        > h1 {
+        .choose-user-text {
             position: absolute;
-            z-index: 10;
+            width: 100%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            font-size: 1.5em;
             text-align: center;
-            opacity: 0.75;
-            margin-top: 2px !important;
-            letter-spacing: 1px;
-            font-size: 1.6em !important;
-            font-weight: 600 !important;
-        }
-    }
-
-    .userlist-content {
-        width: 100% !important;
-        height: @userlist-height !important;
-        border-radius: 0px !important;
-        background-color: transparent !important;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.27) !important;
-
-        > span {
-            width: calc(~"100% -" @userlist-content-height) !important;
         }
 
-        .userlist-content-name-chip {
-            width: 50px !important;
-            height: 50px !important;
-            margin: auto 15px !important;
-            background-color: rgba(13, 47, 97, 0.8) !important;
+        @-webkit-keyframes inf {
+            from {top: 10%;}
+            to {top: 5%;}
         }
         
-        .no-background {
-            background-color: transparent !important;
+        @keyframes inf {
+            from {top: 10%;}
+            to {top: 5%;}
         }
 
-        .userlist-content-name {
+    }
+
+    .search-noresults {
+        opacity: 0.7;
+        color: whitesmoke;
+
+        .search-noresults-text {
             position: absolute;
-            left: 75px;
-            top: 0px;
-            font-size: 1.3em;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: rgba(255,255,255,0.3);
+            width: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            text-align: center;
         }
 
-        .userlist-content-activity {
-            position: absolute;
-            left: 75px;
-            bottom: 0;
-            margin-bottom: 10px;
-            font-size: 0.8em;
-            font-weight: 1000;
-            color: rgba(255,255,255,.3);
+    }
+
+    .userlist-searchbar-container {
+        position: relative;
+        border-bottom: 2px solid rgba(255,255,255,0.7);
+
+        input.userlist-searchbar {
+            height: @userlist-searchbar-height;
+            width: 100%;
+            padding-left: 10px;
+            color: rgba(255,255,255,.7);
+            background-color: transparent;
+            border: none;
+            outline: none;
         }
+    }
 
-        .userlist-content-link-chip {
-            width: 40px !important;
-            height: 40px !important;
-            margin-top: 15px !important;
-
-            .userlist-content-link {
-                color: rgba(13, 47, 97, 0.8) !important;
-                vertical-align: middle !important;
-                margin-top: 3px !important;
-                margin-left: 7px !important;
+    .userlist {
+        position: relative;
+        height: calc(~"100% - 7% -" @userlist-searchbar-height);
+        width: 100%;
+        padding: 10px;
+    
+        &.active {
+            left: @sidenav-width;
+            transition: all 0.3s ease-in;
+            -webkit-transition: all 0.3s ease-in;
+        }
+    
+        .userlist-appbar {
+            position: relative;
+            height: 10%;
+            width: 100%;
+            background-color: rgba(0,0,0,0.25) !important;
+    
+            > div {
+                height: 100% !important;
+                line-height: 100% !important;
+                margin-top: -2px !important;
+    
+                > svg {
+                    position: relative;
+                    z-index: 10;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);    
+                }
+                
+                svg {
+                    color: rgba(255,255,255,0.7) !important;
+                }
+            }
+    
+            > h1 {
+                position: absolute;
+                z-index: 10;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+                opacity: 0.75;
+                margin-top: 2px !important;
+                letter-spacing: 1px;
+                font-size: 1.6em !important;
+                font-weight: 600 !important;
             }
         }
-    }
     
-    .invis-background {
-        background-color: transparent !important;
-    }
+        .userlist-content {
+            position: relative;
+            width: 100% !important;
+            height: @userlist-height !important;
+            border-radius: 0px !important;
+            background-color: rgba(0,0,0,0.2)!important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.27) !important;
+            margin-bottom: 10px;
     
-    .pull-right {
-        float: right !important;
+            > span {
+                width: calc(~"100% -" @userlist-content-height) !important;
+            }
+    
+            .userlist-content-name-chip {
+                position: absolute;
+                width: 50px!important;
+                height: 50px!important;
+                margin-top: 10px;
+                margin-left: 10px;
+                background-color: rgba(0,0,0,0.3);
+            }
+            
+            .no-background {
+                background-color: transparent !important;
+            }
+    
+            .userlist-content-name {
+                position: absolute;
+                left: 75px;
+                top: 3px;
+                font-size: 1.3em;
+                font-weight: 600;
+                letter-spacing: 1px;
+                color: rgba(255,255,255,0.3);
+            }
+    
+            .userlist-content-activity {
+                position: absolute;
+                left: 75px;
+                bottom: 0;
+                margin-bottom: 10px;
+                font-size: 0.8em;
+                letter-spacing: 1px;
+                color: rgba(255,255,255,.3);
+            }
+    
+            .userlist-content-links {
+                position: absolute;
+                top: 3px;
+                right: 10px;
+    
+                .userlist-content-link {
+                    color: rgba(13, 47, 97, 0.8) !important;
+                    vertical-align: middle !important;
+                    margin-top: 3px !important;
+                    margin-left: 7px !important;
+        
+                    svg {
+                        color: rgba(255,255,255,0.3) !important;
+                    }
+                }
+    
+            }
+        }
+        
+        .invis-background {
+            background-color: transparent !important;
+        }
+        
+        .pull-right {
+            float: right !important;
+        }
     }
+
+    input, .jss74:hover:not(.jss73):not(.jss72):not(.jss75):before, .jss74:hover:not(.jss73):not(.jss72):not(.jss75):after {
+        border-bottom: none!important;
+    }
+
+    .jss74:after {
+        border-bottom: none!important;
+    }
+
 }
 
 body {

@@ -14,9 +14,8 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
 
     constructor(props: ITopnavContainerProps) {
         super(props);
-        this.goToTwitchPage = this.goToTwitchPage.bind(this);
-        this.goToSteamPage = this.goToSteamPage.bind(this);
-        this.goToDiscordPage = this.goToDiscordPage.bind(this);
+        this.onTabChange = this.onTabChange.bind(this);
+        this.updateNavSelection = this.updateNavSelection.bind(this);
         this.updateNavSelection(this.props.history.location.pathname);
     }
 
@@ -36,28 +35,22 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
         }
     }
 
-    goToTwitchPage(): void {
-        this.setState({ index: 0 });
-        this.props.history.push(GAMINGNAV_PAGE.TWITCH);
-    }
-
-    goToSteamPage(): void {
-        this.setState({ index: 1 });
-        this.props.history.push(GAMINGNAV_PAGE.STEAM);
-    }
-
-    goToDiscordPage(): void {
-        this.setState({ index: 2 });
-        this.props.history.push(GAMINGNAV_PAGE.DISCORD);
+    onTabChange(event: React.ChangeEvent<{}>, value: any): void {
+        this.setState({ index: value });
+        if (value === 0) {
+            this.props.history.push(GAMINGNAV_PAGE.TWITCH);
+        } else if (value === 1) {
+            this.props.history.push(GAMINGNAV_PAGE.STEAM);
+        } else if (value === 2) {
+            this.props.history.push(GAMINGNAV_PAGE.DISCORD);
+        }
     }
 
     render() {
         return (
             <Topnav
                 index={this.state.index}
-                goToTwitchPage={this.goToTwitchPage}
-                goToSteamPage={this.goToSteamPage}
-                goToDiscordPage={this.goToDiscordPage}
+                onTabChange={this.onTabChange}
             />
         );
     }

@@ -2,8 +2,12 @@ const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
 import { ChatroomUser, UpcomingGameResponse, GenreGame, RecentGameResponse, PlatformGame } from '../../../../client/client-server-common/common';
-import { Card, CardActions, CardMedia, CardTitle, CardText } from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
+import Card from '@material-ui/core/Card';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardActions from '@material-ui/core/CardActions';
+import Button from '@material-ui/core/Button';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
 
 interface IThumbnailGameProps {
     game: UpcomingGameResponse | GenreGame | RecentGameResponse | PlatformGame;
@@ -16,17 +20,19 @@ const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProp
 
     return (
         <Card className="menu-game-thumbnail">
-            <CardMedia>
-                <img src={props.game.cover ? props.game.cover : 'https://i.imgur.com/WcPkTiF.png'} onClick={props.goToGame} alt="Game cover" />
+            <CardMedia className="menu-game-thumbnail-container">
+                <img src={props.game.cover ? props.game.cover : 'https://i.imgur.com/WcPkTiF.png'} onClick={props.goToGame} alt="Game cover" width="100%"/>
             </CardMedia>
-            <CardTitle title={props.game.name} subtitle={props.game.genres} />
-            <CardText className="menu-game-thumbnail-icons">
+            <CardHeader title={props.game.name} subheader={props.game.genres} />
+            <CardContent className="menu-game-thumbnail-icons">
                 {props.game.linkIcons && 
                     props.game.linkIcons.map((platformIcon: string, index: number) => { return <i key={index} className={`${platformIcon} fa-2x menu-game-thumbnail-icons`}/>; })}
-            </CardText>
+            </CardContent>
             <CardActions>
                 {props.game.steam_url && 
-                    <FlatButton label="STEAM PAGE" onClick={() => { window.open(props.game.steam_url); }} />}
+                    <Button variant="contained" onClick={() => { window.open(props.game.steam_url); }}>
+                        STEAM PAGE
+                    </Button>}
             </CardActions>
         </Card>
     );

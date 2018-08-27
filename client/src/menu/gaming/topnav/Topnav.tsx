@@ -1,23 +1,24 @@
 import * as React from 'react';
-import { Tabs, Tab } from 'material-ui/Tabs';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 interface ITopnavProps {
     index: number;
-    goToTwitchPage: () => void;
-    goToSteamPage: () => void;
-    goToDiscordPage: () => void;
+    onTabChange: (event: React.ChangeEvent<{}>, value: any) => void;
 }
 
 const Topnav: React.SFC<ITopnavProps> = (props: ITopnavProps) => {
 
     return (
         <Tabs
-            className="navbar-item-container fixed-container"
+            className="gaming-navbar-item-container fixed-container"
+            onChange={props.onTabChange}
             value={props.index}
+            fullWidth={true}
         >
-            <Tab value={0} icon={<i className="fab fa-twitch fa-2x navbar-item-icon"/>} className="navbar-item-text" onActive={props.goToTwitchPage}/>
-            <Tab value={1} icon={<i className="fab fa-steam-square fa-2x navbar-item-icon"/>} className="navbar-item-text" onActive={props.goToSteamPage}/>
-            <Tab value={2} icon={<i className="fab fa-discord fa-2x navbar-item-icon"/>} className="navbar-item-text" onActive={props.goToDiscordPage}/>
+            <Tab icon={<i className="fab fa-twitch fa-2x navbar-item-icon"/>} className="navbar-item-text"/>
+            <Tab icon={<i className="fab fa-steam-square fa-2x navbar-item-icon"/>} className="navbar-item-text"/>
+            <Tab icon={<i className="fab fa-discord fa-2x navbar-item-icon"/>} className="navbar-item-text"/>
         </Tabs>
     );
 

@@ -3,10 +3,11 @@ import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 import Spinner from '../../spinner/main';
 import * as AccountService from '../../service/account/main';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import Avatar from 'material-ui/Avatar';
-import Toggle from 'material-ui/Toggle';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Avatar from '@material-ui/core/Avatar';
+import Switch from '@material-ui/core/Switch';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 interface ISettingsFormProps {
     isLoading: boolean;
@@ -26,13 +27,13 @@ interface ISettingsFormProps {
     newDiscord: string;
     newSteam: string;
     newTwitch: string;
-    onUsernameChanged: (event: object, newUsername: string) => void;
-    onPasswordChanged: (event: object, newPassword: string) => void;
-    onEmailChanged: (event: object, newEmail: string) => void;
-    onDiscordChanged: (event: object, newDiscord: string) => void;
-    onSteamChanged: (event: object, newSteam: string) => void;
-    onTwitchChanged: (event: object, newTwitch: string) => void;
-    showLinksChanged: (event: any, isInputChecked: boolean) => void;
+    onUsernameChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onPasswordChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onEmailChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onDiscordChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onSteamChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onTwitchChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    showLinksChanged: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
     handleImageChange: (event: any) => void;
     handleImageDelete: () => void;
     saveChanges: () => void;
@@ -89,7 +90,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                         className="account-settings-username"
                         defaultValue={props.username}
                         onChange={props.onUsernameChanged}
-                        floatingLabelText="Username"
+                        label="Username"
                     />
                 </div>
                 <div className="account-settings-container">
@@ -97,10 +98,17 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                         className={props.emailVerified ? "account-settings-email" : "account-settings-email-unverified"} 
                         defaultValue={props.email}
                         onChange={props.onEmailChanged}
-                        floatingLabelText={!props.emailVerified ? "Email (Unverified)" : "Email"}
+                        label={!props.emailVerified ? "Email (Unverified)" : "Email"}
                     />
                     {!props.emailVerified && 
-                        <RaisedButton className="account-settings-email-unverified-btn" label="Resend" primary={true} onClick={() => { props.resend(); }}/>}
+                        <Button 
+                            variant="raised" 
+                            className="account-settings-email-unverified-btn" 
+                            color="primary" 
+                            onClick={() => { props.resend(); }}
+                        >
+                            Resend
+                        </Button>}
                 </div>
                 <div className="account-settings-container">
                     <TextField
@@ -108,13 +116,18 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                         type="password"
                         defaultValue={props.password}
                         onChange={props.onPasswordChanged}
-                        floatingLabelText="New password"
+                        label="New password"
                     />
                 </div>
-                <Toggle
+                <FormControlLabel
                     className="account-settings-showlinks large-checkbox"
+                    control={
+                        <Switch
+                            onChange={props.showLinksChanged}
+                            color="primary"
+                        />
+                    }
                     label="Show profile links"
-                    onToggle={props.showLinksChanged}
                 />
                 {props.showLinks && 
                     <div>
@@ -124,7 +137,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                                 className="account-settings-link"
                                 defaultValue={props.discord}
                                 onChange={props.onDiscordChanged}
-                                floatingLabelText="Discord Server Link"
+                                label="Discord Server Link"
                             />
                         </div>
                         <div className="account-settings-container">
@@ -133,7 +146,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                                 className="account-settings-link"
                                 defaultValue={props.steam}
                                 onChange={props.onSteamChanged}
-                                floatingLabelText="Steam name"
+                                label="Steam name"
                             />
                         </div>
                         <div className="account-settings-container">
@@ -142,13 +155,27 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                                 className="account-settings-link"
                                 defaultValue={props.twitch}
                                 onChange={props.onTwitchChanged}
-                                floatingLabelText="Twitch Name"
+                                label="Twitch Name"
                             />
                         </div>
                     </div>}
-                <RaisedButton className="account-settings-logout" label="Logout" primary={true} onClick={props.logout}/>
+                <Button 
+                    variant="raised" 
+                    className="account-settings-logout"
+                    color="primary" 
+                    onClick={props.logout}
+                >
+                    Logout
+                </Button>
                 {showSaveChanges && 
-                    <RaisedButton className="account-settings-savechanges" label="Save Changes" primary={true} onClick={props.saveChanges}/>}
+                    <Button 
+                        variant="raised" 
+                        className="account-settings-savechanges"
+                        color="primary" 
+                        onClick={props.saveChanges}
+                    >
+                        Save Changes
+                    </Button>}
                 
             </div>
         );

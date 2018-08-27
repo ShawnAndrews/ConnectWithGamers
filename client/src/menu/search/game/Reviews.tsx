@@ -1,5 +1,5 @@
 import * as React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
+import Button from '@material-ui/core/Button';
 import { SteamAPIReview } from '../../../../../client/client-server-common/common';
 
 interface IReviewsProps {
@@ -17,10 +17,10 @@ const Reviews: React.SFC<IReviewsProps> = (props: IReviewsProps) => {
     return (
         <div className="menu-game-reviews">
             <h2 className="menu-game-reviews-header">Reviews</h2>
-            <RaisedButton className="menu-game-reviews-btn" onClick={() => { props.handleReadReviewsClick(); }}>
-                {props.reviewsExpanded ? "Collapse reviews" : "Read reviews"}
+            <Button variant="raised" className="menu-game-reviews-btn" onClick={() => { props.handleReadReviewsClick(); }}>
+                {props.reviewsExpanded ? "Collapse reviews " : "Read reviews "}
                 {props.reviewsExpanded ? <i className="fas fa-chevron-circle-up"/> : <i className="fas fa-chevron-circle-down"/>}
-            </RaisedButton>
+            </Button>
             {props.reviewsExpanded && 
                 <div className="menu-game-reviews-padding">
                     {props.reviews.map((review: SteamAPIReview, index: number) => {

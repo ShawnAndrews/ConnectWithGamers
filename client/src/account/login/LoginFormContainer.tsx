@@ -33,8 +33,8 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, any> 
         this.setState({password: event.target.value});
     }
 
-    remembermeChanged(event: any, isInputChecked: boolean) {
-        this.setState({rememberme: isInputChecked});
+    remembermeChanged(event: React.ChangeEvent<HTMLInputElement>, checked: boolean) {
+        this.setState({rememberme: checked});
     }
 
     onClickLogin(event: any) {

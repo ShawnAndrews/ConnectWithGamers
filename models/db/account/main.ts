@@ -3,7 +3,7 @@ import axios from "axios";
 import DatabaseBase from "../base/dbBase";
 import { genRandStr } from "../../../util/main";
 import { sendVerificationEmail } from "../../../util/nodemailer";
-import { GenericResponseModel, DbAccountImageResponse, DbAccountInfoResponse, DbTwitchIdResponse, DbSteamIdResponse, DbDiscordLinkResponse, DbSteamFriendsResponse, SteamFriend, DbTwitchFollowsResponse, TwitchUser, TwitchEmote, TwitchPair } from "../../../client/client-server-common/common";
+import { GenericResponseModel, DbAccountImageResponse, DbAccountInfoResponse, DbAccountsInfoResponse, DbTwitchIdResponse, DbSteamIdResponse, DbDiscordLinkResponse, DbSteamFriendsResponse, SteamFriend, DbTwitchFollowsResponse, TwitchUser, TwitchEmote, TwitchPair, AccountInfo } from "../../../client/client-server-common/common";
 import config from "../../../config";
 
 export const SALT_RNDS = 10;
@@ -130,6 +130,47 @@ class AccountModel extends DatabaseBase {
     }
 
     /**
+     * Get public account information by username filter.
+     */
+    getAccountsByUsernameFilter(usernameFilter: string): Promise<DbAccountsInfoResponse> {
+        return new Promise( (resolve, reject) => {
+
+            this.select(
+                "dbo.accounts",
+                [],
+                [],
+                [],
+                ["accountid", "username", "discord", "steam", "twitch", "image"],
+                `username LIKE '${usernameFilter ? `%${usernameFilter}%` : `%`}'`)
+                .then((dbResponse: GenericResponseModel) => {
+                    const accounts: AccountInfo[] = [];
+
+                    if (dbResponse.data.recordsets[0].length > 0) {
+                        dbResponse.data.recordsets[0].forEach((element: any) => {
+                            const account: AccountInfo = {
+                                accountid: element.accountid,
+                                username: element.username,
+                                discord_url: element.discord,
+                                steam_url: element.steam,
+                                twitch_url: element.twitch,
+                                image: element.image
+                            };
+                            accounts.push(account);
+                        });
+                    }
+
+                    const dbUsers: DbAccountsInfoResponse = { accounts: accounts };
+                    return resolve(dbUsers);
+                })
+                .catch((err: string) => {
+                    console.log(`Database error: ${err}`);
+                    return reject();
+                });
+
+        });
+    }
+
+    /**
      * Get public account information.
      */
     getAccountInfo(accountid: number): Promise<DbAccountInfoResponse> {
@@ -141,17 +182,19 @@ class AccountModel extends DatabaseBase {
                 ["accountid"],
                 [this.sql.Int],
                 [accountid],
-                ["username", "discord", "steam", "twitch", "image"],
+                ["accountid", "username", "discord", "steam", "twitch", "image"],
                 "accountid=@accountid")
                 .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.recordsets[0].length > 0) {
-                        const dbUser: DbAccountInfoResponse = {
+                        const account: AccountInfo = {
+                            accountid: dbResponse.data.recordsets[0][0].accountid,
                             username: dbResponse.data.recordsets[0][0].username,
                             discord_url: dbResponse.data.recordsets[0][0].discord,
                             steam_url: dbResponse.data.recordsets[0][0].steam,
                             twitch_url: dbResponse.data.recordsets[0][0].twitch,
                             image: dbResponse.data.recordsets[0][0].image
                         };
+                        const dbUser: DbAccountInfoResponse = { account: account };
                         return resolve(dbUser);
                     } else {
                         return reject(accountid);

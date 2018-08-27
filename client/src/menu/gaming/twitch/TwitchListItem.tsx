@@ -1,7 +1,8 @@
 import * as React from 'react';
 import Spinner from '../../../spinner/main';
 import { TwitchUser, TwitchEmote } from '../../../../client-server-common/common';
-import { RaisedButton, Paper } from 'material-ui';
+import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
 import VerifiedIcon from './VerifiedIcon';
 import Truncate from 'react-truncate';
 
@@ -53,15 +54,21 @@ const TwitchListItem: React.SFC<ITwitchListItemProps> = (props: ITwitchListItemP
                 </div>
                 <div className="profile-streampreview" onClick={() => { props.onProfileLinkClick(props.profileLink); }}>
                     <img src={props.streamPreviewLink} alt="Stream preview picture"/>
-                    <RaisedButton className="profile-stream" label="Watch" primary={true}/>
+                    <Button 
+                        variant="raised" 
+                        className="profile-stream"
+                        color="primary"
+                    >
+                        Watch
+                    </Button>
                 </div>
                 <div className="profile-stream-container">
-                    <RaisedButton className={`profile-stream-video ${props.showVideo ? `active` : ``}`} label="Video" primary={true} icon={<i className="fas fa-video"/>} onClick={() => { props.onVideoClick(props.index); }}/>
-                    <RaisedButton className={`profile-stream-chat ${props.showChat ? `active` : ``}`} label="Chat" primary={true} icon={<i className="fas fa-comment-alt"/>} onClick={() => { props.onChatClick(props.index); }}/>
-                    <RaisedButton className={`profile-stream-both ${props.showBoth ? `active` : ``}`} label="Both" primary={true} icon={<div className="profile-stream-both-icons"><i className="fas fa-video"/><i className={"fas fa-comment-alt"}/></div>} onClick={() => { props.onBothClick(props.index); }}/>
+                    <Button variant="raised" className={`profile-stream-video ${props.showVideo ? `active` : ``}`} color="primary" onClick={() => { props.onVideoClick(props.index); }}>Video <i className="fas fa-video"/></Button>
+                    <Button variant="raised" className={`profile-stream-chat ${props.showChat ? `active` : ``}`} color="primary" onClick={() => { props.onChatClick(props.index); }}>Chat <i className="fas fa-comment-alt"/></Button>
+                    <Button variant="raised" className={`profile-stream-both ${props.showBoth ? `active` : ``}`} color="primary" onClick={() => { props.onBothClick(props.index); }}>Both<div className="profile-stream-both-icons"><i className="fas fa-video"/><i className={"fas fa-comment-alt"}/></div></Button>
                 </div>
                 {props.showVideo && 
-                    <Paper className="profile-expand" zDepth={5}>
+                    <Paper className="profile-expand" elevation={5}>
                         <iframe
                             className="profile-video-stream"
                             src={`https://player.twitch.tv/?channel=${props.name}`}
@@ -69,7 +76,7 @@ const TwitchListItem: React.SFC<ITwitchListItemProps> = (props: ITwitchListItemP
                         />
                     </Paper>}
                 {props.showChat && 
-                    <Paper className="profile-expand" zDepth={5} >
+                    <Paper className="profile-expand" elevation={5} >
                         <iframe 
                             className="profile-chat-stream"
                             src={`https://www.twitch.tv/embed/${props.name}/chat`}
@@ -78,7 +85,7 @@ const TwitchListItem: React.SFC<ITwitchListItemProps> = (props: ITwitchListItemP
                         />
                     </Paper>}
                 {props.showBoth && 
-                    <Paper className="profile-expand" zDepth={5} >
+                    <Paper className="profile-expand" elevation={5} >
                         <iframe
                             className="profile-video-stream"
                             src={`https://player.twitch.tv/?channel=${props.name}`}
@@ -92,9 +99,9 @@ const TwitchListItem: React.SFC<ITwitchListItemProps> = (props: ITwitchListItemP
                             allowTransparency={true}
                         />
                     </Paper>}
-                <RaisedButton className="profile-more" label="More" primary={true} icon={<i className={props.expanded ? "fas fa-chevron-up" : "fas fa-chevron-down"}/>} onClick={() => { props.onExpandClick(props.index); }}/>
+                <Button variant="raised" className="profile-more" color="primary" onClick={() => { props.onExpandClick(props.index); }}>More <i className={props.expanded ? "fas fa-chevron-up" : "fas fa-chevron-down"}/></Button>
                 {props.expanded && 
-                    <Paper className="profile-expand" zDepth={5} >
+                    <Paper className="profile-expand" elevation={5} >
                         {!props.cheerEmotes && !props.subEmotes && !props.badgeEmotes &&
                             <div className="profile-expand-title">This stream has no emotes.</div>}
                         {props.subEmotes && 

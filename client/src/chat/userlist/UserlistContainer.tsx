@@ -15,15 +15,15 @@ class UserlistContainer extends React.Component<IUserlistContainerProps, any> {
 
     constructor(props: IUserlistContainerProps) {
         super(props);
-        this.onNewUser = this.onNewUser.bind(this);
-        this.goBack = this.goBack.bind(this);
+        this.onUsers = this.onUsers.bind(this);
+        this.onSearch = this.onSearch.bind(this);
 
+        const paramUser: string = this.props.match.params.user;
         const socket = io(`${window.location.hostname}:${CHAT_SERVER_PORT}`);
         const userlistContainerRef: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
-        this.state = { userlistContainerRef: userlistContainerRef, sidebarWidth: props.sidebarWidth, userlistContainerXPos: props.expanded ? `${props.sidebarWidth}px` : '0px', userlist: [] };
-
-        socket.on(CHATROOM_EVENTS.User, this.onNewUser);
-        socket.emit(CHATROOM_EVENTS.Usercount);
+        this.state = { socket: socket, userlistContainerRef: userlistContainerRef, sidebarWidth: props.sidebarWidth, userlistContainerXPos: props.expanded ? `${props.sidebarWidth}px` : '0px', userlist: [], paramUser: paramUser, searched: paramUser ? true : false };
+        
+        socket.on(CHATROOM_EVENTS.Users, this.onUsers);
     }
 
     componentDidMount(): void {
@@ -31,6 +31,9 @@ class UserlistContainer extends React.Component<IUserlistContainerProps, any> {
         divNode.style.left = this.state.userlistContainerXPos;
         if (this.state.userlistContainerXPos === `${this.state.sidebarWidth}px`) {
             this.setState({ userlistContainerXPos: '0px' });
+        }
+        if (this.state.paramUser) {
+            this.state.socket.emit(CHATROOM_EVENTS.SearchUsers, { filter: this.state.paramUser });
         }
     }
 
@@ -40,22 +43,25 @@ class UserlistContainer extends React.Component<IUserlistContainerProps, any> {
         divNode.style.left = newUserlistContainerXPos;
     }
 
-    goBack(): void {
-        this.props.history.goBack();
+    onUsers(users: ChatroomUser[]): void {
+        const newUserlist: ChatroomUser[] = users;
+        this.setState({ userlist: newUserlist, searched: true });
     }
 
-    onNewUser(newUser: ChatroomUser): void {
-        const newUserlist: ChatroomUser[] = this.state.userlist;
-        newUserlist.push(newUser);
-        this.setState({ userlist: newUserlist });
+    onSearch(event: React.KeyboardEvent<HTMLInputElement>): void {
+        // on enter
+        if (event.key === 'Enter') {
+            this.state.socket.emit(CHATROOM_EVENTS.SearchUsers, { filter: event.currentTarget.value });
+        }
     }
 
     render() {
         return (
             <Userlist
+                searched={this.state.searched}
                 userlist={this.state.userlist}
-                goBack={this.goBack}
                 userlistContainerRef={this.state.userlistContainerRef}
+                onSearch={this.onSearch}
             />
         );
     }

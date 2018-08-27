@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Spinner from '../../../spinner/main';
-import { RaisedButton } from 'material-ui';
+import Button from '@material-ui/core/Button';
 
 interface IDiscordPageProps {
     isLoading: boolean;
@@ -32,7 +32,9 @@ const DiscordPage: React.SFC<IDiscordPageProps> = (props: IDiscordPageProps) => 
             <textarea className="discord-page-link" rows={1}>
                 {props.link}
             </textarea>
-            <RaisedButton className="discord-page-copy-btn" label="Copy To Clipboard" primary={true} onClick={props.onClickCopy}/>
+            <Button variant="raised" className="discord-page-copy-btn" color="primary" onClick={props.onClickCopy}>
+                Copy To Clipboard
+            </Button>
         </div>
     );   
 

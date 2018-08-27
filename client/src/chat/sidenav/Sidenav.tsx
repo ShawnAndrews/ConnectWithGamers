@@ -6,13 +6,14 @@ interface ISidenavProps {
     onOptionClick: (val: number) => void;
     sidenavOptions: SidenavOption[];
     onUsersPage: boolean;
+    onSettingsPage: boolean;
     sideNavRef: React.RefObject<HTMLDivElement>;
 }
 
 const Sidenav: React.SFC<ISidenavProps> = (props: ISidenavProps) => {
     
     return (
-        <div className={`chatroom-menu scrollable ${(props.optionSelected[0] || props.onUsersPage) ? "chatroom-input-height" : ""}`} ref={props.sideNavRef}>
+        <div className={`chatroom-menu scrollable ${(props.optionSelected[0] || props.onUsersPage || props.onSettingsPage) ? "chatroom-input-height" : ""}`} ref={props.sideNavRef}>
             {props.sidenavOptions && 
                 props.sidenavOptions.map((x: SidenavOption, optionIndex: number) => {
                     return (

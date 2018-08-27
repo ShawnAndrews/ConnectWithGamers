@@ -1,7 +1,7 @@
 const socketIO = require("socket.io");
 const express = require("express");
 const router = express.Router();
-import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbAuthorizeResponse, DbAccountInfoResponse, DbAccountImageResponse, DbChatroomAttachmentResponse, ChatroomAttachmentResponse } from "../../client/client-server-common/common";
+import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbAuthorizeResponse, DbAccountInfoResponse, DbAccountsInfoResponse, DbAccountImageResponse, DbChatroomAttachmentResponse, ChatroomAttachmentResponse, AccountInfo } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { securityModel } from "../../models/db/security/main";
 import { chatroomModel } from "../../models/db/chatroom/main";
@@ -37,7 +37,7 @@ router.post(routes.getRoute("attachment/upload"), (req: any, res: any) => {
 
 export default function registerChatHandlers(chatServer: any): void {
     const chatHandler = socketIO.listen(chatServer);
-    const usersActivityRefreshMins: number = 30;
+    const usersActivityRefreshMins: number = 59;
     const usersInChat: any[] = [];
 
     const getExpiresOnFromId = (accountId: number): Date => {
@@ -49,17 +49,17 @@ export default function registerChatHandlers(chatServer: any): void {
         return new Date();
     };
 
-    const getUserCount = (): number => {
-        // delete inactive users
-        for (let i = 0; i < usersInChat.length; i++) {
-            const isUserInactive: boolean = new Date() > usersInChat[i].expiresOn;
-            if (isUserInactive) {
-                usersInChat.splice(i, 1);
-                break;
-            }
-        }
-        return usersInChat.length;
-    };
+    // const getUserCount = (): number => {
+    //     // delete inactive users
+    //     for (let i = 0; i < usersInChat.length; i++) {
+    //         const isUserInactive: boolean = new Date() > usersInChat[i].expiresOn;
+    //         if (isUserInactive) {
+    //             usersInChat.splice(i, 1);
+    //             break;
+    //         }
+    //     }
+    //     return usersInChat.length;
+    // };
 
     const refreshUserActivity = (userAccountId: number): void => {
         const refreshedActivityDate: Date = new Date((new Date()).getTime() + usersActivityRefreshMins * 60000);
@@ -94,9 +94,6 @@ export default function registerChatHandlers(chatServer: any): void {
             .then((response: DbAuthorizeResponse) => {
                 const accountid: number = response.accountid;
                 refreshUserActivity(accountid);
-                const usercount: number = getUserCount();
-                socket.emit(CHATROOM_EVENTS.Usercount, usercount);
-                socket.broadcast.emit(CHATROOM_EVENTS.Usercount, usercount);
             })
             .catch((error: string) => {
                 console.log(`Chat error authorizing: ${error}`);
@@ -112,11 +109,7 @@ export default function registerChatHandlers(chatServer: any): void {
     chatHandler.on("connection", (socket: any) => {
 
         socket.on("disconnect", () => {
-
-            const usercount: number = getUserCount();
-            socket.emit(CHATROOM_EVENTS.Usercount, usercount);
-            socket.broadcast.emit(CHATROOM_EVENTS.Usercount, usercount);
-
+            // do nothing
         });
 
         socket.on(CHATROOM_EVENTS.GetMessageHistory, (data: any) => {
@@ -132,7 +125,7 @@ export default function registerChatHandlers(chatServer: any): void {
 
         });
 
-        socket.on(CHATROOM_EVENTS.Usercount, (data: any) => {
+        socket.on(CHATROOM_EVENTS.GetAllUsers, (data: any) => {
 
             const userAccountIds: number[] = usersInChat.map((x: any) => { return x.accountid; });
             userAccountIds.forEach((accountId: number) => {
@@ -142,7 +135,8 @@ export default function registerChatHandlers(chatServer: any): void {
                     const userExpiresOn: any = getExpiresOnFromId(accountId);
                     const minutesDiff: number = Math.round((((userExpiresOn - now) % 86400000) % 3600000) / 60000);
                     const lastActiveMinutesAgo: number = usersActivityRefreshMins - minutesDiff;
-                    const chatroomUser: ChatroomUser = {...dbUser, last_active: lastActiveMinutesAgo};
+                    const lastActive: number = (lastActiveMinutesAgo === usersActivityRefreshMins) ? -1 : lastActiveMinutesAgo;
+                    const chatroomUser: ChatroomUser = { username: dbUser.account.username, steam_url: dbUser.account.steam_url, discord_url: dbUser.account.discord_url, twitch_url: dbUser.account.twitch_url, image: dbUser.account.image, last_active: lastActive };
                     socket.emit(CHATROOM_EVENTS.User, chatroomUser);
                 })
                 .catch((id: number) => {
@@ -150,6 +144,30 @@ export default function registerChatHandlers(chatServer: any): void {
                     socket.disconnect();
                 });
             });
+
+        });
+
+        socket.on(CHATROOM_EVENTS.SearchUsers, (data: any) => {
+            const usernameFilter: string = data.filter;
+
+            accountModel.getAccountsByUsernameFilter(usernameFilter)
+                .then((dbUsers: DbAccountsInfoResponse) => {
+                    const chatroomUsers: ChatroomUser[] = [];
+                    dbUsers.accounts.forEach((element: AccountInfo) => {
+                        const now: any = new Date();
+                        const userExpiresOn: any = getExpiresOnFromId(element.accountid);
+                        const minutesDiff: number = Math.round((((userExpiresOn - now) % 86400000) % 3600000) / 60000);
+                        const lastActiveMinutesAgo: number = usersActivityRefreshMins - minutesDiff;
+                        const lastActive: number = (lastActiveMinutesAgo === usersActivityRefreshMins) ? -1 : lastActiveMinutesAgo;
+                        const chatroomUser: ChatroomUser = { username: element.username, steam_url: element.steam_url, discord_url: element.discord_url, twitch_url: element.twitch_url, image: element.image, last_active: lastActive };
+                        chatroomUsers.push(chatroomUser);
+                    });
+                    socket.emit(CHATROOM_EVENTS.Users, chatroomUsers);
+                })
+                .catch((err: string) => {
+                    console.log(`Database error: ${err}`);
+                    socket.disconnect();
+                });
 
         });
 

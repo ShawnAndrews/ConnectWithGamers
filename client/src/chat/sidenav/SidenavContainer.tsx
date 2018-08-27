@@ -21,6 +21,7 @@ class SidenavContainer extends React.Component<ISidenavContainerProps, any> {
         this.onOptionClick = this.onOptionClick.bind(this);
         const sideNavRef: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
         const onUsersPage: boolean = props.location.pathname.startsWith('/chat/users');
+        const onSettingsPage: boolean = props.location.pathname.startsWith('/chat/settings');
         const sidenavOptions: SidenavOption[] = [];
         
         sidenavOptions.push({ imageUrl: `https://i.imgur.com/GDbcIK8.png`, redirect: `/chat` });
@@ -33,10 +34,11 @@ class SidenavContainer extends React.Component<ISidenavContainerProps, any> {
 
     componentWillReceiveProps(newProps: ISidenavContainerProps): void {
         const onUsersPage: boolean = newProps.location.pathname.startsWith('/chat/users');
+        const onSettingsPage: boolean = newProps.location.pathname.startsWith('/chat/settings');
         const divNode: HTMLDivElement = this.state.sideNavRef.current;
         let newSideNavXPos: string = parseInt( this.state.originalSideNavXPos, 10 ) + newProps.movedXPos + "px";
         divNode.style.left = newSideNavXPos;
-        this.setState({ onUsersPage: onUsersPage });
+        this.setState({ onUsersPage: onUsersPage, onSettingsPage: onSettingsPage });
     }
 
     onOptionClick(val: number): void {
@@ -59,6 +61,7 @@ class SidenavContainer extends React.Component<ISidenavContainerProps, any> {
                 onOptionClick={this.onOptionClick}
                 sidenavOptions={this.state.sidenavOptions}
                 onUsersPage={this.state.onUsersPage}
+                onSettingsPage={this.state.onSettingsPage}
                 sideNavRef={this.state.sideNavRef}
             />
         );

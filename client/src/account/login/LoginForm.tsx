@@ -3,8 +3,9 @@ import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 import Spinner from '../../spinner/main';
 import FooterIcons from '../footer/footerIcons';
-import Toggle from 'material-ui/Toggle';
-import RaisedButton from 'material-ui/RaisedButton';
+import Switch from '@material-ui/core/Switch';
+import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 interface ILoginFormProps {
     isLoading: boolean;
@@ -12,7 +13,7 @@ interface ILoginFormProps {
     onClickSignUp: (event: any) => void;
     usernameChanged: (event: any) => void;
     passwordChanged: (event: any) => void;
-    remembermeChanged: (event: any, isInputChecked: boolean) => void;
+    remembermeChanged: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
 }
 
 const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
@@ -29,20 +30,40 @@ const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
         <div>
             <div className="account-center">
                 <a href="/"><div className="account-logo"/></a>
-                <form className="account-form" onSubmit={props.onClickLogin}>
+                <form className="account-form-container" onSubmit={props.onClickLogin}>
                     <input type="text" className="account-form underline top-md-padding" placeholder="Username" onChange={props.usernameChanged} />
                     <input type="password" className=" account-form underline top-md-padding" placeholder="Password" onChange={props.passwordChanged} />
                     <label className="account-form top-sm-padding">
                         <div className="div-center">
-                            <Toggle
-                                className="account-checkbox large-checkbox"
+                            <FormControlLabel
+                                className="account-form-rememberme"
+                                control={
+                                    <Switch
+                                        className="account-checkbox large-checkbox"
+                                        onChange={props.remembermeChanged}
+                                        color="primary"
+                                    />
+                                }
                                 label="Remember me"
-                                onToggle={props.remembermeChanged}
                             />
                         </div>
                     </label>
-                    <RaisedButton className="account-form-login top-sm-padding" label="Login" primary={true} onClick={props.onClickLogin}/>
-                    <RaisedButton className="account-form-signup top-sm-padding" label="Sign Up" primary={true} onClick={props.onClickSignUp}/>
+                    <Button 
+                        variant="raised" 
+                        className="account-form-login top-sm-padding"
+                        color="primary" 
+                        onClick={props.onClickLogin}
+                    >
+                        Login
+                    </Button>
+                    <Button 
+                        variant="raised" 
+                        className="account-form-signup top-sm-padding"
+                        color="primary" 
+                        onClick={props.onClickSignUp}
+                    >
+                        Sign Up
+                    </Button>
                 </form>
             </div>
         </div>

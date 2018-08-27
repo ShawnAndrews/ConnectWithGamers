@@ -68,28 +68,28 @@ class SettingsFormContainer extends React.Component<ISettingsFormContainerProps,
             });
     }
 
-    onUsernameChanged(event: object, newUsername: string): void {
-        this.setState({ newUsername: newUsername });
+    onUsernameChanged(event: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({ newUsername: event.currentTarget.value });
     } 
 
-    onEmailChanged(event: object, newEmail: string): void {
-        this.setState({ newEmail: newEmail });
+    onEmailChanged(event: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({ newEmail: event.currentTarget.value });
     } 
 
-    onPasswordChanged(event: object, newPassword: string): void {
-        this.setState({ newPassword: newPassword });
+    onPasswordChanged(event: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({ newPassword: event.currentTarget.value });
     } 
 
-    onDiscordChanged(event: object, newDiscord: string): void {
-        this.setState({ newDiscord: newDiscord });
+    onDiscordChanged(event: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({ newDiscord: event.currentTarget.value });
     } 
 
-    onSteamChanged(event: object, newSteam: string): void {
-        this.setState({ newSteam: newSteam });
+    onSteamChanged(event: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({ newSteam: event.currentTarget.value });
     } 
 
-    onTwitchChanged(event: object, newTwitch: string): void {
-        this.setState({ newTwitch: newTwitch });
+    onTwitchChanged(event: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({ newTwitch: event.currentTarget.value });
     } 
 
     logout(): void {
@@ -214,8 +214,8 @@ class SettingsFormContainer extends React.Component<ISettingsFormContainerProps,
         });
     }
 
-    showLinksChanged(event: any, isInputChecked: boolean): void {
-        this.setState({showLinks: isInputChecked});
+    showLinksChanged(event: React.ChangeEvent<HTMLInputElement>, checked: boolean): void {
+        this.setState({showLinks: checked});
     }
 
     render() {

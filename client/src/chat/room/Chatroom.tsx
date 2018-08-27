@@ -1,8 +1,8 @@
 const popupS = require('popups');
 import * as React from 'react';
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
-import Avatar from 'material-ui/Avatar';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Avatar from '@material-ui/core/Avatar';
 import Spinner from '../../spinner/main';
 import ChatMessageContainer, { IChatMessageContainerProps } from '../message/ChatMessageContainer';
 
@@ -17,7 +17,7 @@ interface IChatroomProps {
     messagesLoading: boolean;
     text: string;
     chatLog: IChatMessageContainerProps[];
-    onTextChanged: (event: object, newText: string) => void;
+    onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onKeyPress: (event: any) => void;
     onSend: (event: any) => void;
     handleAttachmentUpload: (event: any) => void;
@@ -86,12 +86,20 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
                 </label>
                 <TextField
                     className="chatroom-input-textfield"
-                    value={props.text}
                     onChange={props.onTextChanged}
-                    hintText="Write a message..."
+                    placeholder="Write a message..."
                     onKeyPress={props.onKeyPress}
+                    margin="normal"
                 />
-                <RaisedButton className="chatroom-input-send" label="Send" primary={true} onClick={props.onSend} disabled={props.attachmentLoading} />
+                <Button
+                    className="chatroom-input-send" 
+                    variant="contained" 
+                    color="primary" 
+                    onClick={props.onSend} 
+                    disabled={props.attachmentLoading} 
+                >
+                    Send 
+                </Button>
             </div>
         </>
     );

@@ -44,12 +44,14 @@ export interface Config {
 }
 
 export const enum CHATROOM_EVENTS {
-    Usercount = "usercount",
+    SearchUsers = "search-users",
+    GetAllUsers = "get-all-users",
     Message = "message",
     MessageHistory = "message-history",
     GetMessageHistory = "get-message-history",
     PostMessage = "post-message",
     User = "user",
+    Users = "users",
 }
 
 export interface ChatroomInfo {
@@ -167,12 +169,21 @@ export interface ChatroomUser {
     image?: string;
 }
 
-export interface DbAccountInfoResponse {
+export interface AccountInfo {
+    accountid: number;
     username: string;
     steam_url?: string;
     twitch_url?: string;
     discord_url?: string;
     image?: string;
+}
+
+export interface DbAccountsInfoResponse {
+    accounts: AccountInfo[];
+}
+
+export interface DbAccountInfoResponse {
+    account: AccountInfo;
 }
 
 export interface DbTwitchIdResponse {

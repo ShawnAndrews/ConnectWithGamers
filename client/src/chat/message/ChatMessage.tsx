@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { withRouter } from 'react-router-dom';
 import * as io from 'socket.io-client';
-import Avatar from 'material-ui/Avatar';
+import Avatar from '@material-ui/core/Avatar';
 import { getFormattedDate } from '../../util/main';
 import { MessageSide } from '../room/chatroom';
 

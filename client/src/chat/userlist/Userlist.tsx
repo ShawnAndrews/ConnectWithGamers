@@ -1,49 +1,71 @@
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
-import FontIcon from 'material-ui/FontIcon';
-import Avatar from 'material-ui/Avatar';
-import Chip from 'material-ui/Chip';
-import AppBar from 'material-ui/AppBar';
+import Avatar from '@material-ui/core/Avatar';
+import Paper from '@material-ui/core/Paper';
 import { ChatroomUser } from '../../../../client/client-server-common/common';
-import TopnavContainer from '../topnav/TopnavContainer';
 
 interface IUserlistProps {
+    searched: boolean;
     userlist: ChatroomUser[];
-    goBack: () => void;
     userlistContainerRef: React.RefObject<HTMLDivElement>;
+    onSearch: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
 const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
+    console.log(`Render users: ${JSON.stringify(props.userlist)}`);
+
+    const lastActive = (minutesLastActive: number): string => {
+        if (minutesLastActive !== -1) {
+            return `Last active ${minutesLastActive === 0 ? `seconds ago` : `${minutesLastActive} minutes ago`}`;
+        } else {
+            return `Offline`;
+        }
+    };
 
     return (
-        <div className={`userlist scrollable fadeIn`} ref={props.userlistContainerRef}>
-            {props.userlist
-                .map((x: ChatroomUser, index: number) => {
-                    return (
-                        <Chip 
-                            key={index}
-                            className="userlist-content"
-                        >
-                            {x.image
-                                ? <Avatar className="userlist-content-name-chip no-background" src={x.image}/>
-                                : <Avatar className="userlist-content-name-chip">{x.username.slice(0, 2).toUpperCase()}</Avatar>}
-                            <span className="userlist-content-name">{x.username}</span>
-                            <span className="userlist-content-activity">Last active {x.last_active === 0 ? `seconds ago` : `${x.last_active} minutes ago`}</span>
-                            {x.steam_url && 
-                                <Avatar className="invis-background pull-right userlist-content-link-chip">
-                                    <a href={x.steam_url} className="userlist-content-link"><i className="fab fa-steam-square fa-2x" /></a>
-                                </Avatar>}
-                            {x.discord_url && 
-                                <Avatar className="invis-background pull-right userlist-content-link-chip">
-                                    <a href={x.discord_url} className="userlist-content-link"><i className="fab fa-discord fa-2x" /></a>
-                                </Avatar>}
-                            {x.twitch_url && 
-                                <Avatar className="invis-background pull-right userlist-content-link-chip">
-                                    <a href={x.twitch_url} className="userlist-content-link"><i className="fab fa-twitch fa-2x" /></a>
-                                </Avatar>}
-                        </Chip>
-                    );
-                })}
+        <div className="userlist-container" ref={props.userlistContainerRef}>
+            <div className="userlist-searchbar-container">
+                <input
+                    className="userlist-searchbar"
+                    placeholder="Search user..."
+                    onKeyPress={props.onSearch}
+                />
+            </div>
+            {!props.searched &&
+                <div className="choose-user">
+                    <i className="fas fa-arrow-right fa-6x choose-user-arrow" data-fa-transform="rotate-270"/>
+                    <strong className="choose-user-text">Search username</strong>
+                </div>}
+            {props.searched && props.userlist.length === 0 && 
+                <div className="search-noresults">
+                    <strong className="search-noresults-text">No results</strong>
+                </div>}
+            {props.searched && props.userlist.length !== 0 && 
+                <div className={`userlist scrollable fadeIn`}>
+                    {props.userlist
+                        .map((x: ChatroomUser, index: number) => {
+                            return (
+                                <Paper
+                                    key={index}
+                                    className="userlist-content"
+                                    elevation={3}
+                                >
+                                    {x.image
+                                        ? <Avatar className="userlist-content-name-chip no-background" src={x.image}/>
+                                        : <Avatar className="userlist-content-name-chip">{x.username.slice(0, 2).toUpperCase()}</Avatar>}
+                                    <span className="userlist-content-name">{x.username}</span>
+                                    <span className="userlist-content-activity">{lastActive(x.last_active)}</span>
+                                    <div className="userlist-content-links">
+                                        {x.steam_url && 
+                                            <a href={`https://steamcommunity.com/id/${x.steam_url}`} className="userlist-content-link"><i className="fab fa-steam-square fa-2x" /></a>}
+                                        {x.discord_url && 
+                                            <a href={x.discord_url} className="userlist-content-link"><i className="fab fa-discord fa-2x" /></a>}
+                                        {x.twitch_url && 
+                                            <a href={`https://www.twitch.tv/${x.twitch_url}`} className="userlist-content-link"><i className="fab fa-twitch fa-2x" /></a>}
+                                    </div>
+                                </Paper>
+                            );
+                        })}
+                </div>}
         </div>
     );
 

@@ -81,8 +81,8 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
         });
     }
 
-    onTextChanged(event: object, newText: string): void {
-        this.setState({ text: newText });
+    onTextChanged(event: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({ text: event.currentTarget.value });
     } 
 
     onKeyPress(event: any): void {

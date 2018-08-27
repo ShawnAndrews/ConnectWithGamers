@@ -1,5 +1,5 @@
 import * as React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
+import Button from '@material-ui/core/Button';
 
 interface IPlatformsProps {
     platforms: string[];
@@ -20,7 +20,18 @@ const Platforms: React.SFC<IPlatformsProps> = (props: IPlatformsProps) => {
                 {props.platforms
                     .map((x: string, index: number) => {
                         return (
-                            <li key={x}><div className="menu-game-platforms-name-container"><RaisedButton className="menu-game-platforms-name" label={x} onClick={() => { props.handlePlatformClick(index); }}/></div><i className="menu-game-platforms-releasedate">({props.platforms_release_dates[index] !== `undefined. NaN, NaN` ? props.platforms_release_dates[index] : `N/A`})</i></li>
+                            <li key={x}>
+                                <div className="menu-game-platforms-name-container">
+                                    <Button 
+                                        variant="raised" 
+                                        className="menu-game-platforms-name" 
+                                        onClick={() => { props.handlePlatformClick(index); }}
+                                    >
+                                        {x}
+                                    </Button>
+                                </div>
+                                <i className="menu-game-platforms-releasedate">({props.platforms_release_dates[index] !== `undefined. NaN, NaN` ? props.platforms_release_dates[index] : `N/A`})</i>
+                            </li>
                         );
                     })}
             </ul>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import RaisedButton from 'material-ui/RaisedButton';
+import Button from '@material-ui/core/Button';
 
 interface IGenresProps {
     genres: string[];
@@ -18,7 +18,12 @@ const Genres: React.SFC<IGenresProps> = (props: IGenresProps) => {
             {props.genres
                 .map((x: string, index: number) => {
                     return (
-                        <span key={x}><RaisedButton className="menu-game-genres-name" label={x} onClick={() => { props.handleGenreClick(index); }}/>{index !== (props.genres.length - 1) && ` , `}</span>
+                        <span key={x}>
+                            <Button variant="raised" className="menu-game-genres-name" onClick={() => { props.handleGenreClick(index); }}>
+                                {x}
+                            </Button>
+                            {index !== (props.genres.length - 1) && ` , `}
+                        </span>
                     );
                 })}
         </div>

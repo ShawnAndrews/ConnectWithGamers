@@ -3,7 +3,7 @@ import * as React from 'react';
 import Select from 'react-select';
 import Spinner from '../../../spinner/main';
 import { GameResponse } from '../../../../../client/client-server-common/common';
-import RaisedButton from 'material-ui/RaisedButton';
+import Button from '@material-ui/core/Button';
 import Cover from './Cover';
 import Summary from './Summary';
 import ReleaseDate from './ReleaseDate';

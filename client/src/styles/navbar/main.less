@@ -1,19 +1,21 @@
 @navbar-item-height: 70px;
+@gaming-navbar-item-height: 48px;
 
 .navbar-item-container {
     width: 100%;
+    height: @navbar-item-height;
+    background-color: rgba(0,0,0,0.5) !important;
+
+    svg {
+        color: rgba(255,255,255,0.6);
+    }
 
     &.invisible {
         visibility: hidden;
     }
 
     > div:first-child {
-        background-color: rgba(0,0,0,0.5) !important;
         height: @navbar-item-height !important;
-    }
-
-    > div > div {
-        background-color: whitesmoke !important;
     }
 
     .center {
@@ -27,6 +29,45 @@
     
     .navbar-item-icon {
         font-size: 1.1em !important;
+    }
+
+    > div > div > span {
+        background-color: whitesmoke;
+    }
+}
+
+.gaming-navbar-item-container {
+    width: 100%;
+    height: @gaming-navbar-item-height;
+    background-color: rgba(0,0,0,0.5) !important;
+
+    svg {
+        color: rgba(255,255,255,0.6);
+    }
+
+    &.invisible {
+        visibility: hidden;
+    }
+
+    > div:first-child {
+        height: @gaming-navbar-item-height !important;
+    }
+
+    .center {
+        position: relative;
+        top: 50%;
+    }
+
+    .navbar-item-text {
+        font-size: 1.0em !important;
+    }
+    
+    .navbar-item-icon {
+        font-size: 1.1em !important;
+    }
+
+    > div > div > span {
+        background-color: whitesmoke;
     }
 }
 

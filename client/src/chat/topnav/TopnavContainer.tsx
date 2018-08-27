@@ -13,10 +13,12 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
         super(props);
         this.getPathTitle = this.getPathTitle.bind(this);
         this.onClickUsersIcon = this.onClickUsersIcon.bind(this);
+        this.onClickCogIcon = this.onClickCogIcon.bind(this);
 
         const usersPageActive: boolean = (props.location.pathname === '/chat/users/');
+        const cogPageActive: boolean = (props.location.pathname === '/chat/settings/');
 
-        this.state = { title: this.getPathTitle(props), usersPageActive: usersPageActive };
+        this.state = { title: this.getPathTitle(props), usersPageActive: usersPageActive, cogPageActive: cogPageActive };
     }
 
     componentWillReceiveProps(newProps: ITopnavContainerProps): void {
@@ -27,10 +29,12 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
     getPathTitle(props: ITopnavContainerProps): string {
         const path: string = props.history.location.pathname;
         
-        if (path === `/chat`) {
+        if (path === `/chat` || path === `/chat/`) {
             return "Chatroom";
         } else if (path.startsWith(`/chat/users`)) {
             return "User List";
+        } else if (path.startsWith(`/chat/settings`)) {
+            return "Settings";
         } else {
             let title: string = "Title Error";
             CHATROOMS.map((chatroomInfo: ChatroomInfo) => {
@@ -53,12 +57,24 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
         });
     }
 
+    onClickCogIcon(): void {
+        this.setState({ cogPageActive: !this.state.cogPageActive }, () => {
+            if (this.state.cogPageActive) {
+                this.props.history.push('/chat/settings/');
+            } else {
+                this.props.history.goBack();
+            }
+        });
+    }
+
     render() {
         return (
             <Topnav
                 title={this.state.title}
                 usersPageActive={this.state.usersPageActive}
+                cogPageActive={this.state.cogPageActive}
                 onClickUsersIcon={this.onClickUsersIcon}
+                onClickCogIcon={this.onClickCogIcon}
             />
         );
     }
