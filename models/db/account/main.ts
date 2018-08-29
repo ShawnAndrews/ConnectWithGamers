@@ -171,6 +171,48 @@ class AccountModel extends DatabaseBase {
     }
 
     /**
+     * Get All public account information.
+     */
+    getAccountsInfoById(accountIds: number[]): Promise<DbAccountsInfoResponse> {
+
+        return new Promise( (resolve, reject) => {
+
+            this.select(
+                "dbo.accounts",
+                [],
+                [],
+                [],
+                ["accountid", "username", "discord", "steam", "twitch", "image"],
+                `accountid IN (${accountIds.join(",")})`)
+                .then((dbResponse: GenericResponseModel) => {
+                    const accounts: AccountInfo[] = [];
+
+                    if (dbResponse.data.recordsets[0].length > 0) {
+                        dbResponse.data.recordsets[0].forEach((element: any) => {
+                            const account: AccountInfo = {
+                                accountid: element.accountid,
+                                username: element.username,
+                                discord_url: element.discord,
+                                steam_url: element.steam,
+                                twitch_url: element.twitch,
+                                image: element.image
+                            };
+                            accounts.push(account);
+                        });
+                    }
+
+                    const dbUsers: DbAccountsInfoResponse = { accounts: accounts };
+                    return resolve(dbUsers);
+                })
+                .catch((err: string) => {
+                    console.log(`Database error: ${err}`);
+                    return reject();
+                });
+
+        });
+    }
+
+    /**
      * Get public account information.
      */
     getAccountInfo(accountid: number): Promise<DbAccountInfoResponse> {

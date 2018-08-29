@@ -1,7 +1,7 @@
 const socketIO = require("socket.io");
 const express = require("express");
 const router = express.Router();
-import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbAuthorizeResponse, DbAccountInfoResponse, DbAccountsInfoResponse, DbAccountImageResponse, DbChatroomAttachmentResponse, ChatroomAttachmentResponse, AccountInfo } from "../../client/client-server-common/common";
+import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbAuthorizeResponse, DbAccountsInfoResponse, DbAccountImageResponse, DbChatroomAttachmentResponse, ChatroomAttachmentResponse, AccountInfo } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { securityModel } from "../../models/db/security/main";
 import { chatroomModel } from "../../models/db/chatroom/main";
@@ -61,7 +61,7 @@ export default function registerChatHandlers(chatServer: any): void {
     //     return usersInChat.length;
     // };
 
-    const refreshUserActivity = (userAccountId: number): void => {
+    const refreshUserActivity = (userAccountId: number, socket: any): void => {
         const refreshedActivityDate: Date = new Date((new Date()).getTime() + usersActivityRefreshMins * 60000);
         if (usersInChat.length === 0) {
             usersInChat.push({ accountid: userAccountId, expiresOn: refreshedActivityDate });
@@ -79,6 +79,7 @@ export default function registerChatHandlers(chatServer: any): void {
                 break;
             }
         }
+        socket.broadcast.emit(CHATROOM_EVENTS.UpdateUsers);
         return;
     };
 
@@ -93,7 +94,7 @@ export default function registerChatHandlers(chatServer: any): void {
             securityModel.authorize(socket.handshake.headers.cookie)
             .then((response: DbAuthorizeResponse) => {
                 const accountid: number = response.accountid;
-                refreshUserActivity(accountid);
+                refreshUserActivity(accountid, socket);
             })
             .catch((error: string) => {
                 console.log(`Chat error authorizing: ${error}`);
@@ -127,23 +128,33 @@ export default function registerChatHandlers(chatServer: any): void {
 
         socket.on(CHATROOM_EVENTS.GetAllUsers, (data: any) => {
 
-            const userAccountIds: number[] = usersInChat.map((x: any) => { return x.accountid; });
-            userAccountIds.forEach((accountId: number) => {
-                accountModel.getAccountInfo(accountId)
-                .then((dbUser: DbAccountInfoResponse) => {
-                    const now: any = new Date();
-                    const userExpiresOn: any = getExpiresOnFromId(accountId);
-                    const minutesDiff: number = Math.round((((userExpiresOn - now) % 86400000) % 3600000) / 60000);
-                    const lastActiveMinutesAgo: number = usersActivityRefreshMins - minutesDiff;
-                    const lastActive: number = (lastActiveMinutesAgo === usersActivityRefreshMins) ? -1 : lastActiveMinutesAgo;
-                    const chatroomUser: ChatroomUser = { username: dbUser.account.username, steam_url: dbUser.account.steam_url, discord_url: dbUser.account.discord_url, twitch_url: dbUser.account.twitch_url, image: dbUser.account.image, last_active: lastActive };
-                    socket.emit(CHATROOM_EVENTS.User, chatroomUser);
-                })
-                .catch((id: number) => {
-                    console.log(`Account id #${id} not found in database.`);
-                    socket.disconnect();
-                });
+            const activeUserIds: number[] = [];
+
+            usersInChat.forEach((element: any) => {
+                activeUserIds.push(element.accountid);
             });
+            if (activeUserIds.length === 0) {
+                socket.emit(CHATROOM_EVENTS.GetAllUsers, []);
+            } else {
+                accountModel.getAccountsInfoById(activeUserIds)
+                    .then((dbUsers: DbAccountsInfoResponse) => {
+                        const chatroomUsers: ChatroomUser[] = [];
+                        dbUsers.accounts.forEach((element: AccountInfo) => {
+                            const now: any = new Date();
+                            const userExpiresOn: any = getExpiresOnFromId(element.accountid);
+                            const minutesDiff: number = Math.round((((userExpiresOn - now) % 86400000) % 3600000) / 60000);
+                            const lastActiveMinutesAgo: number = usersActivityRefreshMins - minutesDiff;
+                            const lastActive: number = (lastActiveMinutesAgo === usersActivityRefreshMins) ? -1 : lastActiveMinutesAgo;
+                            const chatroomUser: ChatroomUser = { username: element.username, steam_url: element.steam_url, discord_url: element.discord_url, twitch_url: element.twitch_url, image: element.image, last_active: lastActive };
+                            chatroomUsers.push(chatroomUser);
+                        });
+                        socket.emit(CHATROOM_EVENTS.GetAllUsers, chatroomUsers);
+                    })
+                    .catch((err: string) => {
+                        console.log(`Database error: ${err}`);
+                        socket.disconnect();
+                    });
+            }
 
         });
 
@@ -189,7 +200,7 @@ export default function registerChatHandlers(chatServer: any): void {
                 securityModel.authorize(socket.handshake.headers.cookie)
                 .then((response: DbAuthorizeResponse) => {
                     accountid = response.accountid;
-                    refreshUserActivity(accountid);
+                    refreshUserActivity(accountid, socket);
                     return accountModel.getAccountUsername(accountid);
                 })
                 .then((response: GenericResponseModel) => {
@@ -221,7 +232,7 @@ export default function registerChatHandlers(chatServer: any): void {
                 accountModel.getAccountId(username)
                     .then((response: GenericResponseModel) => {
                         accountid = response.data.accountid;
-                        refreshUserActivity(accountid);
+                        refreshUserActivity(accountid, socket);
                         return accountModel.getAccountImage(accountid);
                     })
                     .then((response: DbAccountImageResponse) => {

@@ -3,6 +3,7 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Sidenav from './Sidenav';
 import { CHATROOMS, ChatroomInfo } from '../../../client-server-common/common';
+import { SwipeState } from '../ChatroomMenuContainer';
 
 export interface SidenavOption {
     imageUrl: string;
@@ -11,7 +12,7 @@ export interface SidenavOption {
 
 interface ISidenavContainerProps extends RouteComponentProps<any> {
     sidebarWidth: number;
-    movedXPos: number;
+    swipeState: SwipeState;
 }
 
 class SidenavContainer extends React.Component<ISidenavContainerProps, any> {
@@ -20,8 +21,6 @@ class SidenavContainer extends React.Component<ISidenavContainerProps, any> {
         super(props);
         this.onOptionClick = this.onOptionClick.bind(this);
         const sideNavRef: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
-        const onUsersPage: boolean = props.location.pathname.startsWith('/chat/users');
-        const onSettingsPage: boolean = props.location.pathname.startsWith('/chat/settings');
         const sidenavOptions: SidenavOption[] = [];
         
         sidenavOptions.push({ imageUrl: `https://i.imgur.com/GDbcIK8.png`, redirect: `/chat` });
@@ -29,16 +28,23 @@ class SidenavContainer extends React.Component<ISidenavContainerProps, any> {
             sidenavOptions.push({ imageUrl: chatroomInfo.imagePath, redirect: chatroomInfo.redirect });
         });
         
-        this.state = { sidenavOptions: sidenavOptions, sideNavRef: sideNavRef, originalSideNavXPos: `-${props.sidebarWidth}px`, onUsersPage: onUsersPage };
+        this.state = { sidenavOptions: sidenavOptions, sideNavRef: sideNavRef };
     }
 
     componentWillReceiveProps(newProps: ISidenavContainerProps): void {
-        const onUsersPage: boolean = newProps.location.pathname.startsWith('/chat/users');
-        const onSettingsPage: boolean = newProps.location.pathname.startsWith('/chat/settings');
         const divNode: HTMLDivElement = this.state.sideNavRef.current;
-        let newSideNavXPos: string = parseInt( this.state.originalSideNavXPos, 10 ) + newProps.movedXPos + "px";
-        divNode.style.left = newSideNavXPos;
-        this.setState({ onUsersPage: onUsersPage, onSettingsPage: onSettingsPage });
+        
+        let newLeftPosition: number;
+
+        if (newProps.swipeState === SwipeState.Left) {
+            newLeftPosition = 0;
+        } else if (newProps.swipeState === SwipeState.Middle) {
+            newLeftPosition = -newProps.sidebarWidth;
+        } else {
+            newLeftPosition = -newProps.sidebarWidth;
+        }
+        
+        divNode.style.left = `${newLeftPosition}px`;
     }
 
     onOptionClick(val: number): void {
@@ -60,8 +66,6 @@ class SidenavContainer extends React.Component<ISidenavContainerProps, any> {
                 optionSelected={optionSelected}
                 onOptionClick={this.onOptionClick}
                 sidenavOptions={this.state.sidenavOptions}
-                onUsersPage={this.state.onUsersPage}
-                onSettingsPage={this.state.onSettingsPage}
                 sideNavRef={this.state.sideNavRef}
             />
         );

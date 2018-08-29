@@ -3,15 +3,13 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as io from 'socket.io-client';
 import * as ChatroomService from '../../service/chatroom/main';
-import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory, ChatroomAttachmentResponse } from '../../../../client/client-server-common/common';
+import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory, ChatroomAttachmentResponse, ChatroomUser } from '../../../../client/client-server-common/common';
 import { popupBasic } from '../../common';
 import Chatroom from './chatroom';
+import { SwipeState } from '../ChatroomMenuContainer';
 
 interface IChatroomContainerProps extends RouteComponentProps<any> {
     chatroomid: number;
-    sidebarWidth: number;
-    movedXPos: number;
-    expanded: boolean;
 } 
 
 class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
@@ -26,29 +24,21 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
         this.scrollChatToMostRecent = this.scrollChatToMostRecent.bind(this);
         this.handleAttachmentUpload = this.handleAttachmentUpload.bind(this);
 
-        const chatroomContainerRef: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
         const socket = io(`${window.location.hostname}:${CHAT_SERVER_PORT}`);
 
-        this.state = { chatroomContainerRef: chatroomContainerRef, chatroomid: props.chatroomid, sidebarWidth: props.sidebarWidth, chatroomContainerXPos: props.expanded ? `${props.sidebarWidth}px` : '0px', attachmentLoading: false, text: '', chatLog: [], messagesLoading: true, socket: socket };
+        this.state = { chatroomid: props.chatroomid, attachmentLoading: false, text: '', chatLog: [], messagesLoading: true, socket: socket };
 
         socket.on(CHATROOM_EVENTS.Message, this.onNewMessage);
         socket.on(CHATROOM_EVENTS.MessageHistory, this.onNewMessageHistory);
         socket.emit(CHATROOM_EVENTS.GetMessageHistory, { chatroomid: props.chatroomid });
+        socket.emit(CHATROOM_EVENTS.GetAllUsers);
     }
 
     componentDidMount(): void {
         this.setState({ chatLogContainer: document.querySelector('.chatroom-messages') });
-        const divNode: HTMLDivElement = this.state.chatroomContainerRef.current;
-        divNode.style.left = this.state.chatroomContainerXPos;
-        if (this.state.chatroomContainerXPos === `${this.state.sidebarWidth}px`) {
-            this.setState({ chatroomContainerXPos: '0px' });
-        }
     }
 
     componentWillReceiveProps(newProps: IChatroomContainerProps): void {
-        const divNode: HTMLDivElement = this.state.chatroomContainerRef.current;
-        let newChatroomContainerXPos: string = parseInt( this.state.chatroomContainerXPos, 10 ) + newProps.movedXPos + "px";
-        divNode.style.left = newChatroomContainerXPos;
         if (newProps.chatroomid !== this.state.chatroomid) {
             this.setState({ chatroomid: newProps.chatroomid, chatLog: [], messagesLoading: true }, () => {
                 this.state.socket.emit(CHATROOM_EVENTS.GetMessageHistory, { chatroomid: newProps.chatroomid });
@@ -154,7 +144,6 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
                 onKeyPress={this.onKeyPress}
                 onSend={this.onSend}
                 handleAttachmentUpload={this.handleAttachmentUpload}
-                chatroomContainerRef={this.state.chatroomContainerRef}
             />
         );
     }

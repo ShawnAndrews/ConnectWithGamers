@@ -6,12 +6,10 @@ import { ChatroomUser } from '../../../../client/client-server-common/common';
 interface IUserlistProps {
     searched: boolean;
     userlist: ChatroomUser[];
-    userlistContainerRef: React.RefObject<HTMLDivElement>;
     onSearch: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
 const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
-    console.log(`Render users: ${JSON.stringify(props.userlist)}`);
 
     const lastActive = (minutesLastActive: number): string => {
         if (minutesLastActive !== -1) {
@@ -22,7 +20,7 @@ const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
     };
 
     return (
-        <div className="userlist-container" ref={props.userlistContainerRef}>
+        <div className="userlist-container">
             <div className="userlist-searchbar-container">
                 <input
                     className="userlist-searchbar"

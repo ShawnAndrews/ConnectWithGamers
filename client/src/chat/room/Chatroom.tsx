@@ -21,7 +21,6 @@ interface IChatroomProps {
     onKeyPress: (event: any) => void;
     onSend: (event: any) => void;
     handleAttachmentUpload: (event: any) => void;
-    chatroomContainerRef: React.RefObject<HTMLDivElement>;
 }
 
 const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
@@ -32,7 +31,7 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
 
     return (
         <>
-            <div className={`scrollable chatroom-messages`} ref={props.chatroomContainerRef}>
+            <div className={`scrollable chatroom-messages`}>
                 {props.messagesLoading && 
                     <div className="chatroom-messages-loading">
                         <Spinner loadingMsg="Loading chat..." />
@@ -76,7 +75,7 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
                         );
                     })}
             </div>
-            <div className="chatroom-input" >
+            <div className="chatroom-input">
                 <label className="chatroom-input-icon-container" htmlFor="fileInput">
                     {!props.attachmentLoading
                         ? <i className="fas fa-paperclip fa-lg"/>

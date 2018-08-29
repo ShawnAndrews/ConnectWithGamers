@@ -44,6 +44,7 @@ export interface Config {
 }
 
 export const enum CHATROOM_EVENTS {
+    UpdateUsers = "update-users",
     SearchUsers = "search-users",
     GetAllUsers = "get-all-users",
     Message = "message",
