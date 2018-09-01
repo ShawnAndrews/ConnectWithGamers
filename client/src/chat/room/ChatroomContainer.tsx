@@ -3,7 +3,7 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as io from 'socket.io-client';
 import * as ChatroomService from '../../service/chatroom/main';
-import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory, ChatroomAttachmentResponse, ChatroomUser } from '../../../../client/client-server-common/common';
+import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory, ChatroomUploadImageResponse, ChatroomUser } from '../../../../client/client-server-common/common';
 import { popupBasic } from '../../common';
 import Chatroom from './chatroom';
 import { SwipeState } from '../ChatroomMenuContainer';
@@ -117,7 +117,7 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
         .then((imageBase64: string) => {
             this.setState({ attachmentLoading: true }, () => {
                 ChatroomService.httpUploadAttachment(imageBase64)
-                    .then( (response: ChatroomAttachmentResponse) => {
+                    .then( (response: ChatroomUploadImageResponse) => {
                         this.setState({ attachmentLoading: false, attachmentLink: response.link });
                     })
                     .catch( (error: string) => {

@@ -235,7 +235,15 @@ export interface DbAccountImageResponse {
     link: string;
 }
 
-export interface DbChatroomAttachmentResponse {
+export interface DbChatroomUploadEmoteResponse {
+    link: string;
+}
+
+export interface DbChatroomEmotesResponse {
+    emotes: ChatroomEmote[];
+}
+
+export interface DbChatroomUploadImageResponse {
     link: string;
 }
 
@@ -278,9 +286,24 @@ export interface AccountImageResponse {
     link?: string;
 }
 
-export interface ChatroomAttachmentResponse {
+export interface ChatroomEmote {
+    link: string;
+    prefix: string;
+    suffix: string;
+}
+
+export interface ChatroomEmotesResponse {
+    error: string;
+    emotes?: ChatroomEmote[];
+}
+
+export interface ChatroomUploadImageResponse {
     error: string;
     link?: string;
+}
+
+export interface ChatUploadEmoteResponse {
+    error?: string;
 }
 
 export interface ChatHistoryResponse {

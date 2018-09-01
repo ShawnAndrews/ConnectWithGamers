@@ -468,9 +468,178 @@
     height: 100%;
     left: 0%;
     top: 0%;
+    padding: 10px;
     transition: all 0.3s ease-in;
     -webkit-transition: all 0.3s ease-in;
-    background-color: rgba(0,100,60,0.2);
+
+    .full-width {
+        width: 100%;
+    }
+
+    .view-container-vertical {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+
+        .view-title {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: lighter;
+
+            strong {
+                font-weight: bolder;
+            }
+        }
+    }
+
+    .view-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 40px;
+
+        .view-emote {
+            text-align: center;
+            margin: 10px;
+        }
+    }
+
+    .create-completion {
+        text-align: center;
+        width: 100%;
+
+        svg.fa-check-circle {
+            display: block;
+            margin-bottom: 20px;
+            width: 100%;
+            color: rgba(255,255,255,0.7);
+        }
+
+        > span {
+            margin-bottom: 20px;
+        }
+    }
+
+    .chatroom-settings-spinner {
+        position: relative;
+        width: 100%;
+        height: 350px;
+    }
+
+    .create-completion-btn {
+        display: block;
+        margin-top: 25px;
+        background-color: rgba(0,0,0,0.2);
+        height: 45px;
+        width: 100%;
+
+        &:hover {
+            background-color: rgba(0,0,0,0.2) !important;
+        }
+    }
+
+    .create-emote-btn {
+        margin-top: 20px;
+        background-color: rgba(0,0,0,0.2);
+        width: 100%;
+        height: 45px;
+
+        &:hover {
+            background-color: rgba(0,0,0,0.2) !important;
+        }
+    }
+
+    .create-name {
+
+        > div {
+            > div {
+                margin-right: 0px!important;
+            }
+
+            p {
+                font-size: 1em!important;
+            }
+
+            &::after, &::before {
+                border-bottom-color: rgba(255,255,255,0.7)!important;
+            }
+        }
+
+        * {
+            color: rgba(255,255,255,0.7)!important;
+        }
+    }
+
+    .create-previewtext {
+        position: relative;
+        display: block;
+        text-align: center;
+        margin: 20px 0px;
+    }
+
+    .create-container {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        margin: 0 auto;
+
+        .create-chip {
+            position: absolute !important;
+            height: inherit !important;
+            width: inherit !important;
+            font-size: 30px !important;
+            background-color: rgba(255, 255, 255, 0.3)!important;
+            border-radius: 0%!important;
+            box-shadow: 3px 4px rgba(0,0,0,.3);
+            -moz-box-shadow: 3px 4px rgba(0,0,0,.3);
+            -webkit-box-shadow: 3px 4px rgba(0,0,0,.3);
+            -o-box-shadow: 3px 4px rgba(0,0,0,.3);
+        }
+
+        .create-chip-input {
+            position: absolute !important;
+            height: inherit !important;
+            width: inherit !important;
+            display: inline-block;
+            padding: calc(@title-chip-size + 10px) 0 0 0;
+            overflow: hidden;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            background: none;
+            border-radius: 50%;
+            outline: none;
+        }
+
+        .create-chip-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: inline-flex;
+
+            .create-chip-overlay-plus {
+              position: relative;
+              color: rgba(15, 46, 91,0.5);
+              margin: auto auto auto 2px;
+            }
+          }
+    }
+
+    .panel {
+        position: relative;
+        background-color: rgba(0,0,0,0.2);
+        
+        div, p {
+            color: rgba(255,255,255,0.7)!important;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        i {
+            color: rgba(255,255,255,0.7)!important;
+        }
+    }
 }
 
 .userlist-container {

@@ -1,7 +1,7 @@
 import config from "../../../config";
 import DatabaseBase from "./../base/dbBase";
 import {
-    GenericResponseModel, ChatHistoryResponse, DbChatroomAttachmentResponse } from "../../../client/client-server-common/common";
+    GenericResponseModel, ChatHistoryResponse, DbChatroomUploadImageResponse, DbChatroomEmotesResponse, ChatroomEmote } from "../../../client/client-server-common/common";
 const imgur = require("imgur");
 
 imgur.setClientId(config.imgur.clientId);
@@ -72,20 +72,72 @@ class ChatroomModel extends DatabaseBase {
     }
 
     /**
-     * Upload chatroom message attachment.
+     * Get the complete log of all past chatroom messages.
      */
-    uploadAttachment(imageBase64: string): Promise <DbChatroomAttachmentResponse> {
+    uploadChatEmote(emoteURL: string, emotePrefix: string, emoteSuffix: string): Promise<void> {
+
+        return new Promise( (resolve, reject) => {
+
+            this.insert("dbo.chatemotes",
+                ["prefix", "suffix", "emoteurl", "createdOn"],
+                [this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.DateTime],
+                [emotePrefix, emoteSuffix, emoteURL, Date.now()])
+                .then((dbResponse: GenericResponseModel) => {
+                    return resolve();
+                })
+                .catch((err: string) => {
+                    console.log(`Error inserting chat emote into database: ${err}`);
+                    return reject("Emote name taken.");
+                });
+
+        });
+    }
+
+    /**
+     * Upload base64 string to Imgur and return URL to image.
+     */
+    uploadImage(imageBase64: string): Promise <DbChatroomUploadImageResponse> {
         return new Promise( (resolve, reject) => {
             imgur.uploadBase64(imageBase64)
                 .then((response: any) => {
                     const link: string = response.data.link;
-                    const dbChatroomAttachmentResponse: DbChatroomAttachmentResponse = { link: link };
-                    return resolve(dbChatroomAttachmentResponse);
+                    const DbChatroomUploadImageResponse: DbChatroomUploadImageResponse = { link: link };
+                    return resolve(DbChatroomUploadImageResponse);
                 })
                 .catch((error: string) => {
                     return reject(`Error uploading chatroom message attachment. ${error}`);
                 });
 
+        });
+    }
+
+    /**
+     * Get chatroom emotes.
+     */
+    getEmotes(): Promise <DbChatroomEmotesResponse> {
+        return new Promise( (resolve, reject) => {
+            this.select(
+                "dbo.chatemotes",
+                [],
+                [],
+                [],
+                ["prefix", "suffix", "emoteurl"])
+                .then((dbResponse: GenericResponseModel) => {
+                    const dbChatroomEmotesResponse: DbChatroomEmotesResponse = { emotes: undefined };
+                    const chatroomEmotes: ChatroomEmote[] = [];
+
+                    dbResponse.data.recordsets[0].forEach((emote: any) => {
+                        const chatroomEmote: ChatroomEmote = { link: emote.emoteurl, prefix: emote.prefix, suffix: emote.suffix };
+                        chatroomEmotes.push(chatroomEmote);
+                    });
+
+                    dbChatroomEmotesResponse.emotes = chatroomEmotes;
+
+                    return resolve(dbChatroomEmotesResponse);
+                })
+                .catch((err: string) => {
+                    return reject(err);
+                });
         });
     }
 

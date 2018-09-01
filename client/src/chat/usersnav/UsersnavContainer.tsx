@@ -52,8 +52,6 @@ class UsersnavContainer extends React.Component<IUsersnavContainerProps, any> {
     }
 
     onGetUsers(users: ChatroomUser[]): void {
-        console.log(`Recieved users: ${users}`);
-        console.log(JSON.stringify(users));
         this.setState({ users: users });
     }
 

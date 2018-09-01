@@ -15,7 +15,7 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
         this.onClickUsersIcon = this.onClickUsersIcon.bind(this);
         this.onClickCogIcon = this.onClickCogIcon.bind(this);
 
-        const usersPageActive: boolean = (props.location.pathname === '/chat/users/');
+        const usersPageActive: boolean = (props.location.pathname.startsWith('/chat/users/'));
         const cogPageActive: boolean = (props.location.pathname === '/chat/settings/');
 
         this.state = { title: this.getPathTitle(props), usersPageActive: usersPageActive, cogPageActive: cogPageActive };

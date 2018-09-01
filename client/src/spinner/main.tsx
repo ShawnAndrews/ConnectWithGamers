@@ -2,6 +2,7 @@ import * as React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 interface ISpinnerProps {
+    className?: string;
     loadingMsg: string;
 }
 
@@ -13,7 +14,7 @@ class Spinner extends React.Component<ISpinnerProps, any> {
 
     render() {
         return (
-            <div className="login-spinner">
+            <div className={`login-spinner ${this.props.className ? this.props.className : ''}`}>
                 <CircularProgress
                     className="login-spinner-circle"
                     size={120} 
