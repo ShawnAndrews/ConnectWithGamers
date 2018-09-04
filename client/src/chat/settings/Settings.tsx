@@ -39,8 +39,6 @@ const Settings: React.SFC<ISettingsProps> = (props: ISettingsProps) => {
 
     const prefixes: string[] = props.emotes.length !== 0 ? props.emotes.map((emote: ChatroomEmote) => { return emote.prefix; }) : [];
     const uniquePrefixes: string[] = prefixes.length !== 0 ? prefixes.filter((val: string, index: number, vals: string[]) => { return vals.indexOf(val) === index; }) : [];
-    console.log(`1: ${prefixes}`);
-    console.log(`2: ${uniquePrefixes}`);
 
     return (
         <div className={`settings scrollable fadeIn`}>

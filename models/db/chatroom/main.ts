@@ -126,8 +126,8 @@ class ChatroomModel extends DatabaseBase {
                     const dbChatroomEmotesResponse: DbChatroomEmotesResponse = { emotes: undefined };
                     const chatroomEmotes: ChatroomEmote[] = [];
 
-                    dbResponse.data.recordsets[0].forEach((emote: any) => {
-                        const chatroomEmote: ChatroomEmote = { link: emote.emoteurl, prefix: emote.prefix, suffix: emote.suffix };
+                    dbResponse.data.recordsets[0].forEach((rawEmote: any) => {
+                        const chatroomEmote: ChatroomEmote = { link: rawEmote.emoteurl, prefix: rawEmote.prefix, suffix: rawEmote.suffix };
                         chatroomEmotes.push(chatroomEmote);
                     });
 

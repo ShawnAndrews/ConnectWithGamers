@@ -98,7 +98,7 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
                 authToken = undefined;
             }
             this.state.socket.emit(CHATROOM_EVENTS.PostMessage, { authToken: authToken, text: this.state.text, attachment: this.state.attachmentLink, chatroomid: this.state.chatroomid });
-            this.setState({ attachmentLink: undefined });
+            this.setState({ text: "", attachmentLink: undefined });
         }
     }
 

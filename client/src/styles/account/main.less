@@ -247,18 +247,13 @@
     .account-settings-container {
       position: relative;
       
-      .jss240:hover:not(.jss239):not(.jss238):not(.jss241):before,
-      .jss102:hover:not(.jss101):not(.jss100):not(.jss103):before, .jss240:after, .jss102:after {
-        border-bottom: 2px solid rgba(255,255,255,0.8)!important;
+      > div > div::after, div::before {
+        border-bottom: 2px solid rgba(255,255,255,0.2)!important;
       }
 
       input {
         font-size: 1.2em !important;
         border-bottom: 2px solid rgba(255,255,255,0.5)!important;
-
-        &:after, &::after, &:before, &::before {
-          border-bottom: 2px solid rgba(255,255,255,0.8)!important;
-        }
       }
 
       .account-settings-link {

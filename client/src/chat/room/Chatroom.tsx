@@ -88,6 +88,7 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
                     onChange={props.onTextChanged}
                     placeholder="Write a message..."
                     onKeyPress={props.onKeyPress}
+                    value={props.text}
                     margin="normal"
                 />
                 <Button

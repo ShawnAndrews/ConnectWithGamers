@@ -1,7 +1,7 @@
 const socketIO = require("socket.io");
 const express = require("express");
 const router = express.Router();
-import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbChatroomEmotesResponse, DbChatroomUploadEmoteResponse, DbAuthorizeResponse, DbAccountsInfoResponse, DbAccountImageResponse, DbChatroomUploadImageResponse, ChatroomUploadImageResponse, AccountInfo, ChatroomEmotesResponse } from "../../client/client-server-common/common";
+import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbChatroomEmotesResponse, DbChatroomUploadEmoteResponse, DbAuthorizeResponse, DbAccountsInfoResponse, DbAccountImageResponse, DbChatroomUploadImageResponse, ChatroomUploadImageResponse, AccountInfo, ChatroomEmotesResponse, ChatroomEmote } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { securityModel } from "../../models/db/security/main";
 import { chatroomModel } from "../../models/db/chatroom/main";
@@ -9,6 +9,11 @@ import { accountModel } from "../../models/db/account/main";
 import { AUTH_TOKEN_NAME } from "../../client/client-server-common/common";
 
 const routes = new routeModel();
+
+interface UserLog {
+    accountid: number;
+    lastActive: Date;
+}
 
 /* routes */
 routes.addRoute("emote/upload", "/emote/upload");
@@ -78,38 +83,59 @@ router.post(routes.getRoute("attachment/upload"), (req: any, res: any) => {
 
 export default function registerChatHandlers(chatServer: any): void {
     const chatHandler = socketIO.listen(chatServer);
-    const usersActivityRefreshMins: number = 59;
-    const usersInChat: any[] = [];
+    const usersInChat: UserLog[] = [];
 
-    const getExpiresOnFromId = (accountId: number): Date => {
+    setInterval((): void => {
+        chatHandler.emit(CHATROOM_EVENTS.UpdateUsers);
+    }, 60 * 1000);
+
+    const getLastActiveById = (accountid: number): Date => {
         for (let i = 0; i < usersInChat.length; i++) {
-            if (usersInChat[i].accountid === accountId ) {
-                return usersInChat[i].expiresOn;
+            if (usersInChat[i].accountid === accountid ) {
+                return usersInChat[i].lastActive;
             }
         }
         return new Date();
     };
 
     const refreshUserActivity = (userAccountId: number, socket: any): void => {
-        const refreshedActivityDate: Date = new Date((new Date()).getTime() + usersActivityRefreshMins * 60000);
+        const currentTime: Date = new Date();
         if (usersInChat.length === 0) {
-            usersInChat.push({ accountid: userAccountId, expiresOn: refreshedActivityDate });
+            // insert (if empty)
+            usersInChat.push({ accountid: userAccountId, lastActive: currentTime });
             return;
         }
         for (let i = 0; i < usersInChat.length; i++) {
             if (usersInChat[i].accountid === userAccountId ) {
                 // update
-                usersInChat[i].expiresOn = refreshedActivityDate;
+                usersInChat[i].lastActive = currentTime;
                 break;
             }
             if (i === usersInChat.length - 1) {
-                // insert
-                usersInChat.push({ accountid: userAccountId, expiresOn: refreshedActivityDate });
+                // insert (if not empty)
+                usersInChat.push({ accountid: userAccountId, lastActive: currentTime });
                 break;
             }
         }
-        socket.broadcast.emit(CHATROOM_EVENTS.UpdateUsers);
+        chatHandler.emit(CHATROOM_EVENTS.UpdateUsers);
         return;
+    };
+
+    const encodeEmotes = (emotes: ChatroomEmote[], text: string): string => {
+        let encodedText: string = text;
+
+         emotes.forEach((chatroomEmote: ChatroomEmote) => {
+            const emoteLink: string = chatroomEmote.link;
+            const emoteName: string = `${chatroomEmote.prefix}${chatroomEmote.suffix}`;
+            let foundPos: number = encodedText.indexOf(emoteName);
+            while (foundPos !== -1) {
+                const replacementEncoding: string = `:::${emoteLink}:::`;
+                encodedText = encodedText.substring(0, foundPos) + replacementEncoding + encodedText.substring(foundPos + emoteName.length);
+                foundPos = encodedText.indexOf(emoteName);
+            }
+        });
+
+        return encodedText;
     };
 
     // authentication middleware
@@ -147,7 +173,14 @@ export default function registerChatHandlers(chatServer: any): void {
             const chatroomid: number = data.chatroomid;
             chatroomModel.getChatHistory(chatroomid)
                 .then((chats: ChatHistoryResponse) => {
-                    socket.emit(CHATROOM_EVENTS.MessageHistory, chats);
+                    chatroomModel.getEmotes()
+                    .then((response: DbChatroomEmotesResponse) => {
+                        const emotes: ChatroomEmote[] = response.emotes;
+                        for (let i = 0; i < chats.text.length; i++) {
+                            chats.text[i] = encodeEmotes(emotes, chats.text[i]);
+                        }
+                        socket.emit(CHATROOM_EVENTS.MessageHistory, chats);
+                    });
                 })
                 .catch((error: string) => {
                     console.log(`Error retrieving chat history: ${error}`);
@@ -170,11 +203,9 @@ export default function registerChatHandlers(chatServer: any): void {
                         const chatroomUsers: ChatroomUser[] = [];
                         dbUsers.accounts.forEach((element: AccountInfo) => {
                             const now: any = new Date();
-                            const userExpiresOn: any = getExpiresOnFromId(element.accountid);
-                            const minutesDiff: number = Math.round((((userExpiresOn - now) % 86400000) % 3600000) / 60000);
-                            const lastActiveMinutesAgo: number = usersActivityRefreshMins - minutesDiff;
-                            const lastActive: number = (lastActiveMinutesAgo === usersActivityRefreshMins) ? -1 : lastActiveMinutesAgo;
-                            const chatroomUser: ChatroomUser = { username: element.username, steam_url: element.steam_url, discord_url: element.discord_url, twitch_url: element.twitch_url, image: element.image, last_active: lastActive };
+                            const lastActive: Date = getLastActiveById(element.accountid);
+                            const lastActiveMinsAgo: number = Math.abs(Math.round(((lastActive.getTime() - now.getTime()) / 1000 / 60)));
+                            const chatroomUser: ChatroomUser = { username: element.username, steam_url: element.steam_url, discord_url: element.discord_url, twitch_url: element.twitch_url, image: element.image, last_active: lastActiveMinsAgo };
                             chatroomUsers.push(chatroomUser);
                         });
                         socket.emit(CHATROOM_EVENTS.GetAllUsers, chatroomUsers);
@@ -195,11 +226,9 @@ export default function registerChatHandlers(chatServer: any): void {
                     const chatroomUsers: ChatroomUser[] = [];
                     dbUsers.accounts.forEach((element: AccountInfo) => {
                         const now: any = new Date();
-                        const userExpiresOn: any = getExpiresOnFromId(element.accountid);
-                        const minutesDiff: number = Math.round((((userExpiresOn - now) % 86400000) % 3600000) / 60000);
-                        const lastActiveMinutesAgo: number = usersActivityRefreshMins - minutesDiff;
-                        const lastActive: number = (lastActiveMinutesAgo === usersActivityRefreshMins) ? -1 : lastActiveMinutesAgo;
-                        const chatroomUser: ChatroomUser = { username: element.username, steam_url: element.steam_url, discord_url: element.discord_url, twitch_url: element.twitch_url, image: element.image, last_active: lastActive };
+                        const lastActive: Date = getLastActiveById(element.accountid);
+                        const lastActiveMinsAgo: number = Math.abs(Math.round(((lastActive.getTime() - now.getTime()) / 1000 / 60)));
+                        const chatroomUser: ChatroomUser = { username: element.username, steam_url: element.steam_url, discord_url: element.discord_url, twitch_url: element.twitch_url, image: element.image, last_active: lastActiveMinsAgo };
                         chatroomUsers.push(chatroomUser);
                     });
                     socket.emit(CHATROOM_EVENTS.Users, chatroomUsers);
@@ -222,6 +251,32 @@ export default function registerChatHandlers(chatServer: any): void {
 
             const loggedIn: boolean = socket.handshake.headers.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
 
+            const sendMessage = (): void => {
+                accountModel.getAccountImage(accountid)
+                .then((response: DbAccountImageResponse) => {
+                    date = Date.now();
+                    text = data.text;
+                    image = response.link;
+                    attachment = data.attachment;
+                    chatroomid = data.chatroomid;
+                    return chatroomModel.addChatMessage(username, date, text, image, attachment, chatroomid);
+                })
+                .then(() => {
+                    return chatroomModel.getEmotes();
+                })
+                .then((response: DbChatroomEmotesResponse) => {
+                    const emotes: ChatroomEmote[] = response.emotes;
+                    const encodedText: string = encodeEmotes(emotes, text);
+                    const newChat: SingleChatHistory = { name: username, date: new Date(date), text: encodedText, image: image, attachment: attachment, chatroomid: chatroomid };
+                    socket.emit(CHATROOM_EVENTS.Message, newChat);
+                    socket.broadcast.emit(CHATROOM_EVENTS.Message, newChat);
+                })
+                .catch((error: string) => {
+                    console.log(`Chat error trying to post message: ${error}`);
+                    socket.disconnect();
+                });
+            };
+
             // get accountid and username for posting
             if (loggedIn) {
 
@@ -234,23 +289,10 @@ export default function registerChatHandlers(chatServer: any): void {
                 })
                 .then((response: GenericResponseModel) => {
                     username = response.data.username;
-                    return accountModel.getAccountImage(accountid);
-                })
-                .then((response: DbAccountImageResponse) => {
-                    date = Date.now();
-                    text = data.text;
-                    image = response.link;
-                    attachment = data.attachment;
-                    chatroomid = data.chatroomid;
-                    return chatroomModel.addChatMessage(username, date, text, image, attachment, chatroomid);
-                })
-                .then(() => {
-                    const newChat: SingleChatHistory = { name: username, date: new Date(date), text: text, image: image, attachment: attachment, chatroomid: chatroomid };
-                    socket.emit(CHATROOM_EVENTS.Message, newChat);
-                    socket.broadcast.emit(CHATROOM_EVENTS.Message, newChat);
+                    sendMessage();
                 })
                 .catch((error: string) => {
-                    console.log(`Chat error trying to post message: ${error}`);
+                    console.log(`Chat error trying to get username: ${error}`);
                     socket.disconnect();
                 });
 
@@ -259,28 +301,16 @@ export default function registerChatHandlers(chatServer: any): void {
 
                 // get accountid of anonymous user
                 accountModel.getAccountId(username)
-                    .then((response: GenericResponseModel) => {
-                        accountid = response.data.accountid;
-                        refreshUserActivity(accountid, socket);
-                        return accountModel.getAccountImage(accountid);
-                    })
-                    .then((response: DbAccountImageResponse) => {
-                        date = Date.now();
-                        text = data.text;
-                        image = response.link;
-                        attachment = data.attachment;
-                        chatroomid = data.chatroomid;
-                        return chatroomModel.addChatMessage(username, date, text, image, attachment, chatroomid);
-                    })
-                    .then(() => {
-                        const newChat: SingleChatHistory = { name: username, date: new Date(date), text: text, image: image, attachment: attachment, chatroomid: chatroomid };
-                        socket.emit(CHATROOM_EVENTS.Message, newChat);
-                        socket.broadcast.emit(CHATROOM_EVENTS.Message, newChat);
-                    })
-                    .catch((error: string) => {
-                        console.log(`Chat error trying to post message: ${error}`);
-                        socket.disconnect();
-                    });
+                .then((response: GenericResponseModel) => {
+                    accountid = response.data.accountid;
+                    refreshUserActivity(accountid, socket);
+                    sendMessage();
+                })
+                .catch((error: string) => {
+                    console.log(`Chat error trying to get username: ${error}`);
+                    socket.disconnect();
+                });
+
             }
 
         });

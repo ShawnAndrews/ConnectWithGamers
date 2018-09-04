@@ -191,10 +191,18 @@
                 .chatroom-message-text {
                     position: relative;
                     margin-top: 40px;
+
+                    .chatroom-message-attachment {
+                        max-width: 100%;
+                    }
                 }
                 
                 .chatroom-message-text-repeat {
                     position: relative;
+                    
+                    .chatroom-message-attachment {
+                        max-width: 100%;
+                    }
                 }
 
                 .chatroom-message-username {
@@ -419,18 +427,8 @@
             height: 100% !important;
             top: -5px;
 
-            > div {
-                * {
-                    border-bottom: 2px solid rgba(255,255,255,0.8)!important;
-                }
-
-                *:before {
-                    border-bottom: 2px solid rgba(255,255,255,0.8)!important;
-                }
-
-                *:after {
-                    border-bottom: 2px solid rgba(255,255,255,0.8)!important;
-                }
+            > div::after, div::before {
+                border-bottom: 2px solid rgba(255,255,255,0.8)!important;
             }
             
             input {

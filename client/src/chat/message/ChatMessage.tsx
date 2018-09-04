@@ -23,13 +23,34 @@ const ChatMessage: React.SFC<IChatMessageProps> = (props: IChatMessageProps) => 
     const formattedTime = new Date(props.date).toLocaleTimeString();
     const formattedDateTime: string = `${formattedDate} ${formattedTime}`;
 
+    const decodeEmotes = (text: string): React.ReactNode[] => {
+        const result: React.ReactNode[] = [];
+        const prefix: string = ":::";
+        const suffix: string = ":::";
+        let foundPrefix: number = text.indexOf(prefix);
+        while (foundPrefix !== -1) {
+            const spanText: string = text.substring(0, foundPrefix);
+            result.push(<span>{spanText}</span>);
+
+            text = text.substring(foundPrefix + prefix.length);
+            const foundSuffix: number = text.indexOf(suffix);
+            const emoteLink: string = text.substring(0, foundSuffix);
+            result.push(<img src={emoteLink} width="28" height="28" />);
+
+            text = text.substring(foundSuffix + suffix.length);
+            foundPrefix = text.indexOf(prefix);
+        }
+        result.push(<span>{text}</span>);
+        return result;
+    };
+
     return (
         <div className={`chatroom-message-left ${props.timeVisible ? "time-visible" : "time-invisible"} fadeIn`} onClick={props.changeTimeVisibility}>
             <div className="chatroom-message-text-container">
                 <div className={`chatroom-message-text${props.repeat ? "-repeat" : ""}`}>
-                    {props.text}
+                    {decodeEmotes(props.text)}
                     {props.attachment &&
-                        <img src={props.attachment} alt="Attachment" height="100%" width="100%"/>}
+                        <img src={props.attachment} alt="Attachment" className="chatroom-message-attachment"/>}
                 </div>
                 {!props.repeat && 
                     <div className="chatroom-message-metadata">
