@@ -23,7 +23,8 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
 
     componentWillReceiveProps(newProps: ITopnavContainerProps): void {
         const usersPageActive: boolean = (newProps.location.pathname === '/chat/users/');
-        this.setState({ title: this.getPathTitle(newProps), usersPageActive: usersPageActive });
+        const cogPageActive: boolean = (newProps.location.pathname === '/chat/settings/');
+        this.setState({ title: this.getPathTitle(newProps), usersPageActive: usersPageActive, cogPageActive: cogPageActive });
     }
 
     getPathTitle(props: ITopnavContainerProps): string {

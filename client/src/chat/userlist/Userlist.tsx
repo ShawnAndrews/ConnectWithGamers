@@ -12,8 +12,18 @@ interface IUserlistProps {
 const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
 
     const lastActive = (minutesLastActive: number): string => {
+        const ONE_HOUR_IN_MINS: number = 60;
+        const ONE_DAY_IN_MINS: number = 1440;
         if (minutesLastActive !== -1) {
-            return `Last active ${minutesLastActive === 0 ? `seconds ago` : `${minutesLastActive} minutes ago`}`;
+            if (minutesLastActive === 0) {
+                return `Active seconds ago`;
+            } else if (minutesLastActive <= ONE_HOUR_IN_MINS) {
+                return `Active ${minutesLastActive} mins ago`;
+            } else if (minutesLastActive <= ONE_DAY_IN_MINS) {
+                return `Active ${Math.floor(minutesLastActive / ONE_HOUR_IN_MINS)}h ${minutesLastActive % ONE_HOUR_IN_MINS}m ago`;
+            } else {
+                return `Active ${Math.floor(minutesLastActive / ONE_DAY_IN_MINS)} days ago`;
+            }
         } else {
             return `Offline`;
         }

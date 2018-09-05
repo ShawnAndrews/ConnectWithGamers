@@ -1,8 +1,6 @@
 const popupS = require('popups');
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import * as AccountService from '../../service/account/main';
-import { EmailVerifyResponse } from '../../../../client/client-server-common/common';
 import ChatMessage from './chatmessage';
 import { MessageSide } from '../room/chatroom';
 
