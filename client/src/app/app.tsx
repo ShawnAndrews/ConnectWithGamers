@@ -19,7 +19,12 @@ export enum NAV_PAGE {
 
 interface IAppProps extends RouteComponentProps<any> { }
 
-class App extends React.Component<IAppProps, any> {
+interface IAppState {
+    readonly authenticatedRoutes: string[];
+    readonly unauthenticatedRedirect: string;
+}
+
+class App extends React.Component<IAppProps, IAppState> {
 
     constructor(props: IAppProps) {
         super(props);
@@ -30,40 +35,32 @@ class App extends React.Component<IAppProps, any> {
         };
     }
 
-    get isMobileBrowser(): boolean {
+    get isMobileRes(): boolean {
         return (window.innerWidth <= 800 && window.innerHeight <= 1000);
     }
-
-    get renderUnauthenticatedRedirects(): JSX.Element[] {
-        if (!loggedIn()) {
-            return (
-                this.state.authenticatedRoutes
-                    .map((x: string) => 
-                            (
-                            <Route
-                                key={x} 
-                                exact={true}
-                                path={x} 
-                                render={() => (<Redirect to={this.state.unauthenticatedRedirect}/>)}
-                            />
-                        )
-                    )
-            );
-        }
-        return [];
-    }
-
     render() {
+        const AuthorizedRoutesRedirect: JSX.Element[] = 
+            this.state.authenticatedRoutes
+                .filter(() => { return !loggedIn(); })
+                .map((x: string) => 
+                        (
+                        <Route
+                            key={x} 
+                            exact={true}
+                            path={x} 
+                            render={() => (<Redirect to={this.state.unauthenticatedRedirect}/>)}
+                        />
+                    ));
 
         return (
             <div className="inherit">
                 <Background/>
-                {this.isMobileBrowser 
+                {this.isMobileRes 
                     ?
                     <div className="inherit">
                         <NavbarContainer/>
                         <Switch>
-                            {this.renderUnauthenticatedRedirects}
+                            {AuthorizedRoutesRedirect}
                             <Route path="/account" component={Account}/>
                             <Route path="/menu" component={Menu}/>
                             <Route path="/chat" component={ChatroomMenuContainer}/>

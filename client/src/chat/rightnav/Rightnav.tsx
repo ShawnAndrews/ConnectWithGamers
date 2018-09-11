@@ -2,13 +2,13 @@ import * as React from 'react';
 import { ChatroomUser } from '../../../client-server-common/common';
 import Avatar from '@material-ui/core/Avatar';
 
-interface IUsersnavProps {
+interface IRightnavProps {
     usersNavRef: React.RefObject<HTMLDivElement>;
     users: ChatroomUser[];
     goToRedirect: (URL: string) => void;
 }
 
-const Usersnav: React.SFC<IUsersnavProps> = (props: IUsersnavProps) => {
+const Rightnav: React.SFC<IRightnavProps> = (props: IRightnavProps) => {
     
     const lastActive = (minutesLastActive: number): string => {
         const ONE_HOUR_IN_MINS: number = 60;
@@ -55,4 +55,4 @@ const Usersnav: React.SFC<IUsersnavProps> = (props: IUsersnavProps) => {
 
 }; 
 
-export default Usersnav;
+export default Rightnav;

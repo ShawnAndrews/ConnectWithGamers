@@ -1,7 +1,6 @@
 const popupS = require('popups');
 import * as React from 'react';
 import * as AccountService from '../../../service/account/main';
-import { withRouter } from 'react-router-dom';
 import SteamList from './SteamList';
 import { SteamIdResponse, SteamFriendsResponse, SteamFriend } from '../../../../../client/client-server-common/common';
 
@@ -10,11 +9,27 @@ export interface SteamFriendOption {
     label: string;
 }
 
-class SteamListContainer extends React.Component<any, any> {
+interface IThumbnailGameContainerProps { }
+
+interface SteamListContainerState {
+    isLoading: boolean;
+    steamId: number;
+    onlineFriends: SteamFriend[];
+    offlineFriends: SteamFriend[];
+    filter: string;
+}
+
+class SteamListContainer extends React.Component<IThumbnailGameContainerProps, SteamListContainerState> {
 
     constructor(props: any) {
         super(props);
-        this.state = { isLoading: true };
+        this.state = { 
+            isLoading: true,
+            steamId: undefined,
+            onlineFriends: undefined,
+            offlineFriends: undefined,
+            filter: undefined
+        };
         this.loadAccountSteamId = this.loadAccountSteamId.bind(this);
         this.goToSteamProfile = this.goToSteamProfile.bind(this);
         this.handleRawInputChange = this.handleRawInputChange.bind(this);
@@ -57,7 +72,9 @@ class SteamListContainer extends React.Component<any, any> {
     }
 
     handleRawInputChange(event: any): void {
-        this.setState({ filter: event.target.value !== "" ? event.target.value : undefined });
+        this.setState({ 
+            filter: event.target.value !== "" ? event.target.value : undefined 
+        });
     }
 
     render() {

@@ -1,8 +1,5 @@
-const popupS = require('popups');
 import * as React from 'react';
-import * as IGDBService from '../../service/igdb/main';
-import Select from 'react-select';
-import { GenericResponseModel, DbPlatformGamesResponse, PlatformGame, PlatformGamesResponse, GenreGamesResponse, GenreGame } from '../../../../client/client-server-common/common';
+import { GenreGame } from '../../../../client/client-server-common/common';
 import ThumbnailGameContainer from '../game/ThumbnailGameContainer';
 import Spinner from '../../spinner/main';
 

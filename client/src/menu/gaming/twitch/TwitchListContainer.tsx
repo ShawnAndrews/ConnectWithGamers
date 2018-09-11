@@ -12,11 +12,31 @@ export interface TwitchUserOption {
 
 interface ITwitchListContainerProps extends RouteComponentProps<any> { } 
 
-class TwitchListContainer extends React.Component<ITwitchListContainerProps, any> {
+interface ITwitchListContainerState {
+    isLoading: boolean;
+    twitchId: number;
+    liveFollowers: TwitchUser[];
+    showVideo: boolean[];
+    showChat: boolean[];
+    showBoth: boolean[];
+    expanded: boolean[];
+    filter: string;
+} 
+
+class TwitchListContainer extends React.Component<ITwitchListContainerProps, ITwitchListContainerState> {
 
     constructor(props: ITwitchListContainerProps) {
         super(props);
-        this.state = { isLoading: true };
+        this.state = { 
+            isLoading: true,
+            twitchId: undefined,
+            liveFollowers: undefined,
+            showVideo: undefined,
+            showChat: undefined,
+            showBoth: undefined,
+            expanded: undefined,
+            filter: undefined
+        };
         this.goToTwitchProfile = this.goToTwitchProfile.bind(this);
         this.handleRawInputChange = this.handleRawInputChange.bind(this);
         this.onVideoClick = this.onVideoClick.bind(this);
@@ -50,7 +70,7 @@ class TwitchListContainer extends React.Component<ITwitchListContainerProps, any
                             expanded.push(false);
                         });
                     }
-                    this.setState({ 
+                    this.setState({
                         isLoading: false,
                         twitchId: twitchId,
                         liveFollowers: liveFollowers,

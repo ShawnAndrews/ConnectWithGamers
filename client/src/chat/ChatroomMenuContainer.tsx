@@ -1,6 +1,8 @@
-const popupS = require('popups');
+import * as Redux from 'redux';
 import * as React from 'react';
 import ChatroomMenu from './ChatroomMenu';
+import { connect } from 'react-redux';
+import { swipeLeft, swipeRight } from '../actions/main';
 
 export enum SwipeState {
     'Left',
@@ -8,41 +10,43 @@ export enum SwipeState {
     'Right'
 }
 
-class ChatroomMenuContainer extends React.Component<any, any> {
+interface IChatroomMenuContainerProps { }
 
-    constructor(props: any) {
+interface IChatroomMenuContainerState {
+    swipeLeft: () => void;
+    swipeRight: () => void;
+}
+
+interface ReduxStateProps {
+
+}
+
+interface ReduxDispatchProps {
+    swipeLeft: () => void;
+    swipeRight: () => void;
+}
+
+type Props = IChatroomMenuContainerProps & ReduxStateProps & ReduxDispatchProps;
+
+class ChatroomMenuContainer extends React.Component<Props, IChatroomMenuContainerState> {
+
+    constructor(props: Props) {
         super(props);
         this.onSwipedLeft = this.onSwipedLeft.bind(this);
         this.onSwipedRight = this.onSwipedRight.bind(this);
 
-        const sidebarWidth: number = 50;
-        const usersbarWidth: number = 200;
-
-        this.state = { swipeState: SwipeState.Middle, sidebarWidth: sidebarWidth, usersbarWidth: usersbarWidth };
+        this.state = { 
+            swipeLeft: props.swipeLeft, 
+            swipeRight: props.swipeRight 
+        };
     }
 
     onSwipedLeft(event: React.TouchEvent, delta: number, isFlick: boolean): void {
-        let newSwipeState: SwipeState = this.state.swipeState;
-
-        if (this.state.swipeState === SwipeState.Left) {
-            newSwipeState = SwipeState.Middle;
-        } else if (this.state.swipeState === SwipeState.Middle) {
-            newSwipeState = SwipeState.Right;
-        }
-
-        this.setState({ swipeState: newSwipeState });
+        this.state.swipeLeft();
     }
 
     onSwipedRight(event: React.TouchEvent, delta: number, isFlick: boolean): void {
-        let newSwipeState: SwipeState = this.state.swipeState;
-
-        if (this.state.swipeState === SwipeState.Right) {
-            newSwipeState = SwipeState.Middle;
-        } else if (this.state.swipeState === SwipeState.Middle) {
-            newSwipeState = SwipeState.Left;
-        }
-
-        this.setState({ swipeState: newSwipeState });
+        this.state.swipeRight();
     }
 
     render() {
@@ -50,13 +54,20 @@ class ChatroomMenuContainer extends React.Component<any, any> {
             <ChatroomMenu
                 onSwipedLeft={this.onSwipedLeft}
                 onSwipedRight={this.onSwipedRight}
-                swipeState={this.state.swipeState}
-                sidebarWidth={this.state.sidebarWidth}
-                usersbarWidth={this.state.usersbarWidth}
             />
         );
     }
 
 }
 
-export default ChatroomMenuContainer;
+const mapStateToProps = (state: any, ownProps: IChatroomMenuContainerProps): ReduxStateProps => ({
+    
+});
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: IChatroomMenuContainerProps): ReduxDispatchProps => ({
+    swipeLeft: () => { dispatch(swipeLeft()); },
+    swipeRight: () => { dispatch(swipeRight()); }
+});
+
+export default connect<ReduxStateProps, ReduxDispatchProps, IChatroomMenuContainerProps>
+    (mapStateToProps, mapDispatchToProps)(ChatroomMenuContainer);

@@ -3,11 +3,15 @@ import Topnav from './Topnav';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { CHATROOMS, ChatroomInfo } from '../../../client-server-common/common';
 
-interface ITopnavContainerProps extends RouteComponentProps<any> {
-    
+interface ITopnavContainerProps extends RouteComponentProps<any> { }
+
+interface ITopnavContainerState {
+    title: string;
+    usersPageActive: boolean;
+    cogPageActive: boolean;
 }
 
-class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
+class TopnavContainer extends React.Component<ITopnavContainerProps, ITopnavContainerState> {
 
     constructor(props: ITopnavContainerProps) {
         super(props);
@@ -18,7 +22,11 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
         const usersPageActive: boolean = (props.location.pathname.startsWith('/chat/users/'));
         const cogPageActive: boolean = (props.location.pathname === '/chat/settings/');
 
-        this.state = { title: this.getPathTitle(props), usersPageActive: usersPageActive, cogPageActive: cogPageActive };
+        this.state = { 
+            title: this.getPathTitle(props), 
+            usersPageActive: usersPageActive, 
+            cogPageActive: cogPageActive 
+        };
     }
 
     componentWillReceiveProps(newProps: ITopnavContainerProps): void {

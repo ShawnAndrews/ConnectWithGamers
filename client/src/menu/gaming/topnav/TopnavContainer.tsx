@@ -10,13 +10,21 @@ export enum GAMINGNAV_PAGE {
 
 interface ITopnavContainerProps extends RouteComponentProps<any> { } 
 
-class TopnavContainer extends React.Component<ITopnavContainerProps, any> {
+interface ITopnavContainerState {
+    index: number;
+} 
+
+class TopnavContainer extends React.Component<ITopnavContainerProps, ITopnavContainerState> {
 
     constructor(props: ITopnavContainerProps) {
         super(props);
         this.onTabChange = this.onTabChange.bind(this);
         this.updateNavSelection = this.updateNavSelection.bind(this);
         this.updateNavSelection(this.props.history.location.pathname);
+
+        this.state = {
+            index: undefined
+        };
     }
 
     componentWillReceiveProps(newProps: ITopnavContainerProps) {

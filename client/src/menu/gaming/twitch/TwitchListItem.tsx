@@ -1,10 +1,8 @@
 import * as React from 'react';
-import Spinner from '../../../spinner/main';
-import { TwitchUser, TwitchEmote } from '../../../../client-server-common/common';
+import { TwitchEmote } from '../../../../client-server-common/common';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import VerifiedIcon from './VerifiedIcon';
-import Truncate from 'react-truncate';
 
 interface ITwitchListItemProps {
     index: number;

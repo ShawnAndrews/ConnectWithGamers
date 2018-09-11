@@ -1,8 +1,5 @@
-const popupS = require('popups');
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
 import Spinner from '../../spinner/main';
-import * as AccountService from '../../service/account/main';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';

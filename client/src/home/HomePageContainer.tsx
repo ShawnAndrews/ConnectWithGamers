@@ -4,7 +4,9 @@ import HomePage from './HomePage';
 
 interface IHomePageContainerProps extends RouteComponentProps<any> { } 
 
-class HomePageContainer extends React.Component<IHomePageContainerProps, any> {
+interface IHomePageContainerState { } 
+
+class HomePageContainer extends React.Component<IHomePageContainerProps, IHomePageContainerState> {
 
     constructor(props: IHomePageContainerProps) {
         super(props);

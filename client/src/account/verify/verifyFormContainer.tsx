@@ -7,14 +7,22 @@ import { EmailVerifyResponse } from '../../../../client/client-server-common/com
 
 interface IVerifyFormContainerProps extends RouteComponentProps<any> { }
 
-class VerifyFormContainer extends React.Component<IVerifyFormContainerProps, any> {
+interface IVerifyFormContainerState {
+    isLoading: boolean;
+    verificationSuccessful: boolean;
+}
+
+class VerifyFormContainer extends React.Component<IVerifyFormContainerProps, IVerifyFormContainerState> {
 
     constructor(props: IVerifyFormContainerProps) {
         super(props);
         this.loadSettings = this.loadSettings.bind(this);
         this.onVerifyEmailClick = this.onVerifyEmailClick.bind(this);
 
-        this.state = { isLoading: true };
+        this.state = {
+            isLoading: true,
+            verificationSuccessful: undefined
+        };
         this.loadSettings();
     }
 
@@ -22,7 +30,7 @@ class VerifyFormContainer extends React.Component<IVerifyFormContainerProps, any
         const verificationCode: string = this.props.match.params.id;
         AccountService.httpVerifyEmail(verificationCode)
             .then( (response: EmailVerifyResponse) => {
-                const verificationSuccessful = response.data.verificationSuccessful;
+                const verificationSuccessful: boolean = response.data.verificationSuccessful;
                 this.setState({ 
                     isLoading: false, 
                     verificationSuccessful: verificationSuccessful});

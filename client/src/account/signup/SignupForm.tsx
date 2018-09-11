@@ -1,9 +1,5 @@
-const popupS = require('popups');
 import * as React from 'react';
-import { withRouter } from 'react-router-dom';
 import Spinner from '../../spinner/main';
-import FooterIcons from '../footer/footerIcons';
-import Switch from '@material-ui/core/Switch';
 import Button from '@material-ui/core/Button';
 
 interface ISignupFormProps {

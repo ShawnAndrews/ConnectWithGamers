@@ -1,6 +1,4 @@
 import * as React from 'react';
-import Spinner from '../../../spinner/main';
-import { SteamFriend } from '../../../../client-server-common/common';
 
 interface ISteamListItemProps {
     name: string;

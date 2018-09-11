@@ -2,15 +2,24 @@ const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
 import { withRouter } from 'react-router-dom';
-import ThumbnailGameContainer from '../game/ThumbnailGameContainer';
 import { RecentGameResponse, RecentGamesResponse } from '../../../../client/client-server-common/common';
 import RecentGameList from './RecentGameList';
 
-class RecentGameListContainer extends React.Component<any, any> {
+interface IRecentGameListContainerState {
+    isLoading: boolean;
+    recentGames: RecentGameResponse[];
+    uniqueReleaseDates: string[];
+}
+
+class RecentGameListContainer extends React.Component<any, IRecentGameListContainerState> {
 
     constructor(props: any) {
         super(props);
-        this.state = { isLoading: true };
+        this.state = { 
+            isLoading: true,
+            recentGames: undefined,
+            uniqueReleaseDates: undefined
+        };
         this.loadRecentlyReleasedGames = this.loadRecentlyReleasedGames.bind(this);
         this.loadRecentlyReleasedGames();
     }

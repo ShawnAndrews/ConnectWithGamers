@@ -7,7 +7,15 @@ import * as AccountService from '../../service/account/main';
 
 interface ILoginFormContainerProps extends RouteComponentProps<any> { }
 
-class LoginFormContainer extends React.Component<ILoginFormContainerProps, any> {
+interface ILoginFormContainerState {
+    username: string;
+    password: string;
+    email: string;
+    rememberme: boolean;
+    isLoading: boolean;
+}
+
+class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILoginFormContainerState> {
 
     constructor(props: ILoginFormContainerProps) {
         super(props);
@@ -20,6 +28,7 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, any> 
         this.state = {
             username: '',
             password: '',
+            email: undefined,
             rememberme: false,
             isLoading: false
         };

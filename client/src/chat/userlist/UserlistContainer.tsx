@@ -1,16 +1,19 @@
-const popupS = require('popups');
 import * as React from 'react';
 import Userlist from "./userlist";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as io from 'socket.io-client';
 import { ChatroomUser, CHATROOM_EVENTS, CHAT_SERVER_PORT } from '../../../../client/client-server-common/common';
-import { SwipeState } from '../ChatroomMenuContainer';
 
-interface IUserlistContainerProps extends RouteComponentProps<any> {
+interface IUserlistContainerProps extends RouteComponentProps<any> { }
 
+interface IUserlistContainerState {
+    socket: SocketIOClient.Socket;
+    userlist: ChatroomUser[];
+    paramUser: string;
+    searched: boolean;
 }
 
-class UserlistContainer extends React.Component<IUserlistContainerProps, any> {
+class UserlistContainer extends React.Component<IUserlistContainerProps, IUserlistContainerState> {
 
     constructor(props: IUserlistContainerProps) {
         super(props);
@@ -19,7 +22,12 @@ class UserlistContainer extends React.Component<IUserlistContainerProps, any> {
 
         const paramUser: string = this.props.match.params.user;
         const socket = io(`${window.location.hostname}:${CHAT_SERVER_PORT}`);
-        this.state = { socket: socket, userlist: [], paramUser: paramUser, searched: paramUser ? true : false };
+        this.state = { 
+            socket: socket, 
+            userlist: [], 
+            paramUser: paramUser, 
+            searched: paramUser ? true : false 
+        };
         
         socket.on(CHATROOM_EVENTS.Users, this.onUsers);
     }

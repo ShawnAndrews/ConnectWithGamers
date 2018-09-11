@@ -7,7 +7,27 @@ import * as AccountService from '../../service/account/main';
 
 interface ISettingsFormContainerProps extends RouteComponentProps<any> { }
 
-class SettingsFormContainer extends React.Component<ISettingsFormContainerProps, any> {
+interface ISettingsFormContainerState {
+    showLinks: boolean;
+    isLoading: boolean;
+    username: string;
+    email: string;
+    password: string;
+    discord: string;
+    steam: string;
+    twitch: string;
+    newUsername: string;
+    newEmail: string;
+    newPassword: string;
+    newDiscord: string;
+    newSteam: string;
+    newTwitch: string;
+    loadingMsg: string;
+    image: string;
+    emailVerified: boolean;
+}
+
+class SettingsFormContainer extends React.Component<ISettingsFormContainerProps, ISettingsFormContainerState> {
 
     constructor(props: ISettingsFormContainerProps) {
         super(props);
@@ -28,7 +48,21 @@ class SettingsFormContainer extends React.Component<ISettingsFormContainerProps,
         this.state = {
             showLinks: false,
             isLoading: true,
-            loadingMsg: `Loading account settings...`
+            username: undefined,
+            email: undefined,
+            password: undefined,
+            discord: undefined,
+            steam: undefined,
+            twitch: undefined,
+            newUsername: undefined,
+            newEmail: undefined,
+            newPassword: undefined,
+            newDiscord: undefined,
+            newSteam: undefined,
+            newTwitch: undefined,
+            loadingMsg: `Loading account settings...`,
+            image: undefined,
+            emailVerified: undefined
         };
         this.loadSettings();
     }

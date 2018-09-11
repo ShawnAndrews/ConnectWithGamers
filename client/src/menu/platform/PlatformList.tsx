@@ -1,6 +1,4 @@
-const popupS = require('popups');
 import * as React from 'react';
-import Select from 'react-select';
 import ThumbnailGameContainer from '../game/ThumbnailGameContainer';
 import Spinner from '../../spinner/main';
 import { PlatformGame } from '../../../../client/client-server-common/common';

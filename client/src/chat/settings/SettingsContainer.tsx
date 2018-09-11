@@ -6,11 +6,20 @@ import * as AccountService from '../../service/account/main';
 import * as ChatroomService from '../../service/chatroom/main';
 import { GenericResponseModel, ChatroomEmotesResponse, ChatroomEmote, AUTH_TOKEN_NAME } from '../../../client-server-common/common';
 
-interface ISettingsContainerProps extends RouteComponentProps<any> {
+interface ISettingsContainerProps extends RouteComponentProps<any> { }
 
+interface ISettingsContainerState {
+    uploadedImage: string;
+    isLoading: boolean;
+    isLoadingCreate: boolean;
+    attachmentLoading: boolean;
+    emotePrefix: string;
+    emoteSuffix: string;
+    emotes: ChatroomEmote[];
+    emoteCompletionScreen: boolean;
 }
 
-class SettingsContainer extends React.Component<ISettingsContainerProps, any> {
+class SettingsContainer extends React.Component<ISettingsContainerProps, ISettingsContainerState> {
 
     constructor(props: ISettingsContainerProps) {
         super(props);
@@ -20,7 +29,16 @@ class SettingsContainer extends React.Component<ISettingsContainerProps, any> {
         this.onClickCreateEmote = this.onClickCreateEmote.bind(this);
         this.onClickCreateBack = this.onClickCreateBack.bind(this);
 
-        this.state = { uploadedImage: undefined, isLoading: true, emotePrefix: "anon", emoteSuffix: "" };
+        this.state = { 
+            uploadedImage: undefined, 
+            isLoading: true, 
+            isLoadingCreate: undefined,
+            attachmentLoading: undefined,
+            emotePrefix: "anon", 
+            emoteSuffix: "",
+            emotes: undefined,
+            emoteCompletionScreen: undefined
+        };
     }
 
     componentDidMount(): void {

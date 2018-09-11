@@ -1,4 +1,3 @@
-const popupS = require('popups');
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import MenuList from './MenuList';
@@ -12,7 +11,11 @@ export interface IMenuItem {
 
 interface IMenuListContainerProps extends RouteComponentProps<any> { } 
 
-class MenuListContainer extends React.Component<IMenuListContainerProps, any> {
+interface IMenuListContainerState {
+    menuItems: IMenuItem[];
+}
+
+class MenuListContainer extends React.Component<IMenuListContainerProps, IMenuListContainerState> {
 
     constructor(props: IMenuListContainerProps) {
         super(props);
@@ -87,7 +90,7 @@ class MenuListContainer extends React.Component<IMenuListContainerProps, any> {
             subMenuItems: null
         });
 
-        this.state = {menuItems: menuItems};
+        this.state = { menuItems: menuItems };
     }
 
     goToRedirect(URL: string): void {

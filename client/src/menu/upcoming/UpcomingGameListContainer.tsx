@@ -7,11 +7,21 @@ import { UpcomingGameResponse, UpcomingGamesResponse } from '../../../../client/
 
 interface IUpcomingGameListContainerProps extends RouteComponentProps<any> { }
 
-class UpcomingGameListContainer extends React.Component<IUpcomingGameListContainerProps, any> {
+interface IUpcomingGameListContainerState {
+    isLoading: boolean;
+    upcomingGames: UpcomingGameResponse[];
+    uniqueReleaseDates: string[];
+}
+
+class UpcomingGameListContainer extends React.Component<IUpcomingGameListContainerProps, IUpcomingGameListContainerState> {
 
     constructor(props: IUpcomingGameListContainerProps) {
         super(props);
-        this.state = { isLoading: true };
+        this.state = { 
+            isLoading: true,
+            upcomingGames: undefined,
+            uniqueReleaseDates: undefined
+        };
         this.loadUpcomingGames = this.loadUpcomingGames.bind(this);
         this.loadUpcomingGames();
     }

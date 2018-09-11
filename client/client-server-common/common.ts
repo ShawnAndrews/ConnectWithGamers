@@ -341,7 +341,7 @@ export interface GameResponse {
     steam_url?: string;
     cover?: string;
     summary?: string;
-    genre_ids?: number;
+    genre_ids?: number[];
     genres?: string[];
     platform_ids?: number[];
     platforms?: string[];

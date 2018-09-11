@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GenericResponseModel, ChatroomUploadImageResponse, ChatroomEmotesResponse } from '../../../../client/client-server-common/common';
+import { ChatroomUploadImageResponse, ChatroomEmotesResponse } from '../../../../client/client-server-common/common';
 
 /**
  * HTTP request to get all chatroom emotes.

@@ -3,17 +3,31 @@ import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Game from './Game';
-import { SingleGameResponse, SteamAPIReview, GameResponse } from '../../../../../client/client-server-common/common';
+import { SingleGameResponse, GameResponse } from '../../../../../client/client-server-common/common';
 
 interface IGameContainerProps extends RouteComponentProps<any> {
     gameId: string;
 }
 
-class GameContainer extends React.Component<IGameContainerProps, any> {
+interface IGameContainerState {
+    isLoading: boolean;
+    game: GameResponse;
+    summaryExpanded: boolean;
+    reviewsExpanded: boolean;
+    genre_ids: number[];
+}
+
+class GameContainer extends React.Component<IGameContainerProps, IGameContainerState> {
 
     constructor(props: IGameContainerProps) {
         super(props);
-        this.state = {};
+        this.state = {
+            isLoading: undefined,
+            game: undefined,
+            summaryExpanded: undefined,
+            reviewsExpanded: undefined,
+            genre_ids: undefined
+        };
         this.loadGame = this.loadGame.bind(this);
         this.handleReadReviewsClick = this.handleReadReviewsClick.bind(this);
         this.handlePlatformClick = this.handlePlatformClick.bind(this);
@@ -22,7 +36,13 @@ class GameContainer extends React.Component<IGameContainerProps, any> {
 
         // load game
         if (this.props.gameId) {
-            this.state = { isLoading: true, summaryExpanded: false, reviewsExpanded: false };
+            this.state = { 
+                isLoading: true, 
+                game: undefined, 
+                summaryExpanded: false, 
+                reviewsExpanded: false,
+                genre_ids: undefined
+            };
             this.loadGame(this.props.gameId);
         }
     }

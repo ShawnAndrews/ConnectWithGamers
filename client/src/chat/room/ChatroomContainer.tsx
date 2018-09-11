@@ -3,16 +3,25 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as io from 'socket.io-client';
 import * as ChatroomService from '../../service/chatroom/main';
-import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory, ChatroomUploadImageResponse, ChatroomUser } from '../../../../client/client-server-common/common';
-import { popupBasic } from '../../common';
+import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory, ChatroomUploadImageResponse } from '../../../../client/client-server-common/common';
 import Chatroom from './chatroom';
-import { SwipeState } from '../ChatroomMenuContainer';
 
 interface IChatroomContainerProps extends RouteComponentProps<any> {
     chatroomid: number;
-} 
+}
 
-class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
+interface IChatroomContainerState {
+    chatroomid: number;
+    attachmentLoading: boolean;
+    attachmentLink: string;
+    text: string;
+    chatLog: Array<SingleChatHistory>;
+    messagesLoading: boolean;
+    socket: SocketIOClient.Socket;
+    chatLogContainer: any;
+}
+
+class ChatroomContainer extends React.Component<IChatroomContainerProps, IChatroomContainerState> {
 
     constructor(props: IChatroomContainerProps) {
         super(props);
@@ -24,9 +33,18 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
         this.scrollChatToMostRecent = this.scrollChatToMostRecent.bind(this);
         this.handleAttachmentUpload = this.handleAttachmentUpload.bind(this);
 
-        const socket = io(`${window.location.hostname}:${CHAT_SERVER_PORT}`);
+        const socket: SocketIOClient.Socket = io(`${window.location.hostname}:${CHAT_SERVER_PORT}`);
 
-        this.state = { chatroomid: props.chatroomid, attachmentLoading: false, text: '', chatLog: [], messagesLoading: true, socket: socket };
+        this.state = { 
+            chatroomid: props.chatroomid, 
+            attachmentLoading: false, 
+            text: '', 
+            chatLog: [], 
+            messagesLoading: true, 
+            socket: socket,
+            chatLogContainer: undefined,
+            attachmentLink: undefined
+        };
 
         socket.on(CHATROOM_EVENTS.Message, this.onNewMessage);
         socket.on(CHATROOM_EVENTS.MessageHistory, this.onNewMessageHistory);
@@ -35,7 +53,9 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
     }
 
     componentDidMount(): void {
-        this.setState({ chatLogContainer: document.querySelector('.chatroom-messages') });
+        this.setState({
+            chatLogContainer: document.querySelector('.chatroom-messages') 
+        });
     }
 
     componentWillReceiveProps(newProps: IChatroomContainerProps): void {
@@ -77,14 +97,7 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, any> {
 
     onKeyPress(event: any): void {
         if (event.key === `Enter` && !this.state.attachmentLoading) {
-            const cookieMatch: string[] = document.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
-            if (cookieMatch) {
-                this.onSend();   
-            } else {
-                popupBasic(`Login session expired. Please login again.`, () => {
-                    this.props.history.push(`/account/login`);
-                });
-            }
+            this.onSend();
         }
     }
 

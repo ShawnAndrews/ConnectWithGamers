@@ -1,12 +1,11 @@
 import * as React from 'react';
 import Spinner from '../../../spinner/main';
 import { TwitchUser } from '../../../../client-server-common/common';
-import { TwitchUserOption } from './TwitchListContainer';
 import TwitchListItem from './TwitchListItem';
 
 interface ITwitchListProps {
     isLoading: boolean;
-    twitchId: boolean;
+    twitchId: number;
     liveFollowers: TwitchUser[];
     goToTwitchProfile: (link: string) => void;
     handleRawInputChange: (event: any) => void;

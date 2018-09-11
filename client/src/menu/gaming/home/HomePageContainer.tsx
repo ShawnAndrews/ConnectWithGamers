@@ -1,11 +1,12 @@
-const popupS = require('popups');
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import HomePage from './HomePage';
 
 interface IHomePageContainerProps extends RouteComponentProps<any> { } 
 
-class HomePageContainer extends React.Component<IHomePageContainerProps, any> {
+interface IHomePageContainerState { } 
+
+class HomePageContainer extends React.Component<IHomePageContainerProps, IHomePageContainerState> {
 
     constructor(props: IHomePageContainerProps) {
         super(props);

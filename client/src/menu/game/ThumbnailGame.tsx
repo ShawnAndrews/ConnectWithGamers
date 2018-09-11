@@ -1,6 +1,4 @@
-const popupS = require('popups');
 import * as React from 'react';
-import * as IGDBService from '../../service/igdb/main';
 import { ChatroomUser, UpcomingGameResponse, GenreGame, RecentGameResponse, PlatformGame } from '../../../../client/client-server-common/common';
 import Card from '@material-ui/core/Card';
 import CardMedia from '@material-ui/core/CardMedia';

@@ -1,10 +1,9 @@
-const popupS = require('popups');
 import * as React from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Avatar from '@material-ui/core/Avatar';
 import Spinner from '../../spinner/main';
-import ChatMessageContainer, { IChatMessageContainerProps } from '../message/ChatMessageContainer';
+import ChatMessageContainer from '../message/ChatMessageContainer';
+import { SingleChatHistory } from '../../../../client/client-server-common/common';
 
 export enum MessageSide {
     Left,
@@ -16,7 +15,7 @@ interface IChatroomProps {
     attachmentLoading: boolean;
     messagesLoading: boolean;
     text: string;
-    chatLog: IChatMessageContainerProps[];
+    chatLog: Array<SingleChatHistory>;
     onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onKeyPress: (event: any) => void;
     onSend: (event: any) => void;
@@ -37,7 +36,7 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
                         <Spinner loadingMsg="Loading chat..." />
                     </div>}
                 {!props.messagesLoading &&
-                    props.chatLog.map((x: IChatMessageContainerProps, index: number) => {
+                    props.chatLog.map((x: SingleChatHistory, index: number) => {
                         const currentName: string = x.name;
                         const isLastMessageDifferentPerson: boolean = (lastName !== currentName);
                         let side: MessageSide = lastSide;

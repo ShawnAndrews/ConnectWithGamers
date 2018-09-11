@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import ChatroomContainer from '../../chat/room/ChatroomContainer';
 import UserListContainer from '../../chat/userlist/UserlistContainer';
 import SettingsContainer from '../../chat/settings/SettingsContainer';
-import ChatroomHomePageContainer from './../homepage/ChatroomHomePageContainer';
+import ChatroomHomePage from './../homepage/ChatroomHomePage';
 import { CHATROOMS, ChatroomInfo } from '../../../client-server-common/common';
 
 interface ISwipeProps {
@@ -28,7 +28,7 @@ const Swipe: React.SFC<ISwipeProps> = (props: ISwipeProps) => {
                 <Route path="/chat/settings" render={() => <SettingsContainer/>}/>
                 <Route path="/chat/users/:user" render={() => <UserListContainer/>}/>
                 <Route path="/chat/users" render={() => <UserListContainer/>}/>
-                <Route path="/chat" render={() => <ChatroomHomePageContainer/>}/>
+                <Route path="/chat" render={() => <ChatroomHomePage/>}/>
             </Switch>
         </div>
     );

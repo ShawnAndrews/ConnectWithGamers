@@ -1,12 +1,11 @@
 import * as React from 'react';
 import Spinner from '../../../spinner/main';
 import { SteamFriend } from '../../../../client-server-common/common';
-import { SteamFriendOption } from './SteamListContainer';
 import SteamListItem from './SteamListItem';
 
 interface ISteamListProps {
     isLoading: boolean;
-    steamId: boolean;
+    steamId: number;
     onlineFriends: SteamFriend[];
     offlineFriends: SteamFriend[];
     goToSteamProfile: (link: string) => void;

@@ -1,4 +1,3 @@
-const popupS = require('popups');
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { NAV_PAGE } from '../app/app';
@@ -6,13 +5,21 @@ import Navbar from './navbar';
 
 interface INavbarContainerProps extends RouteComponentProps<any> { } 
 
-class NavbarContainer extends React.Component<INavbarContainerProps, any> {
+interface INavbarContainerState {
+    index: number;
+}
+
+class NavbarContainer extends React.Component<INavbarContainerProps, INavbarContainerState> {
 
     constructor(props: INavbarContainerProps) {
         super(props);
         this.onTabChange = this.onTabChange.bind(this);
         this.updateNavSelection = this.updateNavSelection.bind(this);
         this.updateNavSelection(this.props.history.location.pathname);
+
+        this.state = {
+            index: undefined
+        };
     }
 
     componentWillReceiveProps(newProps: INavbarContainerProps) {

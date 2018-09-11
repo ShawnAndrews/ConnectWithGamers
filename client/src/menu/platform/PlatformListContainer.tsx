@@ -23,11 +23,21 @@ export const platformOptions: PlatformOption[] = [
 
 interface IPlatformListContainerProps extends RouteComponentProps<any> { }
 
-class PlatformListContainer extends React.Component<IPlatformListContainerProps, any> {
+interface IPlatformListContainerState {
+    isLoading: boolean;
+    platformName: string;
+    platformGames: PlatformGame[];
+}
+
+class PlatformListContainer extends React.Component<IPlatformListContainerProps, IPlatformListContainerState> {
 
     constructor(props: IPlatformListContainerProps) {
         super(props);
-        this.state = { isLoading: true };
+        this.state = { 
+            isLoading: true,
+            platformName: undefined,
+            platformGames: undefined
+        };
         this.loadPlatformGames = this.loadPlatformGames.bind(this);
         this.loadPlatformGames();
     }

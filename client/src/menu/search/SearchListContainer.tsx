@@ -12,11 +12,22 @@ export interface SearchGameOption {
 
 interface ISearchListContainerProps extends RouteComponentProps<any> { }
 
-class SearchListContainer extends React.Component<ISearchListContainerProps, any> {
+interface ISearchListContainerState {
+    isLoading: boolean;
+    rawInput: string;
+    gameslist: SearchGameOption[];
+    loadingMsg: string;
+}
+
+class SearchListContainer extends React.Component<ISearchListContainerProps, ISearchListContainerState> {
 
     constructor(props: ISearchListContainerProps) {
         super(props);
-        this.state = { rawInput: '', gameslist: [], isLoading: false, loadingMsg: '' };
+        this.state = { 
+            isLoading: false,
+            rawInput: '', 
+            gameslist: [], 
+            loadingMsg: '' };
         this.handleChange = this.handleChange.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.loadGamesList = this.loadGamesList.bind(this);
@@ -47,7 +58,13 @@ class SearchListContainer extends React.Component<ISearchListContainerProps, any
         IGDBService.httpGetSearchGames(query)
             .then( (response: SearchGamesResponse) => {
                 if (response.data) {
-                    this.setState({ gameslist: response.data.map((x: any) => { return {value: x.id, label: x.name}; }), isLoading: false });
+                    this.setState({ 
+                        gameslist: 
+                            response.data.map((x: any) => {
+                                const searchGameOption: SearchGameOption = { value: x.id, label: x.name };
+                                return searchGameOption; 
+                            }), 
+                        isLoading: false });
                 } else {
                     this.setState({ gameslist: [], isLoading: false });
                 }

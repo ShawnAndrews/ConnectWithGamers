@@ -1,4 +1,3 @@
-const popupS = require('popups');
 import * as React from 'react';
 
 interface IStarIconProps {

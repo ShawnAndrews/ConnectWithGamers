@@ -1,4 +1,3 @@
-const popupS = require('popups');
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import ChatMessage from './chatmessage';
@@ -14,12 +13,18 @@ export interface IChatMessageContainerProps extends RouteComponentProps<any> {
     repeat: boolean;
 }
 
-class ChatMessageContainer extends React.Component<IChatMessageContainerProps, any> {
+export interface IChatMessageContainerState {
+    timeVisible: boolean;
+}
+
+class ChatMessageContainer extends React.Component<IChatMessageContainerProps, IChatMessageContainerState> {
 
     constructor(props: IChatMessageContainerProps) {
         super(props);
         this.changeTimeVisibility = this.changeTimeVisibility.bind(this);
-        this.state = { timeVisible: false };
+        this.state = { 
+            timeVisible: false 
+        };
     }
 
     changeTimeVisibility(): void {

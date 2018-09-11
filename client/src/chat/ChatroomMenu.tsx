@@ -1,17 +1,13 @@
 import * as React from 'react';
 import TopnavContainer from './topnav/TopnavContainer';
-import SidenavContainer from './sidenav/SidenavContainer';
-import UsersnavContainer from './usersnav/UsersnavContainer';
+import LeftnavContainer from './leftnav/LeftnavContainer';
+import RightnavContainer from './rightnav/RightnavContainer';
 import Swipeable = require('react-swipeable');
-import { SwipeState } from './ChatroomMenuContainer';
 import SwipeContainer from './swipe/SwipeContainer';
 
 interface IChatroomMenuProps {
     onSwipedLeft: (event: React.TouchEvent, delta: number, isFlick: boolean) => void;
     onSwipedRight: (event: React.TouchEvent, delta: number, isFlick: boolean) => void;
-    swipeState: SwipeState;
-    sidebarWidth: number;
-    usersbarWidth: number;
 }
 
 const ChatroomMenu: React.SFC<IChatroomMenuProps> = (props: IChatroomMenuProps) => {
@@ -26,19 +22,9 @@ const ChatroomMenu: React.SFC<IChatroomMenuProps> = (props: IChatroomMenuProps) 
                 stopPropagation={true}
                 trackMouse={true}
             >
-                <SidenavContainer
-                    sidebarWidth={props.sidebarWidth}
-                    swipeState={props.swipeState}
-                />
-                <UsersnavContainer
-                    usersbarWidth={props.usersbarWidth}
-                    swipeState={props.swipeState}
-                />
-                <SwipeContainer 
-                    sidebarWidth={props.sidebarWidth}
-                    usersnavWidth={props.usersbarWidth}
-                    swipeState={props.swipeState}
-                />
+                <LeftnavContainer/>
+                <RightnavContainer/>
+                <SwipeContainer/>
             </Swipeable>
         </div>
     );

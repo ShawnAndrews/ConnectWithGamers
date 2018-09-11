@@ -1,45 +1,64 @@
-const popupS = require('popups');
+import * as Redux from 'redux';
 import * as React from 'react';
 import Swipe from "./Swipe";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { SwipeState } from '../ChatroomMenuContainer';
+import { ChatroomReduxState } from '../../reducers/main';
+import { connect } from 'react-redux';
 
-interface ISwipeContainerProps extends RouteComponentProps<any> {
-    sidebarWidth: number;
-    usersnavWidth: number;
+interface ISwipeContainerProps extends RouteComponentProps<any> { }
+
+interface ISwipeContainerState {
     swipeState: SwipeState;
+    leftNavWidth: number;
+    rightNavWidth: number;
+    swipeContainerRef: React.RefObject<HTMLDivElement>;
 }
 
-class SwipeContainer extends React.Component<ISwipeContainerProps, any> {
+interface ReduxStateProps {
+    swipeState: SwipeState;
+    leftNavWidth: number;
+    rightNavWidth: number;
+}
 
-    constructor(props: ISwipeContainerProps) {
+interface ReduxDispatchProps { }
+
+type Props = ISwipeContainerProps & ReduxStateProps & ReduxDispatchProps;
+
+class SwipeContainer extends React.Component<Props, ISwipeContainerState> {
+
+    constructor(props: Props) {
         super(props);
         this.updatePositionRefs = this.updatePositionRefs.bind(this);
 
         const swipeContainerRef: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
-        this.state = { swipeState: props.swipeState, sidebarWidth: props.sidebarWidth, usersnavWidth: props.usersnavWidth, swipeContainerRef: swipeContainerRef};
+        this.state = { 
+            swipeState: props.swipeState, 
+            leftNavWidth: props.leftNavWidth, 
+            rightNavWidth: props.rightNavWidth, 
+            swipeContainerRef: swipeContainerRef
+        };
     }
 
     componentDidMount(): void {
-        this.updatePositionRefs(this.state.swipeState, this.state.sidebarWidth, this.state.usersnavWidth);
+        this.updatePositionRefs(this.state.swipeState, this.state.leftNavWidth, this.state.rightNavWidth);
     }
 
-    componentWillReceiveProps(newProps: ISwipeContainerProps): void {
-        this.updatePositionRefs(newProps.swipeState, newProps.sidebarWidth, newProps.usersnavWidth);
+    componentWillReceiveProps(newProps: Props): void {
+        this.updatePositionRefs(newProps.swipeState, newProps.leftNavWidth, newProps.rightNavWidth);
     }
 
-    updatePositionRefs(swipeState: SwipeState, sidebarWidth: number, usersnavWidth: number): void {
+    updatePositionRefs(swipeState: SwipeState, leftNavWidth: number, rightNavWidth: number): void {
         const divNode: HTMLDivElement = this.state.swipeContainerRef.current;
         let newLeftPosition: number;
 
         if (swipeState === SwipeState.Left) {
-            newLeftPosition = sidebarWidth;
+            newLeftPosition = leftNavWidth;
         } else if (swipeState === SwipeState.Middle) {
             newLeftPosition = 0;
         } else {
-            newLeftPosition = -usersnavWidth;
+            newLeftPosition = -rightNavWidth;
         }
-        
         divNode.style.left = `${newLeftPosition}px`;
     }
 
@@ -53,4 +72,18 @@ class SwipeContainer extends React.Component<ISwipeContainerProps, any> {
 
 }
 
-export default withRouter(SwipeContainer);
+const mapStateToProps = (state: any, ownProps: ISwipeContainerProps): ReduxStateProps => {
+    const chatroomReduxState: ChatroomReduxState = state.chatroom;
+    return {
+        swipeState: chatroomReduxState.swipeState,
+        leftNavWidth: chatroomReduxState.leftNavWidth,
+        rightNavWidth: chatroomReduxState.rightNavWidth
+    };
+};
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: ISwipeContainerProps): ReduxDispatchProps => ({
+
+});
+
+export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, ISwipeContainerProps>
+    (mapStateToProps, mapDispatchToProps)(SwipeContainer));

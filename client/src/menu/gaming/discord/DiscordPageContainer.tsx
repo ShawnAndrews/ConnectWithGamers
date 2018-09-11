@@ -4,11 +4,21 @@ import * as AccountService from '../../../service/account/main';
 import DiscordPage from './DiscordPage';
 import { DiscordLinkResponse } from '../../../../../client/client-server-common/common';
 
-class DiscordPageContainer extends React.Component<any, any> {
+interface IDiscordPageContainerProps { }
+
+interface IDiscordPageContainerState {
+    isLoading: boolean;
+    link: string;
+}
+
+class DiscordPageContainer extends React.Component<IDiscordPageContainerProps, IDiscordPageContainerState> {
 
     constructor(props: any) {
         super(props);
-        this.state = { isLoading: true };
+        this.state = { 
+            isLoading: true,
+            link: undefined
+        };
         this.onClickCopy = this.onClickCopy.bind(this);
         this.loadAccountDiscordLink = this.loadAccountDiscordLink.bind(this);
         this.loadAccountDiscordLink();

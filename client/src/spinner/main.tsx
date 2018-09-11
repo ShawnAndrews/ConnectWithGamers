@@ -6,7 +6,9 @@ interface ISpinnerProps {
     loadingMsg: string;
 }
 
-class Spinner extends React.Component<ISpinnerProps, any> {
+interface ISpinnerState { }
+
+class Spinner extends React.Component<ISpinnerProps, ISpinnerState> {
 
     constructor(props: ISpinnerProps) {
         super(props);
