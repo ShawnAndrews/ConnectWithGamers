@@ -141,7 +141,7 @@ export default function registerChatHandlers(chatServer: any): void {
     // authentication middleware
     chatHandler.use((socket: any, next: any) => {
 
-        const loggedIn: boolean = socket.handshake.headers.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
+        const loggedIn: boolean = socket.handshake.headers.cookie && socket.handshake.headers.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
 
         if (loggedIn) {
 
@@ -249,7 +249,7 @@ export default function registerChatHandlers(chatServer: any): void {
             let attachment: string = undefined;
             let chatroomid: number = undefined;
 
-            const loggedIn: boolean = socket.handshake.headers.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
+            const loggedIn: boolean = socket.handshake.headers.cookie && socket.handshake.headers.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
 
             const sendMessage = (): void => {
                 accountModel.getAccountImage(accountid)
