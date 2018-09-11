@@ -2,7 +2,7 @@
 
   ![alt text](https://i.imgur.com/UfeBmAp.gif "logo")
 
-  <h1>Connect With Gamers (v1.3)</h1>
+  <h1>Connect With Gamers (v1.4)</h1>
 </div>
 
 <div align="center">
@@ -49,7 +49,7 @@
 - Up-to-date Steam price: Keep notified with new discounts to get the best possible price.
 - 84,000 Games - One of the largest collection of games is at your fingertips.
 - 5-star reviews - Pick the best game for you based on actual user reviews.
-- Global Chatroom - Talk with fellow gamers about exciting new releases with all your favorite emojis.
+- Global Chatroom - Talk with fellow gamers about exciting new releases with all your favorite emojis and custom emotes.
 - Linked gaming platforms - Link your gaming profiles such as Twitch, Discord and Steam so people know where to find you.
 
 <br/>
@@ -141,6 +141,30 @@
     - Ability to view your followed live Twitch streams
     - Ability to view your Steam friends list
     - Ability to copy your Discord server's link to send to friends
+</details>
+    
+<h3>Version 1.4<h3>
+
+<details> 
+  <summary>Expand to read patch notes</summary>
+<h4>Login</h4>
+
+- Updated login screen to be fullscreen
+
+<h4>Chatroom</h4>
+
+- Updated chatrooms
+    - Severals new channels for the most popular video games
+- Added user list bar
+    - Ability to see other user's time of most recent activity
+    - Ability to click on a user for more detailed information
+- Added search feature
+    - Find users by name for more detailed information
+- Added settings feature
+    - View all emotes available and who uploaded them
+    - Create your own custom emote
+- Updated messaging
+    - Ability to use Emojis, Animated Emojis, and image attachments
 </details>
     
 ## Config
