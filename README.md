@@ -54,9 +54,9 @@
 
 <br/>
 
-![alt text](https://i.imgur.com/10UUUmo.png "infographic")
+![alt text](https://i.imgur.com/bOllaqY.png "screenshots")
 
-![alt text](https://i.imgur.com/HDz7PYf.png "screenshots")
+![alt text](https://i.imgur.com/MQ50rST.png "infographic")
 
 ## Updates
 
