@@ -58,7 +58,9 @@
   <img src="https://i.imgur.com/bOllaqY.png" />
 </p>
 
-![alt text](https://i.imgur.com/MQ50rST.png "infographic")
+<p align="center">
+  <img src="https://i.imgur.com/0lxFwhZ.png" />
+</p>
 
 ## Updates
 
