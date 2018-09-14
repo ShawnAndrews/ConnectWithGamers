@@ -1,7 +1,6 @@
 import config from "../../../../config";
-import { redisCache, IGDBCacheEntry } from "../redisConstants";
 import {
-    GameListEntryResponse, GameListEntryResponseFields } from "../../../../client/client-server-common/common";
+    GameListEntryResponse, GameListEntryResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 
 const redis = require("redis");
 const redisClient = redis.createClient();

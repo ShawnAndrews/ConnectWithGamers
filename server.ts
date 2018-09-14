@@ -63,5 +63,5 @@ chatServer.listen(config.chatPort);
 /* start HTTP/HTTPS server */
 app.listen(config.httpPort, () => { connectToDatabase(); });
 if (config.useStrictlyHttps) {
-  secureServer.listen(config.httpsPort);
+    secureServer.listen(config.httpsPort);
 }

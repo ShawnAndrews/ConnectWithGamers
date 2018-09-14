@@ -1,6 +1,12 @@
 const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
+enum RedisExpirationTime {
+    ONE_DAY = 60 * 60 * 24,
+    ONE_WEEK = 60 * 60 * 24 * 7,
+    INF = -1
+}
+
 export interface Config {
     useStrictlyHttps: boolean;
     httpPort: number;
@@ -41,6 +47,27 @@ export interface Config {
         cert: string,
         ca: string;
     };
+}
+
+export interface IGDBCacheEntry {
+    key: string;
+    expiry: number; // seconds
+}
+
+export const redisCache: IGDBCacheEntry[] = [
+    {key: "upcominggames", expiry: RedisExpirationTime.ONE_DAY},
+    {key: "games", expiry: RedisExpirationTime.ONE_WEEK},
+    {key: "searchgames", expiry: RedisExpirationTime.ONE_DAY},
+    {key: "platformgames", expiry: RedisExpirationTime.ONE_DAY},
+    {key: "recentgames", expiry: RedisExpirationTime.ONE_DAY},
+    {key: "genregames", expiry: RedisExpirationTime.ONE_DAY},
+    {key: "genrelist", expiry: RedisExpirationTime.ONE_WEEK},
+    {key: "chatusers", expiry: RedisExpirationTime.INF}
+];
+
+export interface UserLog {
+    accountid: number;
+    lastActive: Date;
 }
 
 export const enum CHATROOM_EVENTS {

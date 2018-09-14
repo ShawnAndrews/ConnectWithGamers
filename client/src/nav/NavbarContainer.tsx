@@ -15,10 +15,11 @@ class NavbarContainer extends React.Component<INavbarContainerProps, INavbarCont
         super(props);
         this.onTabChange = this.onTabChange.bind(this);
         this.updateNavSelection = this.updateNavSelection.bind(this);
-        this.updateNavSelection(this.props.history.location.pathname);
+        
+        const onLoginScreen: boolean = props.history.location.pathname.startsWith(NAV_PAGE.ACCOUNT);
 
         this.state = {
-            index: undefined
+            index: onLoginScreen ? 3 : undefined
         };
     }
 
@@ -28,15 +29,15 @@ class NavbarContainer extends React.Component<INavbarContainerProps, INavbarCont
 
     updateNavSelection(path: string): void {
         if (path === NAV_PAGE.HOME) {
-            this.state = { index: 0 };
+            this.setState({ index: 0 });
         } else if (path.startsWith(NAV_PAGE.MENU)) {
-            this.state = { index: 1 };
+            this.setState({ index: 1 });
         } else if (path.startsWith(NAV_PAGE.CHATROOM)) {
-            this.state = { index: 2 };
+            this.setState({ index: 2 });
         } else if (path.startsWith(NAV_PAGE.ACCOUNT)) {
-            this.state = { index: 3 };
+            this.setState({ index: 3 });
         } else {
-            this.state = { index: -1 };
+            this.setState({ index: -1 });
         }
     }
 

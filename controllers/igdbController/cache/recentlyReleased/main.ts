@@ -1,7 +1,6 @@
 import config from "../../../../config";
-import { redisCache, IGDBCacheEntry } from "../redisConstants";
 import { formatDate, addMonths, formatTimestamp, ArrayClean } from "../../../../util/main";
-import { RecentGameResponse, RecentGameResponseFields } from "../../../../client/client-server-common/common";
+import { RecentGameResponse, RecentGameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import { getAllGenrePairs } from "../genreList/main";
 const redis = require("redis");
 const redisClient = redis.createClient();

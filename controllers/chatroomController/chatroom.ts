@@ -1,19 +1,15 @@
 const socketIO = require("socket.io");
 const express = require("express");
 const router = express.Router();
-import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbChatroomEmotesResponse, DbChatroomUploadEmoteResponse, DbAuthorizeResponse, DbAccountsInfoResponse, DbAccountImageResponse, DbChatroomUploadImageResponse, ChatroomUploadImageResponse, AccountInfo, ChatroomEmotesResponse, ChatroomEmote } from "../../client/client-server-common/common";
+import { GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbChatroomEmotesResponse, DbChatroomUploadEmoteResponse, DbAuthorizeResponse, DbAccountsInfoResponse, DbAccountImageResponse, DbChatroomUploadImageResponse, ChatroomUploadImageResponse, ChatroomEmotesResponse, ChatroomEmote } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { securityModel } from "../../models/db/security/main";
 import { chatroomModel } from "../../models/db/chatroom/main";
 import { accountModel } from "../../models/db/account/main";
 import { AUTH_TOKEN_NAME } from "../../client/client-server-common/common";
+import { refreshUserActivity, getAllUserIds, getAllUserInfo } from "./cache/chatUsers/userOperations";
 
 const routes = new routeModel();
-
-interface UserLog {
-    accountid: number;
-    lastActive: Date;
-}
 
 /* routes */
 routes.addRoute("emote/upload", "/emote/upload");
@@ -83,43 +79,10 @@ router.post(routes.getRoute("attachment/upload"), (req: any, res: any) => {
 
 export default function registerChatHandlers(chatServer: any): void {
     const chatHandler = socketIO.listen(chatServer);
-    const usersInChat: UserLog[] = [];
 
     setInterval((): void => {
         chatHandler.emit(CHATROOM_EVENTS.UpdateUsers);
     }, 60 * 1000);
-
-    const getLastActiveById = (accountid: number): Date => {
-        for (let i = 0; i < usersInChat.length; i++) {
-            if (usersInChat[i].accountid === accountid ) {
-                return usersInChat[i].lastActive;
-            }
-        }
-        return new Date();
-    };
-
-    const refreshUserActivity = (userAccountId: number, socket: any): void => {
-        const currentTime: Date = new Date();
-        if (usersInChat.length === 0) {
-            // insert (if empty)
-            usersInChat.push({ accountid: userAccountId, lastActive: currentTime });
-            return;
-        }
-        for (let i = 0; i < usersInChat.length; i++) {
-            if (usersInChat[i].accountid === userAccountId ) {
-                // update
-                usersInChat[i].lastActive = currentTime;
-                break;
-            }
-            if (i === usersInChat.length - 1) {
-                // insert (if not empty)
-                usersInChat.push({ accountid: userAccountId, lastActive: currentTime });
-                break;
-            }
-        }
-        chatHandler.emit(CHATROOM_EVENTS.UpdateUsers);
-        return;
-    };
 
     const encodeEmotes = (emotes: ChatroomEmote[], text: string): string => {
         let encodedText: string = text;
@@ -149,7 +112,10 @@ export default function registerChatHandlers(chatServer: any): void {
             securityModel.authorize(socket.handshake.headers.cookie)
             .then((response: DbAuthorizeResponse) => {
                 const accountid: number = response.accountid;
-                refreshUserActivity(accountid, socket);
+                refreshUserActivity(accountid, socket, chatHandler)
+                .catch((error: string) => {
+                    console.log(`Chatroom error refreshing user activity: ${error}`);
+                });
             })
             .catch((error: string) => {
                 console.log(`Chat error authorizing: ${error}`);
@@ -190,31 +156,30 @@ export default function registerChatHandlers(chatServer: any): void {
 
         socket.on(CHATROOM_EVENTS.GetAllUsers, (data: any) => {
 
-            const activeUserIds: number[] = [];
-
-            usersInChat.forEach((element: any) => {
-                activeUserIds.push(element.accountid);
-            });
-            if (activeUserIds.length === 0) {
-                socket.emit(CHATROOM_EVENTS.GetAllUsers, []);
-            } else {
-                accountModel.getAccountsInfoById(activeUserIds)
-                    .then((dbUsers: DbAccountsInfoResponse) => {
-                        const chatroomUsers: ChatroomUser[] = [];
-                        dbUsers.accounts.forEach((element: AccountInfo) => {
-                            const now: any = new Date();
-                            const lastActive: Date = getLastActiveById(element.accountid);
-                            const lastActiveMinsAgo: number = Math.abs(Math.round(((lastActive.getTime() - now.getTime()) / 1000 / 60)));
-                            const chatroomUser: ChatroomUser = { username: element.username, steam_url: element.steam_url, discord_url: element.discord_url, twitch_url: element.twitch_url, image: element.image, last_active: lastActiveMinsAgo };
-                            chatroomUsers.push(chatroomUser);
+            getAllUserIds()
+            .then((userIds: number[]) => {
+                if (userIds.length === 0) {
+                    socket.emit(CHATROOM_EVENTS.GetAllUsers, []);
+                } else {
+                    accountModel.getAccountsInfoById(userIds)
+                        .then((dbUsers: DbAccountsInfoResponse) => {
+                            getAllUserInfo(dbUsers)
+                            .then((allUserInfo: ChatroomUser[]) => {
+                                socket.emit(CHATROOM_EVENTS.GetAllUsers, allUserInfo);
+                            })
+                            .catch((error: string) => {
+                                console.log(`Chatroom error getting all users info: ${error}`);
+                            });
+                        })
+                        .catch((err: string) => {
+                            console.log(`Database error: ${err}`);
+                            socket.disconnect();
                         });
-                        socket.emit(CHATROOM_EVENTS.GetAllUsers, chatroomUsers);
-                    })
-                    .catch((err: string) => {
-                        console.log(`Database error: ${err}`);
-                        socket.disconnect();
-                    });
-            }
+                }
+            })
+            .catch((error: string) => {
+                console.log(`Chatroom error getting all user ids: ${error}`);
+            });
 
         });
 
@@ -223,15 +188,13 @@ export default function registerChatHandlers(chatServer: any): void {
 
             accountModel.getAccountsByUsernameFilter(usernameFilter)
                 .then((dbUsers: DbAccountsInfoResponse) => {
-                    const chatroomUsers: ChatroomUser[] = [];
-                    dbUsers.accounts.forEach((element: AccountInfo) => {
-                        const now: any = new Date();
-                        const lastActive: Date = getLastActiveById(element.accountid);
-                        const lastActiveMinsAgo: number = Math.abs(Math.round(((lastActive.getTime() - now.getTime()) / 1000 / 60)));
-                        const chatroomUser: ChatroomUser = { username: element.username, steam_url: element.steam_url, discord_url: element.discord_url, twitch_url: element.twitch_url, image: element.image, last_active: lastActiveMinsAgo };
-                        chatroomUsers.push(chatroomUser);
+                    getAllUserInfo(dbUsers)
+                    .then((allUserInfo: ChatroomUser[]) => {
+                        socket.emit(CHATROOM_EVENTS.GetAllUsers, allUserInfo);
+                    })
+                    .catch((error: string) => {
+                        console.log(`Chatroom error getting all users info: ${error}`);
                     });
-                    socket.emit(CHATROOM_EVENTS.Users, chatroomUsers);
                 })
                 .catch((err: string) => {
                     console.log(`Database error: ${err}`);
@@ -284,7 +247,9 @@ export default function registerChatHandlers(chatServer: any): void {
                 securityModel.authorize(socket.handshake.headers.cookie)
                 .then((response: DbAuthorizeResponse) => {
                     accountid = response.accountid;
-                    refreshUserActivity(accountid, socket);
+                    return refreshUserActivity(accountid, socket, chatHandler);
+                })
+                .then(() => {
                     return accountModel.getAccountUsername(accountid);
                 })
                 .then((response: GenericResponseModel) => {
@@ -303,7 +268,9 @@ export default function registerChatHandlers(chatServer: any): void {
                 accountModel.getAccountId(username)
                 .then((response: GenericResponseModel) => {
                     accountid = response.data.accountid;
-                    refreshUserActivity(accountid, socket);
+                    return refreshUserActivity(accountid, socket, chatHandler);
+                })
+                .then(() => {
                     sendMessage();
                 })
                 .catch((error: string) => {

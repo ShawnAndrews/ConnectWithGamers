@@ -1,6 +1,5 @@
 import config from "../../../../config";
-import { redisCache, IGDBCacheEntry } from "../redisConstants";
-import { GenrePair } from "../../../../client/client-server-common/common";
+import { GenrePair, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 
 const redis = require("redis");
 const redisClient = redis.createClient();

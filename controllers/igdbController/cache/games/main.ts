@@ -1,9 +1,8 @@
 import config from "../../../../config";
-import { redisCache, IGDBCacheEntry } from "../redisConstants";
 import { formatTimestamp, steamAPIGetReviews, steamAPIGetPriceInfo } from "../../../../util/main";
 import {
     GameResponse, GameResponseFields,
-    SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse } from "../../../../client/client-server-common/common";
+    SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import { getAllGenrePairs } from "../genreList/main";
 
 const redis = require("redis");
