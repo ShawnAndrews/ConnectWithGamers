@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "5"	  
+  - "7"
+os:
+  - windows
+before_script:
+  - npm install
+script:
+  - npm run client-prod --prefix client/
