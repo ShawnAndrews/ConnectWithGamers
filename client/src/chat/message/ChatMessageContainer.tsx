@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import ChatMessage from './Chatmessage';
+import ChatMessage from './ChatMessage';
 import { MessageSide } from '../room/Chatroom';
 
 export interface IChatMessageContainerProps extends RouteComponentProps<any> {

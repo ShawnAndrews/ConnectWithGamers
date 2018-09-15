@@ -1,6 +1,6 @@
 const popupS = require('popups');
 import * as React from 'react';
-import VerifyForm from "./VerifyForm";
+import VerifyForm from "./verifyForm";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as AccountService from '../../service/account/main';
 import { EmailVerifyResponse } from '../../../../client/client-server-common/common';
