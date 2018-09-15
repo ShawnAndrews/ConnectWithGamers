@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/ShawnAndrews/ConnectWithGamers.svg?branch=master)](https://travis-ci.org/ShawnAndrews/ConnectWithGamers)
 
+[![Website connectwithgamers.com](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](http://connectwithgamers.com/)
+
 <div align="center">
 
   ![alt text](https://i.imgur.com/UfeBmAp.gif "logo")
