@@ -8,7 +8,6 @@ enum RedisExpirationTime {
 }
 
 export interface Config {
-    disableListening: boolean;
     useStrictlyHttps: boolean;
     httpPort: number;
     httpsPort: number;

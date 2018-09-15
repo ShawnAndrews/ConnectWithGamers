@@ -10,4 +10,7 @@ before_script:
   - cd ../
   - npm install
 script:
-  - npm run server-client
+  - cd client
+  - npm run client-prod
+  - cd ../
+  - npm run server-prod

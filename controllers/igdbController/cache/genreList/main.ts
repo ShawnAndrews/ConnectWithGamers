@@ -2,13 +2,9 @@ import config from "../../../../config";
 import { GenrePair, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 
 const redis = require("redis");
-let redisClient: any;
+const redisClient = redis.createClient();
 const igdb = require("igdb-api-node").default;
 const igdbClient = igdb(config.igdb.key);
-
-if (!config.disableListening) {
-    redisClient = redis.createClient();
-}
 
 /**
  * Check if redis key exists.

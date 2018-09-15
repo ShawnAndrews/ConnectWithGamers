@@ -3,13 +3,9 @@ import { formatDate, addMonths, formatTimestamp, ArrayClean } from "../../../../
 import { RecentGameResponse, RecentGameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import { getAllGenrePairs } from "../genreList/main";
 const redis = require("redis");
-let redisClient: any;
+const redisClient = redis.createClient();
 const igdb = require("igdb-api-node").default;
 const igdbClient = igdb(config.igdb.key);
-
-if (!config.disableListening) {
-    redisClient = redis.createClient();
-}
 
 /**
  * Check if redis key exists.

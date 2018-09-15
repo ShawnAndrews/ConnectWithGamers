@@ -2,11 +2,7 @@ import { UserLog, redisCache, IGDBCacheEntry } from "../../../../client/client-s
 import config from "../../../../config";
 
 const redis = require("redis");
-let redisClient: any;
-
-if (!config.disableListening) {
-    redisClient = redis.createClient();
-}
+const redisClient = redis.createClient();
 
 
 /**

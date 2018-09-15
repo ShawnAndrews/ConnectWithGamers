@@ -55,19 +55,13 @@ app.get("/bundle.css", (req: any, res: any) => {res.sendFile(path.join(__dirname
 app.use("*", express.static(path.join(__dirname, "../client/dist")));
 
 /* set chat handlers */
-if (config.disableListening) {
-  registerChatHandlers(chatServer);
-}
+registerChatHandlers(chatServer);
 
 /* start chat server */
-if (!config.disableListening) {
-  chatServer.listen(config.chatPort);
-}
+chatServer.listen(config.chatPort);
 
 /* start HTTP/HTTPS server */
-if (!config.disableListening) {
-  app.listen(config.httpPort, () => { connectToDatabase(); });
-  if (config.useStrictlyHttps) {
-      secureServer.listen(config.httpsPort);
-  }
+app.listen(config.httpPort, () => { connectToDatabase(); });
+if (config.useStrictlyHttps) {
+    secureServer.listen(config.httpsPort);
 }

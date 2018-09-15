@@ -1,7 +1,6 @@
 import { Config } from "./client/client-server-common/common";
 
 const config: Config = {
-    disableListening: true,
     useStrictlyHttps: false,
     httpPort: 80,
     httpsPort: 443,
