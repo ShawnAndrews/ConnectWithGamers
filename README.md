@@ -1,17 +1,15 @@
-<p align="center">
-    <a href="https://travis-ci.org/ShawnAndrews/ConnectWithGamers" alt="Build Status">
-        <img src="https://travis-ci.org/ShawnAndrews/ConnectWithGamers.svg?branch=master" /></a>
-    <a href="http://connectwithgamers.com/" alt="connectwithgamers.com">
-        <img src="https://img.shields.io/website-up-down-green-red/http/shields.io.svg" /></a>
-</p>
-
 <div align="center">
 
   ![alt text](https://i.imgur.com/UfeBmAp.gif "logo")
 
   <h1>Connect With Gamers (v1.4)</h1>
 </div>
-
+<p align="center">
+    <a href="https://travis-ci.org/ShawnAndrews/ConnectWithGamers" alt="Build Status">
+        <img src="https://travis-ci.org/ShawnAndrews/ConnectWithGamers.svg?branch=master" /></a>
+    <a href="http://connectwithgamers.com/" alt="connectwithgamers.com">
+        <img src="https://img.shields.io/website-up-down-green-red/http/shields.io.svg" /></a>
+</p>
 <div align="center">
   :video_game::space_invader::game_die::speech_balloon:
 </div>
