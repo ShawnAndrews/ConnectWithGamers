@@ -6,9 +6,13 @@ import {
 import { getAllGenrePairs } from "../genreList/main";
 
 const redis = require("redis");
-const redisClient = redis.createClient();
+let redisClient: any;
 const igdb = require("igdb-api-node").default;
 const igdbClient = igdb(config.igdb.key);
+
+if (!config.disableListening) {
+    redisClient = redis.createClient();
+}
 
 /**
  * Check if redis key exists.
