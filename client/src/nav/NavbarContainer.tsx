@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { NAV_PAGE } from '../app/app';
-import Navbar from './navbar';
+import Navbar from './Navbar';
 
 interface INavbarContainerProps extends RouteComponentProps<any> { } 
 
