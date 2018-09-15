@@ -7,4 +7,7 @@ before_script:
   - cp configTemplate.ts config.ts
   - npm install
 script:
-  - npm run server-client
+  - cd client
+  - npm run client-prod
+  - cd ../
+  - npm run server-prod
