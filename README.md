@@ -2,13 +2,19 @@
 
   ![alt text](https://i.imgur.com/UfeBmAp.gif "logo")
 
-  <h1>Connect With Gamers (v1.4)</h1>
+  <h1>Connect With Gamers</h1>
 </div>
 <p align="center">
     <a href="https://travis-ci.org/ShawnAndrews/ConnectWithGamers" alt="Build Status">
         <img src="https://travis-ci.org/ShawnAndrews/ConnectWithGamers.svg?branch=master" /></a>
     <a href="http://connectwithgamers.com/" alt="connectwithgamers.com">
         <img src="https://img.shields.io/website-up-down-green-red/http/shields.io.svg" /></a>
+    <a href="https://david-dm.org/" alt="David">
+        <img src="https://david-dm.org/shawnandrews/connectwithgamers.svg" /></a>
+    <a href="https://github.com/ShawnAndrews/ConnectWithGamers" alt="GitHub release">
+        <img src="https://img.shields.io/github/release/shawnandrews/connectwithgamers.svg" /></a>
+    <a href="https://github.com/ShawnAndrews/ConnectWithGamers/blob/master/LICENSE" alt="GitHub license">
+        <img src="https://img.shields.io/github/license/shawnandrews/connectwithgamers.svg" /></a>
 </p>
 <div align="center">
   :video_game::space_invader::game_die::speech_balloon:
