@@ -1,6 +1,9 @@
-[![Build Status](https://travis-ci.org/ShawnAndrews/ConnectWithGamers.svg?branch=master)](https://travis-ci.org/ShawnAndrews/ConnectWithGamers)
-
-[![Website connectwithgamers.com](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](http://connectwithgamers.com/)
+<p align="center">
+    <a href="https://travis-ci.org/ShawnAndrews/ConnectWithGamers" alt="Build Status">
+        <img src="https://travis-ci.org/ShawnAndrews/ConnectWithGamers.svg?branch=master" /></a>
+    <a href="http://connectwithgamers.com/" alt="connectwithgamers.com">
+        <img src="https://img.shields.io/website-up-down-green-red/http/shields.io.svg" /></a>
+</p>
 
 <div align="center">
 
