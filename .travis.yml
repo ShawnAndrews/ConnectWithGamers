@@ -8,3 +8,5 @@ before_script:
   - npm install
 script:
   - npm run server-client
+deploy:
+  skip_cleanup: true
