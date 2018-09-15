@@ -1,4 +1,4 @@
-const mssql = require("mssql/msnodesqlv8");
+const mssql: any = undefined;
 import { GenericResponseModel } from "../../../client/client-server-common/common";
 
 export default class DatabaseBase {

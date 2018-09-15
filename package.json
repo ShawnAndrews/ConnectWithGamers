@@ -38,7 +38,6 @@
     "lodash": "^4.17.10",
     "lusca": "^1.6.1",
     "morgan": "^1.9.0",
-    "msnodesqlv8": "^0.6.8",
     "mssql": "^4.1.0",
     "nodemailer": "^4.6.7",
     "passport": "^0.4.0",
@@ -48,6 +47,7 @@
     "redis": "^2.8.0",
     "request": "^2.88.0",
     "socket.io": "^2.1.1",
+    "tedious": "^2.6.4",
     "web-request": "^1.0.7"
   },
   "devDependencies": {
