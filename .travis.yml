@@ -6,4 +6,4 @@ os:
 before_script:
   - npm install
 script:
-  - npm run client-prod --prefix client/
+  - npm run server-client
