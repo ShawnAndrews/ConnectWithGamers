@@ -8,6 +8,7 @@ enum RedisExpirationTime {
 }
 
 export interface Config {
+    useChatServer: boolean;
     useStrictlyHttps: boolean;
     httpPort: number;
     httpsPort: number;
