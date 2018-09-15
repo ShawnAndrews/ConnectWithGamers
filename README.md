@@ -1,11 +1,11 @@
+[![Build Status](https://travis-ci.org/ShawnAndrews/ConnectWithGamers.svg?branch=master)](https://travis-ci.org/ShawnAndrews/ConnectWithGamers)
+
 <div align="center">
 
   ![alt text](https://i.imgur.com/UfeBmAp.gif "logo")
 
   <h1>Connect With Gamers (v1.4)</h1>
 </div>
-
-[![Build Status](https://travis-ci.org/ShawnAndrews/ConnectWithGamers.svg?branch=master)](https://travis-ci.org/ShawnAndrews/ConnectWithGamers)
 
 <div align="center">
   :video_game::space_invader::game_die::speech_balloon:
