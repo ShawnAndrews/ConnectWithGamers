@@ -3,6 +3,10 @@ node_js:
   - "7"
 os:
   - linux
+before_install:
+  - pip install --user codecov
+after_success:
+  - codecov --file coverage/lcov.info --disable search
 before_script:
   - cp configTemplate.ts config.ts
   - cd client
