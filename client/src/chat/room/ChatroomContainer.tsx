@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as io from 'socket.io-client';
 import * as ChatroomService from '../../service/chatroom/main';
 import { AUTH_TOKEN_NAME, CHATROOM_EVENTS, CHAT_SERVER_PORT, ChatHistoryResponse, SingleChatHistory, ChatroomUploadImageResponse } from '../../../../client/client-server-common/common';
-import Chatroom from './chatroom';
+import Chatroom from './Chatroom';
 
 interface IChatroomContainerProps extends RouteComponentProps<any> {
     chatroomid: number;

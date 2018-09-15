@@ -1,6 +1,6 @@
 const popupS = require('popups');
 import * as React from 'react';
-import SettingsForm from "../settings/settingsForm";
+import SettingsForm from "../settings/SettingsForm";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { AUTH_TOKEN_NAME, GenericResponseModel, AccountImageResponse } from '../../../../client/client-server-common/common';
 import * as AccountService from '../../service/account/main';

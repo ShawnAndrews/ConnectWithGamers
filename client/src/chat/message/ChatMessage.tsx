@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import { getFormattedDate } from '../../util/main';
-import { MessageSide } from '../room/chatroom';
+import { MessageSide } from '../room/Chatroom';
 
 interface IChatMessageProps {
     name: string;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Userlist from "./userlist";
+import Userlist from "./Userlist";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as io from 'socket.io-client';
 import { ChatroomUser, CHATROOM_EVENTS, CHAT_SERVER_PORT } from '../../../../client/client-server-common/common';

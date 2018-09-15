@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Slideshow from './slideshow';
+import Slideshow from './Slideshow';
 
 interface IMediaProps {
     video: string;
