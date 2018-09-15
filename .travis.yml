@@ -8,9 +8,6 @@ before_script:
   - cd client
   - npm install
   - cd ../
-  - touch key.pem
-  - touch certificate.crt
-  - touch bundle.ca-bundle
   - npm install
 script:
   - npm run server-client
