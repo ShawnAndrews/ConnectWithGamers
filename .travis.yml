@@ -7,6 +7,6 @@ before_script:
   - cp configTemplate.ts config.ts
   - npm install
 script:
-  - npm run server-client
+  - npm run server-prod
 deploy:
   skip_cleanup: true
