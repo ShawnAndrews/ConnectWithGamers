@@ -1,7 +1,7 @@
 import { Config } from "./client/client-server-common/common";
 
 const config: Config = {
-    useChatServer: false,
+    disableListening: true,
     useStrictlyHttps: false,
     httpPort: 80,
     httpsPort: 443,
