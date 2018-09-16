@@ -34,15 +34,12 @@ export default class DatabaseBase {
                     query = query.concat(` LIMIT ${numRecords}`);
                 }
 
-                console.log(`Executing SELECT query ${query} with ${preparedVars}`);
-
                 // execute query
                 this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
                     if (error) {
                         console.log(`SELECT error: ${JSON.stringify(error)}`);
                         return reject(error);
                     }
-                    console.log(`The solution is: ${JSON.stringify(results)}`);
                     response.data = results;
                     return resolve(response);
                 });
@@ -66,15 +63,12 @@ export default class DatabaseBase {
             // prepare query
             query =  `INSERT INTO ${config.mysql.database}.${tableName} (${columnNames.join(",")}) VALUES (${preparedValues})`;
 
-            console.log(`Executing INSERT query ${query} with ${preparedVars}`);
-
             // execute query
             this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
                 if (error) {
                     console.log(`INSERT error: ${JSON.stringify(error)}`);
                     return reject(error);
                 }
-                console.log(`The solution is: ${JSON.stringify(results)}`);
                 response.data = results;
                 return resolve(response);
             });
@@ -101,15 +95,12 @@ export default class DatabaseBase {
                 query = query.concat(` WHERE ${conditions}`);
             }
 
-            console.log(`Executing UPDATE query ${query} with ${preparedVars}`);
-
             // execute query
             this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
                 if (error) {
                     console.log(`UPDATE error: ${JSON.stringify(error)}`);
                     return reject(error);
                 }
-                console.log(`The solution is: ${JSON.stringify(results)}`);
                 response.data = results;
                 return resolve(response);
             });
