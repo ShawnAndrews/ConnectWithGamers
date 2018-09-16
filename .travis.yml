@@ -3,12 +3,6 @@ node_js:
   - "7"
 os:
   - linux
-env:
-  - CODECOV_TOKEN="b9f7e3dc-1f68-4897-b270-861f39beda34"
-before_install:
-  - pip install --user codecov
-after_success:
-  - codecov --file coverage/lcov.info --disable search
 before_script:
   - cp configTemplate.ts config.ts
   - cd client

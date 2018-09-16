@@ -19,11 +19,12 @@ class ChatroomModel extends DatabaseBase {
 
         return new Promise( (resolve, reject) => {
             const response: GenericResponseModel = {error: undefined, data: undefined};
+
             this.insert(
-                "dbo.chatroom",
+                "chatroom",
                 ["username", "date", "text", "image", "attachment", "chatroomid"],
-                [this.sql.VarChar, this.sql.DateTime, this.sql.NVarChar, this.sql.VarChar, this.sql.VarChar, this.sql.VarChar],
-                [username, date, text, image, attachment, chatroomid])
+                [username, date / 1000, text, image, attachment, chatroomid],
+                "?, FROM_UNIXTIME(?), ?, ?, ?, ?")
                 .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.error) {
                         return reject(dbResponse.error);
@@ -44,17 +45,15 @@ class ChatroomModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "dbo.chatroom",
-                ["chatroomid"],
-                [this.sql.Int],
-                [chatroomid],
+                "chatroom",
                 ["username", "date", "text", "image", "attachment"],
-                "chatroomid=@chatroomid",
+                "chatroomid=?",
+                [chatroomid],
                 config.chatHistoryCount)
                 .then((dbResponse: GenericResponseModel) => {
                     const chatHistoryResponse: ChatHistoryResponse = { name: [], date: [], text: [], image: [], attachment: [] };
 
-                    dbResponse.data.recordsets[0].forEach((chat: any) => {
+                    dbResponse.data.forEach((chat: any) => {
                         chatHistoryResponse.name.push(chat.username);
                         chatHistoryResponse.date.push(`${new Date(chat.date).toLocaleDateString()} ${new Date(chat.date).toLocaleTimeString()}`);
                         chatHistoryResponse.text.push(chat.text);
@@ -78,10 +77,10 @@ class ChatroomModel extends DatabaseBase {
 
         return new Promise( (resolve, reject) => {
 
-            this.insert("dbo.chatemotes",
+            this.insert("chatemotes",
                 ["prefix", "suffix", "emoteurl", "createdOn"],
-                [this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.DateTime],
-                [emotePrefix, emoteSuffix, emoteURL, Date.now()])
+                [emotePrefix, emoteSuffix, emoteURL, Date.now() / 1000],
+                "?, ?, ?, FROM_UNIXTIME(?)")
                 .then((dbResponse: GenericResponseModel) => {
                     return resolve();
                 })
@@ -117,16 +116,13 @@ class ChatroomModel extends DatabaseBase {
     getEmotes(): Promise <DbChatroomEmotesResponse> {
         return new Promise( (resolve, reject) => {
             this.select(
-                "dbo.chatemotes",
-                [],
-                [],
-                [],
+                "chatemotes",
                 ["prefix", "suffix", "emoteurl"])
                 .then((dbResponse: GenericResponseModel) => {
                     const dbChatroomEmotesResponse: DbChatroomEmotesResponse = { emotes: undefined };
                     const chatroomEmotes: ChatroomEmote[] = [];
 
-                    dbResponse.data.recordsets[0].forEach((rawEmote: any) => {
+                    dbResponse.data.forEach((rawEmote: any) => {
                         const chatroomEmote: ChatroomEmote = { link: rawEmote.emoteurl, prefix: rawEmote.prefix, suffix: rawEmote.suffix };
                         chatroomEmotes.push(chatroomEmote);
                     });

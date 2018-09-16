@@ -17,15 +17,13 @@ class VerificationModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "dbo.accounts",
-                ["accountid"],
-                [this.sql.Int],
-                [accountid],
+                "accounts",
                 ["email", "emailVerification"],
-                "accountid=@accountid")
+                "accountid=?",
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    const dbEmailVerification: string = dbResponse.data.recordsets[0][0].emailVerification;
-                    const dbEmail: string = dbResponse.data.recordsets[0][0].email;
+                    const dbEmailVerification: string = dbResponse.data[0].emailVerification;
+                    const dbEmail: string = dbResponse.data[0].email;
                     sendVerificationEmail(dbEmail, `www.connectwithgamers.com/account/verify/${dbEmailVerification}`)
                     .then(() => {
                         return resolve();
@@ -50,14 +48,12 @@ class VerificationModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "dbo.accounts",
-                ["accountid"],
-                [this.sql.Int],
-                [accountid],
+                "accounts",
                 ["emailVerification"],
-                "accountid=@accountid")
+                "accountid=?",
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    const dbEmailVerification: string = dbResponse.data.recordsets[0][0].emailVerification;
+                    const dbEmailVerification: string = dbResponse.data[0].emailVerification;
 
                     if (dbEmailVerification !== verificationCode) {
                         const dbVerifyEmailResponse: DbVerifyEmailResponse = { verificationSuccessful: false };
@@ -65,14 +61,13 @@ class VerificationModel extends DatabaseBase {
                     }
 
                     return this.update(
-                        "dbo.accounts",
-                        ["accountid", "emailVerification"],
-                        [this.sql.Int, this.sql.VarChar],
-                        [accountid, undefined],
-                        ["emailVerification"],
-                        "accountid=@accountid")
+                        "accounts",
+                        "emailVerification=?",
+                        [undefined],
+                        "accountid=?",
+                        [accountid])
                         .then((dbResponse: GenericResponseModel) => {
-                            if (dbResponse.data.rowsAffected[0] == 1) {
+                            if (dbResponse.data.affectedRows == 1) {
                                 const dbVerifyEmailResponse: DbVerifyEmailResponse = { verificationSuccessful: true };
                                 return resolve(dbVerifyEmailResponse);
                             } else {

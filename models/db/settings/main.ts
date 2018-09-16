@@ -25,20 +25,18 @@ class SettingsModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "dbo.accounts",
-                ["accountid"],
-                [this.sql.Int],
-                [accountid],
+                "accounts",
                 ["username", "email", "discord", "steam", "twitch", "image", "emailVerification"],
-                "accountid=@accountid")
+                `accountid=?`,
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    const username = dbResponse.data.recordsets[0][0].username;
-                    const email = dbResponse.data.recordsets[0][0].email;
-                    const discord = dbResponse.data.recordsets[0][0].discord || "";
-                    const steam = dbResponse.data.recordsets[0][0].steam || "";
-                    const twitch = dbResponse.data.recordsets[0][0].twitch || "";
-                    const image = dbResponse.data.recordsets[0][0].image;
-                    const emailVerified = dbResponse.data.recordsets[0][0].emailVerification === null;
+                    const username = dbResponse.data[0].username;
+                    const email = dbResponse.data[0].email;
+                    const discord = dbResponse.data[0].discord || "";
+                    const steam = dbResponse.data[0].steam || "";
+                    const twitch = dbResponse.data[0].twitch || "";
+                    const image = dbResponse.data[0].image;
+                    const emailVerified = dbResponse.data[0].emailVerification === null;
                     const dbAccountSettingsResponse: DbAccountSettingsResponse = {
                         username: username,
                         email: email,
@@ -65,14 +63,13 @@ class SettingsModel extends DatabaseBase {
                 .then((response: any) => {
                     const link: string = response.data.link;
                     this.update(
-                        "dbo.accounts",
-                        ["accountid", "image"],
-                        [this.sql.Int, this.sql.VarChar],
-                        [accountid, link],
-                        ["image"],
-                        "accountid=@accountid")
+                        "accounts",
+                        "image=?",
+                        [link],
+                        "accountid=?",
+                        [accountid])
                         .then((dbResponse: GenericResponseModel) => {
-                            if (dbResponse.data.rowsAffected[0] == 1) {
+                            if (dbResponse.data.affectedRows == 1) {
                                 const dbAccountImageResponse: DbAccountImageResponse = { link: link };
                                 return resolve(dbAccountImageResponse);
                             } else {
@@ -96,14 +93,13 @@ class SettingsModel extends DatabaseBase {
     deleteAccountImage(accountid: number): Promise<DbAccountImageResponse> {
         return new Promise( (resolve, reject) => {
             this.update(
-                "dbo.accounts",
-                ["accountid", "image"],
-                [this.sql.Int, this.sql.VarChar],
-                [accountid, undefined],
-                ["image"],
-                "accountid=@accountid")
+                "accounts",
+                "image=?",
+                [undefined],
+                "accountid=?",
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.rowsAffected[0] == 1) {
+                    if (dbResponse.data.affectedRows == 1) {
                         const dbAccountImageResponse: DbAccountImageResponse = { link: undefined };
                         return resolve(dbAccountImageResponse);
                     } else {
@@ -129,14 +125,13 @@ class SettingsModel extends DatabaseBase {
             }
 
             this.update(
-                "dbo.accounts",
-                ["accountid", "username"],
-                [this.sql.Int, this.sql.VarChar],
-                [accountid, newUsername],
-                ["username"],
-                "accountid=@accountid")
+                "accounts",
+                "username=?",
+                [newUsername],
+                "accountid=?",
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.rowsAffected[0] == 1) {
+                    if (dbResponse.data.affectedRows == 1) {
                         return resolve();
                     } else {
                         return reject(`Username is already taken.`);
@@ -164,14 +159,13 @@ class SettingsModel extends DatabaseBase {
             }
 
             this.update(
-                "dbo.accounts",
-                ["accountid", "email", "emailVerification"],
-                [this.sql.Int, this.sql.VarChar, this.sql.VarChar],
-                [accountid, newEmail, emailVerification],
-                ["email", "emailVerification"],
-                "accountid=@accountid")
+                "accounts",
+                "email=?,emailVerification=?",
+                [newEmail, emailVerification],
+                "accountid=?",
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.rowsAffected[0] == 1) {
+                    if (dbResponse.data.affectedRows == 1) {
                         return resolve();
                     } else {
                         return reject(`Email is already taken.`);
@@ -200,14 +194,13 @@ class SettingsModel extends DatabaseBase {
             const hash = bcrypt.hashSync(newPassword, salt);
 
             this.update(
-                "dbo.accounts",
-                ["accountid", "passwordHash", "salt"],
-                [this.sql.Int, this.sql.VarChar, this.sql.VarChar],
-                [accountid, hash, salt],
-                ["passwordHash", "salt"],
-                "accountid=@accountid")
+                "accounts",
+                "passwordHash=?,salt=?",
+                [hash, salt],
+                "accountid=?",
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.rowsAffected[0] == 1) {
+                    if (dbResponse.data.affectedRows == 1) {
                         return resolve();
                     } else {
                         return reject(`Database error already taken.`);
@@ -235,14 +228,13 @@ class SettingsModel extends DatabaseBase {
             }
 
             this.update(
-                "dbo.accounts",
-                ["accountid", "discord"],
-                [this.sql.Int, this.sql.VarChar],
-                [accountid, newDiscord === "" ? undefined : newDiscord],
-                ["discord"],
-                "accountid=@accountid")
+                "accounts",
+                "discord=?",
+                [newDiscord === "" ? undefined : newDiscord],
+                "accountid=?",
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.rowsAffected[0] == 1) {
+                    if (dbResponse.data.affectedRows == 1) {
                         return resolve();
                     } else {
                         return reject(`Database error.`);
@@ -263,14 +255,13 @@ class SettingsModel extends DatabaseBase {
         const updatePromise = (): Promise<null> => {
             return new Promise( (resolve, reject) => {
                 this.update(
-                    "dbo.accounts",
-                    ["accountid", "twitch"],
-                    [this.sql.Int, this.sql.VarChar],
-                    [accountid, newTwitch === "" ? undefined : newTwitch],
-                    ["twitch"],
-                    "accountid=@accountid")
+                    "accounts",
+                    "twitch=?",
+                    [newTwitch === "" ? undefined : newTwitch],
+                    "accountid=?",
+                    [accountid])
                     .then((dbResponse: GenericResponseModel) => {
-                        if (dbResponse.data.rowsAffected[0] == 1) {
+                        if (dbResponse.data.affectedRows == 1) {
                             return resolve();
                         } else {
                             return reject("Database error.");
@@ -330,22 +321,21 @@ class SettingsModel extends DatabaseBase {
         const updatePromise = (): Promise<null> => {
             return new Promise( (resolve, reject) => {
                 this.update(
-                "dbo.accounts",
-                ["accountid", "steam"],
-                [this.sql.Int, this.sql.VarChar],
-                [accountid, newSteam === "" ? undefined : newSteam],
-                ["steam"],
-                "accountid=@accountid")
-                .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.rowsAffected[0] == 1) {
-                        return resolve();
-                    } else {
-                        return reject(`Database error.`);
-                    }
-                })
-                .catch((error: string) => {
-                    return reject(error);
-                });
+                    "accounts",
+                    "steam=?",
+                    [newSteam === "" ? undefined : newSteam],
+                    "accountid=?",
+                    [accountid])
+                    .then((dbResponse: GenericResponseModel) => {
+                        if (dbResponse.data.affectedRows == 1) {
+                            return resolve();
+                        } else {
+                            return reject(`Database error.`);
+                        }
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
            });
         };
 

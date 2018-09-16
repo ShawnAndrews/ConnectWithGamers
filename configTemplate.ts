@@ -39,6 +39,13 @@ const config: Config = {
         key: `./key.pem`,
         cert: `./certificate.crt`,
         ca: `./bundle.ca-bundle`
+    },
+    mysql: {
+        host: "",
+        user: "",
+        password: "",
+        database: "",
+        insecureAuth: true
     }
 };
 

@@ -26,10 +26,11 @@ class AccountModel extends DatabaseBase {
 
         return new Promise( (resolve, reject) => {
 
-            this.insert("dbo.accounts",
+            this.insert(
+                "accounts",
                 ["username", "email", "passwordHash", "salt", "createdOn", "emailVerification"],
-                [this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.VarChar, this.sql.DateTime, this.sql.VarChar],
-                [username, email, hash, salt, Date.now(), emailVerification])
+                [username, email, hash, salt, Date.now() / 1000, emailVerification],
+                "?, ?, ?, ?, FROM_UNIXTIME(?), ?")
                 .then(() => {
                     sendVerificationEmail(email, `http://www.connectwithgamers.com/account/verify/${emailVerification}`)
                     .then(() => {
@@ -57,14 +58,12 @@ class AccountModel extends DatabaseBase {
             const response: GenericResponseModel = {error: undefined, data: undefined};
 
             this.select(
-                "dbo.accounts",
-                ["username"],
-                [this.sql.VarChar],
-                [username],
+                "accounts",
                 ["accountid"],
-                "username=@username")
+                `username=?`,
+                [username])
                 .then((dbResponse: GenericResponseModel) => {
-                    const accountid: number = dbResponse.data.recordsets[0][0].accountid;
+                    const accountid: number = dbResponse.data[0].accountid;
                     response.data = { accountid: accountid };
                     return resolve(response);
                 })
@@ -86,14 +85,12 @@ class AccountModel extends DatabaseBase {
             const response: GenericResponseModel = {error: undefined, data: undefined};
 
             this.select(
-                "dbo.accounts",
-                ["accountid"],
-                [this.sql.Int],
-                [accountid],
+                "accounts",
                 ["username"],
-                "accountid=@accountid")
+                `accountid=?`,
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    const username = dbResponse.data.recordsets[0][0].username;
+                    const username = dbResponse.data[0].username;
                     response.data = { username: username };
                     return resolve(response);
                 })
@@ -112,20 +109,17 @@ class AccountModel extends DatabaseBase {
 
         return new Promise( (resolve, reject) => {
             this.select(
-                "dbo.accounts",
-                ["accountid"],
-                [this.sql.Int],
-                [accountid],
+                "accounts",
                 ["image"],
-                "accountid=@accountid")
+                `accountid=?`,
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    const dbAccountImageResponse: DbAccountImageResponse = { link: dbResponse.data.recordsets[0][0].image };
+                    const dbAccountImageResponse: DbAccountImageResponse = { link: dbResponse.data[0].image };
                     return resolve(dbAccountImageResponse);
                 })
                 .catch((error: string) => {
                     return reject(`Database error. ${error}`);
                 });
-
         });
     }
 
@@ -136,17 +130,14 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "dbo.accounts",
-                [],
-                [],
-                [],
+                "accounts",
                 ["accountid", "username", "discord", "steam", "twitch", "image"],
-                `username LIKE '${usernameFilter ? `%${usernameFilter}%` : `%`}'`)
+                `username LIKE ${usernameFilter ? `?` : `'%'`}`,
+                [`%${usernameFilter}%`])
                 .then((dbResponse: GenericResponseModel) => {
                     const accounts: AccountInfo[] = [];
-
-                    if (dbResponse.data.recordsets[0].length > 0) {
-                        dbResponse.data.recordsets[0].forEach((element: any) => {
+                    if (dbResponse.data.length > 0) {
+                        dbResponse.data.forEach((element: any) => {
                             const account: AccountInfo = {
                                 accountid: element.accountid,
                                 username: element.username,
@@ -178,17 +169,15 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "dbo.accounts",
-                [],
-                [],
-                [],
+                "accounts",
                 ["accountid", "username", "discord", "steam", "twitch", "image"],
-                `accountid IN (${accountIds.join(",")})`)
+                `accountid IN (${accountIds.join(",")})`,
+                accountIds)
                 .then((dbResponse: GenericResponseModel) => {
                     const accounts: AccountInfo[] = [];
 
-                    if (dbResponse.data.recordsets[0].length > 0) {
-                        dbResponse.data.recordsets[0].forEach((element: any) => {
+                    if (dbResponse.data.length > 0) {
+                        dbResponse.data.forEach((element: any) => {
                             const account: AccountInfo = {
                                 accountid: element.accountid,
                                 username: element.username,
@@ -220,21 +209,19 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "dbo.accounts",
-                ["accountid"],
-                [this.sql.Int],
-                [accountid],
+                "accounts",
                 ["accountid", "username", "discord", "steam", "twitch", "image"],
-                "accountid=@accountid")
+                "accountid=?",
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.recordsets[0].length > 0) {
+                    if (dbResponse.data.length > 0) {
                         const account: AccountInfo = {
-                            accountid: dbResponse.data.recordsets[0][0].accountid,
-                            username: dbResponse.data.recordsets[0][0].username,
-                            discord_url: dbResponse.data.recordsets[0][0].discord,
-                            steam_url: dbResponse.data.recordsets[0][0].steam,
-                            twitch_url: dbResponse.data.recordsets[0][0].twitch,
-                            image: dbResponse.data.recordsets[0][0].image
+                            accountid: dbResponse.data[0].accountid,
+                            username: dbResponse.data[0].username,
+                            discord_url: dbResponse.data[0].discord,
+                            steam_url: dbResponse.data[0].steam,
+                            twitch_url: dbResponse.data[0].twitch,
+                            image: dbResponse.data[0].image
                         };
                         const dbUser: DbAccountInfoResponse = { account: account };
                         return resolve(dbUser);
@@ -258,15 +245,13 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "dbo.accounts",
-                ["accountid"],
-                [this.sql.Int],
-                [accountid],
+                "accounts",
                 ["twitch"],
-                "accountid=@accountid")
+                "accountid=?",
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.recordsets[0].length > 0 && dbResponse.data.recordsets[0][0].twitch !== null) {
-                        const twitchName: string = dbResponse.data.recordsets[0][0].twitch;
+                    if (dbResponse.data.length > 0 && dbResponse.data[0].twitch !== null) {
+                        const twitchName: string = dbResponse.data[0].twitch;
 
                         axios
                         .get(`https://api.twitch.tv/helix/users?login=${twitchName}`,
@@ -564,15 +549,13 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "dbo.accounts",
-                ["accountid"],
-                [this.sql.Int],
-                [accountid],
+                "accounts",
                 ["steam"],
-                "accountid=@accountid")
+                `accountid=?`,
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.recordsets[0].length > 0 && dbResponse.data.recordsets[0][0].steam !== null) {
-                        const steamName: string = dbResponse.data.recordsets[0][0].steam;
+                    if (dbResponse.data.length > 0 && dbResponse.data[0].steam !== null) {
+                        const steamName: string = dbResponse.data[0].steam;
 
                         axios
                         .get(`https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1?key=${config.steam.key}&vanityurl=${steamName}`)
@@ -760,15 +743,13 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "dbo.accounts",
-                ["accountid"],
-                [this.sql.Int],
-                [accountid],
+                "accounts",
                 ["discord"],
-                "accountid=@accountid")
+                `accountid=?`,
+                [accountid])
                 .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.recordsets[0].length > 0 && dbResponse.data.recordsets[0][0].discord !== null) {
-                        const discordLink: string = dbResponse.data.recordsets[0][0].discord;
+                    if (dbResponse.data.length > 0 && dbResponse.data[0].discord !== null) {
+                        const discordLink: string = dbResponse.data[0].discord;
                         const dbDiscordLinkResponse: DbDiscordLinkResponse = { discordLink: discordLink };
                         return resolve(dbDiscordLinkResponse);
                     } else {

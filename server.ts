@@ -3,7 +3,6 @@ import { router as chatroomController } from "./controllers/chatroomController/c
 import igdbController from "./controllers/igdbController/igdb";
 import registerChatHandlers from "./controllers/chatroomController/chatroom";
 import config from "./config";
-import connectToDatabase from "./models/db/connect";
 import logIP from "./controllers/logger/main";
 const express = require("express");
 const app = express();
@@ -61,7 +60,7 @@ registerChatHandlers(chatServer);
 chatServer.listen(config.chatPort);
 
 /* start HTTP/HTTPS server */
-app.listen(config.httpPort, () => { connectToDatabase(); });
+app.listen(config.httpPort);
 if (config.useStrictlyHttps) {
     secureServer.listen(config.httpsPort);
 }

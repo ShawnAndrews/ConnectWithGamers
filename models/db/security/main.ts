@@ -19,15 +19,13 @@ class SecurityModel extends DatabaseBase {
     authenticate(username: string, password: string, remember: boolean): Promise<DbAuthenticateResponse> {
         return new Promise((resolve, reject) => {
             this.select(
-                "dbo.accounts",
-                ["username"],
-                [this.sql.VarChar],
-                [username],
+                "accounts",
                 ["passwordHash"],
-                "username=@username")
+                `username=?`,
+                [username])
                 .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.recordsets[0].length > 0) {
-                        const dbPasswordHash = dbResponse.data.recordsets[0][0].passwordHash;
+                    if (dbResponse.data.length > 0) {
+                        const dbPasswordHash: string = dbResponse.data[0].passwordHash;
                         if (bcrypt.compareSync(password, dbPasswordHash)) {
                             const response: DbAuthenticateResponse = { username: username, remember: remember };
                             return resolve(response);
@@ -66,15 +64,13 @@ class SecurityModel extends DatabaseBase {
 
             const authToken: string = authCookieMatch[1];
             this.select(
-                "dbo.tokens",
-                [AUTH_TOKEN_NAME],
-                [this.sql.VarChar],
-                [authToken],
+                "tokens",
                 ["accountid"],
-                `${AUTH_TOKEN_NAME}=@${AUTH_TOKEN_NAME}`)
+                `${AUTH_TOKEN_NAME}=?`,
+                [authToken])
                 .then((dbResponse: GenericResponseModel) => {
-                    if (dbResponse.data.recordsets[0].length > 0) {
-                        const accountid: number = Number(dbResponse.data.recordsets[0][0].accountid);
+                    if (dbResponse.data.length > 0) {
+                        const accountid: number = Number(dbResponse.data[0].accountid);
                         const dbAuthorizeResponse: DbAuthorizeResponse = { accountid: accountid };
                         return resolve(dbAuthorizeResponse);
                     } else {
@@ -101,19 +97,17 @@ class SecurityModel extends DatabaseBase {
                 const response: GenericResponseModel = {error: undefined, data: undefined};
 
                 this.select(
-                    "dbo.accounts",
-                    ["username"],
-                    [this.sql.VarChar],
-                    [username],
+                    "accounts",
                     ["accountid", "salt"],
-                    "username=@username")
+                    `username=?`,
+                    [username])
                     .then((dbResponse: GenericResponseModel) => {
                         if (dbResponse.error) {
                             return reject(response);
                         } else {
-                            if (dbResponse.data.recordsets[0].length > 0) {
-                                const accountid = Number(dbResponse.data.recordsets[0][0].accountid);
-                                const salt = dbResponse.data.recordsets[0][0].salt;
+                            if (dbResponse.data.length > 0) {
+                                const accountid = Number(dbResponse.data[0].accountid);
+                                const salt = dbResponse.data[0].salt;
                                 response.data = { accountid: accountid, salt: salt };
                                 return resolve(response);
                             } else {
@@ -138,10 +132,10 @@ class SecurityModel extends DatabaseBase {
                 const authTokenExpiration: number = remember ? Date.now() + config.token_remember_expiration : Date.now() + config.token_expiration;
 
                 this.insert(
-                    "dbo.tokens",
+                    "tokens",
                     ["accountid", "authToken", "createdOn", "expiresOn"],
-                    [this.sql.Int, this.sql.VarChar, this.sql.DateTime, this.sql.DateTime],
-                    [dbAccountid, authToken, Date.now(), authTokenExpiration])
+                    [dbAccountid, authToken, Date.now() / 1000, authTokenExpiration / 1000],
+                    "?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?)")
                     .then((dbResponse: GenericResponseModel) => {
                         if (dbResponse.error) {
                             return reject(dbResponse.error);
@@ -159,7 +153,7 @@ class SecurityModel extends DatabaseBase {
 
             getAccountInfoPromise()
             .then((response: GenericResponseModel) => {
-                // inserting token
+                // insert new token
                 const accountid = response.data.accountid;
                 return insertTokenPromise(accountid);
             })

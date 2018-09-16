@@ -189,12 +189,12 @@ export default function registerChatHandlers(chatServer: any): void {
             accountModel.getAccountsByUsernameFilter(usernameFilter)
                 .then((dbUsers: DbAccountsInfoResponse) => {
                     getAllUserInfo(dbUsers)
-                    .then((allUserInfo: ChatroomUser[]) => {
-                        socket.emit(CHATROOM_EVENTS.GetAllUsers, allUserInfo);
-                    })
-                    .catch((error: string) => {
-                        console.log(`Chatroom error getting all users info: ${error}`);
-                    });
+                        .then((allUserInfo: ChatroomUser[]) => {
+                            socket.emit(CHATROOM_EVENTS.Users, allUserInfo);
+                        })
+                        .catch((error: string) => {
+                            console.log(`Chatroom error getting all users info: ${error}`);
+                        });
                 })
                 .catch((err: string) => {
                     console.log(`Database error: ${err}`);

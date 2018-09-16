@@ -24,7 +24,7 @@ function getLastActiveByIdSync(userLog: UserLog[], accountid: number): Date {
             return userLog[i].lastActive;
         }
     }
-    return new Date();
+    return undefined;
 }
 
 /**
@@ -102,7 +102,7 @@ export function getAllUserInfo(dbUsers: DbAccountsInfoResponse): Promise<Chatroo
             dbUsers.accounts.forEach((element: AccountInfo) => {
                 const now: any = new Date();
                 const lastActive: Date = getLastActiveByIdSync(userLog, element.accountid);
-                const lastActiveMinsAgo: number = Math.abs(Math.round(((new Date(lastActive).getTime() - now.getTime()) / 1000 / 60)));
+                const lastActiveMinsAgo: number = lastActive ? Math.abs(Math.round(((new Date(lastActive).getTime() - now.getTime()) / 1000 / 60))) : -1;
                 const chatroomUser: ChatroomUser = { username: element.username, steam_url: element.steam_url, discord_url: element.discord_url, twitch_url: element.twitch_url, image: element.image, last_active: lastActiveMinsAgo };
                 chatroomUsers.push(chatroomUser);
             });

@@ -47,6 +47,14 @@ export interface Config {
         cert: string,
         ca: string;
     };
+
+    mysql: {
+        host: string,
+        user: string,
+        password: string,
+        database: string,
+        insecureAuth: boolean
+    };
 }
 
 export interface IGDBCacheEntry {
