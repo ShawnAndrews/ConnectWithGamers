@@ -8,7 +8,12 @@ export default class DatabaseBase {
 
     constructor() {
         this.connection = createConnection(config.mysql);
-        this.connection.connect();
+        this.connection.connect((err) => {
+            if (err) {
+                console.error("Failed to connect to MySQL db: " + err.stack);
+                process.exit();
+            }
+        });
     }
 
     /**
@@ -43,6 +48,7 @@ export default class DatabaseBase {
                     response.data = results;
                     return resolve(response);
                 });
+
             });
 
     }
@@ -72,6 +78,7 @@ export default class DatabaseBase {
                 response.data = results;
                 return resolve(response);
             });
+
         });
 
     }
