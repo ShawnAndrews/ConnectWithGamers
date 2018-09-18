@@ -5,6 +5,7 @@ os:
   - linux
 before_script:
   - cp configTemplate.ts config.ts
+  - cp databaseTemplate.json database.json
   - cd client
   - npm install
   - cd ../

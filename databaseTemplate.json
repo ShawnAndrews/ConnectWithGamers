@@ -1,0 +1,18 @@
+{
+    "dev": {
+        "host": "localhost",
+        "user": "root",
+        "password" : "",
+        "driver": "mysql",
+        "multipleStatements": true
+    },
+
+    "prod": {
+        "host": "localhost",
+        "user": "root",
+        "password" : "",
+        "driver": "mysql",
+        "database": "connectwithgamers",
+        "multipleStatements": true
+    }
+}

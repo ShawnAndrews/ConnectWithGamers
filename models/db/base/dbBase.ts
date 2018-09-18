@@ -4,14 +4,32 @@ import config from "../../../config";
 
 export default class DatabaseBase {
 
-    connection: Connection;
+    private connection: Connection;
 
     constructor() {
+        this.connectToDatabase();
+
+        // keep database connection alive
+        setInterval(() => {
+            this.connection.query("SELECT 1");
+        }, 5000);
+    }
+
+    /**
+     * Connect to MySQL database.
+     */
+    connectToDatabase(): void {
         this.connection = createConnection(config.mysql);
-        this.connection.connect((err) => {
+        this.connection.connect((err: MysqlError) => {
             if (err) {
                 console.error("Failed to connect to MySQL db: " + err.stack);
                 process.exit();
+            }
+        });
+        this.connection.on("error", function(err) {
+            if (err.code === "PROTOCOL_CONNECTION_LOST") {
+                console.log(`Connection to MySQL database lost. Retrying...`);
+                setTimeout(this.connectToDatabase, 2000);
             }
         });
     }
