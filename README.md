@@ -9,7 +9,7 @@
         <img src="https://travis-ci.org/ShawnAndrews/ConnectWithGamers.svg?branch=master" /></a>
     <a href="http://connectwithgamers.com/" alt="connectwithgamers.com">
         <img src="https://img.shields.io/website-up-down-green-red/http/shields.io.svg" /></a>
-    <a href="https://david-dm.org/" alt="David">
+    <a href="https://david-dm.org/shawnandrews/connectwithgamers" alt="David">
         <img src="https://david-dm.org/shawnandrews/connectwithgamers.svg" /></a>
     <a href="https://github.com/ShawnAndrews/ConnectWithGamers" alt="GitHub release">
         <img src="https://img.shields.io/github/release/shawnandrews/connectwithgamers.svg" /></a>
