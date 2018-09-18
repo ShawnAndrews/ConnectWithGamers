@@ -47,6 +47,7 @@
 - [Updates](#updates)
 - [Config](#config)
 - [Dependencies](#dependencies)
+- [Migrations](#migrations)
 - [Installation](#installation)
 - [Run](#run)
 - [FAQ](#faq)
@@ -75,115 +76,90 @@
 
 ## Updates
 
-<h3>Version 1.0</h3>
-
-- Initial release
-
-<h3>Version 1.1<h3>
-
-<details> 
-  <summary>Expand to read patch notes</summary>
-<h4>Account login</h4>
-
-- Updated login, signup button
-- Updated Remember Me slider
-
-<h4>Account Settings</h4>
-
-- Added ability to change password
-- Changed saving individual settings into one save button
-- Added ability to Add/Update/Delete profile pictures
-    - Using Imgur image hosting
-- Added slider to expand and collapse gaming links
-
-<h4>Chatroom</h4>
-
-- Added text to show if message was Today, Yesterday, etc for improved readability
-- Added iMessage chat bubbles
-    - Clickable to show time stamp
-- Updated send bar to send messages
-- Updated screen to view users in chatroom
-    - Updated UI
-    - Added text to show how long ago was the last activity of a user
-
-<h4>Menu</h4>
-
-- Added Game Trailer vidoes
-- Added Steam Reviews
-- Added ability to search games by genre
-- Changed Popular Games By Platform to Exclusive Games By Platform
-- Added Read More for long summaries for improved readability
-- Added clickable platforms and genres
+<details>
+  <summary>View patch notes</summary>
+  
+  
+> v1.0
+> 
+> - Initial release
+>
+> v1.1
+> 
+> - Account login
+>     * Updated login, signup button
+>     * Updated Remember Me slider
+> - Account Settings
+>     * Added ability to change password
+>     * Changed saving individual settings into one save button
+>     * Added ability to Add/Update/Delete profile pictures
+>          * Using Imgur image hosting
+>     * Added slider to expand and collapse gaming links
+> - Chatroom
+>     * Added text to show if message was Today, Yesterday, etc for improved readability
+>     * Added iMessage chat bubbles
+>          * Clickable to show time stamp
+>     * Updated send bar to send messages
+>     * Updated screen to view users in chatroom
+>          * Updated UI
+>          * Added text to show how long ago was the last activity of a user
+> - Menu
+>     * Added Game Trailer vidoes
+>     * Added Steam Reviews
+>     * Added ability to search games by genre
+>     * Changed Popular Games By Platform to Exclusive Games By Platform
+>     * Added Read More for long summaries for improved readability
+>     * Added clickable platforms and genres
+>
+> v1.2
+>
+> - Chatroom
+>     * Added top and side nav bar
+>     * Moved User List to side nav
+>          * Updated user list UI
+>          * Added multi-bubble for subsequent messages from the same person
+>          * Added ability to use pictures in messages
+> - Menu
+>     * Updated Game Screen UI
+> - Account
+>     * Added email verification
+>          * Email sent on account creation and resent on request
+> - Other
+>     * Added SSL support
+>     * Code cleanup
+>          * Add comments
+>          * Split heavy files into smaller ones
+>          * Seperate components into container and presentational components
+>
+> v1.3
+>
+> - Menu
+>     * Added Gaming Profiles
+>          * Ability to view your followed live Twitch streams
+>          * Ability to view your Steam friends list
+>          * Ability to copy your Discord server's link to send to friends
+>
+> v1.4
+>
+> - Login
+>     * Updated login screen to be fullscreen
+> - Chatroom
+>     * Updated chatrooms
+>          * Severals new channels for the most popular video games
+>     * Added user list bar
+>          * Ability to see other user's time of most recent activity
+>          * Ability to click on a user for more detailed information
+>     * Added search feature
+>          * Find users by name for more detailed information
+>     * Added settings feature
+>          * View all emotes available and who uploaded them
+>          * Create your own custom emote
+>     * Updated messaging
+>          * Ability to use Emojis, Animated Emojis, and image attachments
 </details>
 
-<h3>Version 1.2<h3>
-
-<details> 
-  <summary>Expand to read patch notes</summary>
-<h4>Chatroom</h4>
-
-- Added top and side nav bar
-- Moved User List to side nav
-    - Updated user list UI
-    - Added multi-bubble for subsequent messages from the same person
-    - Added ability to use pictures in messages
-
-<h4>Menu</h4>
-
-- Updated Game Screen UI
-
-<h4>Account</h4>
-
-- Added email verification
-    - Email sent on account creation and resent on request
-    
-<h4>Other</h4>
-    
-- Added SSL support
-- Code cleanup
-    - Add comments
-    - Split heavy files into smaller ones
-    - Seperate components into container and presentational components
-</details>
-
-<h3>Version 1.3<h3>
-
-<details> 
-  <summary>Expand to read patch notes</summary>
-<h4>Menu</h4>
-
-- Added Gaming Profiles
-    - Ability to view your followed live Twitch streams
-    - Ability to view your Steam friends list
-    - Ability to copy your Discord server's link to send to friends
-</details>
-    
-<h3>Version 1.4<h3>
-
-<details> 
-  <summary>Expand to read patch notes</summary>
-<h4>Login</h4>
-
-- Updated login screen to be fullscreen
-
-<h4>Chatroom</h4>
-
-- Updated chatrooms
-    - Severals new channels for the most popular video games
-- Added user list bar
-    - Ability to see other user's time of most recent activity
-    - Ability to click on a user for more detailed information
-- Added search feature
-    - Find users by name for more detailed information
-- Added settings feature
-    - View all emotes available and who uploaded them
-    - Create your own custom emote
-- Updated messaging
-    - Ability to use Emojis, Animated Emojis, and image attachments
-</details>
-    
 ## Config
-Create a git-ignored file called ``config.ts`` in the ``/`` directory with the following contents, including the requried properties of the Config interface.
+Create a file called ``config.ts`` in the root directory based off the default settings located in configTemplate.ts.
 
 ```
 import { Config } from "./client/client-server-common/common";
@@ -195,31 +171,51 @@ const config: Config = {
 export default config;
 ```
 
-SSL information: If you plan to use SSL set "useStrictlyHttps:true" and "https: { key: `keyPath.pem`, cert: `certPath.crt`, ca: `bundlePath.ca-bundle` }" to the appropriate paths in the config properties.
+SSL information: If you plan to use SSL set "useStrictlyHttps:true" and "https: { key: `<path-to-key>.pem`, cert: `<path-to-certificate>.crt`, ca: `<path-to-bundle>.ca-bundle` }" to the appropriate paths in the config file.
+
+As well, create a file called ``database.json`` in the root directory based off the default settings located in databaseTemplate.json and ensure these values match those for the database property in config.ts.
 
 ## Dependencies
-Apart from the included NPM packages, there are a couple extra components required to run Connect With Gamers without error.
+Apart from the included NPM packages, there are additional components and API's required to run this program without error.
 - Redis: This is required to save API calls to IGDB in memory.
-- SQL Server: This is required to save Accounts, Authenticaiton Tokens, and Chatroom Messages.
+- MySQL Server: This is required to save Accounts, Authenticaiton Tokens, Chat Emotes, and Chatroom Messages.
 - IGDB: You are required to have an IGDB account with a valid API key present in the config file to perform API queries.
 - Imgur: You are required to have a valid Imgur API key.
 - Steam: No API key is required for the current application's requests.
 - SMTP: For account email verification you must set valid SMTP account credentials via the config property "smtp".
 
+## Migrations
+Setting up the database requires the following steps:
+
+- Start your MySQL server.
+- Ensure the database account and connection information located in database.json and config.ts matches eachother.
+- Run the following commands in the root directory to create the database and necessary tables.
+
+```
+db-migrate db:create connectwithgamers
+db-migrate up --config database.json -e prod
+```
+
 ## Installation
 How do i run this website on my own?
-- Make sure your SQL Server database is running on the default port and you imported the schema from [v1.0](http://www.saportfolio.ca/ConnectWithGamersv10.bacpac) or [v1.1](http://www.saportfolio.ca/ConnectWithGamersv11.bak).
-- Make sure your Redis server is up and running.
-- Make sure your HTTP, HTTPS(if enabled) and Chat server ports are forwarded, if using on a live site.
+- Ensure your MySQL server is running and you have a copy of the database using the [Migrations](#migrations) guide.
+- Ensure your Redis server is running.
+- Ensure your HTTP, HTTPS(if enabled) and Chat server ports are forwarded.
 - You may now access the website via ``localhost``.
 
 ## Run
-Start running the HTTP and Chat server by executing "npm install" then the following command in the ``/`` directory:
+Before proceeding, ensure you have completed a "npm install" on both the root and ``/client`` directory.
+
+Start running the HTTP/HTTPS web and chat server by executing the following command:
 
 ```npm run server-client```
 
 This will build the production version of the client and server in the respective ``/dist`` folder then run the server.
 You may now access the site via localhost.
+
+This program is also set up and and optimized for clustering. Clustering will create duplicate processes on each CPU core and spread requests across them to improve CPU task performance. To use clustering, execute the following command:
+
+```node runclusters.js```
 
 ## FAQ
 ### Why is it called Connect With Gamers?
@@ -227,6 +223,9 @@ This website was desgigned to encourage fellow gamers to meet by talking in chat
 
 ### Do you have other projects i can check out?
 Of course! You can check them out on my portfolio website at [saportfolio.ca](http://www.saportfolio.ca)
+
+### Where can i get a copy of the database?
+Use my [Migrations](#migrations) guide located above.
 
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)
