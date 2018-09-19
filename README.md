@@ -219,7 +219,7 @@ This program is also set up and and optimized for clustering. Clustering will cr
 
 ## FAQ
 ### Why is it called Connect With Gamers?
-This website was desgigned to encourage fellow gamers to meet by talking in chat, viewing each others gaming profile, and giving them a library of games to talk discuss.
+This website was desgigned to encourage fellow gamers to meet by talking in chat, viewing each others gaming profile, and giving them a library of games to talk about.
 
 ### Do you have other projects i can check out?
 Of course! You can check them out on my portfolio website at [saportfolio.ca](http://www.saportfolio.ca)
