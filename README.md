@@ -204,22 +204,46 @@ How do i run this website on my own?
 - You may now access the website via ``localhost``.
 
 ## Run
-Before proceeding, ensure you have completed a "npm install" on both the root and ``/client`` directory.
 
-Start running the HTTP/HTTPS web and chat server by executing the following command:
+- Install
 
-```npm run server-client```
+Execute the following commands to install npm packages for the client and server:
+```
+cd client
+npm install
+cd ..
+npm install
+```
 
-This will build the production version of the client and server in the respective ``/dist`` folder then run the server.
-You may now access the site via localhost.
+- Build
 
-This program is also set up and and optimized for clustering. Clustering will create duplicate processes on each CPU core and spread requests across them to improve CPU task performance. To use clustering, execute the following command:
+To build the project using webpack and compile the typescript, execute the following commands:
+```
+cd client
+npm run client-prod
+cd ..
+npm run server-prod
+```
+
+This will build the production version of the client and server in the respective ``/dist`` folder
+
+- Run
+
+You have two options for running the server. The first involves a single process handling requests, and the other is cluster mode which will create duplicate processes on each CPU core and spread requests across them to improve CPU task performance.
+
+#1 (non-cluster mode): 
+
+```npm run server```
+
+#2 (cluster mode):
 
 ```node runclusters.js```
 
+This will start running the HTTP/HTTPS web and chat server and you may now access the site via localhost.
+
 ## FAQ
 ### Why is it called Connect With Gamers?
-This website was desgigned to encourage fellow gamers to meet by talking in chat, viewing each others gaming profile, and giving them a library of games to talk about.
+This website was designed to encourage fellow gamers to meet by talking in chat, viewing each others gaming profile, and giving them a library of games to talk about.
 
 ### Do you have other projects i can check out?
 Of course! You can check them out on my portfolio website at [saportfolio.ca](http://www.saportfolio.ca)
