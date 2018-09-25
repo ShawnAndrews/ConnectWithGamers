@@ -13,6 +13,10 @@
             ]
         }
     },
+    "files": [
+        "server.ts",
+        "chatserver.ts"
+    ],
     "include": [
         "*"
     ]

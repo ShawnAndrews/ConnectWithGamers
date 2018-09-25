@@ -8,6 +8,7 @@
     "server-client": "npm run build-ts && npm run tslint && npm run client-prod --prefix client/ && node dist/server.js",
     "server-prod": "npm run build-ts && npm run tslint",
     "server": "node dist/server.js",
+    "chat-server": "node dist/chatserver.js",
     "build-ts": "tsc",
     "tslint": "tslint -c tslint.json -p tsconfig.json"
   },

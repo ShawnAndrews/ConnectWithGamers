@@ -1,19 +1,16 @@
 import accountController from "./controllers/accountController/account";
 import { router as chatroomController } from "./controllers/chatroomController/chatroom";
 import igdbController from "./controllers/igdbController/igdb";
-import registerChatHandlers from "./controllers/chatroomController/chatroom";
 import config from "./config";
 import logIP from "./controllers/logger/main";
 const blocked = require("blocked");
 const express = require("express");
 const app = express();
-const http = require("http");
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
 const forceSSL = require("express-force-ssl");
 const secureServer = config.useStrictlyHttps ? https.createServer({ key: fs.readFileSync(config.https.key), cert: fs.readFileSync(config.https.cert), ca: fs.readFileSync(config.https.ca) }, app) : undefined;
-const chatServer = config.useStrictlyHttps ? https.Server(secureServer) : http.Server(app);
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const MAX_POST_BODY_SIZE = "50mb";
@@ -60,12 +57,6 @@ app.get("/favicon.ico", (req: any, res: any) => {res.sendFile(path.join(__dirnam
 app.get("/bundle.js", (req: any, res: any) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
 app.get("/bundle.css", (req: any, res: any) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
 app.use("*", express.static(path.join(__dirname, "../client/dist")));
-
-/* set chat handlers */
-registerChatHandlers(chatServer);
-
-/* start chat server */
-chatServer.listen(config.chatPort);
 
 /* start HTTP/HTTPS server */
 app.listen(config.httpPort);
