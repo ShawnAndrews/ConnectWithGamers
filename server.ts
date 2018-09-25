@@ -4,6 +4,7 @@ import igdbController from "./controllers/igdbController/igdb";
 import registerChatHandlers from "./controllers/chatroomController/chatroom";
 import config from "./config";
 import logIP from "./controllers/logger/main";
+const blocked = require("blocked");
 const express = require("express");
 const app = express();
 const http = require("http");
@@ -16,6 +17,13 @@ const chatServer = config.useStrictlyHttps ? https.Server(secureServer) : http.S
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const MAX_POST_BODY_SIZE = "50mb";
+const PROCESS_STALL_THRESHOLD_MS = "1000";
+
+/* detect any block in event loop */
+blocked((ms: number) => {
+  console.log(`Event loop blocked (${ms}ms)`);
+  console.trace();
+}, { threshold: PROCESS_STALL_THRESHOLD_MS });
 
 /* parse post body */
 app.use(bodyParser.json({limit: MAX_POST_BODY_SIZE}));
