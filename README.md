@@ -225,7 +225,7 @@ cd ..
 npm run server-prod
 ```
 
-This will build the production version of the client and server in the respective ``/dist`` folder
+This will build the production version of the client, server and chat server in the respective ``/dist`` folder.
 
 - Run
 
@@ -233,13 +233,15 @@ You have two options for running the server. The first involves a single process
 
 #1 (non-cluster mode): 
 
-```npm run server```
+- Shell #1 ```npm run server```
+- Shell #2 ```npm run chat-server```
 
 #2 (cluster mode):
 
-```node runclusters.js```
+- Shell #1 ```node runcluster.js```
+- Shell #2 ```npm run chat-server```
 
-This will start running the HTTP/HTTPS web and chat server and you may now access the site via localhost.
+This will start running the HTTP/HTTPS web and chat server. You may now access the site via localhost.
 
 ## FAQ
 ### Why is it called Connect With Gamers?
