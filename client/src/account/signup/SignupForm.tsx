@@ -6,6 +6,7 @@ interface ISignupFormProps {
     isLoading: boolean;
     onClickCreate: (event: any) => void;
     onClickBack: (event: any) => void;
+    onClickHome: (event: any) => void;
     usernameChanged: (event: any) => void;
     passwordChanged: (event: any) => void;
     emailChanged: (event: any) => void;
@@ -37,6 +38,14 @@ const SignupForm: React.SFC<ISignupFormProps> = (props: ISignupFormProps) => {
                     </Button>
                 </form>
             </div>
+            <Button 
+                variant="raised" 
+                className="return-btn"
+                color="primary" 
+                onClick={props.onClickHome}
+            >
+                <i className="fas fa-2x fa-home"/>
+            </Button>
         </div>
     );
 

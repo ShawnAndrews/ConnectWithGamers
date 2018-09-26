@@ -57,7 +57,10 @@ const ChatMessage: React.SFC<IChatMessageProps> = (props: IChatMessageProps) => 
                                 ? <Avatar className="chatroom-message-icon-transparent" src={props.image}/>
                                 : <Avatar className="chatroom-message-icon">{props.name.slice(0, 2).toUpperCase()}</Avatar>}
                         </div>
-                        <strong className="chatroom-message-username">{props.name}</strong>
+                        <div className="chatroom-message-username-container">
+                            <strong className="chatroom-message-username">{props.name}</strong>
+                            <div className="chatroom-message-time">{formattedDateTime}</div>
+                        </div>
                     </div>}
                 {props.timeVisible && <strong className="chatroom-message-time fadeIn">{formattedDateTime}</strong>}
             </div>

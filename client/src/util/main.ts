@@ -13,7 +13,7 @@ export function getFormattedDate(dateObj: any) {
     } else if (yesterday.toLocaleDateString() === date.toLocaleDateString()) {
         return "Yesterday at";
     } else if (date.toLocaleDateString() > lastweek.toLocaleDateString()) {
-        return `${date.toLocaleString(window.navigator.language, {weekday: "long"})} at`;
+        return `${date.toLocaleString(window.navigator.language, {weekday: "short"})} at`;
     } else {
         return date.toLocaleDateString();
     }

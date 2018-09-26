@@ -22,6 +22,19 @@
     margin: 20px auto auto auto !important;
   }
 
+  .return-btn {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background-color: rgba(0,0,0,.1)!important;
+    border-radius: 50%!important;
+    height: 64px;
+
+    i {
+      color: rgba(255,255,255,0.6) !important;
+    }
+  }
+
   .account-center {
     position: absolute;
     z-index: 10;
@@ -36,7 +49,7 @@
       height: @login-logo-height;
       width: @login-logo-width;
       opacity: 0.85;
-      margin-bottom: 110px;
+      margin-bottom: 25px;
     }
 
     @media (max-height:650px) {
@@ -319,7 +332,6 @@
       letter-spacing: 2px;
       font-family: Tahoma, Geneva, sans-serif;
       width: 60%;
-      font-size: 1.2em;
       border-width: 0px 0px 2px 0px;
       color: rgba(255,255,255,0.7);
       transition: border-bottom 0.35s ease-in-out;
@@ -363,12 +375,6 @@
         letter-spacing: 3px !important; 
         font-weight: 700 !important;
       }
-
-      > button {
-        background-color: rgba(0, 0, 0, 0.2) !important;
-        height: 50px !important;
-        border-radius: 25px !important;
-      }
     }
   
     .account-form-signup, .account-form-back {
@@ -390,7 +396,7 @@
         border-radius: 25px !important;
       }
     }
-  
+
     button > i {
       margin-right: 10px;
     }

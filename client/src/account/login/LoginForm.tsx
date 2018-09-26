@@ -8,6 +8,7 @@ interface ILoginFormProps {
     isLoading: boolean;
     onClickLogin: (event: any) => void;
     onClickSignUp: (event: any) => void;
+    onClickHome: (event: any) => void;
     usernameChanged: (event: any) => void;
     passwordChanged: (event: any) => void;
     remembermeChanged: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
@@ -30,7 +31,7 @@ const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
                 <form className="account-form-container" onSubmit={props.onClickLogin}>
                     <input type="text" className="account-form underline top-md-padding" placeholder="Username" onChange={props.usernameChanged} />
                     <input type="password" className=" account-form underline top-md-padding" placeholder="Password" onChange={props.passwordChanged} />
-                    <label className="account-form top-sm-padding">
+                    <label className="account-form top-xs-padding">
                         <div className="div-center">
                             <FormControlLabel
                                 className="account-form-rememberme"
@@ -47,7 +48,7 @@ const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
                     </label>
                     <Button 
                         variant="raised" 
-                        className="account-form-login top-sm-padding"
+                        className="account-form-login top-xs-padding"
                         color="primary" 
                         onClick={props.onClickLogin}
                     >
@@ -63,6 +64,14 @@ const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
                     </Button>
                 </form>
             </div>
+            <Button 
+                variant="raised" 
+                className="return-btn"
+                color="primary" 
+                onClick={props.onClickHome}
+            >
+                <i className="fas fa-2x fa-home"/>
+            </Button>
         </div>
     );
 

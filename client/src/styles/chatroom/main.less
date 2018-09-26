@@ -205,14 +205,30 @@
                     }
                 }
 
-                .chatroom-message-username {
+                .chatroom-message-username-container {
                     position: absolute;
+                    display: inline-flex;
                     top: 10px;
                     left: 0px;
-                    width: 200px;
+                    width: 300px;
                     word-wrap: break-word;
                     text-overflow: ellipsis;
                     color: rgba(255,255,255,0.6);
+
+                    .chatroom-message-username {
+                        max-width: 125px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        margin-right: 10px;
+                    }
+
+                    .chatroom-message-time {
+                        display: contents;
+                        color: rgba(255,255,255,0.4);
+                        font-size: 0.85em;
+                    }
+
                 }
 
                 .chatroom-message-time {

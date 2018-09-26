@@ -24,6 +24,7 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
         this.remembermeChanged = this.remembermeChanged.bind(this);
         this.onClickLogin = this.onClickLogin.bind(this);
         this.onClickSignUp = this.onClickSignUp.bind(this);
+        this.onClickHome = this.onClickHome.bind(this);
 
         this.state = {
             username: '',
@@ -72,12 +73,17 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
         this.props.history.push('/account/signup');
     }
 
+    onClickHome() {
+        this.props.history.push('/');
+    }
+
     render() {
         return (
             <LoginForm 
                 isLoading={this.state.isLoading}
                 onClickLogin={this.onClickLogin}
                 onClickSignUp={this.onClickSignUp}
+                onClickHome={this.onClickHome}
                 usernameChanged={this.usernameChanged}
                 passwordChanged={this.passwordChanged}
                 remembermeChanged={this.remembermeChanged}
