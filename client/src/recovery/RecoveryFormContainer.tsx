@@ -1,6 +1,6 @@
 const popupS = require('popups');
 import * as React from 'react';
-import RecoveryForm from "./recoveryForm";
+import RecoveryForm from "./RecoveryForm";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as AccountService from './../service/account/main';
 import { validatePassword, RecoverPasswordResponse, EmailRecoveryVerifyResponse } from '../../client-server-common/common';
