@@ -13,5 +13,8 @@ certificate.crt
 key.pem
 bundle.ca-bundle
 
+# Ignore nodejs debug logs
+npm-debug.log.*
+
 # Readme
 README.md

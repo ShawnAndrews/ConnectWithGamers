@@ -1,10 +1,10 @@
 import config from "../../../config";
 import { genRandStr } from "../../../util/main";
 import DatabaseBase from "../base/dbBase";
-import { EMAIL_VERIFICATION_LEN, SALT_RNDS } from "../account/main";
+import { EMAIL_VERIFICATION_LEN, SALT_RNDS, ACCOUNT_RECOVERYID_LEN } from "../account/main";
 import {
     validateUsername, validateEmail, validateURL, validatePassword,
-    GenericResponseModel, DbAccountSettingsResponse, DbAccountImageResponse } from "../../../client/client-server-common/common";
+    GenericResponseModel, DbAccountSettingsResponse, DbAccountImageResponse, DbAccountRecoveryResponse } from "../../../client/client-server-common/common";
 import axios from "axios";
 const bcrypt = require("bcrypt");
 const imgur = require("imgur");
@@ -369,6 +369,69 @@ class SettingsModel extends DatabaseBase {
             .catch((err: string) => {
                 return reject(err);
             });
+
+        });
+    }
+
+    /**
+     * Change the account's password via account recovery.
+     */
+    recoverAccountPassword(newPassword: string, uid: string): Promise<DbAccountRecoveryResponse> {
+
+        return new Promise( (resolve, reject) => {
+
+            const passwordValidationError: string = validatePassword(newPassword);
+            if (passwordValidationError) {
+                return reject(passwordValidationError);
+            }
+
+            this.select(
+                "accounts",
+                ["accountid"],
+                "recoveryid=?",
+                [uid])
+                .then((dbResponse: GenericResponseModel) => {
+                    if (dbResponse.data.length > 0) {
+                        const accountid: number = dbResponse.data[0].accountid;
+                        this.changeAccountPassword(accountid, newPassword)
+                        .then(() => {
+                            const dbAccountRecoveryResponse: DbAccountRecoveryResponse = { accountid: accountid };
+                            return resolve(dbAccountRecoveryResponse);
+                        });
+                    } else {
+                        return reject(`Incorrect recovery id.`);
+                    }
+                })
+                .catch((error: string) => {
+                    return reject(`Internal error recovering password.`);
+                });
+
+        });
+    }
+
+    /**
+     * Set a new recovery id for account.
+     */
+    resetAccountRecoveryId(accountid: number): Promise<null> {
+
+        return new Promise( (resolve, reject) => {
+
+            this.update(
+                "accounts",
+                "recoveryid=?",
+                [genRandStr(ACCOUNT_RECOVERYID_LEN)],
+                "accountid=?",
+                [accountid])
+                .then((dbResponse: GenericResponseModel) => {
+                    if (dbResponse.data.affectedRows == 1) {
+                        return resolve();
+                    } else {
+                        return reject(`Database error finding accountid in db.`);
+                    }
+                })
+                .catch((error: any) => {
+                    return reject(`Database error reseting account recovery id.`);
+                });
 
         });
     }

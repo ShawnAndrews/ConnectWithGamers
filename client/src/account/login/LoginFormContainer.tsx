@@ -25,6 +25,7 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
         this.onClickLogin = this.onClickLogin.bind(this);
         this.onClickSignUp = this.onClickSignUp.bind(this);
         this.onClickHome = this.onClickHome.bind(this);
+        this.recoverPasswordByEmail = this.recoverPasswordByEmail.bind(this);
 
         this.state = {
             username: '',
@@ -63,8 +64,25 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
                 this.props.history.push('/');
             })
             .catch( (error: string) => {
-                this.setState({ username: '', email: '', rememberme: false, isLoading: false });
-                popupS.modal({ content:  `<div>• ${error}</div>` });
+                this.setState({ email: '', rememberme: false, isLoading: false });
+                popupS.modal({ 
+                        content: `
+                        <div>
+                            <div>• ${error}</div>
+                            <button class="email-recovery-btn" onclick=
+                            "
+                            var username = ${"'username=" + this.state.username + "'"};
+                            var xhr = new XMLHttpRequest();
+                            xhr.open('POST', '/account/email/recovery');
+                            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                            xhr.send(username);
+                            this.parentNode.removeChild(this);
+                            ">
+                                Send password recovery email
+                            </button>
+                        </div>
+                        `
+                    });
             });
 
     }
@@ -75,6 +93,10 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
 
     onClickHome() {
         this.props.history.push('/');
+    }
+
+    recoverPasswordByEmail() {
+        console.log(`Sent recovery email`);
     }
 
     render() {

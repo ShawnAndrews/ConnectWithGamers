@@ -136,7 +136,7 @@ export function ArrayClean(arr: any[], deleteValue: any): any[] {
 }
 
 /**
- * Return a psuedo-randomly generated string of a given length.
+ * Return a psuedo-randomly generated string of a given length. URL safe.
  */
 export function genRandStr(length: number) {
     let text: string = "";

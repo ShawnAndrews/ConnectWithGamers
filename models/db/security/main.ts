@@ -52,7 +52,7 @@ class SecurityModel extends DatabaseBase {
         return new Promise((resolve, reject) => {
 
             if (!cookie) {
-                return reject("Cookie not found.");
+                return reject("Please login to proceed.");
             }
 
             const authCookieMatch: string[] = cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));

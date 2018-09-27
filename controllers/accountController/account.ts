@@ -1,12 +1,13 @@
 const express = require("express");
 // const RateLimit = require("express-rate-limit");
 const router = express.Router();
-import { AUTH_TOKEN_NAME, validateCredentials, DatalessResponse, DbVerifyEmailResponse, EmailVerifyResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse, TwitchIdResponse, DbTwitchIdResponse, SteamIdResponse, DbSteamIdResponse, DbSteamFriendsResponse, SteamFriendsResponse, DiscordLinkResponse, DbDiscordLinkResponse, TwitchFollowersResponse, DbTwitchFollowsResponse } from "../../client/client-server-common/common";
+import { AUTH_TOKEN_NAME, validateCredentials, DatalessResponse, DbRecoveryEmailResponse, EmailRecoveryVerifyResponse, RecoverPasswordResponse, DbVerifyEmailResponse, EmailRecoveryResponse, EmailVerifyResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse, TwitchIdResponse, DbTwitchIdResponse, SteamIdResponse, DbSteamIdResponse, DbSteamFriendsResponse, SteamFriendsResponse, DiscordLinkResponse, DbDiscordLinkResponse, TwitchFollowersResponse, DbTwitchFollowsResponse, DbAccountRecoveryResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { accountModel } from "../../models/db/account/main";
 import { securityModel } from "../../models/db/security/main";
 import { settingsModel } from "../../models/db/settings/main";
 import { verificationModel } from "../../models/db/verification/main";
+import { sendRecoveryEmail } from "../../util/nodemailer";
 
 const routes = new routeModel();
 
@@ -24,6 +25,9 @@ routes.addRoute("settings/image/change", "/settings/image/change");
 routes.addRoute("settings/image/delete", "/settings/image/delete");
 routes.addRoute("email/resend", "/email/resend");
 routes.addRoute("email/verify", "/email/verify");
+routes.addRoute("email/recovery", "/email/recovery");
+routes.addRoute("email/recovery/verify", "/email/recovery/verify");
+routes.addRoute("recover/password", "/recover/password");
 
 // limit account creation requests to 5acc/1hr per ip
 // const createAccountLimiter = new RateLimit({
@@ -355,6 +359,48 @@ router.post(routes.getRoute("email/verify"), (req: any, res: any) => {
 
 });
 
+router.post(routes.getRoute("email/recovery"), (req: any, res: any) => {
+    const emailRecoveryResponse: EmailRecoveryResponse = { error: undefined };
+    const username: string = req.body.username;
+
+    // check if username exists, send recovery
+    accountModel.getAccountRecoveryInfoByUsername(username)
+    .then((response: DbRecoveryEmailResponse) => {
+        const email: string = response.email;
+        const uid: string = response.uid;
+        return sendRecoveryEmail(email, uid);
+    })
+    .then(() => {
+        return res
+        .send(emailRecoveryResponse);
+    })
+    .catch((error: string) => {
+        emailRecoveryResponse.error = error;
+        return res
+        .send(emailRecoveryResponse);
+    });
+
+});
+
+router.post(routes.getRoute("email/recovery/verify"), (req: any, res: any) => {
+    const emailRecoveryVerifyResponse: EmailRecoveryVerifyResponse = { error: undefined };
+    const uid: string = req.body.uid;
+
+    // verify recovery link is valid
+    accountModel.verifyRecoveryExists(uid)
+    .then((verifiedLink: boolean) => {
+        emailRecoveryVerifyResponse.verifiedLink = verifiedLink;
+        return res
+        .send(emailRecoveryVerifyResponse);
+    })
+    .catch((error: string) => {
+        emailRecoveryVerifyResponse.error = error;
+        return res
+        .send(emailRecoveryVerifyResponse);
+    });
+
+});
+
 router.post(routes.getRoute("settings/image/delete"), (req: any, res: any) => {
     const accountImageResponse: AccountImageResponse = { error: undefined };
 
@@ -372,6 +418,27 @@ router.post(routes.getRoute("settings/image/delete"), (req: any, res: any) => {
         accountImageResponse.error = error;
         return res
         .send(accountImageResponse);
+    });
+
+});
+
+router.post(routes.getRoute("recover/password"), (req: any, res: any) => {
+    const recoverPasswordResponse: RecoverPasswordResponse = { error: undefined };
+    const password: string = req.body.password;
+    const uid: string = req.body.uid;
+
+    settingsModel.recoverAccountPassword(password, uid)
+    .then((response: DbAccountRecoveryResponse) => {
+        return settingsModel.resetAccountRecoveryId(response.accountid);
+    })
+    .then(() => {
+        return res
+        .send(recoverPasswordResponse);
+    })
+    .catch((error: string) => {
+        recoverPasswordResponse.error = error;
+        return res
+        .send(recoverPasswordResponse);
     });
 
 });

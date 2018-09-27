@@ -256,6 +256,15 @@ export interface DbVerifyEmailResponse {
     verificationSuccessful: boolean;
 }
 
+export interface DbRecoveryEmailResponse {
+    email: string;
+    uid: string;
+}
+
+export interface DbAccountRecoveryResponse {
+    accountid: number;
+}
+
 export interface DbAccountSettingsResponse {
     username: string;
     email: string;
@@ -316,9 +325,22 @@ export interface EmailVerifyResponse {
     };
 }
 
+export interface EmailRecoveryResponse {
+    error: string;
+}
+
+export interface EmailRecoveryVerifyResponse {
+    error: string;
+    verifiedLink?: boolean;
+}
+
 export interface AccountImageResponse {
     error: string;
     link?: string;
+}
+
+export interface RecoverPasswordResponse {
+    error: string;
 }
 
 export interface ChatroomEmote {

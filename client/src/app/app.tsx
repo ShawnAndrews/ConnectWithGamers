@@ -9,6 +9,7 @@ import Background from '../background/background';
 import NotFoundPageContainer from '../notfound/NotFoundPageContainer';
 import NoticePage from '../notice/NoticePage';
 import NavbarContainer from '../nav/NavbarContainer';
+import RecoveryContainer from '../recovery/RecoveryFormContainer';
 
 export enum NAV_PAGE {
     HOME = '/',
@@ -64,6 +65,7 @@ class App extends React.Component<IAppProps, IAppState> {
                             <Route path="/account" component={Account}/>
                             <Route path="/menu" component={Menu}/>
                             <Route path="/chat" component={ChatroomMenuContainer}/>
+                            <Route path="/recovery/:uid" component={RecoveryContainer}/>
                             <Route exact={true} path="/" component={HomePageContainer}/>
                             <Route component={NotFoundPageContainer}/>
                         </Switch>

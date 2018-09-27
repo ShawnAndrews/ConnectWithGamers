@@ -29,7 +29,7 @@ const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
             <div className="account-center">
                 <a href="/"><div className="account-logo"/></a>
                 <form className="account-form-container" onSubmit={props.onClickLogin}>
-                    <input type="text" className="account-form underline top-md-padding" placeholder="Username" onChange={props.usernameChanged} />
+                    <input type="text" id="account-form-username" className="account-form underline top-md-padding" placeholder="Username" onChange={props.usernameChanged} />
                     <input type="password" className=" account-form underline top-md-padding" placeholder="Password" onChange={props.passwordChanged} />
                     <label className="account-form top-xs-padding">
                         <div className="div-center">

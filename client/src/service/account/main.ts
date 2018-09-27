@@ -1,6 +1,44 @@
 import axios from 'axios';
-import { GenericResponseModel, AccountImageResponse, EmailVerifyResponse, TwitchIdResponse, SteamIdResponse, DiscordLinkResponse, SteamFriendsResponse, TwitchFollowersResponse } from '../../../../client/client-server-common/common';
+import { GenericResponseModel, AccountImageResponse, EmailVerifyResponse, TwitchIdResponse, SteamIdResponse, EmailRecoveryVerifyResponse, DiscordLinkResponse, SteamFriendsResponse, TwitchFollowersResponse } from '../../../../client/client-server-common/common';
 import { AUTH_TOKEN_NAME } from '../../../client-server-common/common';
+
+/**
+ * HTTP request to recover password.
+ */
+export function httpRecoverPassword (password: string, uid: string): Promise<GenericResponseModel> {
+    return new Promise((resolve: any, reject: any) => {
+        axios.post('/account/recover/password', { password: password, uid: uid })
+        .then((result) => {
+            if (result.data.error) {
+                return reject(`Failed to change password via account recovery. ${result.data.error}`);
+            } else {
+                return resolve(result.data);
+            }
+        })
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
+        });
+    }); 
+}
+
+/**
+ * HTTP request to verify account recovery link.
+ */
+export function httpVerifyRecoveryLink (uid: string): Promise<EmailRecoveryVerifyResponse> {
+    return new Promise((resolve: any, reject: any) => {
+        axios.post('/account/email/recovery/verify', { uid: uid })
+        .then((result) => {
+            if (result.data.error) {
+                return reject(`Failed to change password via account recovery. ${result.data.error}`);
+            } else {
+                return resolve(result.data);
+            }
+        })
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
+        });
+    }); 
+}
 
 /**
  * HTTP request to get account settings.

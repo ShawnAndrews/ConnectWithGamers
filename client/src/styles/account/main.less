@@ -4,7 +4,7 @@
 @login-logo-height: 200px;
 @title-chip-size: 60px;
 
-.account-page {
+.account-page, .account-recovery-page {
 
   .div-center {
     text-align: center;
@@ -63,7 +63,7 @@
     }
   }
 
-  .account-settings {
+  .account-settings, .account-recovery {
     position: absolute;
     top: @navbar-item-height;
     left: 0;
@@ -257,7 +257,7 @@
       }
     }
 
-    .account-settings-container {
+    .account-settings-container, .account-recovery-container {
       position: relative;
       
       > div > div::after, div::before {
@@ -523,4 +523,68 @@
       }
     }
   }
+}
+
+.account-recovery-container {
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  .account-recovery-title {
+    width: 90%;
+    display: block;
+    margin: auto;
+    font-size: 2em;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+  }
+
+  .account-recovery-password {
+    position: relative;
+    display: block !important;
+    width: 250px!important;
+    background-color: transparent !important;
+    margin: 20px auto 0px auto;
+    
+    input {
+      width: 250px!important; 
+    }
+
+    span {
+      font-size: 1.1em !important; 
+      letter-spacing: 1px !important; 
+      font-weight: 700 !important;
+      background-color: rgba(0,0,0,0.05) !important;
+    }
+
+    > div > hr {
+      border-bottom-color: rgba(255,255,255,0.35) !important;
+    }
+  }
+
+  .account-recovery-btn, .account-login-btn {
+    position: relative;
+    display: block !important;
+    width: fit-content;
+    background-color: transparent !important;
+    margin: 35px auto 0px auto;
+    
+    span {
+      font-size: 1.1em !important; 
+      letter-spacing: 1px !important; 
+      font-weight: 700 !important;
+      background-color: rgba(0,0,0,0.05) !important;
+    }
+  }
+}
+
+.email-recovery-btn {
+  margin-top: 15px;
+  background: transparent;
+  border: 1px black solid;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.5);
 }

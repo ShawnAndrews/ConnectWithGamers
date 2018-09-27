@@ -3,11 +3,13 @@ import axios from "axios";
 import DatabaseBase from "../base/dbBase";
 import { genRandStr } from "../../../util/main";
 import { sendVerificationEmail } from "../../../util/nodemailer";
-import { GenericResponseModel, DbAccountImageResponse, DbAccountInfoResponse, DbAccountsInfoResponse, DbTwitchIdResponse, DbSteamIdResponse, DbDiscordLinkResponse, DbSteamFriendsResponse, SteamFriend, DbTwitchFollowsResponse, TwitchUser, TwitchEmote, TwitchPair, AccountInfo } from "../../../client/client-server-common/common";
+import { GenericResponseModel, DbAccountImageResponse, DbAccountInfoResponse, DbRecoveryEmailResponse, DbAccountsInfoResponse, DbTwitchIdResponse, DbSteamIdResponse, DbDiscordLinkResponse, DbSteamFriendsResponse, SteamFriend, DbTwitchFollowsResponse, TwitchUser, TwitchEmote, TwitchPair, AccountInfo } from "../../../client/client-server-common/common";
 import config from "../../../config";
 
 export const SALT_RNDS = 10;
 export const EMAIL_VERIFICATION_LEN = 15;
+
+export const ACCOUNT_RECOVERYID_LEN = 32;
 
 class AccountModel extends DatabaseBase {
 
@@ -28,9 +30,9 @@ class AccountModel extends DatabaseBase {
 
             this.insert(
                 "accounts",
-                ["username", "email", "passwordHash", "salt", "createdOn", "emailVerification"],
-                [username, email, hash, salt, Date.now() / 1000, emailVerification],
-                "?, ?, ?, ?, FROM_UNIXTIME(?), ?")
+                ["username", "email", "passwordHash", "salt", "createdOn", "emailVerification", "recoveryid"],
+                [username, email, hash, salt, Date.now() / 1000, emailVerification, genRandStr(ACCOUNT_RECOVERYID_LEN)],
+                "?, ?, ?, ?, FROM_UNIXTIME(?), ?, ?")
                 .then(() => {
                     sendVerificationEmail(email, `http://www.connectwithgamers.com/account/verify/${emailVerification}`)
                     .then(() => {
@@ -119,6 +121,51 @@ class AccountModel extends DatabaseBase {
                 })
                 .catch((error: string) => {
                     return reject(`Database error. ${error}`);
+                });
+        });
+    }
+
+    /**
+     * Get account recovery info by username.
+     */
+    getAccountRecoveryInfoByUsername(username: string): Promise<DbRecoveryEmailResponse> {
+
+        return new Promise( (resolve, reject) => {
+            this.select(
+                "accounts",
+                ["email", "recoveryid"],
+                `username=?`,
+                [username])
+                .then((dbResponse: GenericResponseModel) => {
+                    const dbRecoveryEmailResponse: DbRecoveryEmailResponse = { email: dbResponse.data[0].email, uid: dbResponse.data[0].recoveryid };
+                    return resolve(dbRecoveryEmailResponse);
+                })
+                .catch((error: string) => {
+                    return reject(`Username not found in database.`);
+                });
+        });
+    }
+
+    /**
+     * Verify recovery link is valid.
+     */
+    verifyRecoveryExists(uid: string): Promise<boolean> {
+
+        return new Promise( (resolve, reject) => {
+            this.select(
+                "accounts",
+                ["accountid"],
+                `recoveryid=?`,
+                [uid])
+                .then((dbResponse: GenericResponseModel) => {
+                    if (dbResponse.data.length > 0) {
+                        return resolve(true);
+                    } else {
+                        return resolve(false);
+                    }
+                })
+                .catch((error: string) => {
+                    return reject(`Username not found in database.`);
                 });
         });
     }
