@@ -6,6 +6,8 @@ import {
     UpcomingGameResponse,
     RecentGameResponse,
     DbPlatformGamesResponse,
+    PopularGamesResponse,
+    PopularGameResponse,
     SearchGamesResponse,
     UpcomingGamesResponse,
     RecentGamesResponse,
@@ -23,10 +25,12 @@ import { genreGamesKeyExists, getCachedGenreGames, cacheGenreGames } from "./cac
 import { gameKeyExists, getCachedGame, cacheGame } from "./cache/games/main";
 import { searchGamesKeyExists, getCachedSearchGames, cacheSearchGames } from "./cache/searchGames/main";
 import { genreListKeyExists, getCachedGenreList, cacheGenreList } from "./cache/genreList/main";
+import { popularGamesKeyExists, getCachedPopularGames, cachePopularGames } from "./cache/popularGames/main";
 
 const routes = new routeModel();
 
 /* routes */
+routes.addRoute("populargames", "/games/popular");
 routes.addRoute("searchgames", "/games/search/:query");
 routes.addRoute("upcominggames", "/games/upcoming");
 routes.addRoute("recentgames", "/games/recent");
@@ -104,6 +108,42 @@ router.post(routes.getRoute("upcominggames"), (req: any, res: any) => {
         .catch((error: string) => {
             upcomingGamesResponse.error = error;
             return res.send(upcomingGamesResponse);
+        });
+
+});
+
+/* popular games */
+router.post(routes.getRoute("populargames"), (req: any, res: any) => {
+
+    const PopularGamesResponse: PopularGamesResponse = { error: undefined };
+
+    popularGamesKeyExists()
+        .then((exists: boolean) => {
+            if (exists) {
+                getCachedPopularGames()
+                .then((popularGames: PopularGameResponse[]) => {
+                    PopularGamesResponse.data = popularGames;
+                    return res.send(PopularGamesResponse);
+                })
+                .catch((error: string) => {
+                    PopularGamesResponse.error = error;
+                    return res.send(PopularGamesResponse);
+                });
+            } else {
+                cachePopularGames()
+                .then((popularGames: PopularGameResponse[]) => {
+                    PopularGamesResponse.data = popularGames;
+                    return res.send(PopularGamesResponse);
+                })
+                .catch((error: string) => {
+                    PopularGamesResponse.error = error;
+                    return res.send(PopularGamesResponse);
+                });
+            }
+        })
+        .catch((error: string) => {
+            PopularGamesResponse.error = error;
+            return res.send(PopularGamesResponse);
         });
 
 });

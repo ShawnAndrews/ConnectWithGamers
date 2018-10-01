@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SingleGameResponse, PlatformGamesResponse, RecentGamesResponse, UpcomingGamesResponse, SearchGamesResponse, GenreListResponse, GenreGamesResponse } from '../../../client-server-common/common';
+import { SingleGameResponse, PlatformGamesResponse, RecentGamesResponse, UpcomingGamesResponse, PopularGamesResponse, SearchGamesResponse, GenreListResponse, GenreGamesResponse } from '../../../client-server-common/common';
 
 /**
  * HTTP request to get search games.
@@ -13,6 +13,25 @@ export function httpGetSearchGames(query: string): Promise<SearchGamesResponse> 
             }
             const searchGamesResponse: SearchGamesResponse = result.data;
             return resolve(searchGamesResponse);
+        })
+        .catch((error: string) => {
+            return reject(error);
+        });
+    }); 
+}
+
+/**
+ * HTTP request to get popular games.
+ */
+export function httpGetPopularGamesList(): Promise<PopularGamesResponse> {
+    return new Promise((resolve: any, reject: any) => {
+        axios.post(`/igdb/games/popular`)
+        .then((result) => {
+            if (result.data.error) {
+                return reject(result.data.error);
+            }
+            const PopularGamesResponse: PopularGamesResponse = result.data;
+            return resolve(PopularGamesResponse);
         })
         .catch((error: string) => {
             return reject(error);

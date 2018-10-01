@@ -6,37 +6,38 @@ import { RecentGameResponse } from '../../../../client/client-server-common/comm
 interface IRecentGameListProps {
     isLoading: boolean;
     recentGames: RecentGameResponse[];
-    uniqueReleaseDates: string[];
+    formatRecentlyReleasedDate: (date: number) => string;
+    onClickGame: (id: number) => void;
 }
 
 const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListProps) => {
 
     if (props.isLoading) {
         return (
-            <div className="menu-grid-center">
-                <Spinner loadingMsg="Loading game..." />
-            </div>
+            <Spinner className="middle" loadingMsg="Loading game..." />
         );
     }
 
     return (
-        <div className="menu-game-table">
-            {props.recentGames && 
-                props.uniqueReleaseDates
-                .map((uniqueReleaseDate: string) => {
-                    return (
-                        <div key={uniqueReleaseDate}>
-                            <div className="menu-game-table-header">
-                                <strong>{uniqueReleaseDate}</strong>
-                            </div>
-                            {props.recentGames
-                            .filter((x: RecentGameResponse) => { return x.last_release_date === uniqueReleaseDate; } )
-                            .map((x: RecentGameResponse) => {
-                                return <ThumbnailGameContainer key={x.id} game={x}/>;
-                            })}
+        <div className="recently-released-table">
+            <div className="recently-released-table-header">
+                <a className="recently-released-table-header-link">Recently Released</a>
+                <i className="fas fa-chevron-right"/>
+            </div>
+            {props.recentGames
+            .map((x: RecentGameResponse) => {
+                return (
+                    <div key={x.id} className="recently-released-table-container" onClick={() => { props.onClickGame(x.id); }}>
+                        <div className="recently-released-table-image">
+                            <img src={x.cover ? x.cover : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                         </div>
-                    );
-                })}
+                        <div className="recently-released-table-data-container">
+                            <span className="name">{x.name}</span>
+                            <span className="date">{props.formatRecentlyReleasedDate(x.first_release_date)}</span>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );   
 

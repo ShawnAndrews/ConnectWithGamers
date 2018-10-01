@@ -1,10 +1,10 @@
 import config from "../../../../config";
 import { formatTimestamp, steamAPIGetReviews, steamAPIGetPriceInfo } from "../../../../util/main";
 import {
-    GameResponse, GameResponseFields,
+    GameResponse, GameResponseFields, RawGameResponse,
     SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import { getAllGenrePairs } from "../genreList/main";
-
+import axios from "axios";
 const redis = require("redis");
 const redisClient = redis.createClient();
 const igdb = require("igdb-api-node").default;
@@ -53,32 +53,41 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
     const game: GameResponse = { name: "" };
 
     return new Promise((resolve: any, reject: any) => {
+        axios.get(
+            `https://api-endpoint.igdb.com/games/${gameId}?fields=${GameResponseFields.join()}`,
+            {
+                headers: {
+                    "user-key": config.igdb.key,
+                    "Accept": "application/json"
+                }
+            });
         igdbClient.games({
             ids: [gameId]
         }, GameResponseFields)
         .then( (response: any) => {
+            const rawResponse: RawGameResponse = response.body[0];
 
             getAllGenrePairs()
             .then((genrePair: string[]) => {
 
-                game.name = response.body[0].name;
-                game.rating = response.body[0].total_rating;
-                game.rating_count = response.body[0].total_rating_count;
-                if (response.body[0].cover) {
+                game.name = rawResponse.name;
+                game.rating = rawResponse.total_rating;
+                game.rating_count = rawResponse.total_rating_count;
+                if (rawResponse.cover) {
                     game.cover = igdbClient.image(
-                        { cloudinary_id: response.body[0].cover.cloudinary_id },
+                        { cloudinary_id: rawResponse.cover.cloudinary_id },
                         "cover_big", "jpg");
                 }
-                game.summary = response.body[0].summary;
-                if (response.body[0].screenshots) {
-                    game.screenshots = response.body[0].screenshots.map((x: any) => {
+                game.summary = rawResponse.summary;
+                if (rawResponse.screenshots) {
+                    game.screenshots = rawResponse.screenshots.map((x: any) => {
                         return igdbClient.image(
                             { cloudinary_id: x.cloudinary_id },
                             "screenshot_huge", "jpg");
                     });
                 }
-                if (response.body[0].videos) {
-                    response.body[0].videos.forEach((videoInfo: any) => {
+                if (rawResponse.videos) {
+                    rawResponse.videos.forEach((videoInfo: any) => {
                         if (videoInfo.name === `Trailer`) {
                             const videoName: string = videoInfo.name;
                             const videoLink: string = `https://www.youtube.com/embed/${videoInfo.video_id}`;
@@ -86,15 +95,15 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                         }
                     });
                 }
-                game.genre_ids = response.body[0].genres;
-                if (response.body[0].genres) {
-                    game.genres = response.body[0].genres.map((genreId: number) => { return genrePair[genreId]; });
+                game.genre_ids = rawResponse.genres;
+                if (rawResponse.genres) {
+                    game.genres = rawResponse.genres.map((genreId: number) => { return genrePair[genreId]; });
                 }
 
                 const platformsPromise: Promise<any> = new Promise((resolve: any, reject: any) => {
 
-                    if (response.body[0].platforms) {
-                        const platformIds: number[] = response.body[0].platforms;
+                    if (rawResponse.platforms) {
+                        const platformIds: number[] = rawResponse.platforms;
 
                         igdbClient.platforms({
                             ids: platformIds
@@ -107,9 +116,9 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
 
                             platformAndReleaseDates.forEach((x: any) => {
                                 const platformId: number = x.id;
-                                const indexOfReleaseDateMatch: number = response.body[0].release_dates.findIndex((e: any) => { return e.platform === platformId; });
+                                const indexOfReleaseDateMatch: number = rawResponse.release_dates.findIndex((e: any) => { return e.platform === platformId; });
                                 if (indexOfReleaseDateMatch !== -1) {
-                                    x.release_date = response.body[0].release_dates[indexOfReleaseDateMatch].date;
+                                    x.release_date = rawResponse.release_dates[indexOfReleaseDateMatch].date;
                                 }
                             });
 
@@ -156,8 +165,9 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                 });
 
                 const pricePromise: Promise<SteamAPIGetPriceInfoResponse> = new Promise((resolve: any, reject: any) => {
-                    if (response.body[0].external) {
-                        const steamId: number = response.body[0].external.steam;
+
+                    if (rawResponse.external) {
+                        const steamId: number = rawResponse.external.steam;
                         steamAPIGetPriceInfo(steamId)
                             .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse) => {
                                 return resolve(steamAPIGetPriceInfoResponse);
@@ -171,8 +181,9 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                 });
 
                 const reviewsPromise: Promise<SteamAPIGetReviewsResponse> = new Promise((resolve: any, reject: any) => {
-                    if (response.body[0].external) {
-                        const steamId: number = response.body[0].external.steam;
+
+                    if (rawResponse.external) {
+                        const steamId: number = rawResponse.external.steam;
                         steamAPIGetReviews(steamId)
                             .then( (steamAPIGetReviewsResponse: SteamAPIGetReviewsResponse) => {
                                 return resolve(steamAPIGetReviewsResponse);
@@ -187,6 +198,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
 
                 Promise.all([platformsPromise, pricePromise, reviewsPromise])
                 .then((vals: any) => {
+
                     if (vals[0]) {
                         game.platform_ids = vals[0].platformIds;
                         game.platforms = vals[0].platforms;

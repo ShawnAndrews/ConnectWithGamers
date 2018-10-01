@@ -18,7 +18,7 @@ const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProp
 
     return (
         <Card className="menu-game-thumbnail">
-            <CardMedia className="menu-game-thumbnail-container">
+            {/* <CardMedia className="menu-game-thumbnail-container">
                 <img src={props.game.cover ? props.game.cover : 'https://i.imgur.com/WcPkTiF.png'} onClick={props.goToGame} alt="Game cover" width="100%"/>
             </CardMedia>
             <CardHeader title={props.game.name} subheader={props.game.genres} />
@@ -31,7 +31,7 @@ const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProp
                     <Button variant="contained" onClick={() => { window.open(props.game.steam_url); }}>
                         STEAM PAGE
                     </Button>}
-            </CardActions>
+            </CardActions> */}
         </Card>
     );
 

@@ -2,6 +2,7 @@ const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
 enum RedisExpirationTime {
+    ONE_HOUR = 60 * 60,
     ONE_DAY = 60 * 60 * 24,
     ONE_WEEK = 60 * 60 * 24 * 7,
     INF = -1
@@ -63,14 +64,15 @@ export interface IGDBCacheEntry {
 }
 
 export const redisCache: IGDBCacheEntry[] = [
-    {key: "upcominggames", expiry: RedisExpirationTime.ONE_DAY},
+    {key: "upcominggames", expiry: RedisExpirationTime.ONE_HOUR},
     {key: "games", expiry: RedisExpirationTime.ONE_WEEK},
     {key: "searchgames", expiry: RedisExpirationTime.ONE_DAY},
-    {key: "platformgames", expiry: RedisExpirationTime.ONE_DAY},
-    {key: "recentgames", expiry: RedisExpirationTime.ONE_DAY},
-    {key: "genregames", expiry: RedisExpirationTime.ONE_DAY},
+    {key: "platformgames", expiry: RedisExpirationTime.ONE_HOUR},
+    {key: "recentgames", expiry: RedisExpirationTime.ONE_HOUR},
+    {key: "genregames", expiry: RedisExpirationTime.ONE_HOUR},
     {key: "genrelist", expiry: RedisExpirationTime.ONE_WEEK},
-    {key: "chatusers", expiry: RedisExpirationTime.INF}
+    {key: "chatusers", expiry: RedisExpirationTime.INF},
+    {key: "populargames", expiry: RedisExpirationTime.ONE_DAY}
 ];
 
 export interface UserLog {
@@ -412,6 +414,21 @@ export interface GameResponse {
     reviews?: SteamAPIReview[];
 }
 
+export interface RawGameResponse {
+    id: number;
+    name: string;
+    release_dates: any;
+    cover: Cover;
+    total_rating: number;
+    total_rating_count: number;
+    summary: string;
+    genres: any;
+    platforms: any;
+    screenshots: any;
+    videos: any;
+    external: any;
+}
+
 export const GameResponseFields: string[] = [`name`, `release_dates`, `cover`, `total_rating`, `total_rating_count`, `summary`, `genres`, `platforms`, `screenshots`, `videos`, `external`];
 
 export interface SingleGameResponse {
@@ -419,36 +436,69 @@ export interface SingleGameResponse {
     data?: GameResponse;
 }
 
+export interface RawUpcomingGameResponse {
+
+    id: number;
+    name: string;
+    first_release_date?: number;
+    cover?: Cover;
+}
+
 export interface UpcomingGameResponse {
 
     id: number;
     name: string;
-    next_release_date: string;
-    genres: string;
-    linkIcons: string[];
-    steam_url?: string;
+    first_release_date?: number;
     cover?: string;
 }
 
-export const UpcomingGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`, `genres`, `platforms`, `external`];
+export const UpcomingGameResponseFields: string[] = [`id`, `name`, `first_release_date`, `cover`];
 
 export interface UpcomingGamesResponse {
     error: string;
     data?: UpcomingGameResponse[];
 }
 
-export interface RecentGameResponse {
+export interface Cover {
+    url: string;
+    cloudinary_id: string;
+    width: number;
+    height: number;
+}
 
+export interface RawPopularGameResponse {
     id: number;
     name: string;
-    last_release_date: string;
-    genres: string;
-    linkIcons: string[];
-    steam_url?: string;
+    genres?: any;
+    aggregated_rating?: number;
+    cover?: Cover;
+}
+
+export interface PopularGameResponse {
+    id: number;
+    name: string;
+    genre?: string;
+    aggregated_rating?: number;
     cover?: string;
 }
 
-export const RecentGameResponseFields: string[] = [`id`, `name`, `release_dates.date`, `cover`, `genres`, `platforms`, `external`];
+export const PopularGameResponseFields: string[] = [`id`, `name`, `genres`, `aggregated_rating`, `cover`];
+
+export interface RawRecentGameResponse {
+    id: number;
+    name: string;
+    first_release_date?: number;
+    cover?: Cover;
+}
+
+export interface RecentGameResponse {
+    id: number;
+    name: string;
+    first_release_date?: number;
+    cover?: string;
+}
+
+export const RecentGameResponseFields: string[] = [`id`, `name`, `first_release_date`, `cover`];
 
 export interface TwitchFollowersResponse {
     error: string;
@@ -537,6 +587,11 @@ export interface DiscordLinkResponse {
 
 export interface DiscordLink {
     link: string;
+}
+
+export interface PopularGamesResponse {
+    error: string;
+    data?: PopularGameResponse[];
 }
 
 export interface RecentGamesResponse {

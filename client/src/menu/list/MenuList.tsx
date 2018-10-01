@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { IMenuItem } from './MenuListContainer';
-import FooterIcons from '../../account/footer/footerIcons';
+import RecentGameListContainer from '../recent/RecentGameListContainer';
+import PopularGameListContainer from '../popular/PopularGameListContainer';
+import UpcomingGameListContainer from '../upcoming/UpcomingGameListContainer';
 
 interface IMenuListProps {
     menuItems: IMenuItem[];
@@ -12,50 +14,18 @@ const MenuList: React.SFC<IMenuListProps> = (props: IMenuListProps) => {
     return (
         <div className="menu-items">
             <nav className="nav" role="navigation">
-                <ul className="nav__list">
-                    {props.menuItems && props.menuItems
-                        .map((x: IMenuItem, menuIndex: number) => {
-                            return (
-                                <li key={x.name}>
-                                    <input id={`group-${menuIndex}`} type="checkbox" hidden={true} />
-                                    <label htmlFor={`group-${menuIndex}`} onClick={x.subMenuItems ? () => {} : () => { props.goToRedirect(x.redirectURL); }} >
-                                        {x.subMenuItems && <span className="fa fa-angle-right arrow"/>}
-                                        <div>
-                                            {x.faIcons
-                                                .map((iconClass: string) => {
-                                                    return (
-                                                        <i key={iconClass} className={iconClass}/>
-                                                    );
-                                                })}
-                                            <span className="group-name">{x.name}</span>
-                                        </div>
-                                    </label>
-                                    <ul className="group-list">
-                                        {x.subMenuItems && x.subMenuItems
-                                            .map((y: IMenuItem) => {
-                                                return (
-                                                    <li key={y.name}>
-                                                        <label onClick={() => { props.goToRedirect(y.redirectURL); }}>
-                                                            {y.faIcons
-                                                                .map((subIconClass: string) => {
-                                                                    return (
-                                                                        <i key={subIconClass} className={subIconClass}/>
-                                                                    );
-                                                                })}
-                                                            <span className="sub-group-name">{y.name}</span>
-                                                        </label>
-                                                    </li>
-                                                );
-                                            })}
-                                    </ul>
-                                </li>
-                            );
-                        })}
-                </ul>
+                <PopularGameListContainer
+                    count={10}
+                />
+                <div className="menu-recent-upcoming-container">
+                    <RecentGameListContainer
+                        count={10}
+                    />
+                    <UpcomingGameListContainer
+                        count={10}
+                    />
+                </div>
             </nav>
-            <footer>
-                <FooterIcons/>
-            </footer>
         </div>
     );
 

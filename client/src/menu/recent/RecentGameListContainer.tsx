@@ -1,25 +1,30 @@
 const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { RecentGameResponse, RecentGamesResponse } from '../../../../client/client-server-common/common';
 import RecentGameList from './RecentGameList';
+
+interface IRecentGameListContainerProps extends RouteComponentProps<any> {
+    count: number;
+}
 
 interface IRecentGameListContainerState {
     isLoading: boolean;
     recentGames: RecentGameResponse[];
-    uniqueReleaseDates: string[];
+    count: number;
 }
 
-class RecentGameListContainer extends React.Component<any, IRecentGameListContainerState> {
+class RecentGameListContainer extends React.Component<IRecentGameListContainerProps, IRecentGameListContainerState> {
 
-    constructor(props: any) {
+    constructor(props: IRecentGameListContainerProps) {
         super(props);
         this.state = { 
             isLoading: true,
             recentGames: undefined,
-            uniqueReleaseDates: undefined
+            count: props.count
         };
+        this.onClickGame = this.onClickGame.bind(this);
         this.loadRecentlyReleasedGames = this.loadRecentlyReleasedGames.bind(this);
         this.loadRecentlyReleasedGames();
     }
@@ -27,18 +32,32 @@ class RecentGameListContainer extends React.Component<any, IRecentGameListContai
     loadRecentlyReleasedGames(): void {
         IGDBService.httpGetRecentlyReleasedGamesList()
             .then( (response: RecentGamesResponse) => {
-                const recentGames: RecentGameResponse[] = response.data;
-                const uniqueArray = function(arrArg: any) {
-                    return arrArg.filter(function(elem: string, pos: number, arr: string[]) {
-                        return arr.indexOf(elem) === pos;
-                    });
-                };
-                const uniqueReleaseDates: string[] = uniqueArray(response.data.map((x: any) => { return x.last_release_date; }));
-                this.setState({ isLoading: false, recentGames: recentGames, uniqueReleaseDates: uniqueReleaseDates });
+                const recentGames: RecentGameResponse[] = response.data.slice(0, this.props.count);
+                this.setState({ isLoading: false, recentGames: recentGames });
             })
             .catch( (error: string) => {
                 popupS.modal({ content: `<div>• ${error}</div>` });
+                this.setState({ isLoading: false });
             });
+    }
+
+    onClickGame(id: number): void {
+        this.props.history.push(`/menu/search/${id}`);
+    }
+
+    formatRecentlyReleasedDate(date: number): string {
+        const CURRENT_UNIX_TIME_MS: number = new Date().getTime();
+        const TARGET_UNIX_TIME_MS: number = date;
+        let difference: number = CURRENT_UNIX_TIME_MS - TARGET_UNIX_TIME_MS;
+        let hoursDifference: number = Math.floor(difference / 1000 / 60 / 60);
+        
+        if (hoursDifference < 1) {
+            return `1 hrs ago`; 
+        } else if (hoursDifference < 24) {
+            return `${hoursDifference} hrs ago`;
+        } else {
+            return `${Math.floor(hoursDifference / 24)} days ago`;
+        }
     }
 
     render() {
@@ -46,7 +65,8 @@ class RecentGameListContainer extends React.Component<any, IRecentGameListContai
             <RecentGameList
                 isLoading={this.state.isLoading}
                 recentGames={this.state.recentGames}
-                uniqueReleaseDates={this.state.uniqueReleaseDates}
+                formatRecentlyReleasedDate={this.formatRecentlyReleasedDate}
+                onClickGame={this.onClickGame}
             />
         );
     }
