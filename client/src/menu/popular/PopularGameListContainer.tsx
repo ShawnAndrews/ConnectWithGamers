@@ -1,8 +1,7 @@
 const popupS = require('popups');
 import * as React from 'react';
-import * as IGDBService from '../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { PopularGameResponse, PopularGamesResponse } from '../../../../client/client-server-common/common';
+import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
 import PopularGameList from './PopularGameList';
 
 enum ScrollDirection {
@@ -11,13 +10,13 @@ enum ScrollDirection {
 }
 
 interface IPopularGameListContainerProps extends RouteComponentProps<any> {
-    count: number;
+    popularGames: PredefinedGameResponse[];
+    popularMouseDownCallback: () => void;
+    popularMouseUpCallback: () => void;
 }
 
 interface IPopularGameListContainerState {
-    isLoading: boolean;
-    popularGames: PopularGameResponse[];
-    count: number;
+    popularGames: PredefinedGameResponse[];
     listScrollRef: React.RefObject<HTMLDivElement>;
 }
 
@@ -26,33 +25,19 @@ class PopularGameListContainer extends React.Component<IPopularGameListContainer
     constructor(props: IPopularGameListContainerProps) {
         const listScrollRef: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
         super(props);
-        this.state = { 
-            isLoading: true,
-            popularGames: undefined,
-            count: props.count,
+        this.state = {
+            popularGames: props.popularGames,
             listScrollRef: listScrollRef
         };
         this.onScrollLeft = this.onScrollLeft.bind(this);
         this.onScrollRight = this.onScrollRight.bind(this);
         this.onClickGame = this.onClickGame.bind(this);
-        this.loadPopularGames = this.loadPopularGames.bind(this);
-        this.loadPopularGames();
-    }
-
-    loadPopularGames(): void {
-        IGDBService.httpGetPopularGamesList()
-            .then( (response: PopularGamesResponse) => {
-                const popularGames: PopularGameResponse[] = response.data;
-                this.setState({ isLoading: false, popularGames: popularGames });
-            })
-            .catch( (error: string) => {
-                popupS.modal({ content: `<div>• ${error}</div>` });
-                this.setState({ isLoading: false });
-            });
+        this.mouseDown = this.mouseDown.bind(this);
+        this.mouseUp = this.mouseUp.bind(this);
     }
 
     onClickGame(id: number): void {
-        this.props.history.push(`/menu/search/${id}`);
+        this.props.history.push(`/menu/search/game/${id}`);
     }
 
     smoothScroll(element: any, direction: ScrollDirection, speed: number, distance: number, step: number): void {
@@ -82,15 +67,25 @@ class PopularGameListContainer extends React.Component<IPopularGameListContainer
         this.smoothScroll(element, ScrollDirection.RIGHT, 25, scrollDistance, 5);
     }
 
+    mouseDown(event: React.TouchEvent<HTMLDivElement>): void {
+        this.props.popularMouseDownCallback();
+    }
+
+    mouseUp(event: React.TouchEvent<HTMLDivElement>): void {
+        setTimeout(() => { this.props.popularMouseUpCallback(); }, 200);
+    }
+
     render() {
         return (
             <PopularGameList
-                isLoading={this.state.isLoading}
                 popularGames={this.state.popularGames}
                 onClickGame={this.onClickGame}
                 listScrollRef={this.state.listScrollRef}
                 onScrollLeft={this.onScrollLeft}
                 onScrollRight={this.onScrollRight}
+                goToRedirectCallback={this.props.history.push}
+                mouseDown={this.mouseDown}
+                mouseUp={this.mouseUp}
             />
         );
     }

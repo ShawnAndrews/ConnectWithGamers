@@ -63,6 +63,28 @@ export interface IGDBCacheEntry {
     expiry: number; // seconds
 }
 
+export interface PlatformOption {
+    id: number;
+    name: string;
+}
+
+export enum SwipeState {
+    "Left",
+    "Middle",
+    "Right"
+}
+
+export const platformOptions: PlatformOption[] = [
+    { id: 6,   name: "Steam" },
+    { id: 48,  name: "Playstation 4" },
+    { id: 49,  name: "Xbox One" },
+    { id: 130, name: "Nintendo Switch" },
+    { id: 9,   name: "Playstation 3" },
+    { id: 12,  name: "Xbox 360" },
+    { id: 18,  name: "Nintendo 64" },
+    { id: 37,  name: "Nintendo 3DS" },
+];
+
 export const redisCache: IGDBCacheEntry[] = [
     {key: "upcominggames", expiry: RedisExpirationTime.ONE_HOUR},
     {key: "games", expiry: RedisExpirationTime.ONE_WEEK},
@@ -72,8 +94,20 @@ export const redisCache: IGDBCacheEntry[] = [
     {key: "genregames", expiry: RedisExpirationTime.ONE_HOUR},
     {key: "genrelist", expiry: RedisExpirationTime.ONE_WEEK},
     {key: "chatusers", expiry: RedisExpirationTime.INF},
-    {key: "populargames", expiry: RedisExpirationTime.ONE_DAY}
+    {key: "populargames", expiry: RedisExpirationTime.ONE_DAY},
+    {key: "reviewedgames", expiry: RedisExpirationTime.ONE_HOUR},
+    {key: "news", expiry: RedisExpirationTime.ONE_HOUR},
+    {key: "predefinedpopulargames", expiry: RedisExpirationTime.ONE_DAY},
+    {key: "predefinedrecentgames", expiry: RedisExpirationTime.ONE_DAY},
+    {key: "predefinedupcominggames", expiry: RedisExpirationTime.ONE_DAY},
+    {key: "filtergames", expiry: RedisExpirationTime.ONE_HOUR}
 ];
+
+export enum PredefinedGamesType {
+    Popular,
+    Recent,
+    Upcoming
+}
 
 export interface UserLog {
     accountid: number;
@@ -373,23 +407,57 @@ export interface ChatHistoryResponse {
     attachment: string[];
 }
 
-export interface GameListEntryResponse {
-    name: string;
+export interface RawSearchGameResponse {
     id: number;
+    name: string;
+}
+
+export interface SearchGameResponse {
+    id: number;
+    name: string;
 }
 
 export interface SearchGamesResponse {
     error: string;
-    data?: GameListEntryResponse[];
+    data?: SearchGameResponse[];
 }
 
-export const GameListEntryResponseFields: string[] = [`id`, `name`];
+export const SearchGameResponseFields: string[] = [`id`, `name`];
 
 export interface SteamAPIReview {
     text: string;
     hours_played: number;
     up_votes: number;
 }
+
+export interface ThumbnailGamesResponse {
+    error: string;
+    data?: ThumbnailGameResponse[];
+}
+
+export interface ThumbnailGameResponse {
+    id: number;
+    name: string;
+    rating: number;
+    genres: string;
+    linkIcons: string[];
+    cover?: string;
+    price?: string;
+    discount_percent?: number;
+    steam_url?: string;
+}
+
+export interface RawThumbnailGameResponse {
+    id: number;
+    name: string;
+    rating: number;
+    cover: Cover;
+    genres: number[];
+    platforms: number[];
+    external: ExternalSteamLink;
+}
+
+export const ThumbnailGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`, `genres`, `platforms`, `external`];
 
 export interface GameResponse {
     name: string;
@@ -426,7 +494,7 @@ export interface RawGameResponse {
     platforms: any;
     screenshots: any;
     videos: any;
-    external: any;
+    external: ExternalSteamLink;
 }
 
 export const GameResponseFields: string[] = [`name`, `release_dates`, `cover`, `total_rating`, `total_rating_count`, `summary`, `genres`, `platforms`, `screenshots`, `videos`, `external`];
@@ -436,28 +504,25 @@ export interface SingleGameResponse {
     data?: GameResponse;
 }
 
-export interface RawUpcomingGameResponse {
-
+export interface RawPredefinedGameResponse {
     id: number;
     name: string;
+    genres?: any;
     first_release_date?: number;
+    aggregated_rating?: number;
     cover?: Cover;
 }
 
-export interface UpcomingGameResponse {
-
+export interface PredefinedGameResponse {
     id: number;
     name: string;
+    genre?: string;
     first_release_date?: number;
+    aggregated_rating?: number;
     cover?: string;
 }
 
-export const UpcomingGameResponseFields: string[] = [`id`, `name`, `first_release_date`, `cover`];
-
-export interface UpcomingGamesResponse {
-    error: string;
-    data?: UpcomingGameResponse[];
-}
+export const PredefinedGameResponseFields: string[] = [`id`, `name`, `genres`, `first_release_date`, `aggregated_rating`, `cover`];
 
 export interface Cover {
     url: string;
@@ -466,39 +531,49 @@ export interface Cover {
     height: number;
 }
 
-export interface RawPopularGameResponse {
+export interface Genre {
     id: number;
     name: string;
-    genres?: any;
-    aggregated_rating?: number;
-    cover?: Cover;
 }
 
-export interface PopularGameResponse {
+export interface Platform {
     id: number;
     name: string;
-    genre?: string;
-    aggregated_rating?: number;
-    cover?: string;
 }
 
-export const PopularGameResponseFields: string[] = [`id`, `name`, `genres`, `aggregated_rating`, `cover`];
+export interface ExternalSteamLink {
+    steam: string;
+}
 
-export interface RawRecentGameResponse {
+export interface RawSingleNewsResponse {
     id: number;
-    name: string;
-    first_release_date?: number;
-    cover?: Cover;
+    title: string;
+    author: string;
+    image: string;
+    url: string;
+    created_at: number;
+    pulse_source: {
+        name: string
+    };
+    videos?: [
+        {
+            video_id: string
+        }
+    ];
 }
 
-export interface RecentGameResponse {
+export interface SingleNewsResponse {
     id: number;
-    name: string;
-    first_release_date?: number;
-    cover?: string;
+    title: string;
+    author: string;
+    image: string;
+    video: string;
+    url: string;
+    created_at: number;
+    newsOrg: string;
 }
 
-export const RecentGameResponseFields: string[] = [`id`, `name`, `first_release_date`, `cover`];
+export const SingleNewsResponseFields: string[] = [`id`, `title`, `author`, `image`, `url`, `created_at`, `pulse_source.name`, `videos.video_id`];
 
 export interface TwitchFollowersResponse {
     error: string;
@@ -527,6 +602,11 @@ export interface SteamId {
     steamId: number;
 }
 
+export interface PredefinedGamesResponse {
+    error: string;
+    data?: PredefinedGameResponse[];
+}
+
 export interface DbSteamFriendsResponse {
 
     friends: SteamFriend[];
@@ -536,6 +616,11 @@ export interface SteamFriendsResponse {
 
     error: string;
     data?: SteamFriend[];
+}
+
+export interface GenericErrorResponse {
+    error: string;
+    data?: any[];
 }
 
 export interface SteamFriend {
@@ -589,14 +674,9 @@ export interface DiscordLink {
     link: string;
 }
 
-export interface PopularGamesResponse {
+export interface MultiNewsResponse {
     error: string;
-    data?: PopularGameResponse[];
-}
-
-export interface RecentGamesResponse {
-    error: string;
-    data?: RecentGameResponse[];
+    data?: SingleNewsResponse[];
 }
 
 export interface GenrePair {
@@ -656,6 +736,7 @@ export interface GenreGame {
 export const GenreGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`, `genres`, `platforms`, `external`];
 
 export interface SteamAPIGetPriceInfoResponse {
+    steamgameid: number;
     price: string;
     discount_percent: number;
     steam_url: string;

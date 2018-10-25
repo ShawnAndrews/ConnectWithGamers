@@ -11,7 +11,7 @@ import Reviews from './Reviews';
 
 interface IGameProps {
     isLoading: boolean;
-    gameId: string;
+    gameId: number;
     game: GameResponse;
     summaryExpanded: boolean;
     reviewsExpanded: boolean;
@@ -51,7 +51,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
     }
 
     return (
-        <div>
+        <>
             {props.gameId && 
                 <div className="menu-game">
                     <Cover 
@@ -97,7 +97,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     />
                     {props.game.reviews && <hr className="line-divider" />}
                 </div>}
-        </div>
+        </>
     );
 
 };

@@ -5,9 +5,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Game from './Game';
 import { SingleGameResponse, GameResponse } from '../../../../../client/client-server-common/common';
 
-interface IGameContainerProps extends RouteComponentProps<any> {
-    gameId: string;
-}
+interface IGameContainerProps extends RouteComponentProps<any> { }
 
 interface IGameContainerState {
     isLoading: boolean;
@@ -15,6 +13,7 @@ interface IGameContainerState {
     summaryExpanded: boolean;
     reviewsExpanded: boolean;
     genre_ids: number[];
+    gameid: number;
 }
 
 class GameContainer extends React.Component<IGameContainerProps, IGameContainerState> {
@@ -22,44 +21,43 @@ class GameContainer extends React.Component<IGameContainerProps, IGameContainerS
     constructor(props: IGameContainerProps) {
         super(props);
         this.state = {
-            isLoading: undefined,
+            isLoading: false,
             game: undefined,
             summaryExpanded: undefined,
             reviewsExpanded: undefined,
-            genre_ids: undefined
+            genre_ids: undefined,
+            gameid: undefined
         };
         this.loadGame = this.loadGame.bind(this);
         this.handleReadReviewsClick = this.handleReadReviewsClick.bind(this);
         this.handlePlatformClick = this.handlePlatformClick.bind(this);
         this.handleGenreClick = this.handleGenreClick.bind(this);
         this.expandSummary = this.expandSummary.bind(this);
+    }
 
+    componentWillMount(): void {
         // load game
-        if (this.props.gameId) {
-            this.state = { 
-                isLoading: true, 
-                game: undefined, 
-                summaryExpanded: false, 
-                reviewsExpanded: false,
-                genre_ids: undefined
-            };
-            this.loadGame(this.props.gameId);
+        if (this.props.match.params.id) {
+            this.setState({ isLoading: true }, () => {
+                this.loadGame(this.props.match.params.id);
+            });
         }
     }
 
     componentWillReceiveProps(newProps: IGameContainerProps) {
         // load new game
-        if (newProps.gameId && this.props.gameId !== newProps.gameId) {
-            this.setState({ isLoading: true });
-            this.loadGame(newProps.gameId);
+        if (newProps.match.params.id && this.state.gameid !== newProps.match.params.id) {
+            this.setState({ isLoading: true }, () => {
+                this.loadGame(newProps.match.params.id);
+            });
         }
     }
 
-    loadGame(id: string): void {
-        IGDBService.httpGetGame(id)
+    loadGame(id: number): void {
+        IGDBService.httpGenericGetData<SingleGameResponse>(`/igdb/game/${id}`)
             .then( (response: SingleGameResponse) => {
                 const game: GameResponse = response.data; 
-                this.setState({ isLoading: false, game: game });
+                this.setState({ isLoading: false, game: game, gameid: id });
             })
             .catch( (error: string) => {
                 popupS.modal({ content: error });
@@ -68,11 +66,11 @@ class GameContainer extends React.Component<IGameContainerProps, IGameContainerS
     }
 
     handlePlatformClick(index: number): void {
-        this.props.history.push(`/menu/platform/${this.state.game.platform_ids[index]}`);
+        this.props.history.push(`/menu/search/filter/?platforms=${this.state.game.platform_ids[index]}`);
     }
     
     handleGenreClick(index: number): void {
-        this.props.history.push(`/menu/genre/${this.state.game.genre_ids[index]}`);
+        this.props.history.push(`/menu/search/filter/?genres=${this.state.game.genre_ids[index]}`);
     }
 
     handleReadReviewsClick(): void {
@@ -87,7 +85,7 @@ class GameContainer extends React.Component<IGameContainerProps, IGameContainerS
         return (
             <Game
                 isLoading={this.state.isLoading}
-                gameId={this.props.gameId}
+                gameId={this.state.gameid}
                 game={this.state.game}
                 summaryExpanded={this.state.summaryExpanded}
                 reviewsExpanded={this.state.reviewsExpanded}

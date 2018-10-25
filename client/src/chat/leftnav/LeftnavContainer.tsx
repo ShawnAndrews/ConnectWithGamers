@@ -3,7 +3,7 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Leftnav from './Leftnav';
 import { CHATROOMS, ChatroomInfo } from '../../../client-server-common/common';
-import { SwipeState } from '../ChatroomMenuContainer';
+import { SwipeState } from '../../../client-server-common/common';
 import { ChatroomReduxState } from '../../reducers/main';
 import { connect } from 'react-redux';
 
@@ -105,7 +105,7 @@ class LeftnavContainer extends React.Component<Props, ILeftnavContainerState> {
 const mapStateToProps = (state: any, ownProps: ILeftnavContainerProps): ReduxStateProps => {
     const chatroomReduxState: ChatroomReduxState = state.chatroom;
     return {
-        swipeState: chatroomReduxState.swipeState,
+        swipeState: chatroomReduxState.swipeStateChatroom,
         leftNavWidth: chatroomReduxState.leftNavWidth
     };
 };

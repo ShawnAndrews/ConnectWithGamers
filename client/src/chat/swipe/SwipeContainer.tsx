@@ -2,7 +2,7 @@ import * as Redux from 'redux';
 import * as React from 'react';
 import Swipe from "./Swipe";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { SwipeState } from '../ChatroomMenuContainer';
+import { SwipeState } from '../../../client-server-common/common';
 import { ChatroomReduxState } from '../../reducers/main';
 import { connect } from 'react-redux';
 
@@ -75,7 +75,7 @@ class SwipeContainer extends React.Component<Props, ISwipeContainerState> {
 const mapStateToProps = (state: any, ownProps: ISwipeContainerProps): ReduxStateProps => {
     const chatroomReduxState: ChatroomReduxState = state.chatroom;
     return {
-        swipeState: chatroomReduxState.swipeState,
+        swipeState: chatroomReduxState.swipeStateChatroom,
         leftNavWidth: chatroomReduxState.leftNavWidth,
         rightNavWidth: chatroomReduxState.rightNavWidth
     };

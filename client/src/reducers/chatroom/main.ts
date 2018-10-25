@@ -1,9 +1,9 @@
-import { ChatroomActions, SwipeActionType } from '../../actions/main';
+import { ReduxActions, SwipeActionType } from '../../actions/main';
 import { ChatroomReduxState } from '../main';​
-import { SwipeState } from '../../chat/ChatroomMenuContainer';
+import { SwipeState } from '../../../client-server-common/common';
 
 const initialState: ChatroomReduxState = {
-    swipeState: SwipeState.Middle,
+    swipeStateChatroom: SwipeState.Middle,
     leftNavWidth: 50,
     rightNavWidth: 200
 };
@@ -12,26 +12,26 @@ const ChatroomNavigation = (state: ChatroomReduxState = initialState, action: an
 
     switch (action.type) {
 
-        case ChatroomActions.SWIPE_LEFT: {
+        case ReduxActions.SWIPE_LEFT_CHATROOM: {
             const actionResult: SwipeActionType = action;
             const newState: ChatroomReduxState = state;
 
-            if (state.swipeState === SwipeState.Left) {
-                newState.swipeState = SwipeState.Middle;
-            } else if (state.swipeState === SwipeState.Middle) {
-                newState.swipeState = SwipeState.Right;
+            if (state.swipeStateChatroom === SwipeState.Left) {
+                newState.swipeStateChatroom = SwipeState.Middle;
+            } else if (state.swipeStateChatroom === SwipeState.Middle) {
+                newState.swipeStateChatroom = SwipeState.Right;
             }
             return Object.assign({}, state, newState);
         }
 
-        case ChatroomActions.SWIPE_RIGHT: {
+        case ReduxActions.SWIPE_RIGHT_CHATROOM: {
             const actionResult: SwipeActionType = action;
             const newState: ChatroomReduxState = state;
 
-            if (state.swipeState === SwipeState.Right) {
-                newState.swipeState = SwipeState.Middle;
-            } else if (state.swipeState === SwipeState.Middle) {
-                newState.swipeState = SwipeState.Left;
+            if (state.swipeStateChatroom === SwipeState.Right) {
+                newState.swipeStateChatroom = SwipeState.Middle;
+            } else if (state.swipeStateChatroom === SwipeState.Middle) {
+                newState.swipeStateChatroom = SwipeState.Left;
             }
 
             return Object.assign({}, state, newState);

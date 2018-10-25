@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { UpcomingGameResponse, GenreGame, RecentGameResponse, PlatformGame } from '../../../../client/client-server-common/common';
+import { ThumbnailGameResponse } from '../../../../client/client-server-common/common';
 import ThumbnailGame from './ThumbnailGame';
 
 interface IThumbnailGameContainerProps extends RouteComponentProps<any> {
-    game: UpcomingGameResponse | GenreGame | RecentGameResponse | PlatformGame;
+    game: ThumbnailGameResponse;
 } 
 
 interface IThumbnailGameContainerState { }
@@ -17,7 +17,7 @@ class ThumbnailGameContainer extends React.Component<IThumbnailGameContainerProp
     }
 
     goToGame(): void {
-        this.props.history.push(`/menu/search/${this.props.game.id}`);
+        this.props.history.push(`/menu/search/game/${this.props.game.id}`);
     }
 
     render() {

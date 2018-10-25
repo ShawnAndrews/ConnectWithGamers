@@ -2,7 +2,7 @@ const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import SearchList from './SearchList';
+import SearchBar from './SearchBar';
 import { SearchGamesResponse } from '../../../client-server-common/common';
 
 export interface SearchGameOption {
@@ -10,18 +10,18 @@ export interface SearchGameOption {
     label: string;
 }
 
-interface ISearchListContainerProps extends RouteComponentProps<any> { }
+interface ISearchBarContainerProps extends RouteComponentProps<any> { }
 
-interface ISearchListContainerState {
+interface ISearchBarContainerState {
     isLoading: boolean;
     rawInput: string;
     gameslist: SearchGameOption[];
     loadingMsg: string;
 }
 
-class SearchListContainer extends React.Component<ISearchListContainerProps, ISearchListContainerState> {
+class SearchBarContainer extends React.Component<ISearchBarContainerProps, ISearchBarContainerState> {
 
-    constructor(props: ISearchListContainerProps) {
+    constructor(props: ISearchBarContainerProps) {
         super(props);
         this.state = { 
             isLoading: false,
@@ -35,7 +35,7 @@ class SearchListContainer extends React.Component<ISearchListContainerProps, ISe
     }
 
     handleChange(selectedGame: any): void {
-        this.props.history.push(`/menu/search/${selectedGame.value}`);
+        this.props.history.push(`/menu/search/game/${selectedGame.value}`);
     }
 
     handleKeyDown(event: any): void {
@@ -55,7 +55,7 @@ class SearchListContainer extends React.Component<ISearchListContainerProps, ISe
     loadGamesList(query: string): void {
 
         this.setState({ isLoading: true });
-        IGDBService.httpGetSearchGames(query)
+        IGDBService.httpGenericGetData<SearchGamesResponse>(`/igdb/games/search/${query}`)
             .then( (response: SearchGamesResponse) => {
                 if (response.data) {
                     this.setState({ 
@@ -78,8 +78,7 @@ class SearchListContainer extends React.Component<ISearchListContainerProps, ISe
 
     render() {
         return (
-            <SearchList
-                gameId={this.props.match.params.id}
+            <SearchBar
                 isLoading={this.state.isLoading}
                 gameslist={this.state.gameslist}
                 handleChange={this.handleChange}
@@ -91,4 +90,4 @@ class SearchListContainer extends React.Component<ISearchListContainerProps, ISe
 
 }
 
-export default withRouter(SearchListContainer);
+export default withRouter(SearchBarContainer);

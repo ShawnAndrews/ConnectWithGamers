@@ -8,7 +8,6 @@ interface ITopnavProps {
 }
 
 const Topnav: React.SFC<ITopnavProps> = (props: ITopnavProps) => {
-
     return (
         <Tabs
             className="gaming-navbar-item-container fixed-container"

@@ -19,27 +19,25 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, ITopnavCont
     constructor(props: ITopnavContainerProps) {
         super(props);
         this.onTabChange = this.onTabChange.bind(this);
-        this.updateNavSelection = this.updateNavSelection.bind(this);
-        this.updateNavSelection(this.props.history.location.pathname);
 
         this.state = {
-            index: undefined
+            index: this.detectNavSelection(this.props.history.location.pathname)
         };
     }
 
     componentWillReceiveProps(newProps: ITopnavContainerProps) {
-        this.updateNavSelection(newProps.history.location.pathname);
+        this.setState({ index: this.detectNavSelection(newProps.history.location.pathname) });
     }
 
-    updateNavSelection(path: string): void {
-        if (path === GAMINGNAV_PAGE.TWITCH) {
-            this.state = { index: 0 };
+    detectNavSelection(path: string): number {
+        if (path.startsWith(GAMINGNAV_PAGE.TWITCH)) {
+            return 0;
         } else if (path.startsWith(GAMINGNAV_PAGE.STEAM)) {
-            this.state = { index: 1 };
+            return 1;
         } else if (path.startsWith(GAMINGNAV_PAGE.DISCORD)) {
-            this.state = { index: 2 };
+            return 2;
         } else {
-            this.state = { index: -1};
+            return -1;
         }
     }
 

@@ -62,26 +62,52 @@ export function addMonths(dateToAdd: Date, numMonthsToAdd: number) {
 /**
  * Returns Steam price info from Steam id.
  */
-export function steamAPIGetPriceInfo(id: number): Promise<SteamAPIGetPriceInfoResponse> {
+export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGetPriceInfoResponse[]> {
+
+    const createPricePromise = (steamgameid: number): Promise<SteamAPIGetPriceInfoResponse> => {
+
+        return new Promise((resolve: any, reject: any) => {
+            WebRequest.get(`${config.steam.apiURL}/appdetails?appids=${steamgameid}&cc=us`)
+            .then((response: any) => {
+                const steam_url: string = `${config.steam.appURL}/${steamgameid}`;
+
+                if (!JSON.parse(response.message.body)[steamgameid].data.price_overview) {
+                    return resolve({ price: "Free", steam_url: steam_url });
+                } else {
+                    const price_unformatted: string = (JSON.parse(response.message.body)[steamgameid].data.price_overview.final).toString();
+                    const price: string = price_unformatted.slice(0, price_unformatted.length - 2) + `.` + price_unformatted.slice(price_unformatted.length - 2);
+                    const discount_percent: number = JSON.parse(response.message.body)[steamgameid].data.price_overview.discount_percent;
+                    const steamPriceInfo: SteamAPIGetPriceInfoResponse = {
+                        steamgameid: steamgameid,
+                        price: price,
+                        discount_percent: discount_percent,
+                        steam_url: steam_url
+                    };
+
+                    return resolve(steamPriceInfo);
+                }
+            })
+            .catch((error: any): any => {
+                console.log(`Error retrieving Steam price info: ${error}`);
+                return reject(error);
+            });
+        });
+
+    };
 
     return new Promise((resolve: any, reject: any) => {
+        const pricePromises: Promise<SteamAPIGetPriceInfoResponse>[] = [];
 
-        WebRequest.get(`${config.steam.apiURL}/appdetails?appids=${id}&cc=us`)
-        .then((response: any) => {
-            const steam_url: string = `${config.steam.appURL}/${id}`;
+        steamgameids.forEach((steamgameid: number) => {
+            pricePromises.push(createPricePromise(steamgameid));
+        });
 
-            if (!JSON.parse(response.message.body)[id].data.price_overview) {
-                return resolve({ price: "Free", steam_url: steam_url });
-            } else {
-                const price_unformatted: string = (JSON.parse(response.message.body)[id].data.price_overview.final).toString();
-                const price: string = price_unformatted.slice(0, price_unformatted.length - 2) + `.` + price_unformatted.slice(price_unformatted.length - 2);
-                const discount_percent: number = JSON.parse(response.message.body)[id].data.price_overview.discount_percent;
-
-                return resolve({ price: price, discount_percent: discount_percent, steam_url: steam_url });
-            }
+        Promise.all(pricePromises)
+        .then((vals: any) => {
+            const steamPrices: SteamAPIGetPriceInfoResponse[] = vals;
+            return resolve(steamPrices);
         })
-        .catch((error: any): any => {
-            console.log(`Error retrieving Steam price info: ${error}`);
+        .catch((error: string) => {
             return reject(error);
         });
 

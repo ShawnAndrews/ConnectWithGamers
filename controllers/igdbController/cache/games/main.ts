@@ -2,7 +2,7 @@ import config from "../../../../config";
 import { formatTimestamp, steamAPIGetReviews, steamAPIGetPriceInfo } from "../../../../util/main";
 import {
     GameResponse, GameResponseFields, RawGameResponse,
-    SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
+    SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse, redisCache, IGDBCacheEntry, ExternalSteamLink } from "../../../../client/client-server-common/common";
 import { getAllGenrePairs } from "../genreList/main";
 import axios from "axios";
 const redis = require("redis");
@@ -60,12 +60,9 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                     "user-key": config.igdb.key,
                     "Accept": "application/json"
                 }
-            });
-        igdbClient.games({
-            ids: [gameId]
-        }, GameResponseFields)
+            })
         .then( (response: any) => {
-            const rawResponse: RawGameResponse = response.body[0];
+            const rawResponse: RawGameResponse = response.data[0];
 
             getAllGenrePairs()
             .then((genrePair: string[]) => {
@@ -167,10 +164,10 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                 const pricePromise: Promise<SteamAPIGetPriceInfoResponse> = new Promise((resolve: any, reject: any) => {
 
                     if (rawResponse.external) {
-                        const steamId: number = rawResponse.external.steam;
-                        steamAPIGetPriceInfo(steamId)
-                            .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse) => {
-                                return resolve(steamAPIGetPriceInfoResponse);
+                        const steamid: number = parseInt(rawResponse.external.steam);
+                        steamAPIGetPriceInfo([steamid])
+                            .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse[]) => {
+                                return resolve(steamAPIGetPriceInfoResponse[0]);
                             })
                             .catch ( (error: string) => {
                                 return reject(error);
@@ -183,7 +180,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                 const reviewsPromise: Promise<SteamAPIGetReviewsResponse> = new Promise((resolve: any, reject: any) => {
 
                     if (rawResponse.external) {
-                        const steamId: number = rawResponse.external.steam;
+                        const steamId: number = parseInt(rawResponse.external.steam);
                         steamAPIGetReviews(steamId)
                             .then( (steamAPIGetReviewsResponse: SteamAPIGetReviewsResponse) => {
                                 return resolve(steamAPIGetReviewsResponse);

@@ -1,48 +1,29 @@
-const popupS = require('popups');
 import * as React from 'react';
-import * as IGDBService from '../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { RecentGameResponse, RecentGamesResponse } from '../../../../client/client-server-common/common';
+import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
 import RecentGameList from './RecentGameList';
 
 interface IRecentGameListContainerProps extends RouteComponentProps<any> {
-    count: number;
+    recentGames: PredefinedGameResponse[];
 }
 
 interface IRecentGameListContainerState {
-    isLoading: boolean;
-    recentGames: RecentGameResponse[];
-    count: number;
+    recentGames: PredefinedGameResponse[];
 }
 
 class RecentGameListContainer extends React.Component<IRecentGameListContainerProps, IRecentGameListContainerState> {
 
     constructor(props: IRecentGameListContainerProps) {
         super(props);
-        this.state = { 
-            isLoading: true,
-            recentGames: undefined,
-            count: props.count
-        };
         this.onClickGame = this.onClickGame.bind(this);
-        this.loadRecentlyReleasedGames = this.loadRecentlyReleasedGames.bind(this);
-        this.loadRecentlyReleasedGames();
-    }
-
-    loadRecentlyReleasedGames(): void {
-        IGDBService.httpGetRecentlyReleasedGamesList()
-            .then( (response: RecentGamesResponse) => {
-                const recentGames: RecentGameResponse[] = response.data.slice(0, this.props.count);
-                this.setState({ isLoading: false, recentGames: recentGames });
-            })
-            .catch( (error: string) => {
-                popupS.modal({ content: `<div>• ${error}</div>` });
-                this.setState({ isLoading: false });
-            });
+        
+        this.state = { 
+            recentGames: props.recentGames
+        };
     }
 
     onClickGame(id: number): void {
-        this.props.history.push(`/menu/search/${id}`);
+        this.props.history.push(`/menu/search/game/${id}`);
     }
 
     formatRecentlyReleasedDate(date: number): string {
@@ -63,10 +44,10 @@ class RecentGameListContainer extends React.Component<IRecentGameListContainerPr
     render() {
         return (
             <RecentGameList
-                isLoading={this.state.isLoading}
                 recentGames={this.state.recentGames}
                 formatRecentlyReleasedDate={this.formatRecentlyReleasedDate}
                 onClickGame={this.onClickGame}
+                goToRedirectCallback={this.props.history.push}
             />
         );
     }

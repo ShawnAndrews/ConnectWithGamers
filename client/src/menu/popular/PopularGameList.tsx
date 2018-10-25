@@ -1,33 +1,28 @@
 import * as React from 'react';
-import Spinner from '../../spinner/main';
-import { PopularGameResponse } from '../../../../client/client-server-common/common';
+import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
 
 interface IPopularGameListProps {
-    isLoading: boolean;
-    popularGames: PopularGameResponse[];
+    popularGames: PredefinedGameResponse[];
     onClickGame: (id: number) => void;
     listScrollRef: React.RefObject<HTMLDivElement>;
     onScrollLeft: () => void;
     onScrollRight: () => void;
+    goToRedirectCallback: (URL: string) => void;
+    mouseDown: (event: React.TouchEvent<HTMLDivElement>) => void;
+    mouseUp: (event: React.TouchEvent<HTMLDivElement>) => void;
 }
 
 const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameListProps) => {
 
-    if (props.isLoading) {
-        return (
-            <Spinner className="middle" loadingMsg="Loading game..." />
-        );
-    }
-
     return (
         <div className="popular-table">
-            <div className="popular-table-header">
+            <div className="popular-table-header" onClick={() => { props.goToRedirectCallback(`/menu/search/popular`); }}>
                 <a className="popular-table-header-link">Most Popular</a>
                 <i className="fas fa-chevron-right"/>
             </div>
-            <div className="popular-table-horizontal" ref={props.listScrollRef}>
+            <div className="popular-table-horizontal" ref={props.listScrollRef} onTouchStart={props.mouseDown} onTouchEnd={props.mouseUp}>
                 {props.popularGames
-                    .map((x: PopularGameResponse) => {
+                    .map((x: PredefinedGameResponse) => {
                         return (
                             <div key={x.id} className="popular-table-container" onClick={() => { props.onClickGame(x.id); }}>
                                 <div className="popular-table-image">

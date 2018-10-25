@@ -2,13 +2,7 @@ import * as Redux from 'redux';
 import * as React from 'react';
 import ChatroomMenu from './ChatroomMenu';
 import { connect } from 'react-redux';
-import { swipeLeft, swipeRight } from '../actions/main';
-
-export enum SwipeState {
-    'Left',
-    'Middle',
-    'Right'
-}
+import { swipeLeftChatroom, swipeRightChatroom } from '../actions/main';
 
 interface IChatroomMenuContainerProps { }
 
@@ -65,8 +59,8 @@ const mapStateToProps = (state: any, ownProps: IChatroomMenuContainerProps): Red
 });
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: IChatroomMenuContainerProps): ReduxDispatchProps => ({
-    swipeLeft: () => { dispatch(swipeLeft()); },
-    swipeRight: () => { dispatch(swipeRight()); }
+    swipeLeft: () => { dispatch(swipeLeftChatroom()); },
+    swipeRight: () => { dispatch(swipeRightChatroom()); }
 });
 
 export default connect<ReduxStateProps, ReduxDispatchProps, IChatroomMenuContainerProps>

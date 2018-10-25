@@ -7,12 +7,12 @@ export default class DatabaseBase {
     private connection: Connection;
 
     constructor() {
-        // this.connectToDatabase();
+        this.connectToDatabase();
 
         // keep database connection alive
-        // setInterval(() => {
-        //     this.connection.query("SELECT 1");
-        // }, 5000);
+        setInterval(() => {
+            this.connection.query("SELECT 1");
+        }, 5000);
     }
 
     /**

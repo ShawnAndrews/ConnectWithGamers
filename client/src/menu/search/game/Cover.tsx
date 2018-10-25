@@ -52,8 +52,8 @@ const Cover: React.SFC<ICoverProps> = (props: ICoverProps) => {
                 <div className="menu-game-price level-one">
                     <span className="menu-game-price-header">Price: </span>
                     {props.price === 'Free'
-                    ? <strong>Free</strong>
-                    : <span>${props.price} USD {props.discount_percent !== 0 && '(-' + props.discount_percent + '% SALE)'}</span>}
+                        ? <strong>Free</strong>
+                        : <span>${props.price} USD {props.discount_percent !== 0 && '(-' + props.discount_percent + '% SALE)'}</span>}
                     <a href={props.steam_url} className="menu-game-price-icon"><i className="fab fa-steam-square fa-lg"/></a>
                 </div>}
             <span className={`menu-game-name ${props.price ? 'level-two' : 'level-one'}`}>{props.name}</span>

@@ -1,30 +1,23 @@
 import * as React from 'react';
-import Spinner from '../../spinner/main';
-import { UpcomingGameResponse } from '../../../../client/client-server-common/common';
+import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
 
 interface IUpcomingGameListProps {
-    isLoading: boolean;
-    upcomingGames: UpcomingGameResponse[];
+    upcomingGames: PredefinedGameResponse[];
     formatUpcomingDate: (date: number) => string;
     onClickGame: (id: number) => void;
+    goToRedirectCallback: (URL: string) => void;
 }
 
 const UpcomingGameList: React.SFC<IUpcomingGameListProps> = (props: IUpcomingGameListProps) => {
 
-    if (props.isLoading) {
-        return (
-            <Spinner className="middle" loadingMsg="Loading game..." />
-        );
-    }
-
     return (
         <div className="upcoming-table">
-            <div className="upcoming-table-header">
+            <div className="upcoming-table-header" onClick={() => { props.goToRedirectCallback(`/menu/search/upcoming`); }}>
                 <a className="upcoming-table-header-link">Upcoming</a>
                 <i className="fas fa-chevron-right"/>
             </div>
             {props.upcomingGames
-            .map((x: UpcomingGameResponse) => {
+            .map((x: PredefinedGameResponse) => {
                 return (
                     <div key={x.id} className="upcoming-table-container" onClick={() => { props.onClickGame(x.id); }}>
                         <div className="upcoming-table-image">

@@ -3,42 +3,25 @@ import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import UpcomingGameList from './UpcomingGameList';
-import { UpcomingGameResponse, UpcomingGamesResponse } from '../../../../client/client-server-common/common';
+import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
 
 interface IUpcomingGameListContainerProps extends RouteComponentProps<any> {
-    count: number;
+    upcomingGames: PredefinedGameResponse[];
 }
 
 interface IUpcomingGameListContainerState {
-    isLoading: boolean;
-    upcomingGames: UpcomingGameResponse[];
-    count: number;
+    upcomingGames: PredefinedGameResponse[];
 }
 
 class UpcomingGameListContainer extends React.Component<IUpcomingGameListContainerProps, IUpcomingGameListContainerState> {
 
     constructor(props: IUpcomingGameListContainerProps) {
         super(props);
-        this.state = { 
-            isLoading: true,
-            upcomingGames: undefined,
-            count: props.count
-        };
         this.onClickGame = this.onClickGame.bind(this);
-        this.loadUpcomingGames = this.loadUpcomingGames.bind(this);
-        this.loadUpcomingGames();
-    }
-
-    loadUpcomingGames(): void {
-        IGDBService.httpGetUpcomingGamesList()
-            .then( (response: UpcomingGamesResponse) => {
-                const upcomingGames: UpcomingGameResponse[] = response.data.slice(0, this.props.count);
-                this.setState({ isLoading: false, upcomingGames: upcomingGames });
-            })
-            .catch( (error: string) => {
-                popupS.modal({ content: error });
-                this.setState({ isLoading: false });
-            });
+        
+        this.state = { 
+            upcomingGames: props.upcomingGames
+        };
     }
 
     formatUpcomingDate(date: number): string {
@@ -57,16 +40,16 @@ class UpcomingGameListContainer extends React.Component<IUpcomingGameListContain
     }
 
     onClickGame(id: number): void {
-        this.props.history.push(`/menu/search/${id}`);
+        this.props.history.push(`/menu/search/game/${id}`);
     }
 
     render() {
         return (
             <UpcomingGameList
-                isLoading={this.state.isLoading}
                 upcomingGames={this.state.upcomingGames}
                 formatUpcomingDate={this.formatUpcomingDate}
                 onClickGame={this.onClickGame}
+                goToRedirectCallback={this.props.history.push}
             />
         );
     }

@@ -1,7 +1,6 @@
 import config from "../../../../config";
-import {
-    GameListEntryResponse, GameListEntryResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
-
+import axios from "axios";
+import { redisCache, IGDBCacheEntry, SearchGameResponseFields, SearchGameResponse, RawSearchGameResponse } from "../../../../client/client-server-common/common";
 const redis = require("redis");
 const redisClient = redis.createClient();
 const igdb = require("igdb-api-node").default;
@@ -27,7 +26,7 @@ export function searchGamesKeyExists(query: string): Promise<boolean> {
 /**
  * Get redis-cached search games.
  */
-export function getCachedSearchGames(query: string): Promise<GameListEntryResponse[]> {
+export function getCachedSearchGames(query: string): Promise<SearchGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[2];
 
     return new Promise((resolve: any, reject: any) => {
@@ -44,23 +43,30 @@ export function getCachedSearchGames(query: string): Promise<GameListEntryRespon
 /**
  * Get redis-cached search games.
  */
-export function cacheSearchGames(query: string): Promise<GameListEntryResponse[]> {
+export function cacheSearchGames(query: string): Promise<SearchGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[2];
 
     return new Promise((resolve: any, reject: any) => {
 
-        igdbClient.games({
-            limit: config.igdb.pageLimit,
-            order: "release_dates.date:desc",
-            search: query,
-        }, GameListEntryResponseFields)
-        .then((result: any) => {
-            const games: GameListEntryResponse[] = result.body;
-            redisClient.hset(cacheEntry.key, query, JSON.stringify(games));
+        axios.get(
+            `https://api-endpoint.igdb.com/games/?search=${query}&fields=${SearchGameResponseFields}&order=release_dates.date:desc&limit=${config.igdb.pageLimit}`,
+            {
+                headers: {
+                    "user-key": config.igdb.key,
+                    "Accept": "application/json"
+                }
+            })
+        .then( (response: any) => {
+            const rawResponse: RawSearchGameResponse[] = response.data;
+            const gamesResponse: SearchGameResponse[] = rawResponse;
+
+            redisClient.hset(cacheEntry.key, query, JSON.stringify(gamesResponse));
             if (cacheEntry.expiry !== -1) {
                 redisClient.expire(cacheEntry.key, cacheEntry.expiry);
             }
-            resolve(games);
+
+            return resolve(gamesResponse);
+
         })
         .catch((error: string) => {
             return reject(error);

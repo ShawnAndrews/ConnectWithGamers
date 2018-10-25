@@ -1,5 +1,5 @@
 import config from "../../../../config";
-import { RecentGameResponse, RawRecentGameResponse, RecentGameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
+import { PredefinedGameResponse, RawPredefinedGameResponse, PredefinedGameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import axios from "axios";
 const redis = require("redis");
 const redisClient = redis.createClient();
@@ -26,7 +26,7 @@ export function recentGamesKeyExists(): Promise<boolean> {
 /**
  * Get redis-cached recent games.
  */
-export function getCachedRecentGames(): Promise<RecentGameResponse[]> {
+export function getCachedRecentGames(): Promise<PredefinedGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[4];
 
     return new Promise((resolve: any, reject: any) => {
@@ -44,13 +44,13 @@ export function getCachedRecentGames(): Promise<RecentGameResponse[]> {
  * Cache recent games.
  */
 
-export function cacheRecentGames(): Promise<RecentGameResponse[]> {
+export function cacheRecentGames(): Promise<PredefinedGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[4];
     const CURRENT_UNIX_TIME_MS: number = new Date().getTime();
 
     return new Promise((resolve: any, reject: any) => {
         axios.get(
-            `https://api-endpoint.igdb.com/games/?fields=${RecentGameResponseFields.join()}&order=first_release_date:desc&filter[first_release_date][lte]=${CURRENT_UNIX_TIME_MS}&filter[popularity][gt]=5&limit=${config.igdb.pageLimit}`,
+            `https://api-endpoint.igdb.com/games/?fields=${PredefinedGameResponseFields.join()}&order=first_release_date:desc&filter[first_release_date][lte]=${CURRENT_UNIX_TIME_MS}&filter[popularity][gt]=5&limit=${config.igdb.pageLimit}&filter[cover][exists]=1`,
             {
                 headers: {
                     "user-key": config.igdb.key,
@@ -58,15 +58,15 @@ export function cacheRecentGames(): Promise<RecentGameResponse[]> {
                 }
             })
         .then((response: any) => {
-            const rawResponse: RawRecentGameResponse[] = response.data;
-            const gamesResponse: RecentGameResponse[] = [];
+            const rawResponse: RawPredefinedGameResponse[] = response.data;
+            const gamesResponse: PredefinedGameResponse[] = [];
 
-            rawResponse.forEach((x: RawRecentGameResponse) => {
+            rawResponse.forEach((x: RawPredefinedGameResponse) => {
                 const id: number = x.id;
                 const name: string = x.name;
                 const first_release_date: number = x.first_release_date;
                 const cover: string = x.cover ? igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg") : undefined;
-                const gameResponse: RecentGameResponse = { id: id, name: name, first_release_date: first_release_date, cover: cover };
+                const gameResponse: PredefinedGameResponse = { id: id, name: name, first_release_date: first_release_date, cover: cover };
                 gamesResponse.push(gameResponse);
             });
 

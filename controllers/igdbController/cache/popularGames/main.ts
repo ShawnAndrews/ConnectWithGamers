@@ -1,6 +1,6 @@
 import config from "../../../../config";
 import {
-    PopularGameResponse, RawPopularGameResponse, PopularGameResponseFields,
+    PredefinedGameResponse, RawPredefinedGameResponse, PredefinedGameResponseFields,
     redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import { getAllGenrePairs } from "../genreList/main";
 import axios from "axios";
@@ -29,7 +29,7 @@ export function popularGamesKeyExists(): Promise<boolean> {
 /**
  * Get redis-cached games.
  */
-export function getCachedPopularGames(): Promise<PopularGameResponse[]> {
+export function getCachedPopularGames(): Promise<PredefinedGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[8];
 
     return new Promise((resolve: any, reject: any) => {
@@ -46,13 +46,13 @@ export function getCachedPopularGames(): Promise<PopularGameResponse[]> {
 /**
  * Cache popular game.
  */
-export function cachePopularGames(): Promise<PopularGameResponse[]> {
+export function cachePopularGames(): Promise<PredefinedGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[8];
     const CURRENT_UNIX_TIME_MS: number = new Date().getTime();
 
     return new Promise((resolve: any, reject: any) => {
         axios.get(
-            `https://api-endpoint.igdb.com/games/?fields=name,genres,aggregated_rating,cover&order=aggregated_rating:desc&filter[first_release_date][lte]=${CURRENT_UNIX_TIME_MS}&filter[first_release_date][gt]=2018-06-01&filter[aggregated_rating][lt]=100&filter[popularity][gt]=15&limit=${config.igdb.pageLimit}`,
+            `https://api-endpoint.igdb.com/games/?fields=${PredefinedGameResponseFields.join()}&order=aggregated_rating:desc&filter[first_release_date][lte]=${CURRENT_UNIX_TIME_MS}&filter[first_release_date][gt]=2018-06-01&filter[aggregated_rating][lt]=100&filter[popularity][gt]=15&limit=${config.igdb.pageLimit}&filter[cover][exists]=1`,
             {
                 headers: {
                     "user-key": config.igdb.key,
@@ -60,13 +60,13 @@ export function cachePopularGames(): Promise<PopularGameResponse[]> {
                 }
             })
         .then( (response: any) => {
-            const rawResponse: RawPopularGameResponse[] = response.data;
-            const gamesResponse: PopularGameResponse[] = [];
+            const rawResponse: RawPredefinedGameResponse[] = response.data;
+            const gamesResponse: PredefinedGameResponse[] = [];
 
             getAllGenrePairs()
             .then((genrePair: string[]) => {
 
-                rawResponse.forEach((x: RawPopularGameResponse) => {
+                rawResponse.forEach((x: RawPredefinedGameResponse) => {
                     const id: number = x.id;
                     const name: string =  x.name;
                     const aggregated_rating: number = x.aggregated_rating;
@@ -84,7 +84,7 @@ export function cachePopularGames(): Promise<PopularGameResponse[]> {
                         genre = genrePair[8];
                     }
 
-                    const gameResponse: PopularGameResponse = { id: id, name: name, aggregated_rating: aggregated_rating, cover: cover, genre: genre };
+                    const gameResponse: PredefinedGameResponse = { id: id, name: name, aggregated_rating: aggregated_rating, cover: cover, genre: genre };
                     gamesResponse.push(gameResponse);
                 });
 
@@ -99,6 +99,9 @@ export function cachePopularGames(): Promise<PopularGameResponse[]> {
                 return reject(error);
             });
 
+        })
+        .catch((error: string) => {
+            return reject(error);
         });
 
     });

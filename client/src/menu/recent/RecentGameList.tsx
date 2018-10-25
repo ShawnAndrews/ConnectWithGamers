@@ -1,31 +1,23 @@
 import * as React from 'react';
-import Spinner from '../../spinner/main';
-import ThumbnailGameContainer from '../game/ThumbnailGameContainer';
-import { RecentGameResponse } from '../../../../client/client-server-common/common';
+import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
 
 interface IRecentGameListProps {
-    isLoading: boolean;
-    recentGames: RecentGameResponse[];
+    recentGames: PredefinedGameResponse[];
     formatRecentlyReleasedDate: (date: number) => string;
     onClickGame: (id: number) => void;
+    goToRedirectCallback: (URL: string) => void;
 }
 
 const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListProps) => {
 
-    if (props.isLoading) {
-        return (
-            <Spinner className="middle" loadingMsg="Loading game..." />
-        );
-    }
-
     return (
         <div className="recently-released-table">
-            <div className="recently-released-table-header">
+            <div className="recently-released-table-header" onClick={() => { props.goToRedirectCallback(`/menu/search/recent`); }}>
                 <a className="recently-released-table-header-link">Recently Released</a>
                 <i className="fas fa-chevron-right"/>
             </div>
             {props.recentGames
-            .map((x: RecentGameResponse) => {
+            .map((x: PredefinedGameResponse) => {
                 return (
                     <div key={x.id} className="recently-released-table-container" onClick={() => { props.onClickGame(x.id); }}>
                         <div className="recently-released-table-image">
