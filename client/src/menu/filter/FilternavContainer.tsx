@@ -110,8 +110,8 @@ const defaultFilterOptions: FilterOptions = {
     genreSelection: [false, false, false, false, false, false, false, false, false, false],
     categorySelection: [false, false, false, false, false],
     popularitySelection: FilterPopularityOptions.Above0,
-    sortSelection: FilterSortOptions.ReleaseDate,
-    sortState: [FilterSortState.Asce, FilterSortState.Desc, FilterSortState.Asce],
+    sortSelection: FilterSortOptions.Popularity,
+    sortState: [FilterSortState.Asce, FilterSortState.Asce, FilterSortState.Desc],
     query: ''
 };
 
@@ -432,10 +432,10 @@ class FilternavContainer extends React.Component<Props, IFilternavContainerState
 
     get getDefaultFilterOptionsDeepCopy(): FilterOptions {
         const defaultFilterOptionsDeepCopy: FilterOptions = {...defaultFilterOptions};
-        defaultFilterOptionsDeepCopy.sortState = new Array(defaultFilterOptionsDeepCopy.sortState.length).fill(0);
-        defaultFilterOptionsDeepCopy.genreSelection = new Array(defaultFilterOptionsDeepCopy.genreSelection.length).fill(false);
-        defaultFilterOptionsDeepCopy.platformSelection = new Array(defaultFilterOptionsDeepCopy.platformSelection.length).fill(false);
-        defaultFilterOptionsDeepCopy.categorySelection = new Array(defaultFilterOptionsDeepCopy.categorySelection.length).fill(false);
+        defaultFilterOptionsDeepCopy.sortState = defaultFilterOptions.sortState.slice();
+        defaultFilterOptionsDeepCopy.genreSelection = defaultFilterOptions.genreSelection.slice();
+        defaultFilterOptionsDeepCopy.platformSelection = defaultFilterOptions.platformSelection.slice();
+        defaultFilterOptionsDeepCopy.categorySelection = defaultFilterOptions.categorySelection.slice();
 
         return defaultFilterOptionsDeepCopy;
     }

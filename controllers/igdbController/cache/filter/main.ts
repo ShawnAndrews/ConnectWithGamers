@@ -131,8 +131,7 @@ export function cacheResultsGames(queryString: string): Promise<ThumbnailGameRes
 
                 steamAPIGetPriceInfo(steamids)
                 .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse[]) => {
-
-                    rawResponse.forEach((x: RawThumbnailGameResponse, index: number) => {
+                    rawResponse.forEach((x: RawThumbnailGameResponse) => {
                         const priceResponse: SteamAPIGetPriceInfoResponse = {
                             steamgameid: undefined,
                             price: undefined,

@@ -69,26 +69,43 @@ export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGe
         return new Promise((resolve: any, reject: any) => {
             WebRequest.get(`${config.steam.apiURL}/appdetails?appids=${steamgameid}&cc=us`)
             .then((response: any) => {
+                const formattedResponse: any = JSON.parse(response.message.body)[steamgameid];
                 const steam_url: string = `${config.steam.appURL}/${steamgameid}`;
+                const steamPriceInfo: SteamAPIGetPriceInfoResponse = {
+                    steamgameid: undefined,
+                    price: undefined,
+                    discount_percent: undefined,
+                    steam_url: undefined
+                };
 
-                if (!JSON.parse(response.message.body)[steamgameid].data.price_overview) {
-                    return resolve({ price: "Free", steam_url: steam_url });
+                if (formattedResponse.success) {
+                    if (formattedResponse.data.is_free) {
+                        steamPriceInfo.price = "Free";
+                        steamPriceInfo.steam_url = steam_url;
+                        steamPriceInfo.steamgameid = steamgameid;
+
+                        return resolve(steamPriceInfo);
+                    } else {
+                        if (formattedResponse.data.price_overview) {
+                            const price_unformatted: string = (formattedResponse.data.price_overview.final).toString();
+                            const price: string = price_unformatted.slice(0, price_unformatted.length - 2) + `.` + price_unformatted.slice(price_unformatted.length - 2);
+                            const discount_percent: number = formattedResponse.data.price_overview.discount_percent;
+                            steamPriceInfo.steamgameid = steamgameid,
+                            steamPriceInfo.price = price;
+                            steamPriceInfo.discount_percent = discount_percent;
+                            steamPriceInfo.steam_url = steam_url;
+
+                            return resolve(steamPriceInfo);
+                        }  else {
+
+                            return resolve(steamPriceInfo);
+                        }
+                    }
                 } else {
-                    const price_unformatted: string = (JSON.parse(response.message.body)[steamgameid].data.price_overview.final).toString();
-                    const price: string = price_unformatted.slice(0, price_unformatted.length - 2) + `.` + price_unformatted.slice(price_unformatted.length - 2);
-                    const discount_percent: number = JSON.parse(response.message.body)[steamgameid].data.price_overview.discount_percent;
-                    const steamPriceInfo: SteamAPIGetPriceInfoResponse = {
-                        steamgameid: steamgameid,
-                        price: price,
-                        discount_percent: discount_percent,
-                        steam_url: steam_url
-                    };
-
                     return resolve(steamPriceInfo);
                 }
             })
             .catch((error: any): any => {
-                console.log(`Error retrieving Steam price info: ${error}`);
                 return reject(error);
             });
         });
@@ -103,8 +120,8 @@ export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGe
         });
 
         Promise.all(pricePromises)
-        .then((vals: any) => {
-            const steamPrices: SteamAPIGetPriceInfoResponse[] = vals;
+        .then((vals: SteamAPIGetPriceInfoResponse[]) => {
+            const steamPrices: SteamAPIGetPriceInfoResponse[] = vals.filter((x: SteamAPIGetPriceInfoResponse) => { return x.price !== undefined; });
             return resolve(steamPrices);
         })
         .catch((error: string) => {

@@ -30,29 +30,26 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
         super(props);
         this.loadSearchGames = this.loadSearchGames.bind(this);
         this.loadPredefinedGames = this.loadPredefinedGames.bind(this);
-        
+        this.getTitle = this.getTitle.bind(this);
+
         const predefinedTypeRaw: string = props.match.params.type;
+        const resultsTitle: string = this.getTitle(props);
         let predefinedType: PredefinedGamesType;
         let resultsType: ResultsType;
-        let resultsTitle: string;
 
-        if (props.match.params.type) {
+        if (predefinedTypeRaw) {
             if (predefinedTypeRaw === 'recent') {
                 predefinedType = PredefinedGamesType.Recent;
                 resultsType = ResultsType.PredefinedRecentResults;
-                resultsTitle = 'Recently released';
             } else if (predefinedTypeRaw === 'upcoming') {
                 predefinedType = PredefinedGamesType.Upcoming;
                 resultsType = ResultsType.PredefinedUpcomingResults;
-                resultsTitle = 'Upcoming games';
             } else if (predefinedTypeRaw === 'popular') {
                 predefinedType = PredefinedGamesType.Popular;
                 resultsType = ResultsType.PredefinedPopularResults;
-                resultsTitle = 'Popular games';
             }
         } else {
             resultsType = ResultsType.SearchResults;
-            resultsTitle = 'Search results';
         }
 
         if (resultsType === ResultsType.SearchResults) {
@@ -73,9 +70,10 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
     componentWillReceiveProps(newProps: IResultsContainerProps): void {
         const oldQueryPath: string = this.state.currentQueryPath;
         const newQueryPath: string = newProps.location.search;
+        const newTitle: string = this.getTitle(newProps);
 
         if (oldQueryPath !== newQueryPath) {
-            this.setState({ isLoading: true, currentQueryPath: newQueryPath }, () => {
+            this.setState({ isLoading: true, currentQueryPath: newQueryPath, title: newTitle }, () => {
                 this.loadSearchGames(newQueryPath);
             });
         }
@@ -105,6 +103,25 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
                 popupS.modal({ content: `<div>• ${error}</div>` });
                 this.setState({ isLoading: false });
             });
+    }
+
+    getTitle(props: IResultsContainerProps): string {
+        const predefinedTypeRaw: string = props.match.params.type;
+        let title: string;
+
+        if (predefinedTypeRaw) {
+            if (predefinedTypeRaw === 'recent') {
+                title = 'Recently released';
+            } else if (predefinedTypeRaw === 'upcoming') {
+                title = 'Upcoming games';
+            } else if (predefinedTypeRaw === 'popular') {
+                title = 'Popular games';
+            }
+        } else {
+            title = 'Search results';
+        }
+
+        return title;
     }
 
     render() {
