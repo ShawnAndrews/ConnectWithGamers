@@ -36,7 +36,7 @@ const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProp
                     <span className="menu-game-thumbnail-steam-header">Price: </span>
                     {props.game.price === 'Free'
                         ? <strong>Free</strong>
-                        : <span>${props.game.price} USD {props.game.discount_percent !== 0 && <span className="menu-game-thumbnail-steam-discount">(-{props.game.discount_percent} % SALE)</span>}</span>}
+                        : <span>${props.game.price} USD{props.game.discount_percent !== 0 && <span className="menu-game-thumbnail-steam-discount">(-{props.game.discount_percent} % SALE)</span>}</span>}
                     <a href={props.game.steam_url} className="menu-game-thumbnail-steam-icon"><i className="fab fa-steam-square fa-lg"/></a>
                 </div>}
         </Card>

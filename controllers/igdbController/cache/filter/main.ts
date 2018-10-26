@@ -115,6 +115,8 @@ export function cacheResultsGames(queryString: string): Promise<ThumbnailGameRes
             }
         }
 
+        URL = URL.concat(`&limit=${config.igdb.pageLimit}`);
+
     });
 
     return new Promise((resolve: any, reject: any) => {
