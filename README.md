@@ -156,6 +156,7 @@
 >          * Create your own custom emote
 >     * Updated messaging
 >          * Ability to use Emojis, Animated Emojis, and image attachments
+>
 > v1.5
 >
 > - Login
