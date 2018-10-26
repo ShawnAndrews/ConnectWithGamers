@@ -48,8 +48,10 @@ routes.addRoute("genregames", "/games/genre/:id");
 routes.addRoute("genrelist", "/games/genrelist");
 routes.addRoute("game", "/game/:id");
 
+type CachedRouteTypes = ThumbnailGameResponse | PredefinedGameResponse | SingleNewsResponse | GenrePair | SearchGameResponse;
+
 /* Generic route function for data cached in Redis */
-function GenericCachedRoute<T extends ThumbnailGameResponse | PredefinedGameResponse | SingleNewsResponse | GenrePair | SearchGameResponse> (req: Request, res: Response, keyExists: () => Promise<boolean>, getCachedData: () => Promise<T[]>, cacheData: () => Promise<T[]>): any {
+function GenericCachedRoute<T extends CachedRouteTypes> (req: Request, res: Response, keyExists: () => Promise<boolean>, getCachedData: () => Promise<T[]>, cacheData: () => Promise<T[]>): any {
 
     const listResponse: GenericErrorResponse = { error: undefined };
 

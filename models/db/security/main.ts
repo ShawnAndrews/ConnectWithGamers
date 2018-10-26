@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 import config from "../../../config";
 import DatabaseBase from "./../base/dbBase";
 import { genRandStr } from "../../../util/main";

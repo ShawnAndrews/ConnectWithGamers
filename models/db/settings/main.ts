@@ -6,7 +6,7 @@ import {
     validateUsername, validateEmail, validateURL, validatePassword,
     GenericResponseModel, DbAccountSettingsResponse, DbAccountImageResponse, DbAccountRecoveryResponse } from "../../../client/client-server-common/common";
 import axios from "axios";
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const imgur = require("imgur");
 
 imgur.setClientId(config.imgur.clientId);

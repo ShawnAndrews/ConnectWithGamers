@@ -13,12 +13,11 @@
     "tslint": "tslint -c tslint.json -p tsconfig.json"
   },
   "dependencies": {
-    "@types/bcrypt": "^2.0.0",
+    "@types/bcryptjs": "^2.4.2",
     "@types/mysql": "^2.15.5",
     "async": "^2.6.1",
     "axios": "^0.18.0",
-    "bcrypt": "^2.0.1",
-    "bcrypt-nodejs": "^0.0.3",
+    "bcryptjs": "^2.4.3",
     "blocked": "^1.2.1",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.3",

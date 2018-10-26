@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 import axios from "axios";
 import DatabaseBase from "../base/dbBase";
 import { genRandStr } from "../../../util/main";
@@ -8,7 +8,6 @@ import config from "../../../config";
 
 export const SALT_RNDS = 10;
 export const EMAIL_VERIFICATION_LEN = 15;
-
 export const ACCOUNT_RECOVERYID_LEN = 32;
 
 class AccountModel extends DatabaseBase {
