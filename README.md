@@ -67,11 +67,11 @@
 <br/>
 
 <p align="center">
-  <img src="https://i.imgur.com/bOllaqY.png" />
+  <img src="https://i.imgur.com/exqpFMi.png" />
 </p>
 
 <p align="center">
-  <img src="https://i.imgur.com/0lxFwhZ.png" />
+  <img src="https://i.imgur.com/iA1LvXm.png" />
 </p>
 
 ## Updates
