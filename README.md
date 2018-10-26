@@ -156,6 +156,20 @@
 >          * Create your own custom emote
 >     * Updated messaging
 >          * Ability to use Emojis, Animated Emojis, and image attachments
+> v1.5
+>
+> - Login
+>     * Added back button
+> - Menu
+>     * Updated promotional infographic
+>     * Updated to include news popular, upcoming and recent games as well as gaming news articles
+>     * Added Advanced Search feature
+>          * Includes 4 filters, Popularity, Category, Genre and Platform
+>          * Includes sorting by Release Date, Popularity, and Alphabetic
+>          * Easy to use simply by swiping left on any menu screen
+>     * Updated results screen
+>          * Increased games shown to 50
+>          * Updated game information to include pricing, genres and steam link (where applicable)
 </details>
 
 ## Config
