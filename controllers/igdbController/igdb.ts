@@ -87,7 +87,7 @@ function GenericCachedRoute<T extends CachedRouteTypes> (req: Request, res: Resp
 }
 
 /* Generic route function for data cached in Redis */
-function GenericCachedWithDataRoute<T extends ThumbnailGameResponse | PredefinedGameResponse | SingleNewsResponse | GenrePair | SearchGameResponse, V> (req: Request, res: Response, keyExists: (key: V) => Promise<boolean>, getCachedData: (key: V) => Promise<T[]>, cacheData: (key: V) => Promise<T[]>, param: V): any {
+function GenericCachedWithDataRoute<T extends CachedRouteTypes, V> (req: Request, res: Response, keyExists: (key: V) => Promise<boolean>, getCachedData: (key: V) => Promise<T[]>, cacheData: (key: V) => Promise<T[]>, param: V): any {
 
     const listResponse: GenericErrorResponse = { error: undefined };
 
@@ -147,7 +147,7 @@ router.post(routes.getRoute("reviewedgames"), (req: Request, res: Response) => {
     GenericCachedRoute<PredefinedGameResponse>(req, res, reviewedGamesKeyExists, getCachedReviewedGames, cacheReviewedGames);
 });
 
-/* popular games */
+/* news articles */
 router.post(routes.getRoute("news"), (req: Request, res: Response) => {
     GenericCachedRoute<SingleNewsResponse>(req, res, newsKeyExists, getCachedNews, cacheNews);
 });
@@ -177,7 +177,7 @@ router.post(routes.getRoute("resultsgames"), (req: Request, res: Response) => {
     GenericCachedWithDataRoute<ThumbnailGameResponse, string>(req, res, resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames, JSON.stringify(req.query));
 });
 
-/* games */
+/* individual games */
 router.post(routes.getRoute("game"), (req: Request, res: Response) => {
     const singleGameResponse: SingleGameResponse = { error: undefined };
     const gameId: number = req.params.id;
