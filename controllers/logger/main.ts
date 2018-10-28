@@ -8,14 +8,14 @@ export default function logIP(rawIp: string): void {
       if (formattedIp !== "1" && !formattedIp.startsWith("172.")) {
         const today: Date = new Date();
         const data: string = `${today.toLocaleString()} | ${formattedIp}\n`;
-        fs.appendFile(`${pathToFile}`, data, function(err: any) {
+        fs.appendFile(`${pathToFile}`, data, function(err: string) {
           if (err) {
             throw err;
           }
         });
       }
     } else {
-      fs.writeFile(pathToFile, "", { flag: "wx" }, function (err: any) {});
+      fs.writeFile(pathToFile, "", { flag: "wx" }, function (err: string) {});
     }
   });
 }

@@ -25,7 +25,6 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
         this.onClickLogin = this.onClickLogin.bind(this);
         this.onClickSignUp = this.onClickSignUp.bind(this);
         this.onClickHome = this.onClickHome.bind(this);
-        this.recoverPasswordByEmail = this.recoverPasswordByEmail.bind(this);
 
         this.state = {
             username: '',
@@ -36,19 +35,19 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
         };
     }
 
-    usernameChanged(event: any) {
+    usernameChanged(event: React.ChangeEvent<HTMLInputElement>) {
         this.setState({username: event.target.value});
     }
 
-    passwordChanged(event: any) {
+    passwordChanged(event: React.ChangeEvent<HTMLInputElement>) {
         this.setState({password: event.target.value});
     }
 
     remembermeChanged(event: React.ChangeEvent<HTMLInputElement>, checked: boolean) {
         this.setState({rememberme: checked});
     }
-
-    onClickLogin(event: any) {
+    
+    onClickLogin(event: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLFormElement>): void {
         event.preventDefault();
         
         // validate
@@ -87,16 +86,12 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
 
     }
 
-    onClickSignUp() {
+    onClickSignUp(event: React.MouseEvent<HTMLElement>): void {
         this.props.history.push('/account/signup');
     }
 
-    onClickHome() {
+    onClickHome(event: React.MouseEvent<HTMLElement>): void {
         this.props.history.push('/');
-    }
-
-    recoverPasswordByEmail() {
-        console.log(`Sent recovery email`);
     }
 
     render() {

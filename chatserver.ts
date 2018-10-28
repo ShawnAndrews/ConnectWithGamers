@@ -1,10 +1,11 @@
-const socketIO = require("socket.io");
+import * as core from "express-serve-static-core";
+const socketIO: SocketIO.Server = require("socket.io");
 const express = require("express");
-const fs = require("fs");
+const app: core.Express = express();
 const http = require("http");
 const https = require("https");
-const app = express();
 const redis = require("redis");
+const fs = require("fs");
 const redisClient = redis.createClient();
 import { redisCache, IGDBCacheEntry, UserLog, AccountInfo, GenericResponseModel, ChatHistoryResponse, SingleChatHistory, ChatroomUser, CHATROOM_EVENTS, DbChatroomEmotesResponse, DbAuthorizeResponse, DbAccountsInfoResponse, DbAccountImageResponse, ChatroomEmote } from "./client/client-server-common/common";
 import { securityModel } from "./models/db/security/main";
@@ -12,6 +13,7 @@ import { chatroomModel } from "./models/db/chatroom/main";
 import { accountModel } from "./models/db/account/main";
 import { AUTH_TOKEN_NAME } from "./client/client-server-common/common";
 import config from "./config";
+import { NextFunction } from "connect";
 
 const secureServer = config.useStrictlyHttps ? https.createServer({ key: fs.readFileSync(config.https.key), cert: fs.readFileSync(config.https.cert), ca: fs.readFileSync(config.https.ca) }, app) : undefined;
 const chatServer = config.useStrictlyHttps ? https.Server(secureServer) : http.Server(app);
@@ -20,13 +22,13 @@ const chatServer = config.useStrictlyHttps ? https.Server(secureServer) : http.S
 startChatServer();
 
 function startChatServer(): void {
-    const chatHandler = socketIO.listen(chatServer);
+    const chatHandler: SocketIO.Server = socketIO.listen(chatServer);
 
     // listen to chatroom port
     chatServer.listen(config.chatPort);
 
     // update chatroom userlist every minute
-    setInterval((): void => {
+    setInterval(() => {
         chatHandler.emit(CHATROOM_EVENTS.UpdateUsers);
     }, 60 * 1000);
 
@@ -48,7 +50,7 @@ function startChatServer(): void {
     };
 
     // authentication middleware
-    chatHandler.use((socket: any, next: any) => {
+    chatHandler.use((socket: SocketIO.Socket, next: NextFunction) => {
 
         const loggedIn: boolean = socket.handshake.headers.cookie && socket.handshake.headers.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
 
@@ -74,7 +76,7 @@ function startChatServer(): void {
 
     });
 
-    chatHandler.on("connection", (socket: any) => {
+    chatHandler.on("connection", (socket: SocketIO.Socket) => {
 
         socket.on("disconnect", () => {
             // do nothing

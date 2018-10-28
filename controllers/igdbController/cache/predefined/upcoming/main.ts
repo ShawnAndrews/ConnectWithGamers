@@ -1,6 +1,6 @@
 import config from "../../../../../config";
 import { PredefinedGamesType, ThumbnailGameResponse, RawThumbnailGameResponse, ThumbnailGameResponseFields, redisCache, IGDBCacheEntry, Genre, Platform, SteamAPIGetPriceInfoResponse } from "../../../../../client/client-server-common/common";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { ArrayClean, steamAPIGetPriceInfo } from "../../../../../util/main";
 import { getAllGenrePairs } from "../../genreList/main";
 const redis = require("redis");
@@ -173,7 +173,7 @@ export function cachePredefinedUpcomingGames(): Promise<ThumbnailGameResponse[]>
                     "Accept": "application/json"
                 }
             })
-        .then( (response: any) => {
+        .then( (response: AxiosResponse) => {
             const rawResponse: RawThumbnailGameResponse[] = response.data;
             let gamesResponse: ThumbnailGameResponse[] = [];
 

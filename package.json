@@ -15,6 +15,7 @@
   "dependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/mysql": "^2.15.5",
+    "@types/socket.io": "^1.4.38",
     "async": "^2.6.1",
     "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",

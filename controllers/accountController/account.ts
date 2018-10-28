@@ -1,6 +1,7 @@
+import * as core from "express-serve-static-core";
 const express = require("express");
-// const RateLimit = require("express-rate-limit");
-const router = express.Router();
+const RateLimit = require("express-rate-limit");
+const router: core.Router = express.Router();
 import { AUTH_TOKEN_NAME, validateCredentials, DatalessResponse, DbRecoveryEmailResponse, EmailRecoveryVerifyResponse, RecoverPasswordResponse, DbVerifyEmailResponse, EmailRecoveryResponse, EmailVerifyResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse, TwitchIdResponse, DbTwitchIdResponse, SteamIdResponse, DbSteamIdResponse, DbSteamFriendsResponse, SteamFriendsResponse, DiscordLinkResponse, DbDiscordLinkResponse, TwitchFollowersResponse, DbTwitchFollowsResponse, DbAccountRecoveryResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { accountModel } from "../../models/db/account/main";
@@ -30,14 +31,14 @@ routes.addRoute("email/recovery/verify", "/email/recovery/verify");
 routes.addRoute("recover/password", "/recover/password");
 
 // limit account creation requests to 5acc/1hr per ip
-// const createAccountLimiter = new RateLimit({
-//     windowMs: 60 * 60 * 1000,
-//     max: 5,
-//     delayMs: 0
-// });
+const createAccountLimiter = new RateLimit({
+    windowMs: 60 * 60 * 1000,
+    max: 5,
+    delayMs: 0
+});
 
-// router.post(routes.getRoute("signup"), createAccountLimiter);
-router.post(routes.getRoute("signup"), (req: any, res: any) => {
+router.post(routes.getRoute("signup"), createAccountLimiter);
+router.post(routes.getRoute("signup"), (req: core.Request, res: core.Response) => {
 
     const datalessResponse: DatalessResponse = { error: undefined };
     const signupData = {
@@ -68,7 +69,7 @@ router.post(routes.getRoute("signup"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("login"), (req: any, res: any) => {
+router.post(routes.getRoute("login"), (req: core.Request, res: core.Response) => {
 
     const datalessResponse: DatalessResponse = { error: undefined };
 
@@ -103,7 +104,7 @@ router.post(routes.getRoute("login"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("settings"), (req: any, res: any) => {
+router.post(routes.getRoute("settings"), (req: core.Request, res: core.Response) => {
 
     const accountSettingsResponse: AccountSettingsResponse = { error: undefined };
 
@@ -133,7 +134,7 @@ router.post(routes.getRoute("settings"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("settings/change"), (req: any, res: any) => {
+router.post(routes.getRoute("settings/change"), (req: core.Request, res: core.Response) => {
     const datalessResponse: DatalessResponse = { error: undefined };
     const newSettings: any = req.body.newSettings;
 
@@ -186,7 +187,7 @@ router.post(routes.getRoute("settings/change"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("settings/twitchId"), (req: any, res: any) => {
+router.post(routes.getRoute("settings/twitchId"), (req: core.Request, res: core.Response) => {
     const twitchIdResponse: TwitchIdResponse = { error: undefined };
 
     // authorize
@@ -207,7 +208,7 @@ router.post(routes.getRoute("settings/twitchId"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("settings/twitchFollowers"), (req: any, res: any) => {
+router.post(routes.getRoute("settings/twitchFollowers"), (req: core.Request, res: core.Response) => {
     const twitchFollowersResponse: TwitchFollowersResponse = { error: undefined };
 
     // authorize
@@ -228,7 +229,7 @@ router.post(routes.getRoute("settings/twitchFollowers"), (req: any, res: any) =>
 
 });
 
-router.post(routes.getRoute("settings/steamId"), (req: any, res: any) => {
+router.post(routes.getRoute("settings/steamId"), (req: core.Request, res: core.Response) => {
     const steamIdResponse: SteamIdResponse = { error: undefined };
 
     // authorize
@@ -249,7 +250,7 @@ router.post(routes.getRoute("settings/steamId"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("settings/discordLink"), (req: any, res: any) => {
+router.post(routes.getRoute("settings/discordLink"), (req: core.Request, res: core.Response) => {
     const discordLinkResponse: DiscordLinkResponse = { error: undefined };
 
     // authorize
@@ -270,7 +271,7 @@ router.post(routes.getRoute("settings/discordLink"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("settings/steamFriends"), (req: any, res: any) => {
+router.post(routes.getRoute("settings/steamFriends"), (req: core.Request, res: core.Response) => {
     const steamFriendsResponse: SteamFriendsResponse = { error: undefined };
 
     // authorize
@@ -295,7 +296,7 @@ router.post(routes.getRoute("settings/steamFriends"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("settings/image/change"), (req: any, res: any) => {
+router.post(routes.getRoute("settings/image/change"), (req: core.Request, res: core.Response) => {
     const accountImageResponse: AccountImageResponse = { error: undefined };
     const imageBase64: string = Object.keys(req.body)[0].split(",")[1];
 
@@ -317,7 +318,7 @@ router.post(routes.getRoute("settings/image/change"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("email/resend"), (req: any, res: any) => {
+router.post(routes.getRoute("email/resend"), (req: core.Request, res: core.Response) => {
     const datalessResponse: DatalessResponse = { error: undefined };
 
     // authorize
@@ -337,7 +338,7 @@ router.post(routes.getRoute("email/resend"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("email/verify"), (req: any, res: any) => {
+router.post(routes.getRoute("email/verify"), (req: core.Request, res: core.Response) => {
     const verifyEmailResponse: EmailVerifyResponse = { error: undefined };
     const verificationCode: any = req.body.verificationCode;
 
@@ -359,7 +360,7 @@ router.post(routes.getRoute("email/verify"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("email/recovery"), (req: any, res: any) => {
+router.post(routes.getRoute("email/recovery"), (req: core.Request, res: core.Response) => {
     const emailRecoveryResponse: EmailRecoveryResponse = { error: undefined };
     const username: string = req.body.username;
 
@@ -382,7 +383,7 @@ router.post(routes.getRoute("email/recovery"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("email/recovery/verify"), (req: any, res: any) => {
+router.post(routes.getRoute("email/recovery/verify"), (req: core.Request, res: core.Response) => {
     const emailRecoveryVerifyResponse: EmailRecoveryVerifyResponse = { error: undefined };
     const uid: string = req.body.uid;
 
@@ -401,7 +402,7 @@ router.post(routes.getRoute("email/recovery/verify"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("settings/image/delete"), (req: any, res: any) => {
+router.post(routes.getRoute("settings/image/delete"), (req: core.Request, res: core.Response) => {
     const accountImageResponse: AccountImageResponse = { error: undefined };
 
     // authorize
@@ -422,7 +423,7 @@ router.post(routes.getRoute("settings/image/delete"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("recover/password"), (req: any, res: any) => {
+router.post(routes.getRoute("recover/password"), (req: core.Request, res: core.Response) => {
     const recoverPasswordResponse: RecoverPasswordResponse = { error: undefined };
     const password: string = req.body.password;
     const uid: string = req.body.uid;

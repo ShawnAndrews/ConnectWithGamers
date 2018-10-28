@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as IGDBService from '../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import SearchBar from './SearchBar';
-import { SearchGamesResponse } from '../../../client-server-common/common';
+import { SearchGamesResponse, SearchGameResponse } from '../../../client-server-common/common';
 
 export interface SearchGameOption {
     value: number;
@@ -34,11 +34,11 @@ class SearchBarContainer extends React.Component<ISearchBarContainerProps, ISear
         this.handleRawInputChange = this.handleRawInputChange.bind(this);
     }
 
-    handleChange(selectedGame: any): void {
+    handleChange(selectedGame: SearchGameOption): void {
         this.props.history.push(`/menu/search/game/${selectedGame.value}`);
     }
 
-    handleKeyDown(event: any): void {
+    handleKeyDown(event: React.KeyboardEvent<HTMLDivElement | HTMLInputElement>): void {
         if (event.keyCode === 13) {
             event.preventDefault();
             if (this.state.rawInput !== '') {
@@ -60,7 +60,7 @@ class SearchBarContainer extends React.Component<ISearchBarContainerProps, ISear
                 if (response.data) {
                     this.setState({ 
                         gameslist: 
-                            response.data.map((x: any) => {
+                            response.data.map((x: SearchGameResponse) => {
                                 const searchGameOption: SearchGameOption = { value: x.id, label: x.name };
                                 return searchGameOption; 
                             }), 

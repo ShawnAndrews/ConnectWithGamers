@@ -6,11 +6,11 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 interface ILoginFormProps {
     isLoading: boolean;
-    onClickLogin: (event: any) => void;
-    onClickSignUp: (event: any) => void;
-    onClickHome: (event: any) => void;
-    usernameChanged: (event: any) => void;
-    passwordChanged: (event: any) => void;
+    onClickLogin: (event: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLFormElement>) => void;
+    onClickSignUp: React.MouseEventHandler<HTMLElement>;
+    onClickHome: React.MouseEventHandler<HTMLElement>;
+    usernameChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    passwordChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
     remembermeChanged: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
 }
 

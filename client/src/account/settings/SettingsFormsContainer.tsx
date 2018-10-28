@@ -5,6 +5,15 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { AUTH_TOKEN_NAME, GenericResponseModel, AccountImageResponse } from '../../../../client/client-server-common/common';
 import * as AccountService from '../../service/account/main';
 
+export interface SettingsData {
+    username: string;
+    email: string;
+    password: string;
+    discord: string;
+    steam: string;
+    twitch: string;
+}
+
 interface ISettingsFormContainerProps extends RouteComponentProps<any> { }
 
 interface ISettingsFormContainerState {
@@ -146,7 +155,7 @@ class SettingsFormContainer extends React.Component<ISettingsFormContainerProps,
     }
 
     saveChanges(): void {
-        const newSettings: any  = {};
+        let newSettings: SettingsData;
         const emailChanged: boolean = this.state.email !== this.state.newEmail;
 
         if (this.state.username !== this.state.newUsername) {
@@ -201,8 +210,8 @@ class SettingsFormContainer extends React.Component<ISettingsFormContainerProps,
         });
     }
 
-    handleImageChange(event: any): void {
-        const getBase64 = (file: any) => {
+    handleImageChange(event: React.ChangeEvent<HTMLInputElement>): void {
+        const getBase64 = (file: File) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
@@ -232,7 +241,7 @@ class SettingsFormContainer extends React.Component<ISettingsFormContainerProps,
         });
     }
 
-    handleImageDelete(): void {
+    handleImageDelete(event: React.MouseEvent<HTMLDivElement>): void {
         this.setState({ isLoading: true, loadingMsg: `Deleting profile picture...` }, () => {
             AccountService.httpDeleteAccountImage()
                 .then( (response: AccountImageResponse) => {

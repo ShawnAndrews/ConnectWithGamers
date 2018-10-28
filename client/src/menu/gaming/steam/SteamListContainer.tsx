@@ -21,7 +21,7 @@ interface SteamListContainerState {
 
 class SteamListContainer extends React.Component<IThumbnailGameContainerProps, SteamListContainerState> {
 
-    constructor(props: any) {
+    constructor(props: IThumbnailGameContainerProps) {
         super(props);
         this.state = { 
             isLoading: true,
@@ -71,7 +71,7 @@ class SteamListContainer extends React.Component<IThumbnailGameContainerProps, S
         win.focus();
     }
 
-    handleRawInputChange(event: any): void {
+    handleRawInputChange(event: React.ChangeEvent<HTMLInputElement>): void {
         this.setState({ 
             filter: event.target.value !== "" ? event.target.value : undefined 
         });

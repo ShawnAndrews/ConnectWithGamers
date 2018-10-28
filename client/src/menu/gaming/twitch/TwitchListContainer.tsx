@@ -96,7 +96,7 @@ class TwitchListContainer extends React.Component<ITwitchListContainerProps, ITw
         win.focus();
     }
 
-    handleRawInputChange(event: any): void {
+    handleRawInputChange(event: React.ChangeEvent<HTMLInputElement>): void {
         this.setState({ filter: event.target.value !== "" ? event.target.value : undefined });
     }
 

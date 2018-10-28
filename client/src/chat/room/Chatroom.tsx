@@ -17,9 +17,9 @@ interface IChatroomProps {
     text: string;
     chatLog: Array<SingleChatHistory>;
     onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onKeyPress: (event: any) => void;
-    onSend: (event: any) => void;
-    handleAttachmentUpload: (event: any) => void;
+    onKeyPress: (event: React.KeyboardEvent<Element>) => void;
+    onSend: () => void;
+    handleAttachmentUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
@@ -80,7 +80,7 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
                         ? <i className="fas fa-paperclip fa-lg"/>
                         : <i className="fas fa-spinner fa-spin fa-lg"/>}
                     {!props.attachmentLoading && 
-                        <input className="chatroom-input-icon-input" type="file" id="fileInput" onChange={(e) => props.handleAttachmentUpload(e)}/>}
+                        <input className="chatroom-input-icon-input" type="file" id="fileInput" onChange={props.handleAttachmentUpload}/>}
                 </label>
                 <TextField
                     className="chatroom-input-textfield"
@@ -94,7 +94,7 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
                     className="chatroom-input-send" 
                     variant="contained" 
                     color="primary" 
-                    onClick={props.onSend} 
+                    onClick={() => { props.onSend(); }} 
                     disabled={props.attachmentLoading} 
                 >
                     Send 

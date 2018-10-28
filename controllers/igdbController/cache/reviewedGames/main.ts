@@ -1,6 +1,6 @@
 import config from "../../../../config";
 import { PredefinedGameResponse, RawPredefinedGameResponse, PredefinedGameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { getAllGenrePairs } from "../genreList/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
@@ -59,7 +59,7 @@ export function cacheReviewedGames(): Promise<PredefinedGameResponse[]> {
                     "Accept": "application/json"
                 }
             })
-        .then( (response: any) => {
+        .then( (response: AxiosResponse) => {
             const rawResponse: RawPredefinedGameResponse[] = response.data;
             const gamesResponse: PredefinedGameResponse[] = [];
 

@@ -89,8 +89,8 @@ class SettingsContainer extends React.Component<ISettingsContainerProps, ISettin
         });
     }
 
-    handleImageChange(event: any): void {
-        const getBase64 = (file: any) => {
+    handleImageChange(event: React.ChangeEvent<HTMLInputElement>): void {
+        const getBase64 = (file: File) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
@@ -108,7 +108,7 @@ class SettingsContainer extends React.Component<ISettingsContainerProps, ISettin
         });
     }
 
-    handleEmoteNameChange(event: any): void {
+    handleEmoteNameChange(event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>): void {
         this.setState({ emoteSuffix: event.target.value });
     }
 

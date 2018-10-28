@@ -8,7 +8,7 @@ interface ITwitchListProps {
     twitchId: number;
     liveFollowers: TwitchUser[];
     goToTwitchProfile: (link: string) => void;
-    handleRawInputChange: (event: any) => void;
+    handleRawInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     filter: string;
     onVideoClick: (index: number) => void;
     onChatClick: (index: number) => void;

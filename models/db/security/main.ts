@@ -47,15 +47,17 @@ class SecurityModel extends DatabaseBase {
     /**
      * Authorize account access via HTTP request cookie.
      */
-    authorize(cookie: string): Promise<DbAuthorizeResponse> {
+    authorize(cookie: string | string[]): Promise<DbAuthorizeResponse> {
+
+        const formattedCookie: string = typeof cookie === "string" ? cookie : cookie.join("");
 
         return new Promise((resolve, reject) => {
 
-            if (!cookie) {
+            if (!formattedCookie) {
                 return reject("Please login to proceed.");
             }
 
-            const authCookieMatch: string[] = cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
+            const authCookieMatch: string[] = formattedCookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
 
             // validate
             if (!authCookieMatch) {

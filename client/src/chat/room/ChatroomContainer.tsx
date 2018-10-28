@@ -95,7 +95,7 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, IChatro
         this.setState({ text: event.currentTarget.value });
     } 
 
-    onKeyPress(event: any): void {
+    onKeyPress(event: React.KeyboardEvent<Element>): void {
         if (event.key === `Enter` && !this.state.attachmentLoading) {
             this.onSend();
         }
@@ -115,9 +115,9 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, IChatro
         }
     }
 
-    handleAttachmentUpload(event: any): void {
+    handleAttachmentUpload(event: React.ChangeEvent<HTMLInputElement>): void {
 
-        const getBase64 = (file: any) => {
+        const getBase64 = (file: File) => {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);

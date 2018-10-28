@@ -4,7 +4,7 @@ import {
     GameResponse, GameResponseFields, RawGameResponse,
     SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse, redisCache, IGDBCacheEntry, ExternalSteamLink } from "../../../../client/client-server-common/common";
 import { getAllGenrePairs } from "../genreList/main";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 const redis = require("redis");
 const redisClient = redis.createClient();
 const igdb = require("igdb-api-node").default;
@@ -61,7 +61,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                     "Accept": "application/json"
                 }
             })
-        .then( (response: any) => {
+        .then( (response: AxiosResponse) => {
             const rawResponse: RawGameResponse = response.data[0];
 
             getAllGenrePairs()

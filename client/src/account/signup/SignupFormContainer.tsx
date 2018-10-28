@@ -33,19 +33,19 @@ class SignupFormContainer extends React.Component<ISignupFormContainerProps, ISi
         };
     }
 
-    usernameChanged(event: any) {
+    usernameChanged(event: React.ChangeEvent<HTMLInputElement>): void {
         this.setState({username: event.target.value});
     }
 
-    passwordChanged(event: any) {
+    passwordChanged(event: React.ChangeEvent<HTMLInputElement>): void {
         this.setState({password: event.target.value});
     }
 
-    emailChanged(event: any) {
+    emailChanged(event: React.ChangeEvent<HTMLInputElement>): void {
         this.setState({email: event.target.value});
     }
 
-    onClickCreate(event: any) {
+    onClickCreate(event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLElement>) {
         event.preventDefault();
 
         // validate
@@ -68,11 +68,11 @@ class SignupFormContainer extends React.Component<ISignupFormContainerProps, ISi
 
     }
 
-    onClickBack() {
+    onClickBack(event: React.MouseEvent<Element>): void {
         this.props.history.goBack();
     }
 
-    onClickHome() {
+    onClickHome(event: React.MouseEvent<Element>): void {
         this.props.history.push('/');
     }
 

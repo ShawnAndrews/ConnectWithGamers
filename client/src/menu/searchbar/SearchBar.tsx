@@ -5,8 +5,8 @@ import { SearchGameOption } from './SearchBarContainer';
 interface ISearchBarProps {
     isLoading: boolean;
     gameslist: SearchGameOption[];
-    handleChange: (selectedGame: any) => void;
-    handleKeyDown: (event: any) => void;
+    handleChange: (selectedGame: SearchGameOption) => void;
+    handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement | HTMLInputElement>) => void;
     handleRawInputChange: (newValue: string) => string;
 }
 

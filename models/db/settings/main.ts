@@ -5,7 +5,7 @@ import { EMAIL_VERIFICATION_LEN, SALT_RNDS, ACCOUNT_RECOVERYID_LEN } from "../ac
 import {
     validateUsername, validateEmail, validateURL, validatePassword,
     GenericResponseModel, DbAccountSettingsResponse, DbAccountImageResponse, DbAccountRecoveryResponse } from "../../../client/client-server-common/common";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 const bcrypt = require("bcryptjs");
 const imgur = require("imgur");
 
@@ -76,7 +76,7 @@ class SettingsModel extends DatabaseBase {
                                 return reject(`Database error.`);
                             }
                         })
-                        .catch((error: any) => {
+                        .catch((error: string) => {
                             return reject(`Database error.`);
                         });
                 })
@@ -106,7 +106,7 @@ class SettingsModel extends DatabaseBase {
                         return reject(`Database error.`);
                     }
                 })
-                .catch((error: any) => {
+                .catch((error: string) => {
                     return reject(`Database error.`);
                 });
         });
@@ -137,7 +137,7 @@ class SettingsModel extends DatabaseBase {
                         return reject(`Username is already taken.`);
                     }
                 })
-                .catch((error: any) => {
+                .catch((error: string) => {
                     return reject(`Username is already taken.`);
                 });
 
@@ -293,7 +293,7 @@ class SettingsModel extends DatabaseBase {
                     "Accept": "application/vnd.twitchtv.v5+json"
                 }
             })
-            .then((result: any) => {
+            .then((result: AxiosResponse) => {
                 if (result.data.data.length > 0) {
                     return updatePromise()
                         .then(() => {
@@ -353,7 +353,7 @@ class SettingsModel extends DatabaseBase {
 
             axios
             .get(`https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1?key=${config.steam.key}&vanityurl=${newSteam}`)
-            .then((result: any) => {
+            .then((result: AxiosResponse) => {
                 if (result.data.response.steamid) {
                     return updatePromise()
                         .then(() => {
@@ -429,7 +429,7 @@ class SettingsModel extends DatabaseBase {
                         return reject(`Database error finding accountid in db.`);
                     }
                 })
-                .catch((error: any) => {
+                .catch((error: string) => {
                     return reject(`Database error reseting account recovery id.`);
                 });
 

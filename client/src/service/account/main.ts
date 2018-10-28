@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { GenericResponseModel, AccountImageResponse, EmailVerifyResponse, TwitchIdResponse, SteamIdResponse, EmailRecoveryVerifyResponse, DiscordLinkResponse, SteamFriendsResponse, TwitchFollowersResponse } from '../../../../client/client-server-common/common';
 import { AUTH_TOKEN_NAME } from '../../../client-server-common/common';
+import { SettingsData } from '../../../src/account/settings/SettingsFormsContainer';
 
 /**
  * HTTP request to recover password.
@@ -108,7 +109,7 @@ export function httpSignup (username: string, password: string, email: string): 
 /**
  * HTTP request to change account settings.
  */
-export function httpChangeAccountSettings (newSettings: any): Promise<null> {
+export function httpChangeAccountSettings (newSettings: SettingsData): Promise<null> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/settings/change`, { newSettings })
         .then((result) => {

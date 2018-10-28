@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const VerifiedIcon: React.SFC<any> = (props: any) => {
+const VerifiedIcon: React.SFC<any> = () => {
     
     return (
         <figure className="tw-svg">

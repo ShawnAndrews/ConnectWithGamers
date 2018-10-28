@@ -31,8 +31,8 @@ interface ISettingsFormProps {
     onSteamChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onTwitchChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
     showLinksChanged: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
-    handleImageChange: (event: any) => void;
-    handleImageDelete: () => void;
+    handleImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleImageDelete: (event: React.MouseEvent<HTMLDivElement>) => void;
     saveChanges: () => void;
     resend: () => void;
     logout: () => void;
@@ -70,11 +70,11 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                                     <i className="fas fa-plus account-settings-title-plus"/>
                                 </div>}
                         </div>
-                        <input className="account-settings-title-input" type="file" onChange={(e) => props.handleImageChange(e)} />
+                        <input className="account-settings-title-input" type="file" onChange={props.handleImageChange} />
                     </div>
                     <div className="account-settings-title-discard-container">
                         {props.image &&
-                            <div className="account-settings-title-overlay-container" onClick={() => props.handleImageDelete()}>
+                            <div className="account-settings-title-overlay-container" onClick={props.handleImageDelete}>
                                 <Avatar className="account-settings-title-chip-discard"/>
                                 <div className="account-settings-title-center">
                                     <i className="far fa-trash-alt account-settings-title-image"/>

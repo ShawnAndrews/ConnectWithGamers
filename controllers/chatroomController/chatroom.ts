@@ -1,3 +1,4 @@
+import * as core from "express-serve-static-core";
 const socketIO = require("socket.io");
 const express = require("express");
 const router = express.Router();
@@ -13,7 +14,7 @@ routes.addRoute("emote/upload", "/emote/upload");
 routes.addRoute("attachment/upload", "/attachment/upload");
 routes.addRoute("emotes/get", "/emotes/get");
 
-router.post(routes.getRoute("emotes/get"), (req: any, res: any) => {
+router.post(routes.getRoute("emotes/get"), (req: core.Request, res: core.Response) => {
     const chatroomEmotesResponse: ChatroomEmotesResponse = { error: undefined };
     chatroomModel.getEmotes()
     .then((response: DbChatroomEmotesResponse) => {
@@ -29,7 +30,7 @@ router.post(routes.getRoute("emotes/get"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("emote/upload"), (req: any, res: any) => {
+router.post(routes.getRoute("emote/upload"), (req: core.Request, res: core.Response) => {
     const chatroomEmoteUploadResponse: GenericResponseModel = { error: undefined, data: undefined };
     const imageBase64: string = req.body.emoteBase64.split(",")[1];
     const emotePrefix: string = req.body.emotePrefix;
@@ -52,7 +53,7 @@ router.post(routes.getRoute("emote/upload"), (req: any, res: any) => {
 
 });
 
-router.post(routes.getRoute("attachment/upload"), (req: any, res: any) => {
+router.post(routes.getRoute("attachment/upload"), (req: core.Request, res: core.Response) => {
     const chatroomAttachmentResponse: ChatroomUploadImageResponse = { error: undefined };
     const imageBase64: string = Object.keys(req.body)[0].split(",")[1];
 

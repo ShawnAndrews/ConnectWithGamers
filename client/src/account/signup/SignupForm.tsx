@@ -4,12 +4,12 @@ import Button from '@material-ui/core/Button';
 
 interface ISignupFormProps {
     isLoading: boolean;
-    onClickCreate: (event: any) => void;
-    onClickBack: (event: any) => void;
-    onClickHome: (event: any) => void;
-    usernameChanged: (event: any) => void;
-    passwordChanged: (event: any) => void;
-    emailChanged: (event: any) => void;
+    onClickCreate: (event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLElement>) => void;
+    onClickBack: React.MouseEventHandler<Element>;
+    onClickHome: React.MouseEventHandler<Element>;
+    usernameChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    passwordChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    emailChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const SignupForm: React.SFC<ISignupFormProps> = (props: ISignupFormProps) => {

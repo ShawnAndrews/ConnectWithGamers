@@ -20,8 +20,8 @@ interface ISettingsProps {
     emoteSuffix: string;
     emoteCompletionScreen: boolean;
     emotes: ChatroomEmote[];
-    handleImageChange: (event: any) => void;
-    handleEmoteNameChange: (event: any) => void;
+    handleImageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    handleEmoteNameChange: (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void;
     onClickCreateEmote: () => void;
     onClickCreateBack: () => void;
 }
@@ -101,7 +101,7 @@ const Settings: React.SFC<ISettingsProps> = (props: ISettingsProps) => {
                                     <div className="create-chip-overlay">
                                         <i className="fas fa-plus create-chip-overlay-plus"/>
                                     </div>}
-                                <input className="create-chip-input" type="file" onChange={(e) => props.handleImageChange(e)} />
+                                <input className="create-chip-input" type="file" onChange={props.handleImageChange} />
                             </div>
                             <div className="create-previewtext">
                                 Preview
@@ -111,7 +111,7 @@ const Settings: React.SFC<ISettingsProps> = (props: ISettingsProps) => {
                                 <Input
                                     id="adornment-emote-name"
                                     value={props.emoteSuffix}
-                                    onChange={(e) => props.handleEmoteNameChange(e)}
+                                    onChange={props.handleEmoteNameChange}
                                     startAdornment={<InputAdornment position="start">{props.emotePrefix}</InputAdornment>}
                                 />
                             </FormControl>

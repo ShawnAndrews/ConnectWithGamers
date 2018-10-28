@@ -13,7 +13,7 @@ interface IDiscordPageContainerState {
 
 class DiscordPageContainer extends React.Component<IDiscordPageContainerProps, IDiscordPageContainerState> {
 
-    constructor(props: any) {
+    constructor(props: IDiscordPageContainerProps) {
         super(props);
         this.state = { 
             isLoading: true,

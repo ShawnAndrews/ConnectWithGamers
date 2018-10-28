@@ -9,7 +9,7 @@ interface ISteamListProps {
     onlineFriends: SteamFriend[];
     offlineFriends: SteamFriend[];
     goToSteamProfile: (link: string) => void;
-    handleRawInputChange: (event: any) => void;
+    handleRawInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     filter: string;
 }
 

@@ -1,5 +1,5 @@
 import config from "../../../../config";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { redisCache, IGDBCacheEntry, SearchGameResponseFields, SearchGameResponse, RawSearchGameResponse } from "../../../../client/client-server-common/common";
 const redis = require("redis");
 const redisClient = redis.createClient();
@@ -56,7 +56,7 @@ export function cacheSearchGames(query: string): Promise<SearchGameResponse[]> {
                     "Accept": "application/json"
                 }
             })
-        .then( (response: any) => {
+        .then( (response: AxiosResponse) => {
             const rawResponse: RawSearchGameResponse[] = response.data;
             const gamesResponse: SearchGameResponse[] = rawResponse;
 

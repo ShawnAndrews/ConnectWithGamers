@@ -1,3 +1,4 @@
+import * as core from "express-serve-static-core";
 import accountController from "./controllers/accountController/account";
 import { router as chatroomController } from "./controllers/chatroomController/chatroom";
 import igdbController from "./controllers/igdbController/igdb";
@@ -5,7 +6,7 @@ import config from "./config";
 import logIP from "./controllers/logger/main";
 const blocked = require("blocked");
 const express = require("express");
-const app = express();
+const app: core.Express = express();
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
@@ -35,7 +36,7 @@ if (config.useStrictlyHttps) {
 app.use(cookieParser());
 
 /* log ip and date of access */
-app.use((req: any, res: any, next: any) => {
+app.use((req: core.Request, res: core.Response, next: core.NextFunction) => {
   if (req.url === `/bundle.css`) {
     console.log(`Request (${req.connection.remoteAddress.replace(/^.*:/, ``)}): ${req.url}`);
     logIP(req.connection.remoteAddress);
@@ -53,9 +54,9 @@ app.use("/account", accountController);
 app.use("/igdb", igdbController);
 
 /* client */
-app.get("/favicon.ico", (req: any, res: any) => {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });
-app.get("/bundle.js", (req: any, res: any) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
-app.get("/bundle.css", (req: any, res: any) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
+app.get("/favicon.ico", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });
+app.get("/bundle.js", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
+app.get("/bundle.css", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
 app.use("*", express.static(path.join(__dirname, "../client/dist")));
 
 /* start HTTP/HTTPS server */

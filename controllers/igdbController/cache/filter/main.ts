@@ -3,7 +3,7 @@ import {
     ThumbnailGameResponse, ThumbnailGameResponseFields,
     redisCache, IGDBCacheEntry, RawThumbnailGameResponse, Platform, SteamAPIGetPriceInfoResponse } from "../../../../client/client-server-common/common";
 import { getAllGenrePairs } from "../genreList/main";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { ArrayClean, steamAPIGetPriceInfo } from "../../../../util/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
@@ -241,7 +241,7 @@ export function cacheResultsGames(queryString: string): Promise<ThumbnailGameRes
                     "Accept": "application/json"
                 }
             })
-        .then( (response: any) => {
+        .then( (response: AxiosResponse) => {
             const rawResponse: RawThumbnailGameResponse[] = response.data;
             let gamesResponse: ThumbnailGameResponse[] = [];
 

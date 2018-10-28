@@ -2,7 +2,7 @@ import config from "../../../../config";
 import {
     SingleNewsResponse, RawSingleNewsResponse, SingleNewsResponseFields,
     redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 const redis = require("redis");
 const redisClient = redis.createClient();
 const igdb = require("igdb-api-node").default;
@@ -58,7 +58,7 @@ export function cacheNews(): Promise<SingleNewsResponse[]> {
                     "Accept": "application/json"
                 }
             })
-        .then( (response: any) => {
+        .then( (response: AxiosResponse) => {
             const rawResponse: RawSingleNewsResponse[] = response.data;
             const newsResponse: SingleNewsResponse[] = [];
 

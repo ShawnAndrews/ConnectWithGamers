@@ -1,8 +1,8 @@
 /**
  * Convert Date->MM-DD-YYYY/Today at/Yesterday at/<day_of_week> at.
  */
-export function getFormattedDate(dateObj: any) {
-    const date = new Date(dateObj);
+export function getFormattedDate(dateParam: Date) {
+    const date = new Date(dateParam);
     const today = new Date();
     const yesterday = new Date();
     const lastweek = new Date();
