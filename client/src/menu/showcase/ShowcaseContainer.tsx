@@ -85,12 +85,12 @@ class ShowcaseContainer extends React.Component<Props, IShowcaseContainerState> 
                 }
                 if (vals[2]) {
                     const response: PredefinedGamesResponse = vals[2];
-                    const numOfRecentGamesToShow: number = 10;
+                    const numOfRecentGamesToShow: number = 6;
                     recentGames = response.data.slice(0, numOfRecentGamesToShow);
                 }
                 if (vals[3]) {
                     const response: PredefinedGamesResponse = vals[3];
-                    const numOfUpcomingGamesToShow: number = 10;
+                    const numOfUpcomingGamesToShow: number = 6;
                     upcomingGames = response.data.slice(0, numOfUpcomingGamesToShow);
                 }
                 if (vals[4]) {

@@ -885,7 +885,7 @@
 
         .recently-released-table-container, .upcoming-table-container {
             position: relative;
-            margin: 5px 0px;
+            margin: 10px 0px;
             
             .recently-released-table-image, .upcoming-table-image {
                 display: table-cell;
@@ -903,14 +903,13 @@
 
                 > img {
                     width: 40px;
-                    height: 40px;
+                    height: 55px;
                     margin-right: 5px;
                 }
             }
 
             .recently-released-table-data-container, .upcoming-table-data-container{
                 display: table-cell;
-                vertical-align: top;
     
                 .name {
                     display: block;
@@ -921,7 +920,9 @@
                 }
     
                 .date {
-                    color: #483636;
+                    position: absolute;
+                    bottom: 0px;
+                    color: rgba(255,255,255,0.5);
                     font-size: 0.75em;
                 }
             }
