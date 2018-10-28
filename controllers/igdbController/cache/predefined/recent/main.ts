@@ -1,7 +1,7 @@
 import config from "../../../../../config";
-import { PredefinedGamesType, ThumbnailGameResponse, RawThumbnailGameResponse, ThumbnailGameResponseFields, redisCache, IGDBCacheEntry, Platform } from "../../../../../client/client-server-common/common";
+import { PredefinedGamesType, ThumbnailGameResponse, RawThumbnailGameResponse, ThumbnailGameResponseFields, redisCache, IGDBCacheEntry, Platform, SteamAPIGetPriceInfoResponse } from "../../../../../client/client-server-common/common";
 import axios from "axios";
-import { ArrayClean } from "../../../../../util/main";
+import { ArrayClean, steamAPIGetPriceInfo } from "../../../../../util/main";
 import { getAllGenrePairs } from "../../genreList/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
@@ -49,21 +49,57 @@ export function getCachedPredefinedRecentGames(): Promise<ThumbnailGameResponse[
 export function cachePredefinedRecentGames(): Promise<ThumbnailGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[12];
     const CURRENT_UNIX_TIME_MS: number = new Date().getTime();
+    const URL: string = `https://api-endpoint.igdb.com/games/?fields=${ThumbnailGameResponseFields.join()}&order=first_release_date:desc&filter[first_release_date][lte]=${CURRENT_UNIX_TIME_MS}&filter[popularity][gt]=5&limit=${config.igdb.pageLimit}`;
 
     return new Promise((resolve: any, reject: any) => {
-        axios.get(
-            `https://api-endpoint.igdb.com/games/?fields=${ThumbnailGameResponseFields.join()}&order=first_release_date:desc&filter[first_release_date][lte]=${CURRENT_UNIX_TIME_MS}&filter[popularity][gt]=5&limit=${config.igdb.pageLimit}`,
-            {
-                headers: {
-                    "user-key": config.igdb.key,
-                    "Accept": "application/json"
-                }
-            })
-        .then((response: any) => {
-            const rawResponse: RawThumbnailGameResponse[] = response.data;
-            const gamesResponse: ThumbnailGameResponse[] = [];
 
-            getAllGenrePairs()
+        const pricePromise = (rawResponse: RawThumbnailGameResponse[]): Promise<SteamAPIGetPriceInfoResponse[]> => {
+
+            return new Promise((resolve: any, reject: any) => {
+                const pricesResponse: SteamAPIGetPriceInfoResponse[] = [];
+                const steamids: number[] = rawResponse
+                    .filter((x: RawThumbnailGameResponse) => { return x.external; })
+                    .map((x: RawThumbnailGameResponse) => { return parseInt(x.external.steam); });
+
+                steamAPIGetPriceInfo(steamids)
+                .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse[]) => {
+                    rawResponse.forEach((x: RawThumbnailGameResponse) => {
+                        const priceResponse: SteamAPIGetPriceInfoResponse = {
+                            steamgameid: undefined,
+                            price: undefined,
+                            discount_percent: undefined,
+                            steam_url: undefined
+                        };
+
+                        if (x.external) {
+                            const steamid: number = parseInt(x.external.steam);
+                            const foundIndex: number = steamAPIGetPriceInfoResponse.findIndex((priceInfo: SteamAPIGetPriceInfoResponse) => { return priceInfo.steamgameid === steamid; });
+                            if (foundIndex !== -1) {
+                                priceResponse.steamgameid = steamid;
+                                priceResponse.price = steamAPIGetPriceInfoResponse[foundIndex].price;
+                                priceResponse.discount_percent = steamAPIGetPriceInfoResponse[foundIndex].discount_percent;
+                                priceResponse.steam_url = steamAPIGetPriceInfoResponse[foundIndex].steam_url;
+                            }
+                        }
+
+                        pricesResponse.push(priceResponse);
+                    });
+
+                    return resolve(pricesResponse);
+                })
+                .catch ( (error: string) => {
+                    return reject(error);
+                });
+
+            });
+        };
+
+        const mainPromise = (rawResponse: RawThumbnailGameResponse[]): Promise<ThumbnailGameResponse[]> => {
+
+            return new Promise((resolve: any, reject: any) => {
+                const gamesResponse: ThumbnailGameResponse[] = [];
+
+                getAllGenrePairs()
                 .then((genrePair: string[]) => {
                     rawResponse.forEach((x: RawThumbnailGameResponse) => {
                         const id: number = x.id;
@@ -106,6 +142,7 @@ export function cachePredefinedRecentGames(): Promise<ThumbnailGameResponse[]> {
                         if (x.cover) {
                             cover = igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg");
                         }
+
                         const gameResponse: ThumbnailGameResponse = {
                             id: id,
                             name: name,
@@ -115,22 +152,60 @@ export function cachePredefinedRecentGames(): Promise<ThumbnailGameResponse[]> {
                             steam_url: steam_url,
                             cover: cover
                         };
+
                         gamesResponse.push(gameResponse);
                     });
 
-                    redisClient.hset(cacheEntry.key, PredefinedGamesType.Recent, JSON.stringify(gamesResponse));
-                    if (cacheEntry.expiry !== -1) {
-                        redisClient.expire(cacheEntry.key, cacheEntry.expiry);
-                    }
                     return resolve(gamesResponse);
                 })
                 .catch((error: string) => {
                     return reject(error);
                 });
+
+            });
+        };
+
+        axios.get(
+            URL,
+            {
+                headers: {
+                    "user-key": config.igdb.key,
+                    "Accept": "application/json"
+                }
+            })
+        .then( (response: any) => {
+            const rawResponse: RawThumbnailGameResponse[] = response.data;
+            let gamesResponse: ThumbnailGameResponse[] = [];
+
+            Promise.all([mainPromise(rawResponse), pricePromise(rawResponse)])
+            .then((vals: any) => {
+
+                if (vals[0]) {
+                    gamesResponse = vals[0];
+                }
+                if (vals[1]) {
+                    gamesResponse.forEach((x: ThumbnailGameResponse, index: number) => {
+                        x.price = vals[1][index].price;
+                        x.discount_percent = vals[1][index].discount_percent;
+                    });
+                }
+
+                redisClient.hset(cacheEntry.key, PredefinedGamesType.Recent, JSON.stringify(gamesResponse));
+                if (cacheEntry.expiry !== -1) {
+                    redisClient.expire(cacheEntry.key, cacheEntry.expiry);
+                }
+
+                return resolve(gamesResponse);
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
+
         })
-        .catch( (error: any) => {
+        .catch((error: string) => {
             return reject(error);
         });
+
     });
 
 }
