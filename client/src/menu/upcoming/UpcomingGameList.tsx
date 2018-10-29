@@ -25,6 +25,8 @@ const UpcomingGameList: React.SFC<IUpcomingGameListProps> = (props: IUpcomingGam
                         </div>
                         <div className="upcoming-table-data-container">
                             <span className="name">{x.name}</span>
+                            {x.aggregated_rating &&
+                                <span className="popularity">{Math.floor(x.aggregated_rating)}%</span>}
                             <span className="date">{props.formatUpcomingDate(x.first_release_date)}</span>
                         </div>
                     </div>

@@ -64,9 +64,10 @@ export function cacheRecentGames(): Promise<PredefinedGameResponse[]> {
             rawResponse.forEach((x: RawPredefinedGameResponse) => {
                 const id: number = x.id;
                 const name: string = x.name;
+                const aggregated_rating: number = x.aggregated_rating;
                 const first_release_date: number = x.first_release_date;
                 const cover: string = x.cover ? igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg") : undefined;
-                const gameResponse: PredefinedGameResponse = { id: id, name: name, first_release_date: first_release_date, cover: cover };
+                const gameResponse: PredefinedGameResponse = { id: id, name: name, aggregated_rating: aggregated_rating, first_release_date: first_release_date, cover: cover };
                 gamesResponse.push(gameResponse);
             });
 
