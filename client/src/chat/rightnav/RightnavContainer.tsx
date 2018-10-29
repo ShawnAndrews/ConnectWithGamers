@@ -8,6 +8,10 @@ import { CHAT_SERVER_PORT, CHATROOM_EVENTS, ChatroomUser } from '../../../client
 import { ChatroomReduxState } from '../../reducers/main';
 import { connect } from 'react-redux';
 
+export enum IndicatorStatus {
+    Green, Yellow, Red
+}
+
 interface IRightnavContainerProps extends RouteComponentProps<any> { }
 
 interface IRightnavContainerState {

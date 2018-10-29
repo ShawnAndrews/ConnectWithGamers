@@ -360,6 +360,27 @@
             height: 40px;
             width: 100%;
 
+            .chatroom-users-item-indicator {
+                position: absolute;
+                bottom: 0px;
+                left: 25px;
+                width: 11px;
+                height: 11px;
+                border-radius: 10px;
+
+                &.green {
+                    background-color: rgba(0, 255, 0, 0.8);
+                }
+
+                &.yellow {
+                    background-color: rgba(255, 255, 0, 0.8);
+                }
+
+                &.red {
+                    background-color: rgba(255, 37, 37, 0.8);
+                }
+            }
+
             .chatroom-users-item-chip {
                 position: absolute;
                 top: 0%;
