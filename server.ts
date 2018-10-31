@@ -58,6 +58,7 @@ app.get("/favicon.ico", (req: core.Request, res: core.Response) => {res.sendFile
 app.get("/bundle.js", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
 app.get("/bundle.css", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
 app.get("/robots.txt", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/robots.txt")); });
+app.get("/riot.txt", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/riot.txt")); });
 app.use("*", express.static(path.join(__dirname, "../client/dist")));
 
 /* start HTTP/HTTPS server */
