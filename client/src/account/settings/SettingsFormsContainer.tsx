@@ -6,12 +6,12 @@ import { AUTH_TOKEN_NAME, GenericResponseModel, AccountImageResponse } from '../
 import * as AccountService from '../../service/account/main';
 
 export interface SettingsData {
-    username: string;
-    email: string;
-    password: string;
-    discord: string;
-    steam: string;
-    twitch: string;
+    username?: string;
+    email?: string;
+    password?: string;
+    discord?: string;
+    steam?: string;
+    twitch?: string;
 }
 
 interface ISettingsFormContainerProps extends RouteComponentProps<any> { }
@@ -155,7 +155,7 @@ class SettingsFormContainer extends React.Component<ISettingsFormContainerProps,
     }
 
     saveChanges(): void {
-        let newSettings: SettingsData;
+        let newSettings: SettingsData = {};
         const emailChanged: boolean = this.state.email !== this.state.newEmail;
 
         if (this.state.username !== this.state.newUsername) {

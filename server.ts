@@ -4,6 +4,8 @@ import { router as chatroomController } from "./controllers/chatroomController/c
 import igdbController from "./controllers/igdbController/igdb";
 import config from "./config";
 import logIP from "./controllers/logger/main";
+import { sendContactEmail } from "./util/nodemailer";
+const MobileDetect = require("mobile-detect");
 const blocked = require("blocked");
 const express = require("express");
 const app: core.Express = express();
@@ -53,16 +55,43 @@ app.use("/account", accountController);
 /* igdb controller */
 app.use("/igdb", igdbController);
 
-/* client */
+/* common */
 app.get("/favicon.ico", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });
-app.get("/bundle.js", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
-app.get("/bundle.css", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
 app.get("/robots.txt", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/robots.txt")); });
 app.get("/riot.txt", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/riot.txt")); });
+
+/* desktop */
+app.use(handleDesktopRequests);
+
+/* client */
+app.get("/bundle.js", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
+app.get("/bundle.css", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
 app.use("*", express.static(path.join(__dirname, "../client/dist")));
 
 /* start HTTP/HTTPS server */
 app.listen(config.httpPort);
 if (config.useStrictlyHttps) {
     secureServer.listen(config.httpsPort);
+}
+
+function handleDesktopRequests(req: core.Request, res: core.Response, next: core.NextFunction): void {
+  const device: any = new MobileDetect(req.headers["user-agent"]);
+  if (device.phone() === null) {
+    if (req.path === "/") {
+      res.sendFile(path.join(__dirname, `../client/desktop/index.html`));
+    } else if (req.path === "/emailform") {
+      console.log(`Req email: ${JSON.stringify(req.body)}`);
+      sendContactEmail(req.body.name, req.body.email, req.body.title, req.body.message)
+        .then(() => {
+          res.send({ success: true });
+        })
+        .catch((err: string) => {
+          res.send({ success: false, error: err });
+        });
+    } else {
+      res.sendFile(path.join(__dirname, `../client/desktop${req.path}`));
+    }
+  } else {
+    next();
+  }
 }

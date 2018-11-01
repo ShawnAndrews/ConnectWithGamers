@@ -17,9 +17,9 @@ const SteamListItem: React.SFC<ISteamListItemProps> = (props: ISteamListItemProp
     return (
         <div className="gaming-menu-item">
             <div className="gaming-menu-item-content">
-                <div className="profile-picture">
+                <div className="profile-picture steam">
                     <img src={props.profilePicture} alt="Profile picture"/>
-                    <div className="profile-picture-overlay"/>
+                    <div className="profile-picture-overlay steam"/>
                     <div className={props.online ? `online-text` : `offline-text`}/>
                 </div>
                 <div className="profile-name">
@@ -27,7 +27,7 @@ const SteamListItem: React.SFC<ISteamListItemProps> = (props: ISteamListItemProp
                     <i className="fas fa-external-link-alt link" onClick={() => { props.onProfileLinkClick(props.profileLink); }}/>
                 </div>
                 {props.recentlyPlayedName && 
-                    <div className="profile-recentlyplayed">
+                    <div className="profile-recentlyplayed steam">
                         <span>Recently played: </span> 
                         <i>{props.recentlyPlayedName}</i> 
                         <img src={props.recentlyPlayedImageLink} alt="Recently Played Game Picture"/>

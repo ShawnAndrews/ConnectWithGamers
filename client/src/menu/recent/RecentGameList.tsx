@@ -25,8 +25,10 @@ const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListP
                         </div>
                         <div className="recently-released-table-data-container">
                             <span className="name">{x.name}</span>
-                            {x.aggregated_rating &&
-                                <span className="popularity">{Math.floor(x.aggregated_rating)}%</span>}
+                            <div className="icons">
+                                {x.linkIcons && 
+                                    x.linkIcons.map((platformIcon: string, index: number) => { return <i key={index} className={`${platformIcon} icon`}/>; })}
+                            </div>
                             <span className="date">{props.formatRecentlyReleasedDate(x.first_release_date)}</span>
                         </div>
                     </div>

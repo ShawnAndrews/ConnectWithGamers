@@ -508,6 +508,7 @@ export interface RawPredefinedGameResponse {
     id: number;
     name: string;
     genres?: any;
+    platforms: number[];
     first_release_date?: number;
     aggregated_rating?: number;
     cover?: Cover;
@@ -517,12 +518,13 @@ export interface PredefinedGameResponse {
     id: number;
     name: string;
     genre?: string;
+    linkIcons: string[];
     first_release_date?: number;
     aggregated_rating?: number;
     cover?: string;
 }
 
-export const PredefinedGameResponseFields: string[] = [`id`, `name`, `genres`, `first_release_date`, `aggregated_rating`, `cover`];
+export const PredefinedGameResponseFields: string[] = [`id`, `name`, `genres`, `platforms`, `first_release_date`, `aggregated_rating`, `cover`];
 
 export interface Cover {
     url: string;

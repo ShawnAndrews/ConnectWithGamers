@@ -7,7 +7,6 @@ import Menu from '../menu/main';
 import ChatroomMenuContainer from '../chat/ChatroomMenuContainer';
 import Background from '../background/background';
 import NotFoundPageContainer from '../notfound/NotFoundPageContainer';
-import NoticePage from '../notice/NoticePage';
 import NavbarContainer from '../nav/NavbarContainer';
 import RecoveryContainer from '../recovery/RecoveryFormContainer';
 
@@ -36,15 +35,11 @@ class App extends React.Component<IAppProps, IAppState> {
         };
     }
 
-    get isMobileRes(): boolean {
-        return (window.innerWidth <= 800 && window.innerHeight <= 1000);
-    }
     render() {
         const AuthorizedRoutesRedirect: JSX.Element[] = 
             this.state.authenticatedRoutes
                 .filter(() => { return !loggedIn(); })
-                .map((x: string) => 
-                        (
+                .map((x: string) => (
                         <Route
                             key={x} 
                             exact={true}
@@ -54,27 +49,19 @@ class App extends React.Component<IAppProps, IAppState> {
                     ));
 
         return (
-            <div className="inherit">
+            <>
                 <Background/>
-                {this.isMobileRes 
-                    ?
-                    <div className="inherit">
-                        <NavbarContainer/>
-                        <Switch>
-                            {AuthorizedRoutesRedirect}
-                            <Route path="/account" component={Account}/>
-                            <Route path="/menu" component={Menu}/>
-                            <Route path="/chat" component={ChatroomMenuContainer}/>
-                            <Route path="/recovery/:uid" component={RecoveryContainer}/>
-                            <Route exact={true} path="/" component={HomePageContainer}/>
-                            <Route component={NotFoundPageContainer}/>
-                        </Switch>
-                    </div>
-                    :
-                    <NoticePage message="Sorry! This application is only available on mobile devices."/>
-                    }
-                
-            </div>
+                <NavbarContainer/>
+                <Switch>
+                    {AuthorizedRoutesRedirect}
+                    <Route path="/account" component={Account}/>
+                    <Route path="/menu" component={Menu}/>
+                    <Route path="/chat" component={ChatroomMenuContainer}/>
+                    <Route path="/recovery/:uid" component={RecoveryContainer}/>
+                    <Route exact={true} path="/" component={HomePageContainer}/>
+                    <Route component={NotFoundPageContainer}/>
+                </Switch>
+            </>
         );
 
     }

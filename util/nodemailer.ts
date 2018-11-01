@@ -1,5 +1,46 @@
 const nodemailer = require("nodemailer");
 import config from "../config";
+import { validateEmail } from "../client/client-server-common/common";
+
+/**
+ * Send a Contact Form from the desktop site to admin.
+ */
+export function sendContactEmail(name: string, fromEmail: string, title: string, message: string): Promise<void> {
+
+    return new Promise( (resolve, reject) => {
+
+        if (name === "" || title === "" || message === "" || validateEmail(fromEmail) !== undefined) {
+            return reject("Form incorrectly filled out. Please ensure there is a subject, message, and the email is of valid format.");
+        }
+
+        const transporter = nodemailer.createTransport({
+            host: config.smtp.host,
+            port: config.smtp.secure ? 465 : 587,
+            secure: config.smtp.secure,
+            auth: {
+                user: config.smtp.username,
+                pass: config.smtp.password
+            }
+        });
+
+        const mailOptions = {
+            from: '"Connect With Gamers Admin" <ConnectWithGamers>',
+            to: "shawnandrews@live.ca",
+            subject: `${name} <${fromEmail}> has sent you a contact form message.`,
+            text: message,
+            html: message
+        };
+
+        transporter.sendMail(mailOptions, (error: any, info: any) => {
+            if (error) {
+                return reject(`Internal error sending contact form.`);
+            }
+            return resolve();
+        });
+
+    });
+
+}
 
 /**
  * Send a templated verification email via SMTP to the given email with an email verification link.

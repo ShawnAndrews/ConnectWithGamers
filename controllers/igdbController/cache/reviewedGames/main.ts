@@ -1,6 +1,7 @@
 import config from "../../../../config";
 import { PredefinedGameResponse, RawPredefinedGameResponse, PredefinedGameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
+import { ArrayClean } from "../../../../util/main";
 import { getAllGenrePairs } from "../genreList/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
@@ -76,15 +77,37 @@ export function cacheReviewedGames(): Promise<PredefinedGameResponse[]> {
                             { cloudinary_id: x.cover.cloudinary_id },
                             "cover_big", "jpg");
                     }
-
                     let genre: string = undefined;
                     if (x.genres) {
                         genre = genrePair[x.genres[0]];
                     } else {
                         genre = genrePair[8];
                     }
-
-                    const gameResponse: PredefinedGameResponse = { id: id, name: name, aggregated_rating: aggregated_rating, cover: cover, genre: genre };
+                    let linkIcons: string[];
+                    if (x.platforms) {
+                        linkIcons = x.platforms
+                        .map((platformid: number) => {
+                            if (platformid === 48 || platformid === 45) {
+                                return "fab fa-playstation";
+                            } else if (platformid === 34) {
+                                return "fab fa-android";
+                            } else if (platformid === 6) {
+                                return "fab fa-windows";
+                            } else if (platformid === 14) {
+                                return "fab fa-apple";
+                            } else if (platformid === 3) {
+                                return "fab fa-linux";
+                            } else if (platformid === 92) {
+                                return "fab fa-steam";
+                            } else if (platformid === 49) {
+                                return "fab fa-xbox";
+                            } else if (platformid === 130) {
+                                return "fab fa-nintendo-switch";
+                            }
+                        });
+                        linkIcons = ArrayClean(linkIcons, undefined);
+                    }
+                    const gameResponse: PredefinedGameResponse = { id: id, name: name, aggregated_rating: aggregated_rating, linkIcons: linkIcons, cover: cover, genre: genre };
                     gamesResponse.push(gameResponse);
                 });
 
