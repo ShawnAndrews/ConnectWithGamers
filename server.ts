@@ -21,8 +21,8 @@ const PROCESS_STALL_THRESHOLD_MS = "1000";
 
 /* detect any block in event loop */
 blocked((ms: number) => {
-  console.log(`Event loop blocked (${ms}ms)`);
-  console.trace();
+    console.log(`Event loop blocked (${ms}ms)`);
+    console.trace();
 }, { threshold: PROCESS_STALL_THRESHOLD_MS });
 
 /* parse post body */
@@ -31,7 +31,7 @@ app.use(bodyParser.urlencoded({limit: MAX_POST_BODY_SIZE, extended: false }));
 
 /* transform request to HTTPS */
 if (config.useStrictlyHttps) {
-  app.use(forceSSL);
+    app.use(forceSSL);
 }
 
 /* enable cookies  */
@@ -39,11 +39,11 @@ app.use(cookieParser());
 
 /* log ip and date of access */
 app.use((req: core.Request, res: core.Response, next: core.NextFunction) => {
-  if (req.url === `/bundle.css`) {
-    console.log(`Request (${req.connection.remoteAddress.replace(/^.*:/, ``)}): ${req.url}`);
-    logIP(req.connection.remoteAddress);
-  }
-  next();
+    if (req.url === `/bundle.css`) {
+        console.log(`Request (${req.connection.remoteAddress.replace(/^.*:/, ``)}): ${req.url}`);
+        logIP(req.connection.remoteAddress);
+    }
+    next();
 });
 
 /* chatroom controller */
@@ -75,23 +75,22 @@ if (config.useStrictlyHttps) {
 }
 
 function handleDesktopRequests(req: core.Request, res: core.Response, next: core.NextFunction): void {
-  const device: any = new MobileDetect(req.headers["user-agent"]);
-  if (device.phone() === null) {
-    if (req.path === "/") {
-      res.sendFile(path.join(__dirname, `../client/desktop/index.html`));
-    } else if (req.path === "/emailform") {
-      console.log(`Req email: ${JSON.stringify(req.body)}`);
-      sendContactEmail(req.body.name, req.body.email, req.body.title, req.body.message)
-        .then(() => {
-          res.send({ success: true });
-        })
-        .catch((err: string) => {
-          res.send({ success: false, error: err });
-        });
+    const device: any = new MobileDetect(req.headers["user-agent"]);
+    if (device.phone() === null) {
+        if (req.path.startsWith("/css") || req.path.startsWith("/js") || req.path.startsWith("/images") || req.path.startsWith("/fonts")) {
+            res.sendFile(path.join(__dirname, `../client/desktop${req.path}`));
+        } else if (req.path === "/emailform") {
+            sendContactEmail(req.body.name, req.body.email, req.body.title, req.body.message)
+                .then(() => {
+                    res.send({ success: true });
+                })
+                .catch((err: string) => {
+                    res.send({ success: false, error: err });
+                });
+        } else {
+            res.sendFile(path.join(__dirname, `../client/desktop/index.html`));
+        }
     } else {
-      res.sendFile(path.join(__dirname, `../client/desktop${req.path}`));
+        next();
     }
-  } else {
-    next();
-  }
 }

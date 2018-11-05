@@ -45,7 +45,7 @@ const News: React.SFC<INewsProps> = (props: INewsProps) => {
                                     />
                                 </div>
                             );
-                        })};
+                        })}
                 </div>
             </div>
         </div>

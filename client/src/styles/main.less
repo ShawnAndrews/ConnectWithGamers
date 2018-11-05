@@ -1,11 +1,17 @@
+@primary-color: #2b419c;
+@primary-font: 'Lato', sans-serif;
+
 html, body, #root {
     position: relative;
     width:100%;
     height:100%;
     padding:0;
     margin:0;
-    font-family: source_sans_proregular, Arial, serif;
     font-size:1em;
+
+    * {
+        font-family: @primary-font;
+    }
 }
 
 .inherit {

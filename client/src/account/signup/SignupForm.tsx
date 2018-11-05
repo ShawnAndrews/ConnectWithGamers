@@ -23,9 +23,10 @@ const SignupForm: React.SFC<ISignupFormProps> = (props: ISignupFormProps) => {
     }
 
     return (
-        <div>
+        <div className="flat-background">
             <div className="account-center">
                 <a href="/"><div className="account-logo"/></a>
+                <div className="account-logo-name">Connect With Gamers</div>
                 <form className="account-form-container" onSubmit={props.onClickCreate}>
                     <input type="text" className="account-form underline top-md-padding" placeholder="Username" onChange={props.usernameChanged} />
                     <input type="email" className="account-form underline top-md-padding" placeholder="Email" onChange={props.emailChanged} />

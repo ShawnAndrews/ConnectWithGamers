@@ -36,7 +36,7 @@ const TwitchListItem: React.SFC<ITwitchListItemProps> = (props: ITwitchListItemP
                 <img className="twitch" src={props.profilePicLink} alt="Profile picture"/>
                 <div className="profile-picture-overlay twitch"/>
             </div>
-            <div className="profile-name">
+            <div className="profile-name twitch">
                 <div className="name">{props.name}</div>
                 {props.partnered && <VerifiedIcon/>}
             </div>

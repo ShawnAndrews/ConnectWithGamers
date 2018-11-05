@@ -32,7 +32,6 @@
         > img {
             width: 100%;
             display: block;
-            opacity: 0.9;
         }
     
         .homepage-home-header {
@@ -136,6 +135,7 @@
         width: 100%;
         height: @page-template-title-height;
         position: fixed;
+        background-color: @primary-color;
         z-index: 10;
 
         .page-template-title {
@@ -193,18 +193,18 @@
         .discord-page-content {
             font-weight: 700;
             font-size: 1.4em;
-            color: rgba(255,255,255,0.8);
+            color: @primary-color;
         }
 
         .discord-page-link {
             color: hsla(0,0%,100%,.5);
             letter-spacing: 1px;
-            border: 2px solid #fff;
+            border: 4px solid #adadad;
             margin: 20px 0;
             font-size: 1.2em;
             font-weight: 700;
             width: 100%;
-            background-color: transparent;
+            background-color: @primary-color;
             white-space: normal;
             text-align: justify;
             -moz-text-align-last: center;
@@ -217,13 +217,14 @@
         }
 
         .discord-page-copy-btn {
-            background-color: rgba(0, 0, 0, 0.2) !important;
+            background-color: @primary-color !important;
             height: 50px !important;
 
             span {
                 font-size: 1.2em !important; 
                 letter-spacing: 3px !important; 
                 font-weight: 700 !important;
+                color: rgba(255,255,255,0.7);
             }
         }
 
@@ -270,7 +271,7 @@
         right: -200px;
         height: calc(~"100% -" @menu-gaming-height);
         width: 200px;
-        background-color: rgba(0,0,0,.25);
+        background-color: @primary-color;
         transition: all .3s ease-in;
         -webkit-transition: all .3s ease-in;
 
@@ -385,7 +386,7 @@
         font-size: 1em;
         font-weight: bolder;
         text-align: center;
-        color: rgba(255, 255, 255, 0.63);
+        color: @primary-color;
         margin-top: 10px;
     }
     
@@ -407,7 +408,7 @@
             margin-bottom: 20px;
 
             > i {
-                color: rgba(255, 255, 255, 0.7);
+                color: @primary-color;
                 font-size: 1.1em;
             }
 
@@ -422,7 +423,7 @@
             }
 
             .news-list-header-link {
-                color: rgba(255, 255, 255, 0.7);
+                color: @primary-color;
                 margin-right: 5px;
                 text-transform: uppercase;
                 font-size: 1.1em;
@@ -434,61 +435,63 @@
             position: relative;
             width: 100%;
             height: auto;
+            border-spacing: 10px;
 
             .news-container {
                 display: table-cell;
                 width: 50%;
-                height: 200px;
-                margin: 5px;
-                padding: 5px;
-                overflow: hidden;
 
-                .news-title {
-                    position: relative;
-                    height: 2.4em;
-                    width: 100%;
-                    overflow: hidden;
-                    color: #90d794d8;
-                    font-size: 0.8em;
-                }
+                .news-container-overlay {
+                    background-color: #2b419c;
+                    box-shadow: 5px 4px 3px 0 rgba(0,0,0,.2),3px 1px 1px 0 rgba(0,0,0,.14),0 2px 1px 0 rgba(0,0,0,.12)!important;
 
-                .news-author {
-                    color: rgba(255,255,255,0.5);
-                    margin-top: 5px;
-                    font-size: 0.6em;
-                    overflow: hidden;
-                    height: 1.4em;
-                }
-
-                .news-date {
-                    color: rgba(255,255,255,0.5);
-                    margin-top: 2px;
-                    font-size: 0.6em;
-                    overflow: hidden;
-                    height: 1.4em;
-                }
-
-                .news-media {
-                    width: 100%;
-                    height: calc(100% - 1.4em - 1.4em - 2.4em);
-                    margin-top: 5px;
-                    overflow: hidden;
-
-                    > img {
-                        object-fit: fill;
-                        width: inherit;
-                        height: 100%;
-                        max-height: 150px;
-
-                        &.translucent {
-                            opacity: 0.7;
-                        }
-                    }
-
-                    > iframe {
-                        width: 100%;
-                        height: 100%;
+                    .news-title {
+                        position: relative;
+                        height: 2.7em;
+                        width: calc(100% - 20px);
                         overflow: hidden;
+                        color: #90d794d8;
+                        font-size: 0.8em;
+                        margin: 5px 10px 0px 10px;
+                    }
+    
+                    .news-author {
+                        color: rgba(255,255,255,0.5);
+                        font-size: 0.6em;
+                        overflow: hidden;
+                        height: 1.4em;
+                        margin: 10px 10px 0px 10px;
+                    }
+    
+                    .news-date {
+                        color: rgba(255,255,255,0.5);
+                        font-size: 0.6em;
+                        overflow: hidden;
+                        height: 1.4em;
+                        margin: 0px 10px 0px 10px;
+                    }
+    
+                    .news-media {
+                        width: 100%;
+                        margin-top: 5px;
+                        margin-bottom: -5px;
+                        overflow: hidden;
+    
+                        > img {
+                            object-fit: fill;
+                            width: inherit;
+                            height: 100%;
+                            max-height: 150px;
+    
+                            &.translucent {
+                                opacity: 0.7;
+                            }
+                        }
+    
+                        > iframe {
+                            width: 100%;
+                            overflow: hidden;
+                        }
                     }
                 }
             }
@@ -507,7 +510,7 @@
             margin-bottom: 20px;
 
             > i {
-                color: rgba(255, 255, 255, 0.7);
+                color: @primary-color;
                 font-size: 1.1em;
             }
 
@@ -522,7 +525,7 @@
             }
 
             .profiles-header-link {
-                color: rgba(255, 255, 255, 0.7);
+                color: @primary-color;
                 margin-right: 5px;
                 text-transform: uppercase;
                 font-size: 1.1em;
@@ -539,7 +542,7 @@
             .profiles-twitch, .profiles-steam, .profiles-discord {
                 display: inline-block;
                 width: 32%;
-                background-color: rgba(22, 31, 78, 0.34) !important;
+                background-color: @primary-color !important;
                 font-size: 0.8em;
 
                 i {
@@ -610,7 +613,7 @@
             margin-bottom: 20px;
 
             > i {
-                color: rgba(255, 255, 255, 0.7);
+                color: @primary-color;
                 font-size: 1.1em;
             }
 
@@ -625,7 +628,7 @@
             }
 
             .popular-table-header-link {
-                color: rgba(255, 255, 255, 0.7);
+                color: @primary-color;
                 margin-right: 5px;
                 text-transform: uppercase;
                 font-size: 1.1em;
@@ -636,20 +639,20 @@
         .popular-table-horizontal {
             position: relative;
             width: auto;
+            height: 150px;
             overflow:scroll;
-            overflow-y: hidden;
             white-space:nowrap; 
             transition: all 0.4s ease-in-out;
             
             .popular-table-container {
                 position: relative;
                 display: inline-block;
-                height: 125px;
+                height: auto;
                 margin: 0 10px;
-
+                box-shadow: 5px 4px 3px 0px rgba(0,0,0,.2),3px 1px 1px 0px rgba(0,0,0,.14),0 2px 1px 0 rgba(0,0,0,.12)!important;
+                
                 .popular-table-image {
                     position: relative;
-                    z-index: -1;
 
                     > img {
                         width: 80px;
@@ -659,8 +662,9 @@
 
                 .popular-table-text-container {
                     position: relative;
-                    height: 35px;
+                    height: auto;
                     width: 80px;
+                    background-color: @primary-color;
 
                     .clear {
                         height: 5px;
@@ -668,11 +672,12 @@
 
                     .name {
                         display: block;
-                        width: 80px;
+                        width: 70px;
+                        margin: 0 5px;
                         height: 15px;
                         line-height: 15px;
                         color: #90d793;
-                        font-size: 11px;
+                        font-size: 9px;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
@@ -680,15 +685,17 @@
 
                     .genre {
                         display: inline-block;
-                        width: 52px;
+                        width: 50px;
                         height: 15px;
                         line-height: 15px;
-                        font-size: 9px;
-                        color: rgba(0,0,0,0.85);
+                        font-size: 8px;
+                        color: rgba(255, 255, 255, 0.7);
                         white-space: normal;
                         overflow: hidden;
                         text-overflow: clip;
                         vertical-align: bottom;
+                        margin-bottom: 2px;
+                        margin-left: 5px;
                     }
 
                     .rating {
@@ -697,7 +704,6 @@
                         height: 15px;
                         font-size: 12px;
                         color: orange;
-                        text-align: right;
                     }
                 }
             }
@@ -767,8 +773,20 @@
             display: grid;
             grid-template-columns: auto auto auto;
             grid-template-rows: 30vw 30vw 30vw;
-            grid-gap: 5px;
-        
+            grid-gap: 10px;
+            
+            .reviewed-table-grid-item {
+                box-shadow: 0 4px 3px 0 rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 2px 1px 0 rgba(0,0,0,.12)!important;
+                
+                .reviewed-table-grid-item-content {
+                    position: relative;
+                    color: white;
+                    height: 100%;
+                    width: 100%;
+                    bottom: 0;
+                }
+            }
+
             &>div:nth-child(1) {
                 grid-column: 1;
                 grid-row: 1;
@@ -806,34 +824,51 @@
                 display: inline-block;
                 bottom: 0px;
                 width: 100%;
+                height: 35px;
+                background-color: @primary-color;
 
                 .name {
-                    font-size: 14px;
+                    position: absolute;
+                    left: 5px;
+                    top: 5px;
+                    font-size: 12px;
+                    height: 12px;
+                    width: calc(100% - 8px);
                     font-weight: bolder;
-                    margin-left: 5px;
-                    height: 14px;
-                    line-height: 14px;
-                    white-space: normal;
+                    line-height: 12px;
+                    white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    color: #90d793;
                 }
 
                 .genre {
+                    position: absolute;
+                    left: 5px;
+                    bottom: 5px;
                     display: inline-block;
-                    width: calc(100% - 3.2em);
+                    width: calc(100% - 4.4em);
+                    height: 10.2px;
+                    line-height: 10px;
+                    font-size: 10px;
+                    white-space: normal;
+                    overflow: hidden;
+                    text-overflow: clip;
+                }
+
+                .rating {
+                    position: absolute;
+                    right: 2px;
+                    bottom: 2px;
+                    display: inline-block;
+                    width: 2em;
                     height: 12px;
                     line-height: 12px;
                     font-size: 12px;
                     white-space: normal;
                     overflow: hidden;
                     text-overflow: clip;
-                    margin-left: 5px;
-                }
-
-                .rating {
-                    display: inline-block;
-                    width: 2em;
-                    font-weight: bolder;
+                    color: #ffa500bd;
                 }
             }
         }
@@ -843,8 +878,6 @@
             width: 100%;
             height: 500px;
             background-color: rgba(0,0,0,0.2);
-
-            
         }
     }
 
@@ -861,8 +894,8 @@
             margin-bottom: 20px;
 
             > i {
-                color: rgba(255, 255, 255, 0.7);
-                font-size: 0.8em;
+                color: @primary-color;
+                font-size: 0.7em;
             }
 
             &::before {
@@ -876,7 +909,7 @@
             }
             
             .recently-released-table-header-link, .upcoming-table-header-link {
-                color: rgba(255, 255, 255, 0.7);
+                color: @primary-color;
                 margin-right: 5px;
                 text-transform: uppercase;
                 font-size: 0.8em;
@@ -887,6 +920,8 @@
         .recently-released-table-container, .upcoming-table-container {
             position: relative;
             margin: 10px 0px;
+            background-color: @primary-color;
+            box-shadow: 0 4px 3px 0 rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 2px 1px 0 rgba(0,0,0,.12)!important;
             
             .recently-released-table-image, .upcoming-table-image {
                 display: table-cell;
@@ -918,10 +953,12 @@
                     font-size: .6em;
                     height: 2.4em;
                     overflow: hidden;
+                    margin-top: 2px;
                 }
 
                 .icons {
-                    width: 100%;
+                    position: absolute;
+                    top: 20px;
                     overflow: hidden;
 
                     .icon {
@@ -940,7 +977,7 @@
     
                 .date {
                     position: absolute;
-                    bottom: 0px;
+                    bottom: 2px;
                     color: rgba(255,255,255,0.5);
                     font-size: 0.75em;
                 }
@@ -954,7 +991,7 @@
 
         .gaming-menu-item-content {
             position: relative;
-            background-color: rgba(0,0,0,.05)!important;
+            background-color: @primary-color!important;
             margin-bottom: 20px;
             width: calc(100% - 20px);
             height: 100px;
@@ -985,6 +1022,7 @@
         .profile-picture {
             display: inline-block;
             margin: 18px;
+            color: rgba(255,255,255,0.7);
 
             &.twitch {
                 margin: 15px;
@@ -1009,7 +1047,7 @@
                 bottom: 18px;
                 left: 18px;
                 background-color: rgba(0,255,20,.65);
-                border-radius: 5px 10px 5px 0px;
+                border-radius: 5px 5px 5px 5px;
                 width: 16px;
                 height: 16px;
             }
@@ -1020,7 +1058,7 @@
                 bottom: 18px;
                 left: 18px;
                 background-color: rgba(255,0,20,0.65);
-                border-radius: 5px 10px 5px 0px;
+                border-radius: 5px 5px 5px 5px;
                 width: 16px;
                 height: 16px;
             }
@@ -1059,8 +1097,7 @@
             width: calc(~"(100% - 30px) / 3") !important;
             height: 25px!important;
             display: inline-block !important;
-            opacity: 0.5;
-            background-color: rgba(0, 0, 0, 0.2) !important;
+            background-color: @primary-color !important;
 
             span {
                 font-size: 0.8em !important; 
@@ -1074,8 +1111,7 @@
             width: calc(~"(100% - 30px) / 3") !important;
             height: 25px!important;
             display: inline-block !important;
-            opacity: 0.5;
-            background-color: rgba(0, 0, 0, 0.2) !important;
+            background-color: @primary-color !important;
 
             span {
                 font-size: 0.8em !important; 
@@ -1090,8 +1126,7 @@
             width: calc(~"(100% - 30px) / 3") !important;
             height: 25px!important;
             display: inline-block !important;
-            opacity: 0.5;
-            background-color: rgba(0, 0, 0, 0.2) !important;
+            background-color: @primary-color !important;
 
             span {
                 font-size: 0.8em !important; 
@@ -1127,7 +1162,7 @@
             position: relative;
             bottom: 5px;
             left: 15px;
-            background-color: rgba(0, 0, 0, 0.2) !important;
+            background-color: @primary-color !important;
             width: calc(~"100% - 30px") !important;
             height: 25px!important;
             display: block !important;
@@ -1142,7 +1177,7 @@
 
         .profile-expand {
             position: relative;
-            background-color: rgba(0, 0, 0, 0.2) !important;
+            background-color: @primary-color !important;
             width: calc(~"100% - 30px") !important;
             margin: 0 15px 20px 15px !important;
             padding: 10px !important;
@@ -1179,7 +1214,7 @@
             position: absolute;
             top: 44px;
             right: 0px;
-            background-color: rgba(0, 0, 0, 0.2) !important;
+            background-color: @primary-color !important;
             height: 20px !important;
             width: 64px !important;
 
@@ -1194,7 +1229,14 @@
             position: absolute;
             top: 15px;
             display: inline-block;
-            opacity: 0.8;
+
+            &.twitch {
+                color: @primary-color;
+            }
+
+            &.steam {
+                color: rgba(255,255,255,0.7);
+            }
 
             .name {
                 display: inline-block;
@@ -1210,7 +1252,7 @@
                 vertical-align: middle !important;
 
                 > svg {
-                    fill: white;
+                    fill: @primary-color;
                 }
             }
 
@@ -1220,7 +1262,7 @@
             position: absolute;
             top: 40px;
             display: inline-block;
-            opacity: 0.8;
+            color: @primary-color;
             font-size: 1em;
             width: ~"calc(100% - 210px)";
             height: 2.5em;
@@ -1230,7 +1272,6 @@
         .profile-recentlyplayed, .profile-currentlyplaying {
             position: absolute;
             display: inline-block;
-            opacity: 0.8;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -1254,17 +1295,19 @@
 
         .profile-recentlyplayed {
             width: ~"calc(100% - 170px)";
+            color: rgba(255,255,255,0.7);
         }
 
         .profile-currentlyplaying {
             width: ~"calc(100% - 260px)";
+            color: @primary-color;
         }
 
         .profile-viewercount {
             position: absolute;
             top: 98px;
             right: 15px;
-            opacity: 0.8;
+            color: @primary-color;
 
             .profile-viewercount-indicator {
                 position: relative;
@@ -1376,7 +1419,7 @@
 
     .menu-game-thumbnail {
         position: relative;
-        background-color: rgba(0,0,0,0.05)!important;
+        background-color: @primary-color!important;
         margin-bottom: 20px;
         width: calc(100% - 20px);
         height: 100px;
@@ -1484,7 +1527,7 @@
         height: calc(100% - 37px);
         width: 100%;
         overflow: auto;
-        background-color: rgba(0,0,0,0.2) !important;
+        background-color: @primary-color !important;
 
         * {
             color: rgba(255,255,255,0.9);
@@ -1852,21 +1895,18 @@
 }
 
 .searchbar {
-    > div {
-        background: rgba(0,0,0,0.4);
-        border-color: whitesmoke !important;
-        border-left: none;
-        border-right: none;
-        border-top: none;
-        border-bottom: 2px solid whitesmoke;
+    .Select-control {
+        background: @primary-color !important;
+        border-radius: 0px !important;
+        border: none;
     }
 
     * {
-        color: whitesmoke !important;
+        color: rgba(255,255,255,0.7) !important;
     }
 
-    .Select-menu-outer .Select-option {
-        background: rgba(0,0,0,0.4) !important;
+    .Select-menu-outer .Select-option, .Select-menu-outer .Select-noresults {
+        background: @primary-color!important;
     }
 }
 
@@ -1876,7 +1916,7 @@
     top: @gaming-navbar-item-height + @navbar-item-height;
     z-index: 10000;
     outline: none;
-    background: rgba(0,0,0,0.4);
+    background: @primary-color;
     border-color: whitesmoke !important;
     border-left: none;
     border-right: none;
@@ -1890,8 +1930,4 @@
 
 .gaming-searchbar::-webkit-input-placeholder {
     color: whitesmoke !important;
-}
-
-.Select-control {
-    background: rgba(0,0,0,0.2) !important;
 }

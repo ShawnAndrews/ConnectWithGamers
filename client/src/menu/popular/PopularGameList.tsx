@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
+import { Card, CardMedia } from '@material-ui/core';
 
 interface IPopularGameListProps {
     popularGames: PredefinedGameResponse[];
@@ -24,10 +25,10 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                 {props.popularGames
                     .map((x: PredefinedGameResponse) => {
                         return (
-                            <div key={x.id} className="popular-table-container" onClick={() => { props.onClickGame(x.id); }}>
-                                <div className="popular-table-image">
+                            <Card key={x.id} className="popular-table-container" onClick={() => { props.onClickGame(x.id); }}>
+                                <CardMedia className="popular-table-image">
                                     <img src={x.cover ? x.cover : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
-                                </div>
+                                </CardMedia>
                                 <div className="popular-table-text-container">
                                     <div className="clear"/>
                                     <div className="name">
@@ -41,7 +42,7 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                                             {Math.floor(x.aggregated_rating)}%
                                         </div>}
                                 </div>
-                            </div>
+                            </Card>
                         );
                     })}
             </div>

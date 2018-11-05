@@ -5,6 +5,12 @@
 @title-chip-size: 60px;
 
 .account-page, .account-recovery-page {
+  height: 100%;
+
+  .flat-background {
+    height: 100%;
+    background-color: @primary-color;
+  }
 
   .div-center {
     text-align: center;
@@ -49,7 +55,14 @@
       height: @login-logo-height;
       width: @login-logo-width;
       opacity: 0.85;
-      margin-bottom: 25px;
+    }
+
+    .account-logo-name {
+      font-size: 1.8em;
+      text-align: center;
+      font-family: 'Pacifico' !important;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 50px;
     }
 
     @media (max-height:650px) {
@@ -73,11 +86,11 @@
     padding: 15px;
 
     input {
-      color: whitesmoke !important;
+      color: @primary-color !important;
     }
 
     label {
-      color: rgba(255, 255, 255, 0.55) !important;
+      color: @primary-color !important;
     }
 
     .account-settings-title {
@@ -97,7 +110,7 @@
           height: inherit !important;
           width: inherit !important;
           font-size: 30px !important;
-          background-color: rgba(255, 255, 255, 0.3)!important
+          background-color: @primary-color !important
         }
   
         .account-settings-title-input {
@@ -162,7 +175,7 @@
           height: inherit !important;
           width: inherit !important;
           font-size: 30px !important;
-          background-color: rgba(255, 255, 255, 0.3)!important
+          background-color: @primary-color!important
         }
   
         .account-settings-title-input {
@@ -200,8 +213,12 @@
 
             .account-settings-title-image {
               position: relative;
-              color: rgba(15, 46, 91,0.5);
+              color: @primary-color;
               font-size: 1em;
+
+              > svg {
+                color: white;
+              }
             }
 
             .account-settings-title-plus {
@@ -237,7 +254,7 @@
       position: absolute;
       bottom: 0;
       right: 0;
-      background-color: rgba(0,0,0,0.1) !important;
+      background-color: @primary-color !important;
 
       span {
         font-size: 1em!important;
@@ -250,10 +267,7 @@
 
       span {
         font-size: 1.2em!important;
-      }
-
-      * {
-        color: rgba(255,255,255,0.8)!important;
+        color: @primary-color!important;
       }
     }
 
@@ -261,12 +275,12 @@
       position: relative;
       
       > div > div::after, div::before {
-        border-bottom: 2px solid rgba(255,255,255,0.2)!important;
+        border-bottom: 2px solid @primary-color!important;
       }
 
       input {
         font-size: 1.2em !important;
-        border-bottom: 2px solid rgba(255,255,255,0.5)!important;
+        border-bottom: 2px solid @primary-color!important;
       }
 
       .account-settings-link {
@@ -274,20 +288,20 @@
         font-size: 1.2em !important;
 
         > div > hr {
-          border-bottom-color: rgba(255,255,255,0.35) !important;
+          border-bottom-color: @primary-color!important;
         }
       }
   
       .account-settings-link-icon {
         margin-right: 4%;
-        color: rgb(15, 48, 93);
+        color: @primary-color;
       }
     }
 
     .account-settings-logout {
       position: relative;
       width: 100%;
-      background-color: rgba(0,0,0,0.1)!important;
+      background-color: @primary-color!important;
       bottom: 0;
       left: 0;
       margin-top: 20px;
@@ -368,6 +382,7 @@
       width: 70%;
       height: 45px;
       background-color: rgba(0,0,0,0.1)!important;
+      color: rgba(255,255,255,0.7);
       border-radius: 25px !important;
 
       span {
@@ -382,6 +397,7 @@
       display: block !important;
       width: 50%;
       background-color: rgba(0,0,0,0.1)!important;
+      color: rgba(255,255,255,0.7);
       border-radius: 25px !important;
 
       span {

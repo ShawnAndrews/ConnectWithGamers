@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Card } from '@material-ui/core';
 
 interface ISteamListItemProps {
     name: string;
@@ -16,13 +17,13 @@ const SteamListItem: React.SFC<ISteamListItemProps> = (props: ISteamListItemProp
 
     return (
         <div className="gaming-menu-item">
-            <div className="gaming-menu-item-content">
+            <Card className="gaming-menu-item-content">
                 <div className="profile-picture steam">
                     <img src={props.profilePicture} alt="Profile picture"/>
                     <div className="profile-picture-overlay steam"/>
                     <div className={props.online ? `online-text` : `offline-text`}/>
                 </div>
-                <div className="profile-name">
+                <div className="profile-name steam">
                     <div className="name">{props.name}</div>
                     <i className="fas fa-external-link-alt link" onClick={() => { props.onProfileLinkClick(props.profileLink); }}/>
                 </div>
@@ -36,7 +37,7 @@ const SteamListItem: React.SFC<ISteamListItemProps> = (props: ISteamListItemProp
                     <img className="profile-countryflag" src={props.countryFlagLink} alt="Country Flag" />}
                 {!props.online && props.lastOnline && 
                     <div className="last-online-time">{props.lastOnline}</div>}
-            </div>
+            </Card>
         </div>
     );
 

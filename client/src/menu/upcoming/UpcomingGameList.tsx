@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
+import { Card, CardMedia } from '@material-ui/core';
 
 interface IUpcomingGameListProps {
     upcomingGames: PredefinedGameResponse[];
@@ -19,10 +20,10 @@ const UpcomingGameList: React.SFC<IUpcomingGameListProps> = (props: IUpcomingGam
             {props.upcomingGames
             .map((x: PredefinedGameResponse) => {
                 return (
-                    <div key={x.id} className="upcoming-table-container" onClick={() => { props.onClickGame(x.id); }}>
-                        <div className="upcoming-table-image">
+                    <Card key={x.id} className="upcoming-table-container" onClick={() => { props.onClickGame(x.id); }}>
+                        <CardMedia className="upcoming-table-image">
                             <img src={x.cover ? x.cover : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
-                        </div>
+                        </CardMedia>
                         <div className="upcoming-table-data-container">
                             <span className="name">{x.name}</span>
                             <div className="icons">
@@ -31,7 +32,7 @@ const UpcomingGameList: React.SFC<IUpcomingGameListProps> = (props: IUpcomingGam
                             </div>
                             <span className="date">{props.formatUpcomingDate(x.first_release_date)}</span>
                         </div>
-                    </div>
+                    </Card>
                 );
             })}
         </div>

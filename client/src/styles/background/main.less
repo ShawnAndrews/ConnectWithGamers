@@ -18,94 +18,11 @@
   position: fixed;
   width: 100%;
   height: 100%;
-  display: block;
+  bottom: 0;
   overflow: hidden;
   z-index: -1;
-  background: -webkit-linear-gradient(top left, @login-background-col1 0%, @login-background-col2 100%);
-  background: linear-gradient(to bottom right, @login-background-col1 0%, @login-background-col2 100%);
-
-  .background-floats li {
-    position: absolute;
-    color: whitesmoke;
-    opacity: @login-floats-opacity;
-    width: @login-floats-rot-origin-size;
-    height: @login-floats-rot-origin-size;
-    list-style-type: none;
-    -webkit-animation: float infinite;
-    -moz-animation:    float infinite;
-    -o-animation:      float infinite;
-    animation:         float infinite;
-    -webkit-transition-timing-function: linear;
-    transition-timing-function: linear;
-    -webkit-transform-origin: 50% 50%;
-    -moz-transform-origin: 50% 50%;
-    -o-transform-origin: 50% 50%;
-    transform-origin: 50% 50%;
-  }
-
-  .set-float(@login-floats-quantity);
-  .set-float(@i) when (@i > 0) {
-    .genRandomInt(1,100);
-
-    .background-floats li:nth-child(@{i}) {
-      @range-per-icon: floor(100/@login-floats-quantity);
-      @login-floats-pos-x: ((@i - 1)*@range-per-icon) + mod(@rnd, @range-per-icon);
-      @float-delay: @login-floats-min-delay + ((@rnd/100) * (@login-floats-max-delay - @login-floats-min-delay));
-      @float-duration: @login-floats-min-duration + ((@rnd/100) * (@login-floats-max-duration - @login-floats-min-duration));
-      @float-size: @login-floats-min-size + ((@rnd/100) * (@login-floats-max-size - @login-floats-min-size));
-
-      left: ~"@{login-floats-pos-x}%";
-      bottom: @login-floats-pos-y;
-      font-size: @float-size;
-
-      -webkit-animation-delay: @float-delay;
-              animation-delay: @float-delay;
-      -webkit-animation-duration: @float-duration;
-              animation-duration: @float-duration;
-    }
-
-    .background-floats li:nth-child(@{i}):after {
-      display: inline-block;
-      font-style: normal;
-      font-variant: normal;
-      text-rendering: auto;
-      -webkit-font-smoothing: antialiased;
-      font-weight: 900;
-      font-family: 'Font Awesome 5 Free';
-      content: extract(@login-floats, mod(@rnd, length(@login-floats)) + 1);
-    }
-
-    .background-floats li:nth-child(odd) {
-      animation-direction: reverse;
-    }
-
-    .set-float(@i - 1);
-  }
-
-  @-webkit-keyframes float {
-    0% { 
-      -webkit-transform: translateY(0);
-          -ms-transform: translateY(0);
-              transform: translateY(0);
-    }
-    100% { 
-      -webkit-transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
-          -ms-transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
-              transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
-    }
-  }
-  
-  @keyframes float {
-    0% { 
-      -webkit-transform: translateY(0);
-          -ms-transform: translateY(0);
-              transform: translateY(0);
-    }
-    100% { 
-      -webkit-transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
-          -ms-transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
-              transform: translateY(@login-floats-dist) rotate(@login-floats-rot);
-    }
-  }
-
+  background-color: rgba(43, 65, 156, 0.24);
+  background-image: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), linear-gradient(30deg, #dedede 12%, transparent 12.5%, transparent 87%, #dedede 87.5%, #dedede), linear-gradient(150deg, #dedede 12%, transparent 12.5%, transparent 87%, #dedede 87.5%, #dedede), linear-gradient(30deg, #dedede 12%, transparent 12.5%, transparent 87%, #dedede 87.5%, #dedede), linear-gradient(150deg, #dedede 12%, transparent 12.5%, transparent 87%, #dedede 87.5%, #dedede), linear-gradient(60deg, white 25%, transparent 25.5%, transparent 75%, white 75%, white), linear-gradient(60deg, white 25%, transparent 25.5%, transparent 75%, white 75%, white);
+  background-size: 40px 70px;
+  background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px;
 }

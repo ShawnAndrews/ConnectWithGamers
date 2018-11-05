@@ -23,7 +23,11 @@ class NavbarContainer extends React.Component<INavbarContainerProps, INavbarCont
         };
     }
 
-    componentWillReceiveProps(newProps: INavbarContainerProps) {
+    componentWillMount(): void {
+        this.updateNavSelection(this.props.history.location.pathname);
+    }
+
+    componentWillReceiveProps(newProps: INavbarContainerProps): void {
         this.updateNavSelection(newProps.history.location.pathname);
     }
 
