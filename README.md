@@ -182,9 +182,9 @@ const config: Config = {
 export default config;
 ```
 
-SSL information: If you plan to use SSL set "useStrictlyHttps:true" and "https: { key: `<path-to-key>.pem`, cert: `<path-to-certificate>.crt`, ca: `<path-to-bundle>.ca-bundle` }" to the appropriate paths in the config file.
+Follow the same routine for creating a file called ``database.json`` in the root directory based off the default settings located in databaseTemplate.json and ensure these values match those for the database property in config.ts.
 
-As well, create a file called ``database.json`` in the root directory based off the default settings located in databaseTemplate.json and ensure these values match those for the database property in config.ts.
+SSL information: If you plan to use SSL set "useStrictlyHttps:true" and "https: { key: `<path-to-key>.pem`, cert: `<path-to-certificate>.crt`, ca: `<path-to-bundle>.ca-bundle` }" to the appropriate paths in the config file.
 
 ## Dependencies
 Apart from the included NPM packages, there are additional components and API's required to run this program without error.
