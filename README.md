@@ -276,5 +276,8 @@ Of course! You can check them out on my portfolio website at [saportfolio.ca](ht
 ### Where can i get a copy of the database?
 Use my [Migrations](#migrations) guide located above.
 
+### How was this project developed?
+Using React, Redis, Redux, NodeJS, Mocha, MySQL, and SocketIO.
+
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)
