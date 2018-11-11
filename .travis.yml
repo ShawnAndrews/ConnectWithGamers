@@ -15,4 +15,3 @@ script:
   - npm run client-prod
   - cd ../
   - npm run server-prod
-  - npm run test-with-coverage

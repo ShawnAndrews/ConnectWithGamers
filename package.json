@@ -12,7 +12,8 @@
     "build-ts": "tsc",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "test": "mocha --exit -r ts-node/register **/*.spec.ts  --timeout 5000",
-    "test-with-coverage": "nyc mocha --exit --timeout 5000 --opts ./mocha.opts > coverage.lcov && codecov -t f2186ac4-edde-43bc-8a83-80c089a32d6b"
+    "test-with-coverage": "nyc mocha --exit --timeout 5000 --opts ./mocha.opts",
+    "test-with-coverage-to-codecov": "nyc mocha --exit --timeout 5000 --opts ./mocha.opts > coverage.lcov && codecov -t f2186ac4-edde-43bc-8a83-80c089a32d6b"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.2",
