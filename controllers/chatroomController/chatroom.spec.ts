@@ -13,7 +13,7 @@ describe("Chatroom Routes", function() {
     const emoteSuffix: string = "B";
     let emoteid: number;
 
-    it(chatroomRouterPrefix.concat(routes.getRoute("emotes/upload")), function() {
+    it(chatroomRouterPrefix.concat(routes.getRoute("emote/upload")), function() {
 
         return chatroomModel.uploadImage(testImageBase64)
         .then((response: DbChatroomUploadEmoteResponse) => {
