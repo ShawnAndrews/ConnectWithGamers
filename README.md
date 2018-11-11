@@ -7,6 +7,8 @@
 <p align="center">
     <a href="https://travis-ci.org/ShawnAndrews/ConnectWithGamers" alt="Build Status">
         <img src="https://travis-ci.org/ShawnAndrews/ConnectWithGamers.svg?branch=master" /></a>
+    <a href="https://codecov.io/gh/ShawnAndrews/ConnectWithGamers/" alt="Build Status">
+        <img src="https://codecov.io/gh/shawnandrews/connectwithgamers/branch/master/graph/badge.svg" /></a>
     <a href="http://connectwithgamers.com/" alt="connectwithgamers.com">
         <img src="https://img.shields.io/website-up-down-green-red/http/shields.io.svg" /></a>
     <a href="https://david-dm.org/shawnandrews/connectwithgamers" alt="David">
