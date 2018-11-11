@@ -51,6 +51,10 @@ class SwipeContainer extends React.Component<Props, ISwipeContainerState> {
         };
     }
 
+    componentDidMount(): void {
+        this.updatePositionRefs(this.props.swipeState, this.props.filterNavWidth);
+    }
+
     componentWillReceiveProps(newProps: Props): void {
         this.updatePositionRefs(newProps.swipeState, newProps.filterNavWidth);
     }
