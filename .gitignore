@@ -19,6 +19,7 @@ npm-debug.log.*
 # Coverage reports
 .nyc_output/*
 coverage
+coverage.lcov
 
 # Readme
 README.md
