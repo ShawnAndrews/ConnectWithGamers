@@ -50,6 +50,7 @@
 - [Config](#config)
 - [Dependencies](#dependencies)
 - [Migrations](#migrations)
+- [Testing](#testing)
 - [Installation](#installation)
 - [Run](#run)
 - [FAQ](#faq)
@@ -209,6 +210,15 @@ db-migrate db:create connectwithgamers
 db-migrate up --config database.json -e prod
 ```
 
+## Testing
+Back-end unit testing on the NodeJS server uses Mocha, Nyc, Istanbul and is available through the following script:
+
+```
+npm run test-with-coverage
+```
+
+In addition to the text summary, an html coverage report will be generated in /coverage/lcov-report/index.html
+
 ## Installation
 How do i run this website on my own?
 - Ensure your MySQL server is running and you have a copy of the database using the [Migrations](#migrations) guide.
@@ -265,6 +275,9 @@ Of course! You can check them out on my portfolio website at [saportfolio.ca](ht
 
 ### Where can i get a copy of the database?
 Use my [Migrations](#migrations) guide located above.
+
+### How was this project developed?
+Using React, Redis, Redux, NodeJS, Mocha, MySQL, and SocketIO.
 
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)
