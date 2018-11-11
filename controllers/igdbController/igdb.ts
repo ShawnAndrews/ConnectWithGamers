@@ -4,16 +4,9 @@ import { Request, Response } from "express";
 import {
     GameResponse,
     PredefinedGameResponse,
-    PredefinedGamesResponse,
-    SingleGameResponse,
-    GenreListResponse,
-    GenrePair,
-    MultiNewsResponse,
     SingleNewsResponse,
-    ThumbnailGamesResponse,
     ThumbnailGameResponse,
     SearchGameResponse,
-    SearchGamesResponse,
     GenericErrorResponse
 } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
@@ -21,7 +14,6 @@ import { upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames } fr
 import { recentGamesKeyExists, getCachedRecentGames, cacheRecentGames } from "./cache/recentlyReleased/main";
 import { gameKeyExists, getCachedGame, cacheGame } from "./cache/games/main";
 import { searchGamesKeyExists, getCachedSearchGames, cacheSearchGames } from "./cache/searchGames/main";
-import { genreListKeyExists, getCachedGenreList, cacheGenreList } from "./cache/genreList/main";
 import { popularGamesKeyExists, getCachedPopularGames, cachePopularGames } from "./cache/popularGames/main";
 import { resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames } from "./cache/filter/main";
 import { reviewedGamesKeyExists, getCachedReviewedGames, cacheReviewedGames } from "./cache/reviewedGames/main";
@@ -30,7 +22,7 @@ import { predefinedUpcomingGamesKeyExists, getCachedPredefinedUpcomingGames, cac
 import { predefinedRecentGamesKeyExists, getCachedPredefinedRecentGames, cachePredefinedRecentGames } from "./cache/predefined/recent/main";
 import { newsKeyExists, getCachedNews, cacheNews } from "./cache/news/main";
 
-const routes = new routeModel();
+export const routes = new routeModel();
 
 /* routes */
 routes.addRoute("predefinedpopular", "/games/predefined/popular");
@@ -44,173 +36,224 @@ routes.addRoute("searchgames", "/games/search/:query");
 routes.addRoute("upcominggames", "/games/upcoming");
 routes.addRoute("recentgames", "/games/recent");
 routes.addRoute("platformgames", "/games/platform/:id");
-routes.addRoute("genregames", "/games/genre/:id");
-routes.addRoute("genrelist", "/games/genrelist");
 routes.addRoute("game", "/game/:id");
 
-type CachedRouteTypes = ThumbnailGameResponse | PredefinedGameResponse | SingleNewsResponse | GenrePair | SearchGameResponse;
+type CachedRouteTypes = ThumbnailGameResponse[] | PredefinedGameResponse[] | SingleNewsResponse[] | SearchGameResponse[] | GameResponse;
 
 /* Generic route function for data cached in Redis */
-function GenericCachedRoute<T extends CachedRouteTypes> (req: Request, res: Response, keyExists: () => Promise<boolean>, getCachedData: () => Promise<T[]>, cacheData: () => Promise<T[]>): any {
+export function GenericCachedRoute<T extends CachedRouteTypes> (keyExists: () => Promise<boolean>, getCachedData: () => Promise<T>, cacheData: () => Promise<T>): Promise<T> {
 
-    const listResponse: GenericErrorResponse = { error: undefined };
-
-    keyExists()
-        .then((exists: boolean) => {
-            if (exists) {
-                getCachedData()
-                .then((listItems: T[]) => {
-                    listResponse.data = listItems;
-                    return res.send(listResponse);
-                })
-                .catch((error: string) => {
-                    listResponse.error = error;
-                    return res.send(listResponse);
-                });
-            } else {
-                cacheData()
-                .then((listItems: T[]) => {
-                    listResponse.data = listItems;
-                    return res.send(listResponse);
-                })
-                .catch((error: string) => {
-                    listResponse.error = error;
-                    return res.send(listResponse);
-                });
-            }
-        })
-        .catch((error: string) => {
-            listResponse.error = error;
-            return res.send(listResponse);
-        });
+    return new Promise((resolve: any, reject: any) => {
+        keyExists()
+            .then((exists: boolean) => {
+                if (exists) {
+                    getCachedData()
+                    .then((listItems: T) => {
+                        return resolve(listItems);
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+                } else {
+                    cacheData()
+                    .then((listItems: T) => {
+                        return resolve(listItems);
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+                }
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
+    });
 
 }
 
 /* Generic route function for data cached in Redis */
-function GenericCachedWithDataRoute<T extends CachedRouteTypes, V> (req: Request, res: Response, keyExists: (key: V) => Promise<boolean>, getCachedData: (key: V) => Promise<T[]>, cacheData: (key: V) => Promise<T[]>, param: V): any {
+export function GenericCachedWithDataRoute<T extends CachedRouteTypes, V> (keyExists: (key: V) => Promise<boolean>, getCachedData: (key: V) => Promise<T>, cacheData: (key: V) => Promise<T>, param: V): Promise<T> {
 
-    const listResponse: GenericErrorResponse = { error: undefined };
-
-    keyExists(param)
-        .then((exists: boolean) => {
-            if (exists) {
-                getCachedData(param)
-                .then((listItems: T[]) => {
-                    listResponse.data = listItems;
-                    return res.send(listResponse);
-                })
-                .catch((error: string) => {
-                    listResponse.error = error;
-                    return res.send(listResponse);
-                });
-            } else {
-                cacheData(param)
-                .then((listItems: T[]) => {
-                    listResponse.data = listItems;
-                    return res.send(listResponse);
-                })
-                .catch((error: string) => {
-                    listResponse.error = error;
-                    return res.send(listResponse);
-                });
-            }
-        })
-        .catch((error: string) => {
-            listResponse.error = error;
-            return res.send(listResponse);
-        });
+    return new Promise((resolve: any, reject: any) => {
+        keyExists(param)
+            .then((exists: boolean) => {
+                if (exists) {
+                    getCachedData(param)
+                    .then((listItems: T) => {
+                        return resolve(listItems);
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+                } else {
+                    cacheData(param)
+                    .then((listItems: T) => {
+                        return resolve(listItems);
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+                }
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
+    });
 
 }
 
 /* predefined recent games */
 router.post(routes.getRoute("predefinedrecent"), (req: Request, res: Response) => {
-    GenericCachedRoute<ThumbnailGameResponse>(req, res, predefinedRecentGamesKeyExists, getCachedPredefinedRecentGames, cachePredefinedRecentGames);
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedRoute<ThumbnailGameResponse[]>(predefinedRecentGamesKeyExists, getCachedPredefinedRecentGames, cachePredefinedRecentGames)
+        .then((data: ThumbnailGameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
 });
 
 /* predefined upcoming games */
 router.post(routes.getRoute("predefinedupcoming"), (req: Request, res: Response) => {
-    GenericCachedRoute<ThumbnailGameResponse>(req, res, predefinedUpcomingGamesKeyExists, getCachedPredefinedUpcomingGames, cachePredefinedUpcomingGames);
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedRoute<ThumbnailGameResponse[]>(predefinedUpcomingGamesKeyExists, getCachedPredefinedUpcomingGames, cachePredefinedUpcomingGames)
+        .then((data: ThumbnailGameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
 });
 
 /* predefined popular games */
 router.post(routes.getRoute("predefinedpopular"), (req: Request, res: Response) => {
-    GenericCachedRoute<ThumbnailGameResponse>(req, res, predefinedPopularGamesKeyExists, getCachedPredefinedPopularGames, cachePredefinedPopularGames);
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedRoute<ThumbnailGameResponse[]>(predefinedPopularGamesKeyExists, getCachedPredefinedPopularGames, cachePredefinedPopularGames)
+        .then((data: ThumbnailGameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
 });
 
 /* upcoming games */
 router.post(routes.getRoute("upcominggames"), (req: Request, res: Response) => {
-    GenericCachedRoute<PredefinedGameResponse>(req, res, upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames);
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedRoute<PredefinedGameResponse[]>(upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames)
+        .then((data: PredefinedGameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
 });
 
 /* reviewed games */
 router.post(routes.getRoute("reviewedgames"), (req: Request, res: Response) => {
-    GenericCachedRoute<PredefinedGameResponse>(req, res, reviewedGamesKeyExists, getCachedReviewedGames, cacheReviewedGames);
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedRoute<PredefinedGameResponse[]>( reviewedGamesKeyExists, getCachedReviewedGames, cacheReviewedGames)
+        .then((data: PredefinedGameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
 });
 
 /* news articles */
 router.post(routes.getRoute("news"), (req: Request, res: Response) => {
-    GenericCachedRoute<SingleNewsResponse>(req, res, newsKeyExists, getCachedNews, cacheNews);
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedRoute<SingleNewsResponse[]>(newsKeyExists, getCachedNews, cacheNews)
+        .then((data: SingleNewsResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
 });
 
 /* popular games */
 router.post(routes.getRoute("populargames"), (req: Request, res: Response) => {
-    GenericCachedRoute<PredefinedGameResponse>(req, res, popularGamesKeyExists, getCachedPopularGames, cachePopularGames);
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedRoute<PredefinedGameResponse[]>(popularGamesKeyExists, getCachedPopularGames, cachePopularGames)
+        .then((data: PredefinedGameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
 });
 
 /* recent games */
 router.post(routes.getRoute("recentgames"), (req: Request, res: Response) => {
-    GenericCachedRoute<PredefinedGameResponse>(req, res, recentGamesKeyExists, getCachedRecentGames, cacheRecentGames);
-});
-
-/* genre list */
-router.post(routes.getRoute("genrelist"), (req: Request, res: Response) => {
-    GenericCachedRoute<GenrePair>(req, res, genreListKeyExists, getCachedGenreList, cacheGenreList);
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedRoute<PredefinedGameResponse[]>(recentGamesKeyExists, getCachedRecentGames, cacheRecentGames)
+        .then((data: PredefinedGameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
 });
 
 /* search games */
 router.post(routes.getRoute("searchgames"), (req: Request, res: Response) => {
-    GenericCachedWithDataRoute<SearchGameResponse, string>(req, res, searchGamesKeyExists, getCachedSearchGames, cacheSearchGames, req.params.query);
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedWithDataRoute<SearchGameResponse[], string>(searchGamesKeyExists, getCachedSearchGames, cacheSearchGames, req.params.query)
+        .then((data: SearchGameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
 });
 
 /* results games */
 router.post(routes.getRoute("resultsgames"), (req: Request, res: Response) => {
-    GenericCachedWithDataRoute<ThumbnailGameResponse, string>(req, res, resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames, JSON.stringify(req.query));
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedWithDataRoute<ThumbnailGameResponse[], string>(resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames, JSON.stringify(req.query))
+        .then((data: ThumbnailGameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
 });
 
 /* individual games */
 router.post(routes.getRoute("game"), (req: Request, res: Response) => {
-    const singleGameResponse: SingleGameResponse = { error: undefined };
-    const gameId: number = req.params.id;
-
-    gameKeyExists(gameId)
-        .then((exists: boolean) => {
-            if (exists) {
-                getCachedGame(gameId)
-                .then((game: GameResponse) => {
-                    singleGameResponse.data = game;
-                    return res.send(singleGameResponse);
-                })
-                .catch((error: string) => {
-                    singleGameResponse.error = error;
-                    return res.send(singleGameResponse);
-                });
-            } else {
-                cacheGame(gameId)
-                .then((game: GameResponse) => {
-                    singleGameResponse.data = game;
-                    return res.send(singleGameResponse);
-                })
-                .catch((error: string) => {
-                    singleGameResponse.error = error;
-                    return res.send(singleGameResponse);
-                });
-            }
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedWithDataRoute<GameResponse, number>(gameKeyExists, getCachedGame, cacheGame, req.params.id)
+        .then((data: GameResponse) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
         })
         .catch((error: string) => {
-            singleGameResponse.error = error;
-            return res.send(singleGameResponse);
+            genericResponse.error = error;
+            return res.send(genericResponse);
         });
-
 });
 
 export default router;

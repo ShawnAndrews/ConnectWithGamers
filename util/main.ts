@@ -60,6 +60,32 @@ export function addMonths(dateToAdd: Date, numMonthsToAdd: number) {
 }
 
 /**
+ * Returns an array with all elements of given value deleted.
+ */
+export function ArrayClean(arr: any[], deleteValue: any): any[] {
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] == deleteValue) {
+            arr.splice(i, 1);
+            i--;
+        }
+    }
+    return arr;
+}
+
+/**
+ * Return a psuedo-randomly generated string of a given length. URL safe.
+ */
+export function genRandStr(length: number) {
+    let text: string = "";
+    const possible: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (let i = 0; i < length; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
+/**
  * Returns Steam price info from Steam id.
  */
 export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGetPriceInfoResponse[]> {
@@ -163,30 +189,4 @@ export function steamAPIGetReviews(id: number): Promise<SteamAPIGetReviewsRespon
 
     });
 
-}
-
-/**
- * Returns an array with all elements of given value deleted.
- */
-export function ArrayClean(arr: any[], deleteValue: any): any[] {
-    for (let i = 0; i < arr.length; i++) {
-        if (arr[i] == deleteValue) {
-            arr.splice(i, 1);
-            i--;
-        }
-    }
-    return arr;
-}
-
-/**
- * Return a psuedo-randomly generated string of a given length. URL safe.
- */
-export function genRandStr(length: number) {
-    let text: string = "";
-    const possible: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for (let i = 0; i < length; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
 }

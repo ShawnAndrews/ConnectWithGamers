@@ -18,20 +18,45 @@ export default class DatabaseBase {
     /**
      * Connect to MySQL database.
      */
-    connectToDatabase(): void {
+    connectToDatabase(errCallback?: (err: MysqlError) => void): void {
         this.connection = createConnection(config.mysql);
-        this.connection.connect((err: MysqlError) => {
-            if (err) {
-                console.error("Failed to connect to MySQL db: " + err.stack);
-                process.exit();
-            }
-        });
+        this.connection.connect(errCallback);
         this.connection.on("error", function(err) {
             if (err.code === "PROTOCOL_CONNECTION_LOST") {
                 console.log(`Connection to MySQL database lost. Retrying...`);
                 setTimeout(this.connectToDatabase, 2000);
             }
         });
+    }
+
+    /**
+     * SQL Insert wrapper.
+     */
+    insert(tableName: string, columnNames: string[], columnValues: any[], preparedValues: string): Promise<GenericResponseModel> {
+
+        return new Promise((resolve, reject) => {
+            const response: GenericResponseModel = {error: undefined, data: undefined};
+            let preparedVars: any[];
+            let query: string;
+
+            // prepare variables
+            preparedVars = columnValues;
+
+            // prepare query
+            query =  `INSERT INTO ${config.mysql.database}.${tableName} (${columnNames.join(",")}) VALUES (${preparedValues})`;
+
+            // execute query
+            this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
+                if (error) {
+                    console.log(`INSERT error: ${JSON.stringify(error)}`);
+                    return reject(error);
+                }
+                response.data = results;
+                return resolve(response);
+            });
+
+        });
+
     }
 
     /**
@@ -72,36 +97,6 @@ export default class DatabaseBase {
     }
 
     /**
-     * SQL Insert wrapper.
-     */
-    insert(tableName: string, columnNames: string[], columnValues: any[], preparedValues: string): Promise<GenericResponseModel> {
-
-        return new Promise((resolve, reject) => {
-            const response: GenericResponseModel = {error: undefined, data: undefined};
-            let preparedVars: any[];
-            let query: string;
-
-            // prepare variables
-            preparedVars = columnValues;
-
-            // prepare query
-            query =  `INSERT INTO ${config.mysql.database}.${tableName} (${columnNames.join(",")}) VALUES (${preparedValues})`;
-
-            // execute query
-            this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
-                if (error) {
-                    console.log(`INSERT error: ${JSON.stringify(error)}`);
-                    return reject(error);
-                }
-                response.data = results;
-                return resolve(response);
-            });
-
-        });
-
-    }
-
-    /**
      * SQL Update wrapper.
      */
     update(tableName: string, preparedValues: string, columnValues: any[], conditions: string = undefined, conditionVals: any[] = undefined): Promise<GenericResponseModel> {
@@ -124,6 +119,32 @@ export default class DatabaseBase {
             this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
                 if (error) {
                     console.log(`UPDATE error: ${JSON.stringify(error)}`);
+                    return reject(error);
+                }
+                response.data = results;
+                return resolve(response);
+            });
+
+        });
+
+    }
+
+    /**
+     * SQL Delete wrapper.
+     */
+    delete(tableName: string, preparedValues: string[], values: any[]): Promise<GenericResponseModel> {
+
+        return new Promise((resolve, reject) => {
+            const response: GenericResponseModel = {error: undefined, data: undefined};
+            let query: string;
+
+            // prepare query
+            query =  `DELETE FROM ${config.mysql.database}.${tableName} WHERE ${preparedValues.join(" AND ")}`;
+
+            // execute query
+            this.connection.query(query, values, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
+                if (error) {
+                    console.log(`DELETE error: ${JSON.stringify(error)}`);
                     return reject(error);
                 }
                 response.data = results;

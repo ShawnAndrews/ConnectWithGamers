@@ -1,20 +1,19 @@
-import * as core from "express-serve-static-core";
-const socketIO = require("socket.io");
 const express = require("express");
+import { Request, Response } from "express";
 const router = express.Router();
-import { GenericResponseModel, DbChatroomEmotesResponse, DbChatroomUploadEmoteResponse, DbAuthorizeResponse, DbChatroomUploadImageResponse, ChatroomUploadImageResponse, ChatroomEmotesResponse } from "../../client/client-server-common/common";
+import { GenericResponseModel, DbChatroomEmotesResponse, DbChatroomUploadEmoteResponse, DbChatroomUploadImageResponse, ChatroomUploadImageResponse, ChatroomEmotesResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
-import { securityModel } from "../../models/db/security/main";
 import { chatroomModel } from "../../models/db/chatroom/main";
 
-const routes = new routeModel();
+export const routes = new routeModel();
 
 /* routes */
-routes.addRoute("emote/upload", "/emote/upload");
-routes.addRoute("attachment/upload", "/attachment/upload");
 routes.addRoute("emotes/get", "/emotes/get");
+routes.addRoute("emote/upload", "/emote/upload");
+routes.addRoute("emote/delete", "/emote/delete");
+routes.addRoute("attachment/upload", "/attachment/upload");
 
-router.post(routes.getRoute("emotes/get"), (req: core.Request, res: core.Response) => {
+router.post(routes.getRoute("emotes/get"), (req: Request, res: Response) => {
     const chatroomEmotesResponse: ChatroomEmotesResponse = { error: undefined };
     chatroomModel.getEmotes()
     .then((response: DbChatroomEmotesResponse) => {
@@ -30,7 +29,7 @@ router.post(routes.getRoute("emotes/get"), (req: core.Request, res: core.Respons
 
 });
 
-router.post(routes.getRoute("emote/upload"), (req: core.Request, res: core.Response) => {
+router.post(routes.getRoute("emote/upload"), (req: Request, res: Response) => {
     const chatroomEmoteUploadResponse: GenericResponseModel = { error: undefined, data: undefined };
     const imageBase64: string = req.body.emoteBase64.split(",")[1];
     const emotePrefix: string = req.body.emotePrefix;
@@ -53,15 +52,29 @@ router.post(routes.getRoute("emote/upload"), (req: core.Request, res: core.Respo
 
 });
 
-router.post(routes.getRoute("attachment/upload"), (req: core.Request, res: core.Response) => {
+router.post(routes.getRoute("emote/delete"), (req: Request, res: Response) => {
+    const chatroomEmoteDeleteResponse: GenericResponseModel = { error: undefined, data: undefined };
+    const emotePrefix: string = req.body.emotePrefix;
+    const emoteSuffix: string = req.body.emoteSuffix;
+
+    chatroomModel.deleteChatEmote(emotePrefix, emoteSuffix)
+    .then(() => {
+        return res
+        .send(chatroomEmoteDeleteResponse);
+    })
+    .catch((error: string) => {
+        chatroomEmoteDeleteResponse.error = error;
+        return res
+        .send(chatroomEmoteDeleteResponse);
+    });
+
+});
+
+router.post(routes.getRoute("attachment/upload"), (req: Request, res: Response) => {
     const chatroomAttachmentResponse: ChatroomUploadImageResponse = { error: undefined };
     const imageBase64: string = Object.keys(req.body)[0].split(",")[1];
 
-    // authorize
-    securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return chatroomModel.uploadImage(imageBase64);
-    })
+    chatroomModel.uploadImage(imageBase64)
     .then((response: DbChatroomUploadImageResponse) => {
         chatroomAttachmentResponse.link = response.link;
         return res

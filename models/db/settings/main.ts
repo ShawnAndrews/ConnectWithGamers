@@ -55,6 +55,29 @@ class SettingsModel extends DatabaseBase {
     }
 
     /**
+     * Get account recovery uid.
+     */
+    getAccountRecoveryId(username: string): Promise<string> {
+
+        return new Promise( (resolve, reject) => {
+
+            this.select(
+                "accounts",
+                ["recoveryid"],
+                `username=?`,
+                [username])
+                .then((dbResponse: GenericResponseModel) => {
+                    const recoveryid: string = dbResponse.data[0].recoveryid;
+                    return resolve(recoveryid);
+                })
+                .catch((error: string) => {
+                    return reject(error);
+                });
+
+        });
+    }
+
+    /**
      * Change the account profile picture given a base64 encoded string.
      */
     changeAccountImage(accountid: number, imageBase64: string): Promise<DbAccountImageResponse> {

@@ -11,7 +11,8 @@
                 "node_modules/*",
                 "src/types/*"
             ]
-        }
+        },
+        "sourceMap": true,
     },
     "files": [
         "server.ts",
@@ -19,5 +20,8 @@
     ],
     "include": [
         "*"
+    ],
+    "exclude": [
+        "node_modules"
     ]
 }

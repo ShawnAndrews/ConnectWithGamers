@@ -1,7 +1,7 @@
-import * as core from "express-serve-static-core";
+import { Express } from "express";
 const socketIO: SocketIO.Server = require("socket.io");
 const express = require("express");
-const app: core.Express = express();
+const app: Express = express();
 const http = require("http");
 const https = require("https");
 const redis = require("redis");

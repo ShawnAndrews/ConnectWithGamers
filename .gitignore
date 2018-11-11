@@ -16,5 +16,9 @@ bundle.ca-bundle
 # Ignore nodejs debug logs
 npm-debug.log.*
 
+# Coverage reports
+.nyc_output/*
+coverage
+
 # Readme
 README.md

@@ -20,14 +20,15 @@ class SecurityModel extends DatabaseBase {
         return new Promise((resolve, reject) => {
             this.select(
                 "accounts",
-                ["passwordHash"],
+                ["accountid", "passwordHash"],
                 `username=?`,
                 [username])
                 .then((dbResponse: GenericResponseModel) => {
                     if (dbResponse.data.length > 0) {
                         const dbPasswordHash: string = dbResponse.data[0].passwordHash;
+                        const dbAccountId: number = dbResponse.data[0].accountid;
                         if (bcrypt.compareSync(password, dbPasswordHash)) {
-                            const response: DbAuthenticateResponse = { username: username, remember: remember };
+                            const response: DbAuthenticateResponse = { accountid: dbAccountId, username: username, remember: remember };
                             return resolve(response);
                         } else {
                             return reject(`Incorrect username or password.`);

@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import LoginFormContainer from '../account/login/LoginFormContainer';
 import SignupFormContainer from '../account/signup/SignupFormContainer';
 import SettingsFormContainer from '../account/settings/SettingsFormsContainer';
-import VerifyFormContainer from '../account//verify/VerifyFormContainer';
+import VerifyFormContainer from '../account//verify/verifyFormContainer';
 
 const Account: React.SFC<any> = () => {
 

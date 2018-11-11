@@ -1,14 +1,14 @@
-import * as core from "express-serve-static-core";
 import accountController from "./controllers/accountController/account";
 import { router as chatroomController } from "./controllers/chatroomController/chatroom";
 import igdbController from "./controllers/igdbController/igdb";
 import config from "./config";
 import logIP from "./controllers/logger/main";
 import { sendContactEmail } from "./util/nodemailer";
+import { Request, Response, Express, NextFunction } from "express";
 const MobileDetect = require("mobile-detect");
 const blocked = require("blocked");
 const express = require("express");
-const app: core.Express = express();
+const app: Express = express();
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
@@ -38,7 +38,7 @@ if (config.useStrictlyHttps) {
 app.use(cookieParser());
 
 /* log ip and date of access */
-app.use((req: core.Request, res: core.Response, next: core.NextFunction) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.url === `/bundle.css`) {
         console.log(`Request (${req.connection.remoteAddress.replace(/^.*:/, ``)}): ${req.url}`);
         logIP(req.connection.remoteAddress);
@@ -56,16 +56,16 @@ app.use("/account", accountController);
 app.use("/igdb", igdbController);
 
 /* common */
-app.get("/favicon.ico", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });
-app.get("/robots.txt", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/robots.txt")); });
-app.get("/riot.txt", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/riot.txt")); });
+app.get("/favicon.ico", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });
+app.get("/robots.txt", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/robots.txt")); });
+app.get("/riot.txt", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/riot.txt")); });
 
 /* desktop */
 app.use(handleDesktopRequests);
 
 /* client */
-app.get("/bundle.js", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
-app.get("/bundle.css", (req: core.Request, res: core.Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
+app.get("/bundle.js", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
+app.get("/bundle.css", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
 app.use("*", express.static(path.join(__dirname, "../client/dist")));
 
 /* start HTTP/HTTPS server */
@@ -74,7 +74,7 @@ if (config.useStrictlyHttps) {
     secureServer.listen(config.httpsPort);
 }
 
-function handleDesktopRequests(req: core.Request, res: core.Response, next: core.NextFunction): void {
+function handleDesktopRequests(req: Request, res: Response, next: NextFunction): void {
     const device: any = new MobileDetect(req.headers["user-agent"]);
     if (device.phone() === null) {
         if (req.path.startsWith("/css") || req.path.startsWith("/js") || req.path.startsWith("/images") || req.path.startsWith("/fonts")) {

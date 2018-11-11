@@ -29,6 +29,31 @@ class ChatroomModel extends DatabaseBase {
                     if (dbResponse.error) {
                         return reject(dbResponse.error);
                     } else {
+                        response.data = { insertid: dbResponse.data.insertId };
+                        return resolve(response);
+                    }
+                });
+
+        });
+
+    }
+
+    /**
+     * Delete a chat message from the database.
+     */
+    deleteChatMessage(messageid: number): Promise<GenericResponseModel> {
+
+        return new Promise( (resolve, reject) => {
+            const response: GenericResponseModel = {error: undefined, data: undefined};
+
+            this.delete(
+                "chatroom",
+                ["id=?"],
+                [messageid])
+                .then((dbResponse: GenericResponseModel) => {
+                    if (dbResponse.error) {
+                        return reject(dbResponse.error);
+                    } else {
                         return resolve(response);
                     }
                 });
@@ -71,9 +96,9 @@ class ChatroomModel extends DatabaseBase {
     }
 
     /**
-     * Get the complete log of all past chatroom messages.
+     * Upload a new chat emote.
      */
-    uploadChatEmote(emoteURL: string, emotePrefix: string, emoteSuffix: string): Promise<void> {
+    uploadChatEmote(emoteURL: string, emotePrefix: string, emoteSuffix: string): Promise<number> {
 
         return new Promise( (resolve, reject) => {
 
@@ -82,13 +107,32 @@ class ChatroomModel extends DatabaseBase {
                 [emotePrefix, emoteSuffix, emoteURL, Date.now() / 1000],
                 "?, ?, ?, FROM_UNIXTIME(?)")
                 .then((dbResponse: GenericResponseModel) => {
-                    return resolve();
+                    const insertid: number = dbResponse.data.insertId;
+                    return resolve(insertid);
                 })
                 .catch((err: string) => {
                     console.log(`Error inserting chat emote into database: ${err}`);
                     return reject("Emote name taken.");
                 });
 
+        });
+    }
+
+    /**
+     * Delete a chat emote.
+     */
+    deleteChatEmote(emotePrefix: string, emoteSuffix: string): Promise<GenericResponseModel> {
+        return new Promise( (resolve, reject) => {
+            this.delete("chatemotes",
+                ["prefix=?", "suffix=?"],
+                [emotePrefix, emoteSuffix])
+                .then((dbResponse: GenericResponseModel) => {
+                    return resolve(dbResponse);
+                })
+                .catch((err: string) => {
+                    console.log(`Error deleting chat emote from database: ${err}`);
+                    return reject("Emote does not exist for deletion.");
+                });
         });
     }
 
@@ -106,7 +150,6 @@ class ChatroomModel extends DatabaseBase {
                 .catch((error: string) => {
                     return reject(`Error uploading chatroom message attachment. ${error}`);
                 });
-
         });
     }
 

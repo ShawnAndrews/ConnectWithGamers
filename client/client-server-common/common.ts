@@ -275,6 +275,7 @@ export interface DatalessResponse {
 }
 
 export interface DbAuthenticateResponse {
+    accountid: number;
     username: string;
     remember: boolean;
 }
@@ -622,7 +623,7 @@ export interface SteamFriendsResponse {
 
 export interface GenericErrorResponse {
     error: string;
-    data?: any[];
+    data?: any;
 }
 
 export interface SteamFriend {
