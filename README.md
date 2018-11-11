@@ -50,6 +50,7 @@
 - [Config](#config)
 - [Dependencies](#dependencies)
 - [Migrations](#migrations)
+- [Testing](#testing)
 - [Installation](#installation)
 - [Run](#run)
 - [FAQ](#faq)
@@ -208,6 +209,15 @@ Setting up the database requires the following steps:
 db-migrate db:create connectwithgamers
 db-migrate up --config database.json -e prod
 ```
+
+## Testing
+Back-end unit testing on the NodeJS server uses Mocha, Nyc, Istanbul and is available through the following script:
+
+```
+npm run test-with-coverage
+```
+
+In addition to the text summary, an html coverage report will be generated in /coverage/lcov-report/index.html
 
 ## Installation
 How do i run this website on my own?
