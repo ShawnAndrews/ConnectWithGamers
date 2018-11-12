@@ -53,7 +53,7 @@ export function cacheReviewedGames(): Promise<PredefinedGameResponse[]> {
     return new Promise((resolve: any, reject: any) => {
 
         axios.get(
-            `https://api-endpoint.igdb.com/games/?fields=${PredefinedGameResponseFields}&filter[first_release_date][gt]=2018-06-01&filter[release_dates.platform][eq]=6&order=updated_at:desc&limit=${config.igdb.pageLimit}&filter[cover][exists]=1`,
+            `https://api-endpoint.igdb.com/games/?fields=${PredefinedGameResponseFields}&filter[first_release_date][gt]=${CURRENT_UNIX_TIME_MS}&filter[release_dates.platform][eq]=6&order=updated_at:desc&limit=${config.igdb.pageLimit}&filter[cover][exists]=1`,
             {
                 headers: {
                     "user-key": config.igdb.key,
