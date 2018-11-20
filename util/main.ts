@@ -1,4 +1,5 @@
 import * as WebRequest from "web-request";
+import { get } from "web-request";
 import config from "./../config";
 import { SteamAPIReview, SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse } from "../client/client-server-common/common";
 
