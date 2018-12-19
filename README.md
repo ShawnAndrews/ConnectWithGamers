@@ -25,7 +25,7 @@
   <strong>Discover new games today!</strong>
 </div>
 <div align="center">
-  A games library and mobile chat application.
+  A games library and chat application.
 </div>
 
 <div align="center">
