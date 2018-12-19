@@ -70,7 +70,7 @@
 <br/>
 
 <p align="center">
-  <img src="https://i.imgur.com/lk6rICR.png" />
+  <img src="https://i.imgur.com/RXENBuI.png" />
 </p>
 
 ## Updates
@@ -170,6 +170,10 @@
 >     * Updated results screen
 >          * Increased games shown to 50
 >          * Updated game information to include pricing, genres and steam link (where applicable)
+> v1.6
+>
+> - Added fully-responsive across all devices
+> - Redesigned UI
 </details>
 
 ## Config
@@ -277,7 +281,7 @@ Of course! You can check them out on my portfolio website at [saportfolio.ca](ht
 Use my [Migrations](#migrations) guide located above.
 
 ### How was this project developed?
-Using React, Redis, Redux, NodeJS, Mocha, MySQL, and SocketIO.
+Using React, Bootstrap, Redis, Redux, NodeJS, Mocha, MySQL, and SocketIO.
 
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)
