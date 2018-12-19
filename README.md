@@ -170,6 +170,7 @@
 >     * Updated results screen
 >          * Increased games shown to 50
 >          * Updated game information to include pricing, genres and steam link (where applicable)
+>
 > v1.6
 >
 > - Added fully-responsive across all devices
