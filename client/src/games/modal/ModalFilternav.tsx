@@ -54,7 +54,7 @@ const ModalFilternav: React.SFC<IModalFilternavProps> = (props: IModalFilternavP
                     {props.platformExpanded ? <i className="fas fa-chevron-down"/> : <i className="fas fa-chevron-up"/>}
                 </ListItem>
                 <Collapse className="filter-items" in={props.platformExpanded} timeout="auto" unmountOnExit={true}>
-                    <List component="div" disablePadding={true}>
+                    <List disablePadding={true}>
                         {props.platforms && 
                             props.platforms.map((pair: NameValuePair, index: number) => {
                                 return (
@@ -84,7 +84,7 @@ const ModalFilternav: React.SFC<IModalFilternavProps> = (props: IModalFilternavP
                     {props.genreExpanded ? <i className="fas fa-chevron-down"/> : <i className="fas fa-chevron-up"/>}
                 </ListItem>
                 <Collapse className="filter-items" in={props.genreExpanded} timeout="auto" unmountOnExit={true}>
-                    <List component="div" disablePadding={true}>
+                    <List disablePadding={true}>
                         {props.genres && 
                             props.genres.map((pair: NameValuePair, index: number) => {
                                 return (
@@ -114,7 +114,7 @@ const ModalFilternav: React.SFC<IModalFilternavProps> = (props: IModalFilternavP
                     {props.categoryExpanded ? <i className="fas fa-chevron-down"/> : <i className="fas fa-chevron-up"/>}
                 </ListItem>
                 <Collapse className="filter-items" in={props.categoryExpanded} timeout="auto" unmountOnExit={true}>
-                    <List component="div" disablePadding={true}>
+                    <List disablePadding={true}>
                         {props.categories && 
                             props.categories.map((pair: NameValuePair, index: number) => {
                                 return (
@@ -144,7 +144,7 @@ const ModalFilternav: React.SFC<IModalFilternavProps> = (props: IModalFilternavP
                     {props.popularityExpanded ? <i className="fas fa-chevron-down"/> : <i className="fas fa-chevron-up"/>}
                 </ListItem>
                 <Collapse className="filter-items" in={props.popularityExpanded} timeout="auto" unmountOnExit={true}>
-                    <List component="div" disablePadding={true}>
+                    <List disablePadding={true}>
                         {props.popularities &&
                             props.popularities.map((pair: NameValuePair, index: number) => {
                                 return (
@@ -164,7 +164,7 @@ const ModalFilternav: React.SFC<IModalFilternavProps> = (props: IModalFilternavP
                     {props.sortExpanded ? <i className="fas fa-chevron-down"/> : <i className="fas fa-chevron-up"/>}
                 </ListItem>
                 <Collapse className="filter-items" in={props.sortExpanded} timeout="auto" unmountOnExit={true}>
-                    <List component="div" disablePadding={true}>
+                    <List disablePadding={true}>
                         {props.sorts &&
                             props.sorts.map((pair: NameValuePair, index: number) => {
                                 return (
