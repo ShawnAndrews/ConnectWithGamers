@@ -18,12 +18,11 @@ class Spinner extends React.Component<ISpinnerProps, ISpinnerState> {
         return (
             <div className={`login-spinner ${this.props.className ? this.props.className : ''}`}>
                 <CircularProgress
-                    className="login-spinner-circle"
                     size={120} 
                     thickness={2}
                 />
                 {this.props.loadingMsg &&
-                    <div className="login-spinner-message">{this.props.loadingMsg}</div>
+                    <div className="my-3">{this.props.loadingMsg}</div>
                     }
             </div>
         );

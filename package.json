@@ -1,111 +1,76 @@
 {
-  "name": "connect-with-gamers",
-  "version": "1.0.0",
-  "description": "Connect With Gamers",
-  "author": "Shawn Andrews",
-  "license": "MIT",
-  "scripts": {
-    "server-client": "npm run build-ts && npm run tslint && npm run client-prod --prefix client/ && node dist/server.js",
-    "server-prod": "npm run build-ts && npm run tslint",
-    "server": "node dist/server.js",
-    "chat-server": "node dist/chatserver.js",
-    "build-ts": "tsc",
-    "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "test": "mocha --exit -r ts-node/register **/*.spec.ts  --timeout 5000",
-    "test-with-coverage": "nyc mocha --exit --timeout 5000 --opts ./mocha.opts",
-    "test-with-coverage-to-codecov": "nyc mocha --exit --timeout 5000 --opts ./mocha.opts > coverage.lcov && codecov -t f2186ac4-edde-43bc-8a83-80c089a32d6b"
-  },
-  "dependencies": {
-    "@types/bcryptjs": "^2.4.2",
-    "@types/chai-as-promised": "^7.1.0",
-    "@types/mysql": "^2.15.5",
-    "@types/redis": "^2.8.7",
-    "@types/socket.io": "^2.1.0",
-    "async": "^2.6.1",
-    "axios": "^0.18.0",
-    "bcryptjs": "^2.4.3",
-    "blocked": "^1.2.1",
-    "bluebird": "^3.5.2",
-    "body-parser": "^1.18.3",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "cluster": "^0.7.7",
-    "compression": "^1.7.3",
-    "cookie-parser": "^1.4.3",
-    "dotenv": "^6.1.0",
-    "errorhandler": "^1.5.0",
-    "express": "^4.16.4",
-    "express-flash": "0.0.2",
-    "express-force-ssl": "^0.3.2",
-    "express-rate-limit": "^3.3.0",
-    "express-session": "^1.15.6",
-    "express-validator": "^5.3.0",
-    "fbgraph": "^1.4.4",
-    "hoek": "^6.0.0",
-    "https": "^1.0.0",
-    "igdb-api-node": "^3.1.7",
-    "imgur": "^0.3.1",
-    "lodash": "^4.17.11",
-    "lusca": "^1.6.1",
-    "mobile-detect": "^1.4.3",
-    "mocha": "^5.2.0",
-    "morgan": "^1.9.1",
-    "mysql": "^2.16.0",
-    "nodemailer": "^4.6.8",
-    "passport": "^0.4.0",
-    "passport-facebook": "^2.1.1",
-    "passport-local": "^1.0.0",
-    "pug": "^2.0.3",
-    "redis": "^2.8.0",
-    "request": "^2.88.0",
-    "socket.io": "^2.1.1",
-    "web-request": "^1.0.7"
-  },
-  "devDependencies": {
-    "@types/async": "^2.0.50",
-    "@types/bcrypt-nodejs": "0.0.30",
-    "@types/bluebird": "^3.5.24",
-    "@types/body-parser": "^1.17.0",
-    "@types/chai": "^4.1.7",
-    "@types/compression": "0.0.33",
-    "@types/dotenv": "^2.0.20",
-    "@types/errorhandler": "0.0.32",
-    "@types/express": "^4.16.0",
-    "@types/express-session": "^1.15.11",
-    "@types/jquery": "^3.3.22",
-    "@types/lodash": "^4.14.117",
-    "@types/mocha": "^5.2.5",
-    "@types/morgan": "^1.7.32",
-    "@types/node": "^7.10.1",
-    "@types/request": "^2.48.0",
-    "@types/supertest": "^2.0.6",
-    "codecov": "^3.1.0",
-    "concurrently": "^3.6.1",
-    "node-sass": "^4.9.4",
-    "nodemon": "^1.18.5",
-    "nyc": "^13.1.0",
-    "shelljs": "^0.7.7",
-    "source-map-support": "^0.5.9",
-    "supertest": "^3.3.0",
-    "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
-    "typescript": "^2.9.2"
-  },
-  "nyc": {
-    "include": [
-      "**/*.spec.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "text-summary",
-      "lcov"
-    ],
-    "sourceMap": true,
-    "instrument": true
-  }
+    "name": "connect-with-gamers",
+    "version": "1.0.0",
+    "description": "Connect With Gamers",
+    "author": "Shawn Andrews",
+    "license": "MIT",
+    "scripts": {
+        "server-client": "npm run build-ts && npm run tslint && npm run client-prod --prefix client/ && node dist/server.js",
+        "server-prod": "npm run build-ts && npm run tslint",
+        "server": "node dist/server.js",
+        "chat-server": "node dist/chatserver.js",
+        "build-ts": "tsc",
+        "tslint": "tslint -c tslint.json -p tsconfig.json",
+        "test": "mocha --exit -r ts-node/register **/*.spec.ts  --timeout 5000",
+        "test-with-coverage": "nyc mocha --exit --timeout 5000 --opts ./mocha.opts",
+        "test-with-coverage-to-codecov": "nyc mocha --exit --timeout 5000 --opts ./mocha.opts > coverage.lcov && codecov -t f2186ac4-edde-43bc-8a83-80c089a32d6b"
+    },
+    "dependencies": {
+        "@types/express": "^4.16.0",
+        "@types/mysql": "^2.15.5",
+        "@types/reactstrap": "^6.4.3",
+        "@types/redis": "^2.8.7",
+        "@types/socket.io": "^2.1.0",
+        "axios": "^0.18.0",
+        "bcryptjs": "^2.4.3",
+        "blocked": "^1.2.1",
+        "body-parser": "^1.18.3",
+        "chai": "^4.2.0",
+        "chai-as-promised": "^7.1.1",
+        "cluster": "^0.7.7",
+        "cookie-parser": "^1.4.3",
+        "event-stream": "^4.0.1",
+        "express": "^4.16.4",
+        "express-force-ssl": "^0.3.2",
+        "express-rate-limit": "^3.3.0",
+        "express-session": "^1.15.6",
+        "https": "^1.0.0",
+        "igdb-api-node": "^3.1.7",
+        "imgur": "^0.3.1",
+        "mobile-detect": "^1.4.3",
+        "mocha": "^5.2.0",
+        "mysql": "^2.16.0",
+        "nodemailer": "^4.6.8",
+        "react": "^16.6.3",
+        "react-dom": "^16.6.3",
+        "reactstrap": "^6.5.0",
+        "redis": "^2.8.0",
+        "socket.io": "^2.1.1",
+        "web-request": "^1.0.7"
+    },
+    "devDependencies": {
+        "codecov": "^3.1.0",
+        "nyc": "^13.1.0",
+        "source-map-support": "^0.5.9",
+        "ts-node": "^7.0.1",
+        "tslint": "^5.11.0",
+        "typescript": "^2.9.2"
+    },
+    "nyc": {
+        "include": [
+            "**/*.spec.ts"
+        ],
+        "extension": [
+            ".ts"
+        ],
+        "require": [
+            "ts-node/register"
+        ],
+        "reporter": [
+            "text-summary",
+            "lcov"
+        ],
+        "sourceMap": true,
+        "instrument": true
+    }
 }

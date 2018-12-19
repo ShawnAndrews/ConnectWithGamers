@@ -1,3 +1,127 @@
-.genRandomInt(@min, @max) { 
-    @rnd: floor(`Math.random() * @{max} + @{min}`);
+.custom-shadow {
+    box-shadow: 0 4px 3px 0 rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 2px 1px 0 rgba(0,0,0,.12);
+}
+
+.hover-primary {
+    &:hover {
+        background-color: @primary-highlighted-color!important;
+    }
+}
+
+.bg-primary {
+    background-color: @primary-color!important;
+}
+
+.bg-secondary {
+    background-color: @secondary-color!important;
+}
+
+.color-primary {
+    color: @primary-color!important;
+}
+
+.color-secondary {
+    color: white!important;
+}
+
+.font-secondary {
+    font-family: @secondary-font!important;
+}
+
+.cursor-pointer {
+    * {
+        cursor: pointer;
+    }
+}
+
+.btn-flat-bot-rad {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.y-scrollable {
+    overflow-y: scroll;
+}
+
+.custom-scrollbar {
+    &::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 10px;
+        background-color: #F5F5F5;
+    }
+    &::-webkit-scrollbar {
+        width: 12px;
+        background-color: #F5F5F5;
+    }
+    &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: @primary-color;
+    }
+}
+
+.custom-account-form-group {
+    > div {
+        border-bottom: 1px solid rgba(white, 0.42)!important;
+
+        &::before {
+            border-bottom: 1px solid rgba(white, 0.42)!important;
+        }
+        &::after {
+            border-bottom: 2px solid white!important;
+        }
+        &:hover::before {
+            border-bottom: 2px solid rgba(white, 0.87)!important;
+        }
+        &:hover::after {
+            border-bottom: 2px solid white!important;
+        }
+    }
+    * {
+        color: white!important;
+    }
+}
+
+.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.notfound {
+    width: 200px;
+    border-radius: 20px;
+}
+
+.background-left {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 550px;
+    height: 700px;
+    background: radial-gradient(ellipse at left, rgba(255,255,255,0) 20%,rgba(255,255,255,1) 70%), radial-gradient(ellipse at left, rgba(255,255,255,0) 60%,rgba(255,255,255,1) 70%), linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('https://i.imgur.com/X9PCp1v.jpg');
+    background-size: 100% 100%;
+    z-index: -1;
+
+    @media @lg {
+        display: none;
+    }
+}
+
+.background-right {
+    position: fixed;
+    top: @navbar-height;
+    right: 0;
+    width: 450px;
+    height: 600px;
+    background: radial-gradient(ellipse at right 50%, rgba(255,255,255,0) 20%,rgba(255,255,255,1) 70%), radial-gradient(ellipse at right 50%, rgba(255,255,255,0) 60%,rgba(255,255,255,1) 70%), linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('https://i.imgur.com/rZUW3lw.jpg');
+    background-size: 100% 100%;
+    z-index: -1;
+
+    @media @lg {
+        display: none;
+    }
 }

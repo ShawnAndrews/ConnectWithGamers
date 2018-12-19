@@ -1,10 +1,7 @@
 import * as React from 'react';
 import Spinner from '../../spinner/main';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
-import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { Paper, TextField, Button, FormControlLabel, Switch } from '@material-ui/core';
 
 interface ISettingsFormProps {
     isLoading: boolean;
@@ -48,135 +45,125 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
             (props.steam !== props.newSteam) ||
             (props.twitch !== props.newTwitch);
 
-        if (props.isLoading) {
-            return (
-                <div className="account-center">
-                    <Spinner loadingMsg={props.loadingMsg} />
-                </div>
-            );
-        }
-
+    if (props.isLoading) {
         return (
-            <div className="account-settings scrollable">
-                <div className="account-settings-title">
-                    <div className="account-settings-title-container">
-                        {props.image
-                            ? <Avatar className="account-settings-title-chip" src={props.image}/>
-                            : <Avatar className="account-settings-title-chip"/>}
-                        <div className="account-settings-title-overlay-container">
-                            {!props.image && 
-                                <div className="account-settings-title-center">
-                                    <i className="far fa-file-image account-settings-title-image"/>
-                                    <i className="fas fa-plus account-settings-title-plus"/>
-                                </div>}
-                        </div>
-                        <input className="account-settings-title-input" type="file" onChange={props.handleImageChange} />
-                    </div>
-                    <div className="account-settings-title-discard-container">
-                        {props.image &&
-                            <div className="account-settings-title-overlay-container" onClick={props.handleImageDelete}>
-                                <Avatar className="account-settings-title-chip-discard"/>
-                                <div className="account-settings-title-center">
-                                    <i className="far fa-trash-alt account-settings-title-image"/>
-                                </div>
-                            </div>}
-                    </div>
-                </div>
-                <div className="account-settings-container">
-                    <TextField
-                        className="account-settings-username"
-                        defaultValue={props.username}
-                        onChange={props.onUsernameChanged}
-                        label="Username"
-                    />
-                </div>
-                <div className="account-settings-container">
-                    <TextField
-                        className={props.emailVerified ? "account-settings-email" : "account-settings-email-unverified"} 
-                        defaultValue={props.email}
-                        onChange={props.onEmailChanged}
-                        label={!props.emailVerified ? "Email (Unverified)" : "Email"}
-                    />
-                    {!props.emailVerified && 
-                        <Button 
-                            variant="raised" 
-                            className="account-settings-email-unverified-btn" 
-                            color="primary" 
-                            onClick={() => { props.resend(); }}
-                        >
-                            Resend
-                        </Button>}
-                </div>
-                <div className="account-settings-container">
-                    <TextField
-                        className="account-settings-password"
-                        type="password"
-                        defaultValue={props.password}
-                        onChange={props.onPasswordChanged}
-                        label="New password"
-                    />
-                </div>
-                <FormControlLabel
-                    className="account-settings-showlinks large-checkbox"
-                    control={
-                        <Switch
-                            onChange={props.showLinksChanged}
-                            color="primary"
-                        />
-                    }
-                    label="Show profile links"
-                />
-                {props.showLinks && 
-                    <div>
-                        <div className="account-settings-container">
-                            <i className="fab fa-discord fa-3x account-settings-link-icon"/>
-                            <TextField
-                                className="account-settings-link"
-                                defaultValue={props.discord}
-                                onChange={props.onDiscordChanged}
-                                label="Discord Server Link"
-                            />
-                        </div>
-                        <div className="account-settings-container">
-                            <i className="fab fa-steam-square fa-3x account-settings-link-icon"/>
-                            <TextField
-                                className="account-settings-link"
-                                defaultValue={props.steam}
-                                onChange={props.onSteamChanged}
-                                label="Steam name"
-                            />
-                        </div>
-                        <div className="account-settings-container">
-                            <i className="fab fa-twitch fa-3x account-settings-link-icon"/>
-                            <TextField
-                                className="account-settings-link"
-                                defaultValue={props.twitch}
-                                onChange={props.onTwitchChanged}
-                                label="Twitch Name"
-                            />
-                        </div>
-                    </div>}
-                <Button 
-                    variant="raised" 
-                    className="account-settings-logout"
-                    color="primary" 
-                    onClick={props.logout}
-                >
-                    Logout
-                </Button>
-                {showSaveChanges && 
-                    <Button 
-                        variant="raised" 
-                        className="account-settings-savechanges"
-                        color="primary" 
-                        onClick={props.saveChanges}
-                    >
-                        Save Changes
-                    </Button>}
-                
+            <div className="account-center">
+                <Spinner className="text-center mt-5" loadingMsg={props.loadingMsg} />
             </div>
         );
+    }
 
+    return (
+        <Paper className="settings bg-primary p-4 mx-auto mt-5 position-relative" elevation={24}>
+            <div className="chip-container position-relative">
+                {props.image
+                    ? <Avatar className="chip mx-auto bg-secondary mt-3" src={props.image}/>
+                    : <Avatar className="chip mx-auto bg-secondary mt-3"/>}
+                {!props.image && <i className="fas fa-plus plus-icon color-primary center "/>}
+                <input className="chip-input-hidden rounded-circle" type="file" onChange={props.handleImageChange}/>
+            </div>
+            {props.image &&
+                <div className="chip-discard-container position-relative" onClick={props.handleImageDelete}>
+                    <Avatar className="chip-discard mx-auto bg-secondary mt-2"/>
+                    <i className="far fa-trash-alt center"/>
+                </div>}
+            <div className="username mx-auto mt-4">
+                <TextField
+                    className="custom-account-form-group"
+                    label="Username"
+                    value={props.newUsername}
+                    onChange={props.onUsernameChanged}
+                    margin="normal"
+                    fullWidth={true}
+                />
+            </div>
+            <div className="email row mx-auto">
+                <div className={`${props.emailVerified ? 'col-12' : 'col-9'} p-0`}>
+                    <TextField
+                        className="custom-account-form-group"
+                        label={!props.emailVerified ? "Email (Unverified)" : "Email"}
+                        value={props.newEmail}
+                        onChange={props.onEmailChanged}
+                        margin="normal"
+                        fullWidth={true}
+                    />
+                </div>
+                {!props.emailVerified &&
+                    <div className="col-3 pr-0">
+                        <Button className="resend-btn color-primary bg-secondary" onClick={props.resend} variant="contained" fullWidth={true}>
+                            Resend
+                        </Button>
+                    </div>}
+            </div>
+            <div className="password mx-auto">
+                <TextField
+                    className="custom-account-form-group"
+                    label="New password"
+                    value={props.newPassword}
+                    defaultValue={props.password}
+                    onChange={props.onPasswordChanged}
+                    type="password"
+                    margin="normal"
+                    fullWidth={true}
+                />
+            </div>
+            <FormControlLabel
+                className={`showlinks custom-switch ${props.showLinks ? 'active' : ''} m-0`}
+                control={
+                    <Switch
+                        onChange={props.showLinksChanged}
+                        color="primary"
+                    />
+                }
+                label="Show profile links"
+            />
+            {props.showLinks && 
+                <>
+                    <div className="link-container row mx-0 mt-4">
+                        <i className="fab fa-discord fa-3x col-2 p-0"/>
+                        <TextField
+                            className="custom-account-form-group col-10"
+                            defaultValue={props.newDiscord}
+                            onChange={props.onDiscordChanged}
+                            label="Discord Server Link"
+                            fullWidth={true}
+                        />
+                    </div>
+                    <div className="link-container row mx-0 mt-2">
+                        <i className="fab fa-steam-square fa-3x col-2 p-0"/>
+                        <TextField
+                            className="custom-account-form-group col-10"
+                            defaultValue={props.newSteam}
+                            onChange={props.onSteamChanged}
+                            label="Steam name"
+                            fullWidth={true}
+                        />
+                    </div>
+                    <div className="link-container row mx-0 mt-2">
+                        <i className="fab fa-twitch fa-3x col-2 p-0"/>
+                        <TextField
+                            className="custom-account-form-group col-10"
+                            defaultValue={props.newTwitch}
+                            onChange={props.onTwitchChanged}
+                            label="Twitch Name"
+                            fullWidth={true}
+                        />
+                    </div>
+                </>}
+            <Button className="logout-btn color-primary bg-secondary mt-3" onClick={props.logout} variant="contained" fullWidth={true}>
+                Logout
+            </Button>
+            {showSaveChanges && 
+                <Button 
+                    variant="raised" 
+                    className="save br-0"
+                    color="primary" 
+                    onClick={props.saveChanges}
+                >
+                    Save Changes
+                </Button>}  
+        </Paper>
+    );
 };
 
 export default SettingsForm;

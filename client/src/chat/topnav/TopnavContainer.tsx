@@ -7,8 +7,8 @@ interface ITopnavContainerProps extends RouteComponentProps<any> { }
 
 interface ITopnavContainerState {
     title: string;
-    usersPageActive: boolean;
-    cogPageActive: boolean;
+    searchText: string;
+    anchorEl: HTMLElement;
 }
 
 class TopnavContainer extends React.Component<ITopnavContainerProps, ITopnavContainerState> {
@@ -16,31 +16,29 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, ITopnavCont
     constructor(props: ITopnavContainerProps) {
         super(props);
         this.getPathTitle = this.getPathTitle.bind(this);
-        this.onClickUsersIcon = this.onClickUsersIcon.bind(this);
-        this.onClickCogIcon = this.onClickCogIcon.bind(this);
-
-        const usersPageActive: boolean = (props.location.pathname.startsWith('/chat/users/'));
-        const cogPageActive: boolean = (props.location.pathname === '/chat/settings/');
-
+        this.handleSearchKeyPress = this.handleSearchKeyPress.bind(this);
+        this.onSearchTextChange = this.onSearchTextChange.bind(this);
+        this.onMenuClick = this.onMenuClick.bind(this);
+        this.onMenuClose = this.onMenuClose.bind(this);
+        this.onCreateEmoteLinkClick = this.onCreateEmoteLinkClick.bind(this);
+        this.onViewEmotesLinkClick = this.onViewEmotesLinkClick.bind(this);
+        this.onUserlistLinkClick = this.onUserlistLinkClick.bind(this);
+        
         this.state = { 
-            title: this.getPathTitle(props), 
-            usersPageActive: usersPageActive, 
-            cogPageActive: cogPageActive 
+            title: this.getPathTitle(props),
+            searchText: '',
+            anchorEl: null
         };
     }
 
     componentWillReceiveProps(newProps: ITopnavContainerProps): void {
-        const usersPageActive: boolean = (newProps.location.pathname === '/chat/users/');
-        const cogPageActive: boolean = (newProps.location.pathname === '/chat/settings/');
-        this.setState({ title: this.getPathTitle(newProps), usersPageActive: usersPageActive, cogPageActive: cogPageActive });
+        this.setState({ title: this.getPathTitle(newProps) });
     }
 
     getPathTitle(props: ITopnavContainerProps): string {
         const path: string = props.history.location.pathname;
         
-        if (path === `/chat` || path === `/chat/`) {
-            return "Chatroom";
-        } else if (path.startsWith(`/chat/users`)) {
+        if (path.startsWith(`/chat/users`)) {
             return "User List";
         } else if (path.startsWith(`/chat/settings`)) {
             return "Settings";
@@ -56,34 +54,48 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, ITopnavCont
 
     }
 
-    onClickUsersIcon(): void {
-        this.setState({ usersPageActive: !this.state.usersPageActive }, () => {
-            if (this.state.usersPageActive) {
-                this.props.history.push('/chat/users/');
-            } else {
-                this.props.history.goBack();
-            }
-        });
+    handleSearchKeyPress(e: React.KeyboardEvent<HTMLInputElement>): void {
+        if (e.key === 'Enter') {
+            this.props.history.push(`/chat/users${this.state.searchText === '' ? this.state.searchText : `?search=${this.state.searchText}`}`);
+        }
     }
 
-    onClickCogIcon(): void {
-        this.setState({ cogPageActive: !this.state.cogPageActive }, () => {
-            if (this.state.cogPageActive) {
-                this.props.history.push('/chat/settings/');
-            } else {
-                this.props.history.goBack();
-            }
-        });
+    onSearchTextChange(e: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({ searchText: e.target.value });
+    }
+
+    onMenuClick(e: React.MouseEvent<HTMLElement>): void {
+        this.setState({ anchorEl: e.currentTarget });
+    }
+
+    onMenuClose(): void {
+        this.setState({ anchorEl: null });
+    }
+
+    onCreateEmoteLinkClick(): void {
+        this.props.history.push('/chat/emotes/create');
+    }
+
+    onViewEmotesLinkClick(): void {
+        this.props.history.push('/chat/emotes');
+    }
+
+    onUserlistLinkClick(): void {
+        this.props.history.push('/chat/users');
     }
 
     render() {
         return (
             <Topnav
                 title={this.state.title}
-                usersPageActive={this.state.usersPageActive}
-                cogPageActive={this.state.cogPageActive}
-                onClickUsersIcon={this.onClickUsersIcon}
-                onClickCogIcon={this.onClickCogIcon}
+                anchorEl={this.state.anchorEl}
+                onSearchTextChange={this.onSearchTextChange}
+                handleSearchKeyPress={this.handleSearchKeyPress}
+                onMenuClick={this.onMenuClick}
+                onMenuClose={this.onMenuClose}
+                onCreateEmoteLinkClick={this.onCreateEmoteLinkClick}
+                onViewEmotesLinkClick={this.onViewEmotesLinkClick}
+                onUserlistLinkClick={this.onUserlistLinkClick}
             />
         );
     }

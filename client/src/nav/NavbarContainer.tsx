@@ -1,25 +1,45 @@
+import * as Redux from 'redux';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { NAV_PAGE } from '../app/app';
 import Navbar from './Navbar';
+import { toggleSearchModal } from '../actions/main';
 
 interface INavbarContainerProps extends RouteComponentProps<any> { } 
 
 interface INavbarContainerState {
     index: number;
+    searchQuery: string;
+    toggleAdvancedSearch: boolean;
 }
 
-class NavbarContainer extends React.Component<INavbarContainerProps, INavbarContainerState> {
+interface ReduxStateProps {
+    
+}
 
-    constructor(props: INavbarContainerProps) {
+interface ReduxDispatchProps {
+    toggleSearchModal: () => void;
+}
+
+type Props = INavbarContainerProps & ReduxStateProps & ReduxDispatchProps;
+
+class NavbarContainer extends React.Component<Props, INavbarContainerState> {
+
+    constructor(props: Props) {
         super(props);
-        this.onTabChange = this.onTabChange.bind(this);
+        this.onTabClick = this.onTabClick.bind(this);
         this.updateNavSelection = this.updateNavSelection.bind(this);
-        
+        this.onToggleAdvancedSearch = this.onToggleAdvancedSearch.bind(this);
+        this.onSubmitSearch = this.onSubmitSearch.bind(this);
+        this.onSearchQueryChanged = this.onSearchQueryChanged.bind(this);
+
         const onLoginScreen: boolean = props.history.location.pathname.startsWith(NAV_PAGE.ACCOUNT);
 
         this.state = {
-            index: onLoginScreen ? 3 : undefined
+            index: onLoginScreen ? 3 : undefined,
+            searchQuery: '',
+            toggleAdvancedSearch: false
         };
     }
 
@@ -34,7 +54,7 @@ class NavbarContainer extends React.Component<INavbarContainerProps, INavbarCont
     updateNavSelection(path: string): void {
         if (path === NAV_PAGE.HOME) {
             this.setState({ index: 0 });
-        } else if (path.startsWith(NAV_PAGE.MENU)) {
+        } else if (path.startsWith(NAV_PAGE.GAMES)) {
             this.setState({ index: 1 });
         } else if (path.startsWith(NAV_PAGE.CHATROOM)) {
             this.setState({ index: 2 });
@@ -45,28 +65,44 @@ class NavbarContainer extends React.Component<INavbarContainerProps, INavbarCont
         }
     }
 
-    onTabChange(event: React.ChangeEvent<{}>, value: any): void {
-        this.setState({ index: value });
-        if (value === 0) {
-            this.props.history.push(NAV_PAGE.HOME);
-        } else if (value === 1) {
-            this.props.history.push(NAV_PAGE.MENU);
-        } else if (value === 2) {
-            this.props.history.push(NAV_PAGE.CHATROOM);
-        } else if (value === 3) {
-            this.props.history.push(NAV_PAGE.ACCOUNT);
-        }
+    onTabClick(path: string): void {
+        this.props.history.push(path);
+    }
+
+    onToggleAdvancedSearch(): void {
+        this.props.toggleSearchModal();
+    }
+
+    onSubmitSearch(e: React.FormEvent<HTMLFormElement>): void {
+        e.preventDefault();
+        this.props.history.push(`/games/search/filter/?query=${this.state.searchQuery}&sort=popularity-desc`);
+    }
+
+    onSearchQueryChanged(e: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({ searchQuery: e.target.value });
     }
 
     render() {
         return (
             <Navbar
                 index={this.state.index}
-                onTabChange={this.onTabChange}
+                searchQuery={this.state.searchQuery}
+                toggleAdvancedSearch={this.state.toggleAdvancedSearch}
+                onTabClick={this.onTabClick}
+                onToggleAdvancedSearch={this.onToggleAdvancedSearch}
+                onSubmitSearch={this.onSubmitSearch}
+                onSearchQueryChanged={this.onSearchQueryChanged}
             />
         );
     }
 
 }
 
-export default withRouter(NavbarContainer);
+const mapStateToProps = (state: any, ownProps: INavbarContainerProps): ReduxStateProps => ({});
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: INavbarContainerProps): ReduxDispatchProps => ({
+    toggleSearchModal: () => { dispatch(toggleSearchModal()); },
+});
+
+export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, INavbarContainerProps>
+    (mapStateToProps, mapDispatchToProps)(NavbarContainer));

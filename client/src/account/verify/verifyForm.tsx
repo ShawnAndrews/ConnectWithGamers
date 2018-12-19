@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Spinner from '../../spinner/main';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
 
 interface IVerifyFormProps {
     isLoading: boolean;
@@ -13,25 +14,26 @@ const VerifyForm: React.SFC<IVerifyFormProps> = (props: IVerifyFormProps) => {
     if (props.isLoading) {
         return (
             <div className="account-center">
-                <Spinner loadingMsg="Verifying code..." />
+                <Spinner className="text-center mt-4" loadingMsg="Verifying code..." />
             </div>
         );
     }
 
     return (
-        <div className="account-verify-email-container">
+        <Paper className="settings bg-primary p-4 mx-auto mt-5 position-relative" elevation={24}>
             {props.verificationSuccessful
-            ? <span className="account-verify-email-text">Successfully verified email!</span>
-            : <span className="account-verify-email-text">Failed to verify email. <br/> Please ensure the verification code in the URL is correct.</span>}
+                ? <div className="text-center color-secondary">Successfully verified email!</div>
+                : <div className="text-center color-secondary">Failed to verify email. <br/> Please ensure the verification code in the URL is correct.</div>}
             <Button 
                 variant="raised" 
-                className="account-verify-email-btn"
+                className="color-primary bg-secondary mt-4"
                 color="primary" 
                 onClick={props.onVerifyEmailClick}
+                fullWidth={true}
             >
                 {props.verificationSuccessful ? "Back To Account" : "Home"} 
             </Button>
-        </div>
+        </Paper>
     );
 
 };

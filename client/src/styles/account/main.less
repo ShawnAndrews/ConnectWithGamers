@@ -1,606 +1,121 @@
-@login-form-col: whitesmoke;
-@login-logo-URL: url("https://i.imgur.com/UfeBmAp.gif");
-@login-logo-width: 200px;
-@login-logo-height: 200px;
-@title-chip-size: 60px;
+@account-login-width: 400px;
+@chip-size: 60px;
+@chip-discard-size: 30px;
+@save-height-btn: 50px;
 
-.account-page, .account-recovery-page {
-  height: 100%;
+.account {
+    border-radius: 20px!important;
+    max-width: @account-login-width;
 
-  .flat-background {
-    height: 100%;
-    background-color: @primary-color;
-  }
-
-  .div-center {
-    text-align: center;
-  }
-
-  .top-xs-padding {
-    margin: 10px auto auto auto !important;
-  }
-
-  .top-sm-padding {
-    margin: 20px auto auto auto !important;
-  }
-
-  .top-md-padding {
-    margin: 20px auto auto auto !important;
-  }
-
-  .return-btn {
-    position: absolute;
-    left: 10px; 
-    bottom: 10px;
-    background-color: rgba(0,0,0,.1)!important;
-    border-radius: 50%!important;
-    height: 64px;
-
-    i {
-      color: rgba(255,255,255,0.6) !important;
-    }
-  }
-
-  .account-center {
-    position: absolute;
-    z-index: 10;
-    width: 100%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    .account-logo {
-      background-image: @login-logo-URL;
-      margin: auto;
-      height: @login-logo-height;
-      width: @login-logo-width;
-      opacity: 0.85;
-    }
-
-    .account-logo-name {
-      font-size: 1.8em;
-      text-align: center;
-      font-family: 'Pacifico' !important;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 50px;
-    }
-
-    @media (max-height:650px) {
-      .account-logo {
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: @login-logo-width * 0.75 @login-logo-height * 0.75;
-        height: @login-logo-height * 0.75;
-        width: @login-logo-width * 0.75;
-      }
-    }
-  }
-
-  .account-settings, .account-recovery {
-    position: absolute;
-    top: @navbar-item-height;
-    left: 0;
-    height: calc(~"100% -" @navbar-item-height);
-    width: 100%;
-    box-sizing: border-box;
-    padding: 15px;
-
-    input {
-      color: @primary-color !important;
-    }
-
-    label {
-      color: @primary-color !important;
-    }
-
-    .account-settings-title {
-      position: relative;
-      height: 180px !important;
-
-      .account-settings-title-container {
-        position: relative;
-        width: @title-chip-size;
-        height: @title-chip-size;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-
-        .account-settings-title-chip {
-          position: absolute !important;
-          height: inherit !important;
-          width: inherit !important;
-          font-size: 30px !important;
-          background-color: @primary-color !important
+    .logo-img {
+        > img {
+            max-width: 30%;
         }
-  
-        .account-settings-title-input {
-          position: absolute !important;
-          height: inherit !important;
-          width: inherit !important;
-          display: inline-block;
-          padding: calc(@title-chip-size + 10px) 0 0 0;
-          overflow: hidden;
-          -webkit-box-sizing: border-box;
-          -moz-box-sizing: border-box;
-          box-sizing: border-box;
-          background: none;
-          border-radius: 50%;
-          outline: none;
-        }
-
-        .account-settings-title-overlay-container {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          color: rgba(255,255,255,0.4);
-          border-radius: 50%;
-          box-shadow: 3px 4px rgba(0,0,0,0.3);
-          -moz-box-shadow: 3px 4px rgba(0,0,0,0.3);
-          -webkit-box-shadow: 3px 4px rgba(0,0,0,0.3);
-          -o-box-shadow: 3px 4px rgba(0,0,0,0.3);
-
-          .account-settings-title-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: inline-flex;
-
-            .account-settings-title-image {
-              position: relative;
-              color: rgba(15, 46, 91,0.5);
-              font-size: 1.5em;
-            }
-
-            .account-settings-title-plus {
-              position: relative;
-              color: rgba(15, 46, 91,0.5);
-              margin: auto auto auto 2px;
-            }
-          }
-        }
-
-      }
-
-      .account-settings-title-discard-container {
-        position: relative;
-        width: @title-chip-size / 2;
-        height: @title-chip-size / 2;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-
-        .account-settings-title-chip-discard {
-          position: absolute !important;
-          height: inherit !important;
-          width: inherit !important;
-          font-size: 30px !important;
-          background-color: @primary-color!important
-        }
-  
-        .account-settings-title-input {
-          position: absolute !important;
-          height: inherit !important;
-          width: inherit !important;
-          display: inline-block;
-          padding: calc(@title-chip-size + 10px) 0 0 0;
-          overflow: hidden;
-          -webkit-box-sizing: border-box;
-          -moz-box-sizing: border-box;
-          box-sizing: border-box;
-          background: none;
-          border-radius: 50%;
-          outline: none;
-        }
-
-        .account-settings-title-overlay-container {
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          color: rgba(255,255,255,0.4);
-          border-radius: 50%;
-          box-shadow: 3px 4px rgba(0,0,0,0.3);
-          -moz-box-shadow: 3px 4px rgba(0,0,0,0.3);
-          -webkit-box-shadow: 3px 4px rgba(0,0,0,0.3);
-          -o-box-shadow: 3px 4px rgba(0,0,0,0.3);
-
-          .account-settings-title-center {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: inline-flex;
-
-            .account-settings-title-image {
-              position: relative;
-              color: @primary-color;
-              font-size: 1em;
-
-              > svg {
-                color: white;
-              }
-            }
-
-            .account-settings-title-plus {
-              position: relative;
-              color: rgba(15, 46, 91,0.5);
-              margin: auto auto auto 2px;
-            }
-          }
-        }
-
-      }
     }
 
-    .account-settings-username, .account-settings-email, .account-settings-password {
-      width: 100% !important;
-      margin: 18px 0px;
-
-      > div > hr {
-        border-bottom-color: rgba(255,255,255,0.35) !important;
-      }
-    }
-
-    .account-settings-email-unverified {
-      width: 65% !important;
-      font-size: 1.2em !important;
-
-      > div > hr {
-        border-bottom-color: rgba(255,255,255,0.35) !important;
-      }
-    }
-
-    .account-settings-email-unverified-btn {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      background-color: @primary-color !important;
-
-      span {
-        font-size: 1em!important;
-        letter-spacing: 1px!important;
-      }
-    }
-
-    .account-settings-showlinks {
-      -webkit-tap-highlight-color: rgba(255,255,255,0);
-
-      span {
-        font-size: 1.2em!important;
-        color: @primary-color!important;
-      }
-    }
-
-    .account-settings-container, .account-recovery-container {
-      position: relative;
-      
-      > div > div::after, div::before {
-        border-bottom: 2px solid @primary-color!important;
-      }
-
-      input {
-        font-size: 1.2em !important;
-        border-bottom: 2px solid @primary-color!important;
-      }
-
-      .account-settings-link {
-        width: 80% !important;
-        font-size: 1.2em !important;
-
-        > div > hr {
-          border-bottom-color: @primary-color!important;
-        }
-      }
-  
-      .account-settings-link-icon {
-        margin-right: 4%;
-        color: @primary-color;
-      }
-    }
-
-    .account-settings-logout {
-      position: relative;
-      width: 100%;
-      background-color: @primary-color!important;
-      bottom: 0;
-      left: 0;
-      margin-top: 20px;
-      height: 60px;
-
-      span {
-        font-size: 1.2em !important; 
-        letter-spacing: 3px !important; 
-        font-weight: 700 !important;
-      }
-    }
-
-    .account-settings-savechanges {
-      position: fixed;
-      width: 100%;
-      background-color: transparent !important;
-      bottom: 0;
-      left: 0;
-      margin-top: 20px;
-      background-color: rgb(216, 182, 29)!important;
-      height: 60px !important;
-
-      span {
-        font-size: 1.2em !important; 
-        letter-spacing: 3px !important; 
-        font-weight: 700 !important;
-      }
-
-    }
-  }
-
-  .account-form-container {
-
-    .underline {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    .logo-name {
+        color: white;
     }
 
     .account-form {
-      position: relative;
-      display: block;
-      background: transparent;
-      letter-spacing: 2px;
-      font-family: Tahoma, Geneva, sans-serif;
-      width: 60%;
-      border-width: 0px 0px 2px 0px;
-      color: rgba(255,255,255,0.7);
-      transition: border-bottom 0.35s ease-in-out;
-    }
-  
-    .account-form:focus {
-      border-bottom: 1px solid @login-form-col;
-    }
-
-    .account-form-rememberme {
-      > * {
-        color: rgba(255,255,255,0.7);
-        font-size: 1em;
-      }
-    }
-
-    .account-checkbox {
-      opacity: 0.8;
-      font-weight: 700;
-      -webkit-tap-highlight-color: rgba(255,255,255,0);
-      
-      * {
-        color: white !important;
-      }
-
-      :focus {
-        outline:none;
-      }
-    }
-
-    .account-form-login, .account-form-create {
-      position: relative;
-      display: block !important;
-      width: 70%;
-      height: 45px;
-      background-color: rgba(0,0,0,0.1)!important;
-      color: rgba(255,255,255,0.7);
-      border-radius: 25px !important;
-
-      span {
-        font-size: 1.2em !important; 
-        letter-spacing: 3px !important; 
-        font-weight: 700 !important;
-      }
-    }
-  
-    .account-form-signup, .account-form-back {
-      position: relative;
-      display: block !important;
-      width: 50%;
-      background-color: rgba(0,0,0,0.1)!important;
-      color: rgba(255,255,255,0.7);
-      border-radius: 25px !important;
-
-      span {
-        font-size: 1.2em !important; 
-        letter-spacing: 3px !important; 
-        font-weight: 700 !important;
-      }
-
-      > button {
-        background-color: rgba(0, 0, 0, 0.2) !important;
-        height: 50px !important;
-        border-radius: 25px !important;
-      }
-    }
-
-    button > i {
-      margin-right: 10px;
-    }
-  
-    ::-webkit-input-placeholder {
-      color: @login-form-col;
-      letter-spacing: 2px;
-      opacity: 0.5;
-      -webkit-transition: opacity 0.35s ease-in-out;
-      transition: opacity 0.35s ease-in-out;
-    }
-    :-moz-placeholder {
-      color: @login-form-col;
-      letter-spacing: 2px;
-      opacity: 0.5;
-      -moz-transition: opacity 0.35s ease-in-out;
-      transition: opacity 0.35s ease-in-out;
-    }
-    ::-moz-placeholder {
-      color: @login-form-col;
-      letter-spacing: 2px;
-      opacity: 0.5;
-      -moz-transition: opacity 0.35s ease-in-out;
-      transition: opacity 0.35s ease-in-out;
-    }
-    :-ms-input-placeholder {  
-      color: @login-form-col;
-      letter-spacing: 2px;
-      opacity: 0.5;
-      -ms-transition: opacity 0.35s ease-in-out;
-      transition: opacity 0.35s ease-in-out;
-    }
-  
-    :focus::-webkit-input-placeholder {
-      opacity: 0;
-      -webkit-transition: opacity 0.35s ease-in-out;
-      transition: opacity 0.35s ease-in-out;
-    }
-    :focus:-moz-placeholder {
-      opacity: 0;
-      -moz-transition: opacity 0.35s ease-in-out;
-      transition: opacity 0.35s ease-in-out;
-    }
-    :focus::-moz-placeholder {
-      opacity: 0;
-      -moz-transition: opacity 0.35s ease-in-out;
-      transition: opacity 0.35s ease-in-out;
-    }
-    :focus:-ms-input-placeholder {  
-      opacity: 0;
-      -ms-transition: opacity 0.35s ease-in-out;
-      transition: opacity 0.35s ease-in-out;
-    }
-  
-    input:focus, button:focus {
-      outline: none;
-    }
-  
-  }
-
-  .large-checkbox {
-
-    > div {
+        
+        .username, .password, .email {
+            width: 200px;
+        }
+        
+        .login-btn {
+            font-size: 1.2rem;
+        }
     
-      > label {
-        line-height: 38px !important;
-      }
-
-      > div {
-        width: 50px !important;
-
-        > div > div > span {
-          background-color: transparent !important;
+        .create-btn {
+            font-size: 1.0rem;
         }
 
-        > div {
-          height: 28px !important;
-          border-radius: 30px !important;
-          background-color: rgba(15, 51, 94,0.4) !important;
+        .rememberme {
+            * {
+                color: white;
+            }
         }
 
-        > div > div {
-          top: -3px !important;
-          width: 30px !important;
-          height: 30px !important;
-          line-height: 30px !important;
-          background-color: whitesmoke !important;
-          border-radius: 50% !important;
+        .notamember, .alreadyamember {
+            font-size: 13px;
+
+            u {
+                cursor: pointer;
+            }
         }
-      }
-      
-    }
-  }
-
-  .account-verify-email-container {
-    position: absolute;
-    z-index: 10;
-    width: 100%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    .account-verify-email-text {
-      width: 90%;
-      display: block;
-      margin: auto;
-      font-size: 1.5em;
-      color: rgba(255,255,255,0.5);
-      text-align: center;
     }
 
-    .account-verify-email-btn {
-      position: relative;
-      display: block !important;
-      width: fit-content;
-      background-color: transparent !important;
-      margin: 20px auto 0px auto;
-      
-      span {
-        font-size: 1.1em !important; 
-        letter-spacing: 1px !important; 
-        font-weight: 700 !important;
-        background-color: rgba(0,0,0,0.05) !important;
-      }
-    }
-  }
-}
+    .settings {
 
-.account-recovery-container {
-  position: absolute;
-  z-index: 10;
-  width: 100%;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+        .chip-container, .chip-discard-container {
 
-  .account-recovery-title {
-    width: 90%;
-    display: block;
-    margin: auto;
-    font-size: 2em;
-    font-weight: 700;
-    color: rgba(255,255,255,0.5);
-    text-align: center;
-  }
+            .chip, .chip-discard {
+                cursor: pointer;
+                box-shadow: 3px 4px rgba(white, 0.2);
+                -moz-box-shadow: 3px 4px rgba(white, 0.2);
+                -webkit-box-shadow: 3px 4px rgba(white, 0.2);
+                -o-box-shadow: 3px 4px rgba(white, 0.2);
 
-  .account-recovery-password {
-    position: relative;
-    display: block !important;
-    width: 250px!important;
-    background-color: transparent !important;
-    margin: 20px auto 0px auto;
+                &.chip {
+                    width: @chip-size;
+                    height: @chip-size;
+                }
+
+                &.chip-discard {
+                    width: @chip-discard-size;
+                    height: @chip-discard-size;
+                }
+            }
     
-    input {
-      width: 250px!important; 
-    }
+            .chip-input-hidden {
+                position: absolute;
+                left: calc(50% - (@chip-size / 2));
+                top: 0px;
+                height: @chip-size;
+                width: @chip-size;
+                margin: auto;
+                padding: @chip-size @chip-size 0 0;
+                outline: none;
+                opacity: 0;
+                cursor: pointer;
+            }
 
-    span {
-      font-size: 1.1em !important; 
-      letter-spacing: 1px !important; 
-      font-weight: 700 !important;
-      background-color: rgba(0,0,0,0.05) !important;
-    }
+            i {
+                cursor: pointer;
+            }
+        }
 
-    > div > hr {
-      border-bottom-color: rgba(255,255,255,0.35) !important;
-    }
-  }
+        .email {
 
-  .account-recovery-btn, .account-login-btn {
-    position: relative;
-    display: block !important;
-    width: fit-content;
-    background-color: transparent !important;
-    margin: 35px auto 0px auto;
-    
-    span {
-      font-size: 1.1em !important; 
-      letter-spacing: 1px !important; 
-      font-weight: 700 !important;
-      background-color: rgba(0,0,0,0.05) !important;
-    }
-  }
-}
+            .resend-btn {
+                top: 25px;
+            }
+        }
 
-.email-recovery-btn {
-  margin-top: 15px;
-  background: transparent;
-  border: 1px black solid;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.5);
+        .showlinks {
+
+            span {
+                color: white;
+            }
+        }
+
+        .link-container {
+                 
+            * {
+                color: white;
+            }
+        }
+
+        .save {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: @account-login-width;
+            height: @save-height-btn;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            background-color: orange;
+        }
+    }
 }

@@ -2,17 +2,18 @@ import * as React from 'react';
 import { Route, Redirect, Switch, withRouter, RouteComponentProps } from 'react-router-dom';
 import Account from '../account/main';
 import { loggedIn } from '../service/account/main';
-import HomePageContainer from '../home/HomePageContainer';
-import Menu from '../menu/main';
-import ChatroomMenuContainer from '../chat/ChatroomMenuContainer';
-import Background from '../background/background';
+import ChatroomMenu from '../chat/main';
+import GamesContainer from '../games/main';
 import NotFoundPageContainer from '../notfound/NotFoundPageContainer';
 import NavbarContainer from '../nav/NavbarContainer';
 import RecoveryContainer from '../recovery/RecoveryFormContainer';
+import ShowcaseContainer from '../home/ShowcaseContainer';
+import ModalFilternavContainer from '../games/modal/ModalFilternavContainer';
+import Background from '../background/background';
 
 export enum NAV_PAGE {
     HOME = '/',
-    MENU = '/menu',
+    GAMES = '/games',
     ACCOUNT = '/account',
     CHATROOM = '/chat'
 }
@@ -30,7 +31,7 @@ class App extends React.Component<IAppProps, IAppState> {
         super(props);
 
         this.state = {
-            authenticatedRoutes: ['/account', `/menu/gaming`, `/menu/gaming/twitch`, `/menu/gaming/steam`, `/menu/gaming/discord`],
+            authenticatedRoutes: ['/account', `/games/gaming`, `/games/gaming/twitch`, `/games/gaming/steam`, `/games/gaming/discord`],
             unauthenticatedRedirect: '/account/login'
         };
     }
@@ -49,19 +50,20 @@ class App extends React.Component<IAppProps, IAppState> {
                     ));
 
         return (
-            <>
+            <div className="h-100">
                 <Background/>
                 <NavbarContainer/>
                 <Switch>
                     {AuthorizedRoutesRedirect}
                     <Route path="/account" component={Account}/>
-                    <Route path="/menu" component={Menu}/>
-                    <Route path="/chat" component={ChatroomMenuContainer}/>
+                    <Route path="/chat" component={ChatroomMenu}/>
+                    <Route path="/games" component={GamesContainer}/>
                     <Route path="/recovery/:uid" component={RecoveryContainer}/>
-                    <Route exact={true} path="/" component={HomePageContainer}/>
+                    <Route path="/" component={ShowcaseContainer}/>
                     <Route component={NotFoundPageContainer}/>
                 </Switch>
-            </>
+                <ModalFilternavContainer/>
+            </div>
         );
 
     }

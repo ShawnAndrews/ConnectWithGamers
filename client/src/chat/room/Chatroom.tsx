@@ -1,106 +1,78 @@
 import * as React from 'react';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import Spinner from '../../spinner/main';
-import ChatMessageContainer from '../message/ChatMessageContainer';
 import { SingleChatHistory } from '../../../../client/client-server-common/common';
-
-export enum MessageSide {
-    Left,
-    Right
-}
+import { List, ListSubheader } from '@material-ui/core';
+import MessageBoxContainer from './messagebox/MessageBoxContainer';
+import Message from './message/Message';
 
 interface IChatroomProps {
-    attachmentLink: string;
-    attachmentLoading: boolean;
     messagesLoading: boolean;
-    text: string;
     chatLog: Array<SingleChatHistory>;
-    onTextChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onKeyPress: (event: React.KeyboardEvent<Element>) => void;
-    onSend: () => void;
-    handleAttachmentUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onSendCallback: (text: string, attachmentLink: string) => void;
 }
 
 const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
+    let todayHeaderRendered: boolean = false;
+    let yesterdayHeaderRendered: boolean = false;
+    let EarlierThisWeekHeaderRendered: boolean = false;
+    let EarlierThisMonthHeaderRendered: boolean = false;
 
-    let lastSide: MessageSide = MessageSide.Left;
-    let lastName: string = null;
-    let isLastMessageDifferentPerson: boolean = false;
+    const renderSubheader = (date: Date): React.ReactNode => {
+        const today: Date = new Date();
+        const yesterday: Date = new Date(new Date().setDate(today.getDate() - 1));
+        const firstDayOfThisWeek: Date = new Date(new Date().setDate(today.getDate() - today.getDay()));
+        const firstDayOfThisMonth: Date = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        const postedToday: boolean = (today.toDateString() === date.toDateString());
+        const postedYesterday: boolean = (yesterday.toDateString() === date.toDateString());
+        const postedThisWeek: boolean = (date >= firstDayOfThisWeek && date < new Date(today.getTime()));
+        const postedThisMonth: boolean = (date >= firstDayOfThisMonth && date < new Date(today.getTime()));
+
+        if (postedToday && !todayHeaderRendered) {
+            todayHeaderRendered = true;
+            return <ListSubheader disableSticky={true}>Today</ListSubheader>;
+        } else if (postedYesterday && !postedToday && !yesterdayHeaderRendered) {
+            yesterdayHeaderRendered = true;
+            return <ListSubheader disableSticky={true}>Yesterday</ListSubheader>;
+        } else if (postedThisWeek && !postedYesterday && !postedToday && !EarlierThisWeekHeaderRendered) {
+            EarlierThisWeekHeaderRendered = true;
+            return <ListSubheader disableSticky={true}>Earlier this week</ListSubheader>;
+        } else if (postedThisMonth && !postedThisWeek && !postedYesterday && !postedToday && !EarlierThisMonthHeaderRendered) {
+            EarlierThisMonthHeaderRendered = true;
+            return <ListSubheader disableSticky={true}>Earlier this month</ListSubheader>;
+        } else {
+            return undefined;
+        }
+    };
 
     return (
-        <>
-            <div className={`scrollable chatroom-messages`}>
-                {props.messagesLoading && 
-                    <div className="chatroom-messages-loading">
-                        <Spinner loadingMsg="Loading chat..." />
-                    </div>}
-                {!props.messagesLoading &&
-                    props.chatLog.map((x: SingleChatHistory, index: number) => {
-                        const currentName: string = x.name;
-                        const isLastMessageDifferentPerson: boolean = (lastName !== currentName);
-                        let side: MessageSide = lastSide;
-                        let repeat: boolean = false;
-
-                        if (lastName === x.name) {
-                            repeat = true;
-                        } else {
-                            // flip message side
-                            if (side === MessageSide.Left) {
-                                side = MessageSide.Right;
-                            } else {
-                                side = MessageSide.Left;
-                            }
-                        }
-
-                        lastName = x.name;
-                        lastSide = side;
-
-                        return (
-                            <>
-                                {index !== 0 && isLastMessageDifferentPerson 
-                                    && <div className="divider"/>}
-                                <ChatMessageContainer
-                                    key={index}
-                                    name={x.name}
-                                    date={x.date}
-                                    text={x.text}
-                                    image={x.image}
-                                    attachment={x.attachment}
-                                    side={side}
-                                    repeat={repeat}
-                                />
-                            </>
-                        );
-                    })}
+        <div className="h-100">
+            <div className="chatroom-messages py-3">
+                <div className={`chatroom-messages-container y-scrollable custom-scrollbar h-100`}>
+                    {props.messagesLoading && 
+                        <div className="chatroom-messages-loading">
+                            <Spinner className="text-center mt-5" loadingMsg="Loading chat..." />
+                        </div>}
+                    {!props.messagesLoading && props.chatLog.length === 0 && 
+                        <h3 className="text-center mt-5 color-primary">No comments<i className="far fa-comments ml-3"/></h3>}
+                    {!props.messagesLoading &&
+                        <List className="pr-2">
+                            {props.chatLog
+                                .map((x: SingleChatHistory, index: number) => (
+                                    <React.Fragment key={index}>
+                                        {renderSubheader(x.date)}
+                                        <Message
+                                            chat={x}
+                                        />
+                                    </React.Fragment>
+                                ))}
+                        </List>}
+                </div>
             </div>
-            <div className="chatroom-input">
-                <label className="chatroom-input-icon-container" htmlFor="fileInput">
-                    {!props.attachmentLoading
-                        ? <i className="fas fa-paperclip fa-lg"/>
-                        : <i className="fas fa-spinner fa-spin fa-lg"/>}
-                    {!props.attachmentLoading && 
-                        <input className="chatroom-input-icon-input" type="file" id="fileInput" onChange={props.handleAttachmentUpload}/>}
-                </label>
-                <TextField
-                    className="chatroom-input-textfield"
-                    onChange={props.onTextChanged}
-                    placeholder="Write a message..."
-                    onKeyPress={props.onKeyPress}
-                    value={props.text}
-                    margin="normal"
-                />
-                <Button
-                    className="chatroom-input-send" 
-                    variant="contained" 
-                    color="primary" 
-                    onClick={() => { props.onSend(); }} 
-                    disabled={props.attachmentLoading} 
-                >
-                    Send 
-                </Button>
-            </div>
-        </>
+            <MessageBoxContainer
+                onSendCallback={props.onSendCallback}
+            />
+        </div>
     );
 
 };

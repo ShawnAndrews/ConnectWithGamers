@@ -1,0 +1,272 @@
+@steam-profile-img-maxw: 120px;
+@steam-profile-flag-width: 28px;
+@steam-profile-game-imgw: 20px;
+@steam-cover-img-width: 90px; 
+@twitch-cover-img-width: 120px; 
+@stream-preview-img: 64px;
+@stream-viewercount-text-width: 70px;
+
+.gaming {
+
+    .homepage {
+        width: 500px;
+        border-radius: 20px;
+    }
+
+    .topnav {
+        
+        .navbar-item-text {
+            border-bottom: 1px solid @primary-color;
+        }
+
+        > div > div > span {
+            background-color: @primary-color;
+        }
+    }
+
+    .twitch {
+        
+        .title {
+            width: 300px;
+        }
+
+        .streams {
+
+            .stream {
+
+                .cover-img {
+                    width: @twitch-cover-img-width;
+                    height: @twitch-cover-img-width;
+                }
+
+                .name {
+                    position: absolute;
+                    top: 4px;
+                    left: @twitch-cover-img-width;
+                    width: calc(100% - 4px - @twitch-cover-img-width - @stream-preview-img);
+                    
+                    > div {
+                        max-width: calc(100% - 20px);
+                        height: 24px;
+                        overflow: hidden;
+                        word-break: break-all;
+                    }
+
+                    figure {
+                        position: absolute;
+                        display: inline-block;
+                        margin: 0px 0px 0px 4px;
+
+                        svg {
+                            fill: white;
+                        }
+                    }
+                }
+
+                .title {
+                    position: absolute;
+                    top: 28px;
+                    left: @twitch-cover-img-width;
+                    width: calc(100% - 4px - @twitch-cover-img-width - @stream-preview-img);
+                    height: 55px;
+                    color: rgba(0, 255, 0, 0.8);
+                    font-size: 0.8rem;
+                    overflow: hidden;
+                    word-break: break-all;
+                }
+                
+                .currentlyplaying {
+                    position: absolute;
+                    top: calc(@stream-preview-img + 4px + 20px);
+                    left: @twitch-cover-img-width;
+                    width: calc(100% - 4px - @twitch-cover-img-width - @stream-preview-img - @stream-viewercount-text-width);
+                    height: 20px;
+                    font-size: 0.8rem;
+                    overflow: hidden;
+                    word-break: break-all;
+                    color: orange;
+                }
+
+                .viewercount {
+                    position: absolute;
+                    top: calc(@stream-preview-img + 4px + 20px);
+                    right: 4px;
+                    width: calc(@stream-preview-img + @stream-viewercount-text-width);
+                    height: 20px;
+                    font-size: 0.9rem;
+
+                    .indicator {
+                        position: relative;
+                        background-color: red;
+                        border-radius: 50%;
+                        width: 0.7em;
+                        height: 0.7em;
+                        display: inline-block;
+                    }
+                }
+
+                .preview {
+                    position: absolute;
+                    top: 4px;
+                    right: 4px;
+                    width: @stream-preview-img;
+
+                    > img {
+                        width: inherit;
+                        height: 44px;
+                    }
+
+                    button {
+                        height: 36px;
+                        font-size: 0.7rem;
+                        border-top-left-radius: 0;
+                        border-top-right-radius: 0;
+                    }
+                }
+
+                .view {
+
+                    > button {
+                        width: calc(100% / 3);
+                        height: 33px;
+                    }
+                }
+
+                .more {
+                    margin-top: 10px;
+
+                    > button {
+                        height: 33px;
+                    }
+                }
+
+                .expand {
+
+                    .video {
+                        min-height: 400px;
+                        height: calc(24vw);
+                    }
+
+                    .chat {
+                        height: 700px;
+                    }
+                }
+
+                .emotes {
+
+                    .subtitle {
+                        font-size: 1.1rem;
+                    }
+
+                    .emote-container {
+                        
+                        img {
+                            width: 32px;
+                            height: 32px;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    .discord {
+        width: 400px;
+
+        .text-readonly {
+            background: transparent;
+            height: 35px;
+        }
+    }
+
+    .steam {
+        
+        .title {
+            width: 300px;
+        }
+
+        .profile-img-container {
+
+            img {
+                height: @steam-cover-img-width;
+                max-width: @steam-profile-img-maxw;
+                border-top-left-radius: 4px;
+                border-bottom-left-radius: 4px;
+            }
+
+            .overlay {
+                position: absolute;
+                top: 70px;
+                height: 0;
+                border-top: 20px solid transparent;
+
+                &.online {
+                    border-left: 20px solid rgba(0, 255, 0, 0.6);
+                }
+
+                &.offline {
+                    border-left: 20px solid rgba(255, 0, 0, 0.6);
+                }
+            }
+        }
+
+        .name-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+
+            .name {
+                width: calc(100% - @steam-profile-img-maxw - @steam-profile-flag-width);
+                height: 22px;
+                
+                > div {
+                    letter-spacing: 1px;
+                    overflow: hidden;
+                    text-overflow: ellipsis; 
+                }
+            }
+
+            .flag {
+                width: 24px;
+                margin-right: 4px;
+            }
+
+            i {
+                cursor: pointer;
+            }
+        }
+
+        .recentlyplayed {
+            position: absolute;
+            top: 1.6rem;
+            right: @steam-profile-game-imgw - 8px;
+            width: calc(100% - @steam-profile-img-maxw);
+            height: @steam-profile-game-imgw;
+            font-size: 0.9rem;
+            color: orange;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-break: break-all;
+        }
+
+        .game-img {
+            position: absolute;
+            top: 1.6rem;
+            right: 0;
+            width: @steam-profile-game-imgw;
+            height: @steam-profile-game-imgw;
+        }
+
+        .lastonline {
+            position: absolute;
+            bottom: 0.2rem;
+            right: 0;
+            width: calc(100% - @steam-profile-img-maxw);
+            height: @steam-profile-game-imgw;
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}

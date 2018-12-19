@@ -1,40 +1,32 @@
 @primary-color: #2b419c;
-@primary-font: 'Lato', sans-serif;
+@secondary-color: white;
+@primary-highlighted-color: #142f9e;
+@primary-font: "Motiva Sans", Sans-serif;
+@secondary-font: Pacifico;
+@sm: ~"screen and (max-width:576px)";
+@md: ~"screen and (max-width:768px)";
+@lg: ~"screen and (max-width:992px)";
+@xl: ~"screen and (max-width:1200px)";
 
 html, body, #root {
-    position: relative;
-    width:100%;
-    height:100%;
-    padding:0;
-    margin:0;
-    font-size:1em;
-
     * {
         font-family: @primary-font;
     }
 }
 
-.inherit {
-    height: inherit;
-}
-
-.center {
-    position: absolute;
-    z-index: 10;
-    width: 100%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%)
-}
-
 @import 'util/main';
-@import 'popupS/main';
-@import 'spinner/main';
 
+@import 'game/main';
+@import 'gaming/main';
+@import 'results/main';
+@import 'games/main';
+@import 'recovery/main';
 @import 'account/main';
-@import 'background/main';
-@import 'notfound/main';
-@import 'notice/main';
-@import 'navbar/main';
-@import 'menu/main';
 @import 'chatroom/main';
+@import 'modal/main';
+@import 'home/main';
+@import 'navbar/main';
+@import 'spinner/main';
+@import 'carousel/main';
+@import 'popupS/main';
+@import 'bootstrap/main';

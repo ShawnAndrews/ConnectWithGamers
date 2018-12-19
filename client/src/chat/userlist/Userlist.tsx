@@ -2,9 +2,9 @@ import * as React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Paper from '@material-ui/core/Paper';
 import { ChatroomUser } from '../../../../client/client-server-common/common';
+import { Textfit } from 'react-textfit';
 
 interface IUserlistProps {
-    searched: boolean;
     userlist: ChatroomUser[];
     onSearch: React.KeyboardEventHandler<HTMLInputElement>;
 }
@@ -30,45 +30,39 @@ const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
     };
 
     return (
-        <div className="userlist-container">
-            <div className="userlist-searchbar-container">
-                <input
-                    className="userlist-searchbar"
-                    placeholder="Search user..."
-                    onKeyPress={props.onSearch}
-                />
-            </div>
-            {!props.searched &&
-                <div className="choose-user">
-                    <i className="fas fa-arrow-right fa-6x choose-user-arrow" data-fa-transform="rotate-270"/>
-                    <strong className="choose-user-text">Search username</strong>
-                </div>}
-            {props.searched && props.userlist.length === 0 && 
-                <div className="search-noresults">
-                    <strong className="search-noresults-text">No results</strong>
-                </div>}
-            {props.searched && props.userlist.length !== 0 && 
-                <div className={`userlist scrollable fadeIn`}>
+        <div className="chatroom-userlist py-3 h-100">
+            {props.userlist.length === 0 
+                ?
+                <div className="noresults d-table w-100 h-100">
+                    <div className="noresults-container d-table-cell align-middle text-center">
+                        <div className="noresults-image"><i className="fas fa-user-slash"/></div>
+                        <strong className="noresults-text">No users found</strong>
+                    </div>
+                </div>
+                :
+                <div className={`userlist y-scrollable custom-scrollbar h-100 px-4 px-sm-5`}>
                     {props.userlist
                         .map((x: ChatroomUser, index: number) => {
                             return (
                                 <Paper
                                     key={index}
-                                    className="userlist-content"
+                                    className="user row my-3 p-3"
                                     elevation={3}
                                 >
                                     {x.image
-                                        ? <Avatar className="userlist-content-name-chip no-background" src={x.image}/>
-                                        : <Avatar className="userlist-content-name-chip">{x.username.slice(0, 2).toUpperCase()}</Avatar>}
-                                    <span className="userlist-content-name">{x.username}</span>
-                                    <span className="userlist-content-activity">{lastActive(x.last_active)}</span>
-                                    <div className="userlist-content-links">
+                                        ? <Avatar className="user-image col-2 col-lg-1 p-0" src={x.image}/>
+                                        : <Avatar className="user-image default col-2 col-lg-1">{x.username.slice(0, 2).toUpperCase()}</Avatar>}
+                                    <div className="user-text col-10 col-md-6 col-lg-8">
+                                        <Textfit className="name font-weight-bold h-50">{x.username}</Textfit>
+                                        <Textfit className="time h-50" max={12}>{lastActive(x.last_active)}</Textfit>
+                                    </div>
+                                    <div className="user-links text-right col-0 col-md-4 col-lg-3 pr-0">
                                         {x.steam_url && 
-                                            <a href={`https://steamcommunity.com/id/${x.steam_url}`} className="userlist-content-link"><i className="fab fa-steam-square fa-2x" /></a>}
+                                            <a href={`https://steamcommunity.com/id/${x.steam_url}`} className="link mx-1"><i className="fab fa-steam-square fa-2x" /></a>}
                                         {x.discord_url && 
-                                            <a href={x.discord_url} className="userlist-content-link"><i className="fab fa-discord fa-2x" /></a>}
+                                            <a href={x.discord_url} className="link mx-2"><i className="fab fa-discord fa-2x" /></a>}
                                         {x.twitch_url && 
-                                            <a href={`https://www.twitch.tv/${x.twitch_url}`} className="userlist-content-link"><i className="fab fa-twitch fa-2x" /></a>}
+                                            <a href={`https://www.twitch.tv/${x.twitch_url}`} className="link mx-2"><i className="fab fa-twitch fa-2x" /></a>}
                                     </div>
                                 </Paper>
                             );

@@ -2,7 +2,7 @@ const popupS = require('popups');
 import * as React from 'react';
 import LoginForm from "./LoginForm";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { validateCredentials, GenericResponseModel } from '../../../../client/client-server-common/common';
+import { validateCredentials } from '../../../../client/client-server-common/common';
 import * as AccountService from '../../service/account/main';
 
 interface ILoginFormContainerProps extends RouteComponentProps<any> { }
@@ -25,6 +25,7 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
         this.onClickLogin = this.onClickLogin.bind(this);
         this.onClickSignUp = this.onClickSignUp.bind(this);
         this.onClickHome = this.onClickHome.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
 
         this.state = {
             username: '',
@@ -47,8 +48,10 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
         this.setState({rememberme: checked});
     }
     
-    onClickLogin(event: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLFormElement>): void {
-        event.preventDefault();
+    onClickLogin(event?: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLFormElement>): void {
+        if (event) {
+            event.preventDefault();   
+        }
         
         // validate
         const error: string = validateCredentials(this.state.username, this.state.password);
@@ -94,9 +97,18 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
         this.props.history.push('/');
     }
 
+    onKeyPress(event: React.KeyboardEvent<Element>): void {
+        if (event.key === `Enter`) {
+            this.onClickLogin();
+        }
+    }
+
     render() {
         return (
-            <LoginForm 
+            <LoginForm
+                username={this.state.username}
+                password={this.state.password}
+                rememberme={this.state.rememberme}
                 isLoading={this.state.isLoading}
                 onClickLogin={this.onClickLogin}
                 onClickSignUp={this.onClickSignUp}
@@ -104,6 +116,7 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
                 usernameChanged={this.usernameChanged}
                 passwordChanged={this.passwordChanged}
                 remembermeChanged={this.remembermeChanged}
+                onKeyPress={this.onKeyPress}
             />
         );
     }

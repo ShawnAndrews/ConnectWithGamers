@@ -134,11 +134,14 @@ export interface ChatroomInfo {
 }
 
 export const CHATROOMS: ChatroomInfo[] = [
+    { name: "Home", abbrevName: "", imagePath: "https://i.imgur.com/oll7zIX.png", redirect: "/chat" },
     { name: "Hearthstone", abbrevName: "hearthstone", imagePath: "https://i.imgur.com/myONDFo.png", redirect: "/chat/hearthstone" },
     { name: "League Of Legends", abbrevName: "lol", imagePath: "https://i.imgur.com/AuOsUek.png", redirect: "/chat/lol" },
     { name: "Overwatch", abbrevName: "overwatch", imagePath: "https://i.imgur.com/3Bz1ihC.png", redirect: "/chat/overwatch" },
     { name: "World Of Warcraft", abbrevName: "wow", imagePath: "https://i.imgur.com/MAZIWSq.png", redirect: "/chat/wow" },
+    { name: "Grand Theft Auto", abbrevName: "gta", imagePath: "https://i.imgur.com/VC8O3S4.png", redirect: "/chat/gta" },
     { name: "Fortnite", abbrevName: "fortnite", imagePath: "https://i.imgur.com/LPIXnRA.png", redirect: "/chat/fortnite" },
+    { name: "Dont Notice Me", abbrevName: "dnm", imagePath: "https://i.ibb.co/sC84Wdr/dnm-sized.png", redirect: "/chat/dnm" },
     { name: "CS:GO", abbrevName: "csgo", imagePath: "https://i.imgur.com/nb1WjIZ.png", redirect: "/chat/csgo" },
     { name: "Dota 2", abbrevName: "dota", imagePath: "https://i.imgur.com/X36goZb.png", redirect: "/chat/dota" },
     { name: "Rocket League", abbrevName: "rocketleague", imagePath: "https://i.imgur.com/PhSJVeI.png", redirect: "/chat/rocketleague" },
@@ -452,7 +455,7 @@ export interface RawThumbnailGameResponse {
     id: number;
     name: string;
     rating: number;
-    cover: Cover;
+    cover: IGDBImage;
     genres: number[];
     platforms: number[];
     external: ExternalSteamLink;
@@ -487,7 +490,7 @@ export interface RawGameResponse {
     id: number;
     name: string;
     release_dates: any;
-    cover: Cover;
+    cover: IGDBImage;
     total_rating: number;
     total_rating_count: number;
     summary: string;
@@ -512,7 +515,8 @@ export interface RawPredefinedGameResponse {
     platforms: number[];
     first_release_date?: number;
     aggregated_rating?: number;
-    cover?: Cover;
+    cover?: IGDBImage;
+    screenshots?: IGDBImage[];
 }
 
 export interface PredefinedGameResponse {
@@ -525,9 +529,9 @@ export interface PredefinedGameResponse {
     cover?: string;
 }
 
-export const PredefinedGameResponseFields: string[] = [`id`, `name`, `genres`, `platforms`, `first_release_date`, `aggregated_rating`, `cover`];
+export const PredefinedGameResponseFields: string[] = [`id`, `name`, `genres`, `platforms`, `first_release_date`, `aggregated_rating`, `cover`, `screenshots`];
 
-export interface Cover {
+export interface IGDBImage {
     url: string;
     cloudinary_id: string;
     width: number;

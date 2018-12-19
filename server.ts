@@ -60,9 +60,6 @@ app.get("/favicon.ico", (req: Request, res: Response) => {res.sendFile(path.join
 app.get("/robots.txt", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/robots.txt")); });
 app.get("/riot.txt", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/riot.txt")); });
 
-/* desktop */
-app.use(handleDesktopRequests);
-
 /* client */
 app.get("/bundle.js", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
 app.get("/bundle.css", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
@@ -72,25 +69,4 @@ app.use("*", express.static(path.join(__dirname, "../client/dist")));
 app.listen(config.httpPort);
 if (config.useStrictlyHttps) {
     secureServer.listen(config.httpsPort);
-}
-
-function handleDesktopRequests(req: Request, res: Response, next: NextFunction): void {
-    const device: any = new MobileDetect(req.headers["user-agent"]);
-    if (device.phone() === null) {
-        if (req.path.startsWith("/css") || req.path.startsWith("/js") || req.path.startsWith("/images") || req.path.startsWith("/fonts")) {
-            res.sendFile(path.join(__dirname, `../client/desktop${req.path}`));
-        } else if (req.path === "/emailform") {
-            sendContactEmail(req.body.name, req.body.email, req.body.title, req.body.message)
-                .then(() => {
-                    res.send({ success: true });
-                })
-                .catch((err: string) => {
-                    res.send({ success: false, error: err });
-                });
-        } else {
-            res.sendFile(path.join(__dirname, `../client/desktop/index.html`));
-        }
-    } else {
-        next();
-    }
 }

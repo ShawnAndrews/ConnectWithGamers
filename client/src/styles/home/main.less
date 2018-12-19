@@ -1,0 +1,382 @@
+@home-tables-height: 500px;
+@home-profiles-height: 230px;
+@home-popular-height: 230px;
+
+.home {
+
+    .reviewed-table {
+
+        .reviewed-header {
+
+            &::before {
+                position: absolute;
+                top: 26px;
+                left: 1rem;
+                content: "";
+                height: 2px;
+                width: 40px;
+                background-color: rgba(blue, 0.8);
+
+                @media @lg {
+                    left: 0.0rem;
+                }
+
+                @media @md {
+                    left: 1rem;
+                }
+            }
+    
+            * {
+                color: @primary-color;
+            }
+        }
+    
+        .reviewed-games {
+            height: calc(@home-tables-height - 25px);
+    
+            &>.row:nth-child(1) {
+                height: 34%;
+            }
+    
+            &>.row:nth-child(2) {
+                height: 66%;
+            }
+
+            .cover-overlay-yellow {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                height: calc(100% + 2px);
+                background: linear-gradient(45deg,rgba(241,196,15,.5),rgba(0,0,0,.15));
+
+                &:hover {
+                    background: linear-gradient(45deg,rgba(241,196,15,.8),rgba(0,0,0,.15));
+                }
+            }
+
+            .cover-overlay-green {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                height: calc(100% + 2px);
+                background: linear-gradient(45deg, rgba(16,175,101,0.5), rgba(0,0,0,0.15));
+
+                &:hover {
+                    background: linear-gradient(45deg, rgba(16,175,101,0.8), rgba(0,0,0,0.15))
+                }
+            }
+
+            .reviewed-table-text {
+                position: absolute;
+                bottom: 15px;
+                left: 15px;
+                width: calc(100% - 30px);
+                height: 50px;
+    
+                .name {
+                    position: initial;
+                    width: 100%;
+                    height: 20px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                
+                    > div {
+                        color: #90d793;
+                        font-weight: bold;
+                    }
+    
+                    &::before {
+                        position: absolute;
+                        bottom: 25px;
+                        left: 0;
+                        content: "";
+                        height: 2px;
+                        width: 25px;
+                        background-color: rgba(247, 157, 0, 0.75);
+                    }
+                }
+    
+                .genre {
+                    position: absolute;
+                    bottom: 0;
+                    font-size: 0.9em;
+                    width: 80%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+    
+                .rating {
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                    width: 20%;
+                    text-align: end;
+                    font-weight: bold;
+                    color: rgba(orange, 0.7);
+                }
+            
+                * {
+                    color: rgba(white, 0.8);
+                }
+            }
+        }
+    }
+
+    .recently-released-table, .upcoming-table {
+        height: @home-tables-height;
+        padding: 10px;
+
+        @media @sm {
+            height: auto;
+        }
+
+        .recently-released-table-header, .upcoming-table-header {
+            cursor: pointer;
+
+            &::before {
+                position: absolute;
+                bottom: -3px;
+                left: 0;
+                content: "";
+                height: 2px;
+                width: 53px;
+                background-color: #f1c40f;   
+            }
+        }
+
+        .recently-released-table-container, .upcoming-table-container {
+            background-color: @primary-color;
+            height: calc((100% - 80px) / 6);
+
+            @media @sm {
+                height: 100px;
+            }
+
+            .name {
+                display: block;
+                color: #90d793;
+                font-size: .8em;
+                height: 2.6em;
+                line-height: 1rem;
+                overflow: hidden;
+                margin-top: 2px;
+            }
+
+            .icons {
+                position: absolute;
+                bottom: 15px;
+                overflow: hidden;
+
+                .icon {
+                    color: rgba(white, 0.5)!important;
+                    font-size: .7em!important;
+                }
+            }
+
+            .date {
+                position: absolute;
+                bottom: 2px;
+                color: rgba(white, 0.5);
+                font-size: .75em;
+            }
+
+            * {
+                color: rgba(white, 0.7);
+                cursor: pointer;
+            }
+        }
+    }
+
+    .profiles-table {
+        height: @home-profiles-height;
+
+        .profiles-header {
+            cursor: pointer;
+
+            &::before {
+                position: absolute;
+                top: 34px;
+                content: "";
+                height: 2px;
+                width: 53px;
+                background-color: rgba(red, 0.8);
+            }
+        }
+
+        .profiles-buttons {
+            height: calc(192px - 24px - 0.5rem);
+
+            > button {
+                height: calc((100% - 0.5rem) / 3);
+            }
+        }
+    }
+
+    .popular-table {
+        height: @home-popular-height;
+
+        .popular-table-container {
+            background-color: @primary-color;
+
+            .name {
+                color: #90d793;
+                font-size: 9px;
+                line-height: 10px;
+                padding-top: 3px;
+                height: 24px;
+                white-space: pre-line;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .genre {
+                padding-top: 2px;
+                padding-left: 20px;
+                font-size: 9px;
+                color: hsla(0,0%,100%,.7);
+                white-space: normal;
+                overflow: hidden;
+                text-overflow: clip;
+            }
+
+            .rating {
+                font-size: 12px;
+                color: orange;
+            }
+        }
+
+        .popular-table-header {
+            cursor: pointer;
+
+            &::before {
+                position: absolute;
+                top: 34px;
+                left: 1rem;
+                content: "";
+                height: 2px;
+                width: 53px;
+                background-color: rgba(gray, 0.8);
+            }
+
+            @media @lg {
+                left: 0rem;
+            }
+        }
+
+        .popular-table-horizontal {
+            position: relative;
+            height: calc(222px - 32px);
+            width: auto;
+            overflow: scroll;
+            white-space: nowrap;
+            transition: all .4s ease-in-out;
+
+            .popular-table-container {
+                width: 100px;
+                height: calc(100% - 14px);
+
+                img {
+                    pointer-events: none;
+                }
+
+                * {
+                    outline:none;
+                    -webkit-touch-callout: none; /* iOS Safari */
+                    -webkit-user-select: none; /* Safari */
+                     -khtml-user-select: none; /* Konqueror HTML */
+                       -moz-user-select: none; /* Firefox */
+                        -ms-user-select: none; /* Internet Explorer/Edge */
+                            user-select: none; /* Non-prefixed version, currently
+                                                  supported by Chrome and Opera */
+                }
+            }
+
+            &::-webkit-scrollbar {
+                width: 0px;
+                background: transparent;
+            }
+            &::-webkit-scrollbar-thumb {
+                background: transparent;
+            }
+        }
+
+        .popular-table-arrow {
+            position: absolute;
+            top: 50%;
+            padding: 3px;
+            background-color: rgba(@primary-color, 0.8);
+
+            > i {
+                color: rgba(white, 0.8);
+            }
+
+            &.left {
+                left: 20px;
+            }
+
+            &.right {
+                right: 20px;
+            }
+        }
+
+    }
+
+    .news-list-container {
+        position: relative;
+
+        .news-list-header {
+            cursor: pointer;
+
+            &::before {
+                position: absolute;
+                top: 32px;
+                content: "";
+                height: 2px;
+                width: 28px;
+                background-color: rgba(brown, 0.8);
+            }
+        }
+    }
+}
+
+//shared
+.news-article {
+
+    .title {
+        position: relative;
+        overflow: hidden;
+        color: #90d794d8;
+        font-size: .8em;
+    }
+
+    .author {
+        color: hsla(0,0%,100%,.5);
+        font-size: .6em;
+        height: 1.4em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .date {
+        color: orange;
+        font-size: .8em;
+        text-align: right;
+        overflow: hidden;
+        height: 1.4em;
+    }
+
+    > div {
+        background-color: @primary-color;
+    }
+
+    img {
+        max-height: 165px;
+    }
+
+    * {
+        color: white;
+    }
+}

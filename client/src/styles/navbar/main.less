@@ -1,84 +1,57 @@
-@navbar-item-height: 70px;
-@gaming-navbar-item-height: 48px;
+.brand-navbar {
+    border-bottom: 1px solid rgba(@primary-color, 0.2);
+    z-index: 1;
 
-.navbar-item-container {
-    width: 100%;
-    height: @navbar-item-height;
-    background-color: @primary-color;
-
-    * {
-        overflow: hidden!important;
-    }
-
-    svg {
-        color: rgba(255,255,255,0.6);
-    }
-
-    &.invisible {
-        visibility: hidden;
-    }
-
-    > div:first-child {
-        height: @navbar-item-height !important;
-    }
-
-    .center {
-        position: relative;
-        top: 50%;
-    }
-
-    .navbar-item-text {
-        font-size: 1.0em !important;
+    .logo {
+        display: initial;
+    
+        @media @xl {
+            display: none;
+        }
     }
     
-    .navbar-item-icon {
-        font-size: 1.1em !important;
-    }
-
-    > div > div > span {
-        background-color: whitesmoke;
-    }
-}
-
-.gaming-navbar-item-container {
-    width: 100%;
-    height: @gaming-navbar-item-height;
-    background-color: @primary-color;
-
-    svg {
-        color: rgba(255,255,255,0.6);
-    }
-
-    &.invisible {
-        visibility: hidden;
-    }
-
-    > div:first-child {
-        height: @gaming-navbar-item-height !important;
-    }
-
-    .center {
-        position: relative;
-        top: 50%;
-    }
-
-    .navbar-item-text {
-        font-size: 1.0em !important;
+    .logo-name {
+        font-family: 'Pacifico'!important;
+        color: white;
     }
     
-    .navbar-item-icon {
-        font-size: 1.1em !important;
+    .brand-menu {
+        position: relative;
+        top: 10px;
+
+        @media @sm {
+            i {
+                display: none;
+            }
+        }
+
+        @media @lg {
+            top: 0px;
+        }
+
+        a {
+            color: white;   
+        }
+
+        @media @md {
+            width: 100%;
+    
+            > li {
+                width: 25%;
+            }
+        }
     }
+    
+    .search-form {
+        display: initial;
+        color: @primary-color;
 
-    > div > div > span {
-        background-color: whitesmoke;
+        > input {
+            border: 1px solid @primary-color;
+        }
+
+        @media @lg {
+            display: none;
+        }
     }
-}
-
-.fixed-container {
-    position: fixed;
-}
-
-.relative-container {
-    position: relative;
 }

@@ -8,7 +8,7 @@ import VerifyFormContainer from '../account//verify/verifyFormContainer';
 const Account: React.SFC<any> = () => {
 
     return (
-        <div className="account-page">
+        <div className="account mx-auto">
             <Switch>
                 <Route path="/account/login" component={LoginFormContainer}/>
                 <Route path="/account/signup" component={SignupFormContainer} />

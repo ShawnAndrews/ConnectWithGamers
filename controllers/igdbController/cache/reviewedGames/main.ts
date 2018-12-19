@@ -53,7 +53,7 @@ export function cacheReviewedGames(): Promise<PredefinedGameResponse[]> {
     return new Promise((resolve: any, reject: any) => {
 
         axios.get(
-            `https://api-endpoint.igdb.com/games/?fields=${PredefinedGameResponseFields}&filter[first_release_date][gt]=${CURRENT_UNIX_TIME_MS}&filter[release_dates.platform][eq]=6&order=updated_at:desc&limit=${config.igdb.pageLimit}&filter[cover][exists]=1`,
+            `https://api-endpoint.igdb.com/games/?fields=${PredefinedGameResponseFields}&filter[first_release_date][gt]=${CURRENT_UNIX_TIME_MS}&filter[release_dates.platform][eq]=6&order=updated_at:desc&limit=${config.igdb.pageLimit}&filter[screenshots][exists]=1`,
             {
                 headers: {
                     "user-key": config.igdb.key,
@@ -72,10 +72,10 @@ export function cacheReviewedGames(): Promise<PredefinedGameResponse[]> {
                     const name: string =  x.name;
                     const aggregated_rating: number = x.aggregated_rating;
                     let cover: string = undefined;
-                    if (x.cover) {
+                    if (x.screenshots) {
                         cover = igdbClient.image(
-                            { cloudinary_id: x.cover.cloudinary_id },
-                            "cover_big", "jpg");
+                            { cloudinary_id: x.screenshots[0].cloudinary_id },
+                            "screenshot_big", "jpg");
                     }
                     let genre: string = undefined;
                     if (x.genres) {

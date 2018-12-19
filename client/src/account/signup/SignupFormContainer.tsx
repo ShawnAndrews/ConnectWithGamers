@@ -24,6 +24,7 @@ class SignupFormContainer extends React.Component<ISignupFormContainerProps, ISi
         this.onClickCreate = this.onClickCreate.bind(this);
         this.onClickBack = this.onClickBack.bind(this);
         this.onClickHome = this.onClickHome.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
 
         this.state = {
             username: '',
@@ -45,8 +46,10 @@ class SignupFormContainer extends React.Component<ISignupFormContainerProps, ISi
         this.setState({email: event.target.value});
     }
 
-    onClickCreate(event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLElement>) {
-        event.preventDefault();
+    onClickCreate(event?: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLElement>) {
+        if (event) {
+            event.preventDefault();
+        }
 
         // validate
         const error: string = validateCredentials(this.state.username, this.state.password, this.state.email);
@@ -76,16 +79,26 @@ class SignupFormContainer extends React.Component<ISignupFormContainerProps, ISi
         this.props.history.push('/');
     }
 
+    onKeyPress(event: React.KeyboardEvent<Element>): void {
+        if (event.key === `Enter`) {
+            this.onClickCreate();
+        }
+    }
+
     render() {
         return (
             <SignupForm 
                 isLoading={this.state.isLoading}
+                username={this.state.username}
+                email={this.state.email}
+                password={this.state.password}
                 onClickCreate={this.onClickCreate}
                 onClickBack={this.onClickBack}
                 onClickHome={this.onClickHome}
                 usernameChanged={this.usernameChanged}
                 passwordChanged={this.passwordChanged}
                 emailChanged={this.emailChanged}
+                onKeyPress={this.onKeyPress}
             />
         );
     }
