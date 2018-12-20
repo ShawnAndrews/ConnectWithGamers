@@ -53,8 +53,8 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     video={props.game.video && props.game.video.youtube_link}
                     screenshots={props.game.screenshots}
                 />
-                <div className="cover-container col-lg-4">
-                    <div className="general-info">
+                <div className={`cover-container ${props.game.screenshots || props.game.video ? 'col-lg-4' : 'col-lg-12'}`}>
+                    <div className={`general-info ${!props.game.screenshots && !props.game.video && 'text-center'}`}>
                         <Cover
                             cover={props.game.cover}
                             screenshots={props.game.screenshots}

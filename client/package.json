@@ -8,6 +8,7 @@
     "@types/react-router": "^4.4.0",
     "@types/react-router-dom": "^4.3.1",
     "@types/react-truncate": "^2.3.3",
+    "@types/react-youtube": "^7.4.2",
     "@types/socket.io-client": "^1.4.32",
     "axios": "^0.17.1",
     "css-loader": "^0.28.11",

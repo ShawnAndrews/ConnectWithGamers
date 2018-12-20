@@ -13,22 +13,38 @@ class Message extends React.PureComponent<IMessageProps, null> {
         super(props);
     }
 
-    decodeEmotes = (text: string): React.ReactNode[] => {
+    decodeEmotesAndLinks = (text: string): React.ReactNode[] => {
         const result: React.ReactNode[] = [];
-        const prefix: string = ":::";
-        const suffix: string = ":::";
-        let foundPrefix: number = text.indexOf(prefix);
-        while (foundPrefix !== -1) {
-            const spanText: string = text.substring(0, foundPrefix);
+        const prefixes: string[] = ["http", "www."];
+        const suffix: string = " ";
+        const getNextLinkIndex = (textStr: string): number => {
+            let foundIndex = Math.max(textStr.indexOf(prefixes[0]), textStr.indexOf(prefixes[1]));
+            if (textStr.indexOf(prefixes[0]) < foundIndex && textStr.indexOf(prefixes[0]) != -1) {
+                foundIndex = textStr.indexOf(prefixes[0]);
+            }
+            if (textStr.indexOf(prefixes[1]) < foundIndex && textStr.indexOf(prefixes[1]) != -1) {
+                foundIndex = textStr.indexOf(prefixes[1]);
+            }
+            return foundIndex;
+        };
+
+        let nextLinkIndex: number = getNextLinkIndex(text);
+
+        while (nextLinkIndex !== -1) {
+            const spanText: string = text.substring(0, nextLinkIndex);
             result.push(<span>{spanText}</span>);
 
-            text = text.substring(foundPrefix + prefix.length);
+            text = text.substring(nextLinkIndex);
             const foundSuffix: number = text.indexOf(suffix);
-            const emoteLink: string = text.substring(0, foundSuffix);
-            result.push(<img src={emoteLink} width="28" height="28" />);
+            const link: string = foundSuffix !== -1 ? text.substring(0, foundSuffix) : text.substring(0);
+            if (link.startsWith('https://i.imgur.com')) {
+                result.push(<img src={link} width="28" height="28" />);
+            } else {
+                result.push(<a target="_blank" href={link}>{link}</a>);
+            }
 
-            text = text.substring(foundSuffix + suffix.length);
-            foundPrefix = text.indexOf(prefix);
+            text = text.substring(link.length);
+            nextLinkIndex = getNextLinkIndex(text);
         }
         result.push(<span>{text}</span>);
         return result;
@@ -46,7 +62,7 @@ class Message extends React.PureComponent<IMessageProps, null> {
                     : <Avatar className="bg-primary">{this.props.chat.name.slice(0, 2).toUpperCase()}</Avatar>}
                 <ListItemText>
                     <div><span className="name color-primary font-weight-bold">{`${this.props.chat.name}   `}</span><span className="time">{`${formattedDateTime}`}</span></div>
-                    <p className="text">{this.decodeEmotes(this.props.chat.text)}</p>
+                    <p className="text">{this.decodeEmotesAndLinks(this.props.chat.text)}</p>
                     {this.props.chat.attachment && 
                         <img className="w-25" src={this.props.chat.attachment}/>}
                 </ListItemText>

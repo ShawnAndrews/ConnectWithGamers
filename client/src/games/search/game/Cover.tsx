@@ -15,9 +15,10 @@ const Cover: React.SFC<ICoverProps> = (props: ICoverProps) => {
                 <div className="blurred-screenshot position-relative">
                     <img className="w-100" src={blurredScreenshot}/>
                 </div>}
-            <div className="cover text-center">
-                <img src={props.cover || 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
-            </div>
+            {props.cover &&
+                <div className={`cover text-center ${!blurredScreenshot && 'without-blur'}`}>
+                    <img src={props.cover || 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
+                </div>}
         </>
     );
 

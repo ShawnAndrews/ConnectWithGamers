@@ -40,8 +40,7 @@ function startChatServer(): void {
             const emoteName: string = `${chatroomEmote.prefix}${chatroomEmote.suffix}`;
             let foundPos: number = encodedText.indexOf(emoteName);
             while (foundPos !== -1) {
-                const replacementEncoding: string = `:::${emoteLink}:::`;
-                encodedText = encodedText.substring(0, foundPos) + replacementEncoding + encodedText.substring(foundPos + emoteName.length);
+                encodedText = encodedText.substring(0, foundPos) + emoteLink + encodedText.substring(foundPos + emoteName.length);
                 foundPos = encodedText.indexOf(emoteName);
             }
         });

@@ -91,7 +91,14 @@
                 position: absolute;
                 top: 85px;
                 width: calc(100% - 40px);
-    
+
+                &.without-blur {
+                    position: relative;
+                    top: 0px;
+                    width: 100%;
+                    padding: 20px;
+                }
+
                 > img {
                     border-radius: 8px;
                     height: @game-details-cover-height;
