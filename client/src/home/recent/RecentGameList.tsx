@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
 import { Card, CardMedia } from '@material-ui/core';
+import { formatDate } from '../../util/main';
 
 interface IRecentGameListProps {
     recentGames: PredefinedGameResponse[];
-    formatRecentlyReleasedDate: (date: number) => string;
     onClickGame: (id: number) => void;
     goToRedirectCallback: (URL: string) => void;
 }
@@ -30,7 +30,7 @@ const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListP
                                 {x.linkIcons && 
                                     x.linkIcons.map((platformIcon: string, index: number) => { return <i key={index} className={`${platformIcon} icon mr-1`}/>; })}
                             </div>
-                            <span className="date">{props.formatRecentlyReleasedDate(x.first_release_date)}</span>
+                            <span className="date">{formatDate(x.first_release_date, true)}</span>
                         </div>
                     </Card>
                 );

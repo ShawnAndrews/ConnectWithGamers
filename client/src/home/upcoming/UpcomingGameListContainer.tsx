@@ -22,22 +22,6 @@ class UpcomingGameListContainer extends React.Component<IUpcomingGameListContain
         };
     }
 
-    formatUpcomingDate(date: number): string {
-        const CURRENT_UNIX_TIME_MS: number = parseInt(new Date().getTime().toString().slice(0, -3));
-        const TARGET_UNIX_TIME_MS: number = new Date(date).getTime();
-        let difference: number = TARGET_UNIX_TIME_MS - CURRENT_UNIX_TIME_MS;
-        console.log(`Formatting date: Target: ${TARGET_UNIX_TIME_MS} Current: ${CURRENT_UNIX_TIME_MS}`);
-        let hoursDifference: number = Math.floor(difference / 60 / 60);
-        
-        if (hoursDifference < 1) {
-            return `in 1 hrs `; 
-        } else if (hoursDifference < 24) {
-            return `in ${hoursDifference} hrs`;
-        } else {
-            return `in ${Math.floor(hoursDifference / 24)} days`;
-        }
-    }
-
     onClickGame(id: number): void {
         this.props.history.push(`/games/search/game/${id}`);
     }
@@ -46,7 +30,6 @@ class UpcomingGameListContainer extends React.Component<IUpcomingGameListContain
         return (
             <UpcomingGameList
                 upcomingGames={this.state.upcomingGames}
-                formatUpcomingDate={this.formatUpcomingDate}
                 onClickGame={this.onClickGame}
                 goToRedirectCallback={this.props.history.push}
             />

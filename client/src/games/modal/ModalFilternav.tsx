@@ -1,23 +1,20 @@
 import * as React from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { ListItem, ListItemIcon, ListItemText, Collapse, List, Checkbox, TextField } from '@material-ui/core';
-import { FilterOptions, FilterSortOptions, NameValuePair } from './ModalFilternavContainer';
+import { FilterOptions, NameValuePair } from './ModalFilternavContainer';
 
 interface IModalFilternavProps {
     toggle: boolean;
     onToggle: () => void;
-    sortExpanded: boolean;
     popularityExpanded: boolean;
     categoryExpanded: boolean;
     genreExpanded: boolean;
     platformExpanded: boolean;
-    onSortExpandClick: () => void;
     onPopularityExpandClick: () => void;
     onCategoryExpandClick: () => void;
     onGenreExpandClick: () => void;
     onPlatformExpandClick: () => void;
     filterOptions: FilterOptions;
-    onSortSelectionClick: (sortSelection: number) => void;
     onFilterPopularityClick: (popularitySelection: number) => void;
     onFilterCategoryClick: (categorySelection: number) => void;
     onFilterGenreClick: (genreSelection: number) => void;
@@ -25,7 +22,6 @@ interface IModalFilternavProps {
     onClearBtnClick: () => void;
     onSearchBtnClick: () => void;
     onQueryChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    sorts: NameValuePair[];
     popularities: NameValuePair[];
     categories: NameValuePair[];
     genres: NameValuePair[];
@@ -149,29 +145,6 @@ const ModalFilternav: React.SFC<IModalFilternavProps> = (props: IModalFilternavP
                             props.popularities.map((pair: NameValuePair, index: number) => {
                                 return (
                                     <ListItem key={pair.value} className={`${props.filterOptions.popularitySelection === pair.value ? 'active' : ''}`} onClick={() => { props.onFilterPopularityClick(index); }} button={true}>
-                                        <ListItemText inset={true} primary={pair.name} />
-                                    </ListItem>
-                                );
-                            })}
-                    </List>
-                </Collapse>
-
-                <ListItem className="filter" button={true} onClick={props.onSortExpandClick}>
-                    <ListItemIcon>
-                        <i className="fas fa-sort"/>
-                    </ListItemIcon>
-                    <ListItemText inset={true} primary="Sort" />
-                    {props.sortExpanded ? <i className="fas fa-chevron-down"/> : <i className="fas fa-chevron-up"/>}
-                </ListItem>
-                <Collapse className="filter-items" in={props.sortExpanded} timeout="auto" unmountOnExit={true}>
-                    <List disablePadding={true}>
-                        {props.sorts &&
-                            props.sorts.map((pair: NameValuePair, index: number) => {
-                                return (
-                                    <ListItem key={pair.value} className={`${props.filterOptions.sortSelection === pair.value ? 'active' : ''}`} onClick={() => { props.onSortSelectionClick(index); }} button={true}>
-                                        <ListItemIcon>
-                                            <i className={`fas fa-sort-${pair.value === FilterSortOptions.Alphabetically ? 'alpha' : ''}${pair.value === FilterSortOptions.ReleaseDate ? 'numeric' : ''}${pair.value === FilterSortOptions.Popularity ? 'amount' : ''}-${props.filterOptions.sortState[pair.value] ? 'up' : 'down'}`}/>
-                                        </ListItemIcon>
                                         <ListItemText inset={true} primary={pair.name} />
                                     </ListItem>
                                 );

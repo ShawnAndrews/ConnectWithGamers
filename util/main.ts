@@ -196,3 +196,40 @@ export function steamAPIGetReviews(id: number): Promise<SteamAPIGetReviewsRespon
 export function IGDBImage(image_id: string, size: string, type: string): string {
     return "https://images.igdb.com/igdb/image/upload/t_".concat(size, "/").concat(image_id, ".").concat(type);
 }
+
+/**
+ * Get the current Unix Timestamp in seconds.
+ */
+export function getCurrentUnixTimestampInSeconds(): number {
+    return parseInt(new Date().getTime().toString().slice(0, -3));
+}
+
+/**
+ * Build an IGDB request body from the fields, filters and sort.
+ */
+export function buildIGDBRequestBody(filters: string[], fields: string, limit: number, sort?: string, search?: string): string {
+    let body: string = "";
+
+    // process search
+    if (search) {
+        body = body.concat(`search "${search}";`);
+    }
+
+    // process fields
+    body = body.concat(`fields ${fields || "*"};`);
+
+    // process filters
+    if (filters.length > 0) {
+        body = body.concat(`where ${filters.join(" & ")} ;`);
+    }
+
+    // process sort
+    if (sort) {
+        body = body.concat(`${sort};`);
+    }
+
+    // process limit
+    body = body.concat(`limit ${limit || config.igdb.pageLimit};`);
+
+    return body;
+}

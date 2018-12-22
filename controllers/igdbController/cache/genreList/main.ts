@@ -1,6 +1,7 @@
 import config from "../../../../config";
 import { GenrePair, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
+import { buildIGDBRequestBody } from "../../../../util/main";
 
 const redis = require("redis");
 const redisClient = redis.createClient();
@@ -46,7 +47,11 @@ export function cacheGenreList(): Promise<GenrePair[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[6];
 
     const URL: string = `${config.igdb.apiURL}/genres`;
-    const body: string = `fields name; limit ${config.igdb.pageLimit};`;
+    const body: string = buildIGDBRequestBody(
+        [],
+        `name`,
+        undefined
+    );
 
     return new Promise((resolve: any, reject: any) => {
         axios({

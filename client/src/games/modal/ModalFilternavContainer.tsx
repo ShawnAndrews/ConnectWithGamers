@@ -43,17 +43,6 @@ export enum FilterCategoryOptions {
     StandaloneExpansion
 }
 
-export enum FilterSortState {
-    Asce,
-    Desc
-}
-
-export enum FilterSortOptions {
-    Alphabetically,
-    ReleaseDate,
-    Popularity
-}
-
 export enum FilterPopularityOptions {
     Above0,
     Above20,
@@ -67,8 +56,6 @@ export interface FilterOptions {
     genreSelection: boolean[];
     categorySelection: boolean[];
     popularitySelection: FilterPopularityOptions;
-    sortSelection: FilterSortOptions;
-    sortState: FilterSortState[];
     query: string;
 }
 
@@ -77,13 +64,11 @@ interface IModalFilternavContainerProps extends RouteComponentProps<any> {
 }
 
 interface IModalFilternavContainerState {
-    sortExpanded: boolean;
     categoryExpanded: boolean;
     popularityExpanded: boolean;
     genreExpanded: boolean;
     platformExpanded: boolean;
     filterOptions: FilterOptions;
-    sorts: NameValuePair[];
     popularities: NameValuePair[];
     categories: NameValuePair[];
     genres: NameValuePair[];
@@ -105,8 +90,6 @@ const defaultFilterOptions: FilterOptions = {
     genreSelection: [false, false, false, false, false, false, false, false, false, false],
     categorySelection: [false, false, false, false, false],
     popularitySelection: FilterPopularityOptions.Above0,
-    sortSelection: FilterSortOptions.Popularity,
-    sortState: [FilterSortState.Asce, FilterSortState.Asce, FilterSortState.Desc],
     query: ''
 };
 
@@ -114,12 +97,10 @@ class ModalFilternavContainer extends React.Component<Props, IModalFilternavCont
 
     constructor(props: Props) {
         super(props);
-        this.onSortExpandClick = this.onSortExpandClick.bind(this);
         this.onPlatformExpandClick = this.onPlatformExpandClick.bind(this);
         this.onGenreExpandClick = this.onGenreExpandClick.bind(this);
         this.onPopularityExpandClick = this.onPopularityExpandClick.bind(this);
         this.onCategoryExpandClick = this.onCategoryExpandClick.bind(this);
-        this.onSortSelectionClick = this.onSortSelectionClick.bind(this);
         this.onFilterPopularityClick = this.onFilterPopularityClick.bind(this);
         this.onFilterCategoryClick = this.onFilterCategoryClick.bind(this);
         this.onFilterGenreClick = this.onFilterGenreClick.bind(this);
@@ -129,7 +110,6 @@ class ModalFilternavContainer extends React.Component<Props, IModalFilternavCont
         this.onSearchBtnClick = this.onSearchBtnClick.bind(this);
 
         this.state = {
-            sortExpanded: false,
             categoryExpanded: false,
             popularityExpanded: false,
             genreExpanded: false,
@@ -157,11 +137,6 @@ class ModalFilternavContainer extends React.Component<Props, IModalFilternavCont
                 { name: 'Sport', value: FilterGenreOptions.Sport },
                 { name: 'Simulator', value: FilterGenreOptions.Simulator }
             ],
-            sorts: [
-                { name: 'Alphabetically', value: FilterSortOptions.Alphabetically },
-                { name: 'Release date', value: FilterSortOptions.ReleaseDate },
-                { name: 'Popularity', value: FilterSortOptions.Popularity }
-            ],
             categories: [
                 { name: 'Main game', value: FilterCategoryOptions.MainGame }, 
                 { name: 'DLC', value: FilterCategoryOptions.DLC }, 
@@ -179,10 +154,6 @@ class ModalFilternavContainer extends React.Component<Props, IModalFilternavCont
         };
     }
 
-    onSortExpandClick(): void {
-        this.setState({ sortExpanded: !this.state.sortExpanded });
-    }
-
     onPopularityExpandClick(): void {
         this.setState({ popularityExpanded: !this.state.popularityExpanded });
     }
@@ -197,17 +168,6 @@ class ModalFilternavContainer extends React.Component<Props, IModalFilternavCont
 
     onPlatformExpandClick(): void {
         this.setState({ platformExpanded: !this.state.platformExpanded });
-    }
-
-    onSortSelectionClick(sortSelection: number): void {
-        const filterOptions: FilterOptions = this.state.filterOptions;
-        filterOptions.sortSelection = sortSelection;
-        if (filterOptions.sortState[sortSelection] === FilterSortState.Asce) {
-            filterOptions.sortState[sortSelection] = FilterSortState.Desc;
-        } else {
-            filterOptions.sortState[sortSelection] = FilterSortState.Asce;
-        }
-        this.setState({ filterOptions: filterOptions });
     }
 
     onFilterPopularityClick(popularitySelection: number): void {
@@ -297,25 +257,6 @@ class ModalFilternavContainer extends React.Component<Props, IModalFilternavCont
                 params.push(`popularity=80`);
             } 
         }
-        if (this.state.filterOptions.sortSelection === FilterSortOptions.Alphabetically) {
-            if (this.state.filterOptions.sortState[0] === FilterSortState.Asce) {
-                params.push(`sort=alphabetically-aesc`);
-            } else {
-                params.push(`sort=alphabetically-desc`);
-            }
-        } else if (this.state.filterOptions.sortSelection === FilterSortOptions.ReleaseDate) {
-            if (this.state.filterOptions.sortState[1] === FilterSortState.Asce) {
-                params.push(`sort=releasedate-aesc`);
-            } else {
-                params.push(`sort=releasedate-desc`);
-            }
-        } else {
-            if (this.state.filterOptions.sortState[2] === FilterSortState.Asce) {
-                params.push(`sort=popularity-aesc`);
-            } else {
-                params.push(`sort=popularity-desc`);
-            }
-        }
         queryString = queryString.concat(params.join('&'));
         this.onClearBtnClick();
         this.props.toggleSearchModal();
@@ -324,7 +265,6 @@ class ModalFilternavContainer extends React.Component<Props, IModalFilternavCont
 
     get getDefaultFilterOptionsDeepCopy(): FilterOptions {
         const defaultFilterOptionsDeepCopy: FilterOptions = {...defaultFilterOptions};
-        defaultFilterOptionsDeepCopy.sortState = defaultFilterOptions.sortState.slice();
         defaultFilterOptionsDeepCopy.genreSelection = defaultFilterOptions.genreSelection.slice();
         defaultFilterOptionsDeepCopy.platformSelection = defaultFilterOptions.platformSelection.slice();
         defaultFilterOptionsDeepCopy.categorySelection = defaultFilterOptions.categorySelection.slice();
@@ -338,18 +278,15 @@ class ModalFilternavContainer extends React.Component<Props, IModalFilternavCont
             <ModalFilternav
                 toggle={this.props.toggleSearch}
                 onToggle={this.props.toggleSearchModal}
-                sortExpanded={this.state.sortExpanded}
                 popularityExpanded={this.state.popularityExpanded}
                 categoryExpanded={this.state.categoryExpanded}
                 genreExpanded={this.state.genreExpanded}
                 platformExpanded={this.state.platformExpanded}
-                onSortExpandClick={this.onSortExpandClick}
                 onPopularityExpandClick={this.onPopularityExpandClick}
                 onCategoryExpandClick={this.onCategoryExpandClick}
                 onGenreExpandClick={this.onGenreExpandClick}
                 onPlatformExpandClick={this.onPlatformExpandClick}
                 filterOptions={this.state.filterOptions}
-                onSortSelectionClick={this.onSortSelectionClick}
                 onFilterPopularityClick={this.onFilterPopularityClick}
                 onFilterCategoryClick={this.onFilterCategoryClick}
                 onFilterGenreClick={this.onFilterGenreClick}
@@ -357,7 +294,6 @@ class ModalFilternavContainer extends React.Component<Props, IModalFilternavCont
                 onClearBtnClick={this.onClearBtnClick}
                 onSearchBtnClick={this.onSearchBtnClick}
                 onQueryChanged={this.onQueryChanged}
-                sorts={this.state.sorts}
                 popularities={this.state.popularities}
                 categories={this.state.categories}
                 genres={this.state.genres}

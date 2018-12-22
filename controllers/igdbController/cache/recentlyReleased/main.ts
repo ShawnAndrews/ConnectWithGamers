@@ -1,7 +1,7 @@
 import config from "../../../../config";
 import { PredefinedGameResponse, RawPredefinedGameResponse, PredefinedGameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-import { ArrayClean, IGDBImage } from "../../../../util/main";
+import { ArrayClean, IGDBImage, buildIGDBRequestBody, getCurrentUnixTimestampInSeconds } from "../../../../util/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
 
@@ -45,14 +45,21 @@ export function getCachedRecentGames(): Promise<PredefinedGameResponse[]> {
 
 export function cacheRecentGames(): Promise<PredefinedGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[4];
-    const CURRENT_UNIX_TIME_MS: number = parseInt(new Date().getTime().toString().slice(0, -3));
+    const CURRENT_UNIX_TIME_S: number = getCurrentUnixTimestampInSeconds();
 
     return new Promise((resolve: any, reject: any) => {
 
         const URL: string = `${config.igdb.apiURL}/games`;
-        let body: string = `fields ${PredefinedGameResponseFields.join()}; limit ${config.igdb.pageLimit};`;
-        body = body.concat(`where cover != null & popularity > 5 & first_release_date <= ${CURRENT_UNIX_TIME_MS};`);
-        body = body.concat(`sort first_release_date desc;`);
+        const body: string = buildIGDBRequestBody(
+            [
+                `cover != null`,
+                `popularity > 5`,
+                `first_release_date <= ${CURRENT_UNIX_TIME_S}`
+            ],
+            PredefinedGameResponseFields.join(),
+            undefined,
+            `sort first_release_date desc`
+        );
 
         axios({
             method: "post",

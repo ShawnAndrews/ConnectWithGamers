@@ -1,5 +1,5 @@
 import config from "../../../../config";
-import { formatTimestamp, steamAPIGetReviews, steamAPIGetPriceInfo, IGDBImage } from "../../../../util/main";
+import { formatTimestamp, steamAPIGetReviews, steamAPIGetPriceInfo, IGDBImage, buildIGDBRequestBody } from "../../../../util/main";
 import {
     GameResponse, GameResponseFields, RawGameResponse,
     SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse, redisCache, IGDBCacheEntry, ExternalGame, IGDBExternalCategoryEnum } from "../../../../client/client-server-common/common";
@@ -53,8 +53,13 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
     return new Promise((resolve: any, reject: any) => {
 
         const URL: string = `${config.igdb.apiURL}/games`;
-        let body: string = `fields ${GameResponseFields.join()}; limit ${config.igdb.pageLimit};`;
-        body = body.concat(`where id = ${gameId};`);
+        const body: string = buildIGDBRequestBody(
+            [
+                `id = ${gameId}`
+            ],
+            GameResponseFields.join(),
+            undefined
+        );
 
         axios({
             method: "post",
@@ -103,9 +108,14 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                         const platformIds: number[] = rawResponse.platforms;
 
                         const URL: string = `${config.igdb.apiURL}/platforms`;
-                        let body: string = `fields name; limit ${config.igdb.pageLimit};`;
-                        body = body.concat(`where id = (${platformIds.join()});`);
-                        body = body.concat(`sort updated_at desc;`);
+                        const body: string = buildIGDBRequestBody(
+                            [
+                                `id = (${platformIds.join()})`,
+                            ],
+                            `name`,
+                            undefined,
+                            `sort updated_at desc`
+                        );
 
                         axios({
                             method: "post",

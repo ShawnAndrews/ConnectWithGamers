@@ -3,6 +3,7 @@ import {
     SingleNewsResponse, RawSingleNewsResponse, SingleNewsResponseFields,
     redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
+import { buildIGDBRequestBody, getCurrentUnixTimestampInSeconds } from "../../../../util/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
 
@@ -45,14 +46,20 @@ export function getCachedNews(): Promise<SingleNewsResponse[]> {
  */
 export function cacheNews(): Promise<SingleNewsResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[10];
-    const CURRENT_UNIX_TIME_MS: number = parseInt(new Date().getTime().toString().slice(0, -3));
+    const CURRENT_UNIX_TIME_S: number = getCurrentUnixTimestampInSeconds();
 
     return new Promise((resolve: any, reject: any) => {
 
         const URL: string = `${config.igdb.apiURL}/pulses`;
-        let body: string = `fields ${SingleNewsResponseFields.join()}; limit ${config.igdb.pageLimit};`;
-        body = body.concat(`where image != null & created_at <= ${CURRENT_UNIX_TIME_MS};`);
-        body = body.concat(`sort created_at desc;`);
+        const body: string = buildIGDBRequestBody(
+            [
+                `image != null`,
+                `created_at <= ${CURRENT_UNIX_TIME_S}`
+            ],
+            SingleNewsResponseFields.join(),
+            undefined,
+            `sort created_at desc`
+        );
 
         axios({
             method: "post",

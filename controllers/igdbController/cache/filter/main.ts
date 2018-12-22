@@ -4,7 +4,7 @@ import {
     redisCache, IGDBCacheEntry, RawThumbnailGameResponse, Platform, SteamAPIGetPriceInfoResponse, ExternalGame, IGDBExternalCategoryEnum } from "../../../../client/client-server-common/common";
 import { getAllGenrePairs } from "../genreList/main";
 import axios, { AxiosResponse } from "axios";
-import { ArrayClean, steamAPIGetPriceInfo, IGDBImage } from "../../../../util/main";
+import { ArrayClean, steamAPIGetPriceInfo, IGDBImage, buildIGDBRequestBody } from "../../../../util/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
 
@@ -48,18 +48,9 @@ export function getCachedResultsGames(queryString: string): Promise<ThumbnailGam
 export function cacheResultsGames(queryString: string): Promise<ThumbnailGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[14];
     const queryStringObj: any = JSON.parse(queryString);
-
-    const URL: string = `${config.igdb.apiURL}/games`;
-    let body: string = `fields ${ThumbnailGameResponseFields.join()}; limit ${config.igdb.pageLimit};`;
     const whereFilters: string[] = [];
 
     Object.keys(queryStringObj).forEach((key: string) => {
-
-        if (key === "query") {
-            const query: string = queryStringObj[key];
-
-            body = body.concat(`search "${query}";`);
-        }
 
         if (key === "genres") {
             const genres: number[] = JSON.parse("[" + queryStringObj[key] + "]");
@@ -87,9 +78,14 @@ export function cacheResultsGames(queryString: string): Promise<ThumbnailGameRes
 
     });
 
-    if (whereFilters.length > 0) {
-        body = body.concat(`where ${whereFilters.join(" & ")};`);
-    }
+    const URL: string = `${config.igdb.apiURL}/games`;
+    const body: string = buildIGDBRequestBody(
+        whereFilters,
+        ThumbnailGameResponseFields.join(),
+        undefined,
+        undefined,
+        queryStringObj.query
+    );
 
     return new Promise((resolve: any, reject: any) => {
 

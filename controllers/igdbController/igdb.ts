@@ -13,7 +13,6 @@ import routeModel from "../../models/routemodel";
 import { upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames } from "./cache/upcomingGames/main";
 import { recentGamesKeyExists, getCachedRecentGames, cacheRecentGames } from "./cache/recentlyReleased/main";
 import { gameKeyExists, getCachedGame, cacheGame } from "./cache/games/main";
-import { searchGamesKeyExists, getCachedSearchGames, cacheSearchGames } from "./cache/searchGames/main";
 import { popularGamesKeyExists, getCachedPopularGames, cachePopularGames } from "./cache/popularGames/main";
 import { resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames } from "./cache/filter/main";
 import { reviewedGamesKeyExists, getCachedReviewedGames, cacheReviewedGames } from "./cache/reviewedGames/main";
@@ -205,20 +204,6 @@ router.post(routes.getRoute("recentgames"), (req: Request, res: Response) => {
     const genericResponse: GenericErrorResponse = { error: undefined };
     GenericCachedRoute<PredefinedGameResponse[]>(recentGamesKeyExists, getCachedRecentGames, cacheRecentGames)
         .then((data: PredefinedGameResponse[]) => {
-            genericResponse.data = data;
-            return res.send(genericResponse);
-        })
-        .catch((error: string) => {
-            genericResponse.error = error;
-            return res.send(genericResponse);
-        });
-});
-
-/* search games */
-router.post(routes.getRoute("searchgames"), (req: Request, res: Response) => {
-    const genericResponse: GenericErrorResponse = { error: undefined };
-    GenericCachedWithDataRoute<SearchGameResponse[], string>(searchGamesKeyExists, getCachedSearchGames, cacheSearchGames, req.params.query)
-        .then((data: SearchGameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
         })

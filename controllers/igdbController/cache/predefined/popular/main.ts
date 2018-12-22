@@ -1,7 +1,7 @@
 import config from "../../../../../config";
 import { PredefinedGamesType, ThumbnailGameResponse, RawThumbnailGameResponse, ThumbnailGameResponseFields, redisCache, IGDBCacheEntry, Genre, Platform, SteamAPIGetPriceInfoResponse, ExternalGame, IGDBExternalCategoryEnum } from "../../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-import { ArrayClean, steamAPIGetPriceInfo, IGDBImage } from "../../../../../util/main";
+import { ArrayClean, steamAPIGetPriceInfo, IGDBImage, buildIGDBRequestBody, getCurrentUnixTimestampInSeconds } from "../../../../../util/main";
 import { getAllGenrePairs } from "../../genreList/main";
 import { platform } from "os";
 const redis = require("redis");
@@ -47,12 +47,22 @@ export function getCachedPredefinedPopularGames(): Promise<ThumbnailGameResponse
 
 export function cachePredefinedPopularGames(): Promise<ThumbnailGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[11];
-    const CURRENT_UNIX_TIME_MS: number = parseInt(new Date().getTime().toString().slice(0, -3));
+    const CURRENT_UNIX_TIME_S: number = getCurrentUnixTimestampInSeconds();
 
     const URL: string = `${config.igdb.apiURL}/games`;
-    let body: string = `fields ${ThumbnailGameResponseFields.join()}; limit ${config.igdb.pageLimit};`;
-    body = body.concat(`where cover != null & popularity > 15 & aggregated_rating < 100 & first_release_date > 1533081600 & first_release_date <= ${CURRENT_UNIX_TIME_MS};`);
-    body = body.concat(`sort aggregated_rating desc;`);
+    const body: string = buildIGDBRequestBody(
+        [
+            `cover != null`,
+            `popularity > 15`,
+            `aggregated_rating < 100`,
+            `first_release_date > 1533081600`,
+            `first_release_date <= ${CURRENT_UNIX_TIME_S}`
+        ],
+        ThumbnailGameResponseFields.join(),
+        undefined,
+        `sort aggregated_rating desc`
+    );
+
 
     return new Promise((resolve: any, reject: any) => {
 
