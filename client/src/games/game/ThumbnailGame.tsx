@@ -27,7 +27,7 @@ const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProp
                         props.game.linkIcons.map((platformIcon: string, index: number) => { return <i key={index} className={`${platformIcon} mx-1`}/>; })}
                 </div>
                 {props.game.price && 
-                    <Textfit className="price color-secondary text-nowrap text-right px-2" max={17}>
+                    <Textfit className="price color-secondary text-nowrap text-right px-2" max={14}>
                         {props.game.price === 'Free'
                             ? <span className="free-text">Free</span>
                             : <span>${props.game.price} USD{props.game.discount_percent !== 0 && <i className="discount-text ml-1">(-{props.game.discount_percent} % SALE)</i>}</span>}

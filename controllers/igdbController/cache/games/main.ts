@@ -1,14 +1,12 @@
 import config from "../../../../config";
-import { formatTimestamp, steamAPIGetReviews, steamAPIGetPriceInfo } from "../../../../util/main";
+import { formatTimestamp, steamAPIGetReviews, steamAPIGetPriceInfo, IGDBImage } from "../../../../util/main";
 import {
     GameResponse, GameResponseFields, RawGameResponse,
-    SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse, redisCache, IGDBCacheEntry, ExternalSteamLink } from "../../../../client/client-server-common/common";
+    SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse, redisCache, IGDBCacheEntry, ExternalGame, IGDBExternalCategoryEnum } from "../../../../client/client-server-common/common";
 import { getAllGenrePairs } from "../genreList/main";
 import axios, { AxiosResponse } from "axios";
 const redis = require("redis");
 const redisClient = redis.createClient();
-const igdb = require("igdb-api-node").default;
-const igdbClient = igdb(config.igdb.key);
 
 /**
  * Check if redis key exists.
@@ -53,14 +51,20 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
     const game: GameResponse = { name: "" };
 
     return new Promise((resolve: any, reject: any) => {
-        axios.get(
-            `https://api-endpoint.igdb.com/games/${gameId}?fields=${GameResponseFields.join()}`,
-            {
-                headers: {
-                    "user-key": config.igdb.key,
-                    "Accept": "application/json"
-                }
-            })
+
+        const URL: string = `${config.igdb.apiURL}/games`;
+        let body: string = `fields ${GameResponseFields.join()}; limit ${config.igdb.pageLimit};`;
+        body = body.concat(`where id = ${gameId};`);
+
+        axios({
+            method: "post",
+            url: URL,
+            headers: {
+                "user-key": config.igdb.key,
+                "Accept": "application/json"
+            },
+            data: body
+        })
         .then( (response: AxiosResponse) => {
             const rawResponse: RawGameResponse = response.data[0];
 
@@ -71,16 +75,12 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                 game.rating = rawResponse.total_rating;
                 game.rating_count = rawResponse.total_rating_count;
                 if (rawResponse.cover) {
-                    game.cover = igdbClient.image(
-                        { cloudinary_id: rawResponse.cover.cloudinary_id },
-                        "cover_big", "jpg");
+                    game.cover = IGDBImage(rawResponse.cover.image_id, "cover_big", "jpg");
                 }
                 game.summary = rawResponse.summary;
                 if (rawResponse.screenshots) {
                     game.screenshots = rawResponse.screenshots.map((x: any) => {
-                        return igdbClient.image(
-                            { cloudinary_id: x.cloudinary_id },
-                            "screenshot_huge", "jpg");
+                        return IGDBImage(x.image_id, "screenshot_huge", "jpg");
                     });
                 }
                 if (rawResponse.videos) {
@@ -102,11 +102,22 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                     if (rawResponse.platforms) {
                         const platformIds: number[] = rawResponse.platforms;
 
-                        igdbClient.platforms({
-                            ids: platformIds
-                        }, ["name"])
-                        .then( (platformResponse: any) => {
-                            const platformAndReleaseDates: any[] = platformResponse.body;
+                        const URL: string = `${config.igdb.apiURL}/platforms`;
+                        let body: string = `fields name; limit ${config.igdb.pageLimit};`;
+                        body = body.concat(`where id = (${platformIds.join()});`);
+                        body = body.concat(`sort updated_at desc;`);
+
+                        axios({
+                            method: "post",
+                            url: URL,
+                            headers: {
+                                "user-key": config.igdb.key,
+                                "Accept": "application/json"
+                            },
+                            data: body
+                        })
+                        .then( (response: AxiosResponse) => {
+                            const platformAndReleaseDates: any[] = response.data;
                             const platformsNames: string[] = [];
                             const platformsReleaseDates: string[] = [];
                             const orderedPlatformIds: number[] = [];
@@ -143,7 +154,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
 
                             platformAndReleaseDates.forEach((platform: any, index: number) => {
                                 platformsNames.push(platform.name);
-                                platformResponse.body.forEach((platformPair: any) => {
+                                response.data.forEach((platformPair: any) => {
                                     if (platformPair.name === platform.name) {
                                         orderedPlatformIds.push(platformPair.id);
                                     }
@@ -163,9 +174,19 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
 
                 const pricePromise: Promise<SteamAPIGetPriceInfoResponse> = new Promise((resolve: any, reject: any) => {
 
-                    if (rawResponse.external) {
-                        const steamid: number = parseInt(rawResponse.external.steam);
-                        steamAPIGetPriceInfo([steamid])
+                    if (rawResponse.external_games) {
+                        let steamId: number = undefined;
+                        rawResponse.external_games.forEach((y: ExternalGame) => {
+                            if (y.category === IGDBExternalCategoryEnum.steam) {
+                                steamId = parseInt(y.uid);
+                            }
+                        });
+
+                        if (!steamId) {
+                            return resolve();
+                        }
+
+                        steamAPIGetPriceInfo([steamId])
                             .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse[]) => {
                                 return resolve(steamAPIGetPriceInfoResponse[0]);
                             })
@@ -177,23 +198,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                     }
                 });
 
-                const reviewsPromise: Promise<SteamAPIGetReviewsResponse> = new Promise((resolve: any, reject: any) => {
-
-                    if (rawResponse.external) {
-                        const steamId: number = parseInt(rawResponse.external.steam);
-                        steamAPIGetReviews(steamId)
-                            .then( (steamAPIGetReviewsResponse: SteamAPIGetReviewsResponse) => {
-                                return resolve(steamAPIGetReviewsResponse);
-                            })
-                            .catch ( (error: string) => {
-                                return reject(error);
-                            });
-                    } else {
-                        return resolve();
-                    }
-                });
-
-                Promise.all([platformsPromise, pricePromise, reviewsPromise])
+                Promise.all([platformsPromise, pricePromise])
                 .then((vals: any) => {
 
                     if (vals[0]) {
@@ -205,9 +210,6 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                         game.price = vals[1].price;
                         game.discount_percent = vals[1].discount_percent;
                         game.steam_url = vals[1].steam_url;
-                    }
-                    if (vals[2]) {
-                        game.reviews = vals[2].reviews;
                     }
 
                     redisClient.hset(cacheEntry.key, gameId, JSON.stringify(game));
@@ -226,6 +228,9 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                 return reject(error);
             });
 
+        })
+        .catch((error: string) => {
+            return reject(error);
         });
 
     });

@@ -14,6 +14,7 @@ const config: Config = {
     token_remember_expiration: 86400000, // 1day
     token_length: 32, // 32characters
     igdb: {
+        apiURL: "https://api-v3.igdb.com",
         key: "",
         pageLimit: 50
     },

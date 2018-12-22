@@ -29,7 +29,7 @@ export function formatDate(date: Date): string {
 export function formatTimestamp(timestamp: number): string {
     const monthsArr = [`Jan`, `Feb`, `Mar`, `Apr`, `May`, `Jun`, `Jul`, `Aug`, `Sep`, `Oct`, `Nov`, `Dec`];
 
-    const date = new Date(timestamp);
+    const date = new Date(timestamp * 1000);
     const year = date.getFullYear();
     const month = monthsArr[date.getMonth()];
     const day = date.getDate();
@@ -190,4 +190,9 @@ export function steamAPIGetReviews(id: number): Promise<SteamAPIGetReviewsRespon
 
     });
 
+}
+
+/* IGDB image */
+export function IGDBImage(image_id: string, size: string, type: string): string {
+    return "https://images.igdb.com/igdb/image/upload/t_".concat(size, "/").concat(image_id, ".").concat(type);
 }

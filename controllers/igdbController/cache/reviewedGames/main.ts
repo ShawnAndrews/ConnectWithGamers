@@ -1,12 +1,10 @@
 import config from "../../../../config";
 import { PredefinedGameResponse, RawPredefinedGameResponse, PredefinedGameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
-import axios, { AxiosResponse } from "axios";
-import { ArrayClean } from "../../../../util/main";
+import axios, { AxiosResponse, AxiosError } from "axios";
+import { ArrayClean, IGDBImage } from "../../../../util/main";
 import { getAllGenrePairs } from "../genreList/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
-const igdb = require("igdb-api-node").default;
-const igdbClient = igdb(config.igdb.key);
 
 /**
  * Check if redis key exists.
@@ -48,18 +46,24 @@ export function getCachedReviewedGames(): Promise<PredefinedGameResponse[]> {
 
 export function cacheReviewedGames(): Promise<PredefinedGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[9];
-    const CURRENT_UNIX_TIME_MS: number = new Date().getTime();
+    const CURRENT_UNIX_TIME_MS: number = parseInt(new Date().getTime().toString().slice(0, -3));
 
     return new Promise((resolve: any, reject: any) => {
 
-        axios.get(
-            `https://api-endpoint.igdb.com/games/?fields=${PredefinedGameResponseFields}&filter[first_release_date][gt]=${CURRENT_UNIX_TIME_MS}&filter[release_dates.platform][eq]=6&order=updated_at:desc&limit=${config.igdb.pageLimit}&filter[screenshots][exists]=1`,
-            {
-                headers: {
-                    "user-key": config.igdb.key,
-                    "Accept": "application/json"
-                }
-            })
+        const URL: string = `${config.igdb.apiURL}/games`;
+        let body: string = `fields ${PredefinedGameResponseFields.join()}; limit ${config.igdb.pageLimit};`;
+        body = body.concat(`where screenshots != null & first_release_date > ${CURRENT_UNIX_TIME_MS} & release_dates.platform = 6;`);
+        body = body.concat(`sort updated_at desc;`);
+
+        axios({
+            method: "post",
+            url: URL,
+            headers: {
+                "user-key": config.igdb.key,
+                "Accept": "application/json"
+            },
+            data: body
+        })
         .then( (response: AxiosResponse) => {
             const rawResponse: RawPredefinedGameResponse[] = response.data;
             const gamesResponse: PredefinedGameResponse[] = [];
@@ -73,9 +77,7 @@ export function cacheReviewedGames(): Promise<PredefinedGameResponse[]> {
                     const aggregated_rating: number = x.aggregated_rating;
                     let cover: string = undefined;
                     if (x.screenshots) {
-                        cover = igdbClient.image(
-                            { cloudinary_id: x.screenshots[0].cloudinary_id },
-                            "screenshot_big", "jpg");
+                        cover = IGDBImage(x.screenshots[0].image_id, "screenshot_big", "jpg");
                     }
                     let genre: string = undefined;
                     if (x.genres) {
@@ -123,7 +125,7 @@ export function cacheReviewedGames(): Promise<PredefinedGameResponse[]> {
             });
 
         })
-        .catch((error: string) => {
+        .catch((error: AxiosError) => {
             return reject(error);
         });
 

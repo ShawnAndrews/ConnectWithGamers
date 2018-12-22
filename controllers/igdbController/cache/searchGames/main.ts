@@ -3,8 +3,6 @@ import axios, { AxiosResponse } from "axios";
 import { redisCache, IGDBCacheEntry, SearchGameResponseFields, SearchGameResponse, RawSearchGameResponse } from "../../../../client/client-server-common/common";
 const redis = require("redis");
 const redisClient = redis.createClient();
-const igdb = require("igdb-api-node").default;
-const igdbClient = igdb(config.igdb.key);
 
 /**
  * Check if redis key exists.
@@ -48,14 +46,19 @@ export function cacheSearchGames(query: string): Promise<SearchGameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
 
-        axios.get(
-            `https://api-endpoint.igdb.com/games/?search=${query}&fields=${SearchGameResponseFields}&order=release_dates.date:desc&limit=${config.igdb.pageLimit}`,
-            {
-                headers: {
-                    "user-key": config.igdb.key,
-                    "Accept": "application/json"
-                }
-            })
+        const URL: string = `${config.igdb.apiURL}/games`;
+        let body: string = `fields ${SearchGameResponseFields.join()}; limit ${config.igdb.pageLimit};`;
+        body = body.concat(`search "${query}";`);
+
+        axios({
+            method: "post",
+            url: URL,
+            headers: {
+                "user-key": config.igdb.key,
+                "Accept": "application/json"
+            },
+            data: body
+        })
         .then( (response: AxiosResponse) => {
             const rawResponse: RawSearchGameResponse[] = response.data;
             const gamesResponse: SearchGameResponse[] = rawResponse;

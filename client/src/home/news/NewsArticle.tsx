@@ -9,13 +9,13 @@ interface INewsArticleProps {
 const NewsArticle: React.SFC<INewsArticleProps> = (props: INewsArticleProps) => {
     
     const formatDate = (date: number): string => {
-        const CURRENT_UNIX_TIME_MS: number = new Date().getTime();
-        const TARGET_UNIX_TIME_MS: number = date;
+        const CURRENT_UNIX_TIME_MS: number = parseInt(new Date().getTime().toString().slice(0, -3));
+        const TARGET_UNIX_TIME_MS: number = new Date(date).getTime();
         let difference: number = CURRENT_UNIX_TIME_MS - TARGET_UNIX_TIME_MS;
-        let hoursDifference: number = Math.floor(difference / 1000 / 60 / 60);
+        let hoursDifference: number = Math.floor(difference / 60 / 60);
         
         if (hoursDifference < 1) {
-            const minutes: number = Math.floor(60 * (difference / 1000 / 60 / 60));
+            const minutes: number = Math.floor(60 * (difference / 60 / 60));
             return `${minutes} mins ago`; 
         } else if (hoursDifference < 24) {
             return `${hoursDifference} hrs ago`;
@@ -41,9 +41,8 @@ const NewsArticle: React.SFC<INewsArticleProps> = (props: INewsArticleProps) => 
                     </div>
                 </div>
                 <div className="news-media">
-                    {props.article.image
-                    ? <img className={`w-100 ${props.article.image ? '' : 'translucent'}`} src={props.article.image} onError={(e: any) => { e.target.onerror = null; e.target.src = "https://i.imgur.com/WcPkTiF.png"; }} />
-                    : props.article.video && <iframe src={props.article.video} frameBorder="0" custom-attribute="autoplay; encrypted-media" allowFullScreen={true}/>}
+                    {props.article.image &&
+                        <img className={`w-100 ${props.article.image ? '' : 'translucent'}`} src={props.article.image} onError={(e: any) => { e.target.onerror = null; e.target.src = "https://i.imgur.com/WcPkTiF.png"; }} />}
                 </div>
             </Card>
         </div>

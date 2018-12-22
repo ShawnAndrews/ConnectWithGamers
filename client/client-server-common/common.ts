@@ -22,6 +22,7 @@ export interface Config {
     token_remember_expiration: number; // 1day
     token_length: number; // 32characters
     igdb: {
+        apiURL: string,
         key: string,
         pageLimit: number
     };
@@ -458,10 +459,10 @@ export interface RawThumbnailGameResponse {
     cover: IGDBImage;
     genres: number[];
     platforms: number[];
-    external: ExternalSteamLink;
+    external_games: ExternalGame[];
 }
 
-export const ThumbnailGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`, `genres`, `platforms`, `external`];
+export const ThumbnailGameResponseFields: string[] = [`id`, `name`, `rating`, `cover.*`, `genres`, `platforms`, `external_games.*`];
 
 export interface GameResponse {
     name: string;
@@ -483,7 +484,6 @@ export interface GameResponse {
         name: string;
         youtube_link: string;
     };
-    reviews?: SteamAPIReview[];
 }
 
 export interface RawGameResponse {
@@ -498,10 +498,10 @@ export interface RawGameResponse {
     platforms: any;
     screenshots: any;
     videos: any;
-    external: ExternalSteamLink;
+    external_games: ExternalGame[];
 }
 
-export const GameResponseFields: string[] = [`name`, `release_dates`, `cover`, `total_rating`, `total_rating_count`, `summary`, `genres`, `platforms`, `screenshots`, `videos`, `external`];
+export const GameResponseFields: string[] = [`name`, `release_dates.*`, `cover.*`, `total_rating`, `total_rating_count`, `summary`, `genres`, `platforms`, `screenshots.*`, `videos.*`, `external_games.*`];
 
 export interface SingleGameResponse {
     error: string;
@@ -529,11 +529,13 @@ export interface PredefinedGameResponse {
     cover?: string;
 }
 
-export const PredefinedGameResponseFields: string[] = [`id`, `name`, `genres`, `platforms`, `first_release_date`, `aggregated_rating`, `cover`, `screenshots`];
+export const PredefinedGameResponseFields: string[] = [`id`, `name`, `genres`, `platforms`, `first_release_date`, `aggregated_rating`, `cover.*`, `screenshots.*`];
 
 export interface IGDBImage {
+    alpha_channel: boolean;
+    animated: boolean;
     url: string;
-    cloudinary_id: string;
+    image_id: string;
     width: number;
     height: number;
 }
@@ -548,8 +550,31 @@ export interface Platform {
     name: string;
 }
 
-export interface ExternalSteamLink {
-    steam: string;
+export enum IGDBExternalCategoryEnum {
+    "steam" = 1,
+    "gog" = 5,
+    "youtube" = 10,
+    "microsoft" = 11,
+    "apple" = 13,
+    "twitch" = 14,
+    "android" = 15
+}
+
+export interface ExternalGame {
+    category: IGDBExternalCategoryEnum;
+    created_at: number;
+    game: number;
+    name: string;
+    uid: string;
+    updated_at: number;
+    url: string;
+    year: number;
+}
+
+export interface IGDBWebsite {
+    id: number;
+    trusted: boolean;
+    url: string;
 }
 
 export interface RawSingleNewsResponse {
@@ -557,16 +582,11 @@ export interface RawSingleNewsResponse {
     title: string;
     author: string;
     image: string;
-    url: string;
+    website: IGDBWebsite;
     created_at: number;
     pulse_source: {
         name: string
     };
-    videos?: [
-        {
-            video_id: string
-        }
-    ];
 }
 
 export interface SingleNewsResponse {
@@ -574,13 +594,12 @@ export interface SingleNewsResponse {
     title: string;
     author: string;
     image: string;
-    video: string;
     url: string;
     created_at: number;
     newsOrg: string;
 }
 
-export const SingleNewsResponseFields: string[] = [`id`, `title`, `author`, `image`, `url`, `created_at`, `pulse_source.name`, `videos.video_id`];
+export const SingleNewsResponseFields: string[] = [`id`, `title`, `author`, `image`, `website.*`, `created_at`, `pulse_source.*`];
 
 export interface TwitchFollowersResponse {
     error: string;
@@ -717,7 +736,7 @@ export interface PlatformGame {
     cover?: string;
 }
 
-export const PlatformGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`, `genres`, `platforms`, `external`];
+export const PlatformGameResponseFields: string[] = [`id`, `name`, `rating`, `cover.*`, `genres`, `platforms`, `external`];
 
 export interface GenreGamesResponse {
     error: string;
@@ -740,7 +759,7 @@ export interface GenreGame {
     cover?: string;
 }
 
-export const GenreGameResponseFields: string[] = [`id`, `name`, `rating`, `cover`, `genres`, `platforms`, `external`];
+export const GenreGameResponseFields: string[] = [`id`, `name`, `rating`, `cover.*`, `genres`, `platforms`, `external`];
 
 export interface SteamAPIGetPriceInfoResponse {
     steamgameid: number;

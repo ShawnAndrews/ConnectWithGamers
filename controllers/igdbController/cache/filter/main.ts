@@ -1,14 +1,12 @@
 import config from "../../../../config";
 import {
     ThumbnailGameResponse, ThumbnailGameResponseFields,
-    redisCache, IGDBCacheEntry, RawThumbnailGameResponse, Platform, SteamAPIGetPriceInfoResponse } from "../../../../client/client-server-common/common";
+    redisCache, IGDBCacheEntry, RawThumbnailGameResponse, Platform, SteamAPIGetPriceInfoResponse, ExternalGame, IGDBExternalCategoryEnum } from "../../../../client/client-server-common/common";
 import { getAllGenrePairs } from "../genreList/main";
 import axios, { AxiosResponse } from "axios";
-import { ArrayClean, steamAPIGetPriceInfo } from "../../../../util/main";
+import { ArrayClean, steamAPIGetPriceInfo, IGDBImage } from "../../../../util/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
-const igdb = require("igdb-api-node").default;
-const igdbClient = igdb(config.igdb.key);
 
 /**
  * Check if redis key exists.
@@ -50,74 +48,48 @@ export function getCachedResultsGames(queryString: string): Promise<ThumbnailGam
 export function cacheResultsGames(queryString: string): Promise<ThumbnailGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[14];
     const queryStringObj: any = JSON.parse(queryString);
-    let URL: string = `https://api-endpoint.igdb.com/games/?fields=${ThumbnailGameResponseFields.join()}`;
+
+    const URL: string = `${config.igdb.apiURL}/games`;
+    let body: string = `fields ${ThumbnailGameResponseFields.join()}; limit ${config.igdb.pageLimit};`;
+    const whereFilters: string[] = [];
 
     Object.keys(queryStringObj).forEach((key: string) => {
 
         if (key === "query") {
             const query: string = queryStringObj[key];
 
-            URL = URL.concat(`&search=${query}`);
+            body = body.concat(`search "${query}";`);
         }
 
         if (key === "genres") {
             const genres: number[] = JSON.parse("[" + queryStringObj[key] + "]");
 
-            genres.forEach((genreid: number) => {
-                URL = URL.concat(`&filter[genres][eq]=${genreid}`);
-            });
+            whereFilters.push(`genres = (${genres.join()});`);
         }
 
         if (key === "platforms") {
             const platforms: number[] = JSON.parse("[" + queryStringObj[key] + "]");
 
-            platforms.forEach((platformid: number) => {
-                URL = URL.concat(`&filter[platforms][eq]=${platformid}`);
-            });
+            whereFilters.push(`platforms = (${platforms.join()});`);
         }
 
         if (key === "categories") {
             const categories: number[] = JSON.parse("[" + queryStringObj[key] + "]");
 
-            categories.forEach((categoryid: number) => {
-                URL = URL.concat(`&filter[category][eq]=${categoryid}`);
-            });
+            whereFilters.push(`category = ${categories.join()};`);
         }
 
         if (key === "popularity") {
             const popularity: number = parseInt(queryStringObj[key]);
 
-            URL = URL.concat(`&filter[aggregated_rating][gte]=${popularity}`);
+            whereFilters.push(`aggregated_rating >= ${popularity};`);
         }
-
-        if (key === "sort") {
-            const sortName: string = queryStringObj[key].split("-")[0];
-            const sortType: string = queryStringObj[key].split("-")[1];
-
-            if (sortName === "alphabetically") {
-                if (sortType === "aesc") {
-                    URL = URL.concat(`&order=name:asc`);
-                } else {
-                    URL = URL.concat(`&order=name:desc`);
-                }
-            } else if (sortName === "releasedate") {
-                if (sortType === "aesc") {
-                    URL = URL.concat(`&order=first_release_date:asc`);
-                } else {
-                    URL = URL.concat(`&order=first_release_date:desc`);
-                }
-            } else if (sortName === "popularity") {
-                if (sortType === "aesc") {
-                    URL = URL.concat(`&order=popularity:asc`);
-                } else {
-                    URL = URL.concat(`&order=popularity:desc`);
-                }
-            }
-        }
-
-        URL = URL.concat(`&limit=${config.igdb.pageLimit}`);
 
     });
+
+    if (whereFilters.length > 0) {
+        body = body.concat(`where ${whereFilters.join(" & ")};`);
+    }
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -126,8 +98,29 @@ export function cacheResultsGames(queryString: string): Promise<ThumbnailGameRes
             return new Promise((resolve: any, reject: any) => {
                 const pricesResponse: SteamAPIGetPriceInfoResponse[] = [];
                 const steamids: number[] = rawResponse
-                    .filter((x: RawThumbnailGameResponse) => { return x.external; })
-                    .map((x: RawThumbnailGameResponse) => { return parseInt(x.external.steam); });
+                    .filter((x: RawThumbnailGameResponse) => {
+                        let hasSteamLink: boolean = false;
+
+                        if (!x.external_games) {
+                            return false;
+                        }
+
+                        x.external_games.forEach((y: ExternalGame) => {
+                            if (y.category === IGDBExternalCategoryEnum.steam) {
+                                hasSteamLink = true;
+                            }
+                        });
+                        return hasSteamLink;
+                    })
+                    .map((x: RawThumbnailGameResponse) => {
+                        let steamId: number;
+                        x.external_games.forEach((y: ExternalGame) => {
+                            if (y.category === IGDBExternalCategoryEnum.steam) {
+                                steamId = parseInt(y.uid);
+                            }
+                        });
+                        return steamId;
+                    });
 
                 steamAPIGetPriceInfo(steamids)
                 .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse[]) => {
@@ -139,20 +132,27 @@ export function cacheResultsGames(queryString: string): Promise<ThumbnailGameRes
                             steam_url: undefined
                         };
 
-                        if (x.external) {
-                            const steamid: number = parseInt(x.external.steam);
-                            const foundIndex: number = steamAPIGetPriceInfoResponse.findIndex((priceInfo: SteamAPIGetPriceInfoResponse) => { return priceInfo.steamgameid === steamid; });
-                            if (foundIndex !== -1) {
-                                priceResponse.steamgameid = steamid;
-                                priceResponse.price = steamAPIGetPriceInfoResponse[foundIndex].price;
-                                priceResponse.discount_percent = steamAPIGetPriceInfoResponse[foundIndex].discount_percent;
-                                priceResponse.steam_url = steamAPIGetPriceInfoResponse[foundIndex].steam_url;
+                        if (x.external_games) {
+                            let steamId: number = undefined;
+                            x.external_games.forEach((y: ExternalGame) => {
+                                if (y.category === IGDBExternalCategoryEnum.steam) {
+                                    steamId = parseInt(y.uid);
+                                }
+                            });
+
+                            if (steamId) {
+                                const foundIndex: number = steamAPIGetPriceInfoResponse.findIndex((priceInfo: SteamAPIGetPriceInfoResponse) => { return priceInfo.steamgameid === steamId; });
+                                if (foundIndex !== -1) {
+                                    priceResponse.steamgameid = steamId;
+                                    priceResponse.price = steamAPIGetPriceInfoResponse[foundIndex].price;
+                                    priceResponse.discount_percent = steamAPIGetPriceInfoResponse[foundIndex].discount_percent;
+                                    priceResponse.steam_url = steamAPIGetPriceInfoResponse[foundIndex].steam_url;
+                                }
                             }
                         }
 
                         pricesResponse.push(priceResponse);
                     });
-
                     return resolve(pricesResponse);
                 })
                 .catch ( (error: string) => {
@@ -169,18 +169,24 @@ export function cacheResultsGames(queryString: string): Promise<ThumbnailGameRes
 
                 getAllGenrePairs()
                 .then((genrePair: string[]) => {
+
                     rawResponse.forEach((x: RawThumbnailGameResponse) => {
                         const id: number = x.id;
                         const name: string = x.name;
                         const rating: number = x.rating;
                         let genres: string;
+
                         if (x.genres) {
                             genres = x.genres.map((genreid: number) => { return genrePair[genreid]; }).join(`, `);
                         }
                         let steam_url: string;
-                        if (x.external) {
-                            const steamid: string = x.external.steam;
-                            steam_url = `${config.steam.appURL}/${steamid}`;
+                        if (x.external_games) {
+                            x.external_games.forEach((y: ExternalGame) => {
+                                if (y.category === IGDBExternalCategoryEnum.steam) {
+                                    const steamId = parseInt(y.uid);
+                                    steam_url = `${config.steam.appURL}/${steamId}`;
+                                }
+                            });
                         }
                         let linkIcons: string[];
                         if (x.platforms) {
@@ -208,7 +214,7 @@ export function cacheResultsGames(queryString: string): Promise<ThumbnailGameRes
                         }
                         let cover: string;
                         if (x.cover) {
-                            cover = igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg");
+                            cover = IGDBImage(x.cover.image_id, "cover_big", "jpg");
                         }
 
                         const gameResponse: ThumbnailGameResponse = {
@@ -223,7 +229,6 @@ export function cacheResultsGames(queryString: string): Promise<ThumbnailGameRes
 
                         gamesResponse.push(gameResponse);
                     });
-
                     return resolve(gamesResponse);
                 })
                 .catch((error: string) => {
@@ -233,14 +238,15 @@ export function cacheResultsGames(queryString: string): Promise<ThumbnailGameRes
             });
         };
 
-        axios.get(
-            URL,
-            {
-                headers: {
-                    "user-key": config.igdb.key,
-                    "Accept": "application/json"
-                }
-            })
+        axios({
+            method: "post",
+            url: URL,
+            headers: {
+                "user-key": config.igdb.key,
+                "Accept": "application/json"
+            },
+            data: body
+        })
         .then( (response: AxiosResponse) => {
             const rawResponse: RawThumbnailGameResponse[] = response.data;
             let gamesResponse: ThumbnailGameResponse[] = [];

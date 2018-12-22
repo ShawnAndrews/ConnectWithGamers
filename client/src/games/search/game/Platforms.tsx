@@ -13,7 +13,7 @@ const Platforms: React.SFC<IPlatformsProps> = (props: IPlatformsProps) => {
     if (!props.platforms) {
         return null;
     }
-
+    
     return (
         <div className="platforms mt-2">
             <div className="title">Platforms</div>

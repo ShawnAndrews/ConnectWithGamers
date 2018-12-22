@@ -27,10 +27,10 @@ class RecentGameListContainer extends React.Component<IRecentGameListContainerPr
     }
 
     formatRecentlyReleasedDate(date: number): string {
-        const CURRENT_UNIX_TIME_MS: number = new Date().getTime();
-        const TARGET_UNIX_TIME_MS: number = date;
+        const CURRENT_UNIX_TIME_MS: number = parseInt(new Date().getTime().toString().slice(0, -3));
+        const TARGET_UNIX_TIME_MS: number = new Date(date).getTime();
         let difference: number = CURRENT_UNIX_TIME_MS - TARGET_UNIX_TIME_MS;
-        let hoursDifference: number = Math.floor(difference / 1000 / 60 / 60);
+        let hoursDifference: number = Math.floor(difference / 60 / 60);
         
         if (hoursDifference < 1) {
             return `1 hrs ago`; 

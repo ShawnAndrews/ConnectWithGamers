@@ -1,12 +1,10 @@
 import config from "../../../../../config";
-import { PredefinedGamesType, ThumbnailGameResponse, RawThumbnailGameResponse, ThumbnailGameResponseFields, redisCache, IGDBCacheEntry, Genre, Platform, SteamAPIGetPriceInfoResponse } from "../../../../../client/client-server-common/common";
+import { PredefinedGamesType, ThumbnailGameResponse, RawThumbnailGameResponse, ThumbnailGameResponseFields, redisCache, IGDBCacheEntry, Genre, Platform, SteamAPIGetPriceInfoResponse, ExternalGame, IGDBExternalCategoryEnum } from "../../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-import { ArrayClean, steamAPIGetPriceInfo } from "../../../../../util/main";
+import { ArrayClean, steamAPIGetPriceInfo, IGDBImage } from "../../../../../util/main";
 import { getAllGenrePairs } from "../../genreList/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
-const igdb = require("igdb-api-node").default;
-const igdbClient = igdb(config.igdb.key);
 
 /**
  * Check if redis key exists.
@@ -48,8 +46,12 @@ export function getCachedPredefinedUpcomingGames(): Promise<ThumbnailGameRespons
 
 export function cachePredefinedUpcomingGames(): Promise<ThumbnailGameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[13];
-    const CURRENT_UNIX_TIME_MS: number = new Date().getTime();
-    const URL: string = `https://api-endpoint.igdb.com/games/?fields=${ThumbnailGameResponseFields.join()}&order=first_release_date:aes&filter[first_release_date][gte]=${CURRENT_UNIX_TIME_MS}&filter[popularity][gt]=5&limit=${config.igdb.pageLimit}`;
+    const CURRENT_UNIX_TIME_MS: number = parseInt(new Date().getTime().toString().slice(0, -3));
+
+    const URL: string = `${config.igdb.apiURL}/games`;
+    let body: string = `fields ${ThumbnailGameResponseFields.join()}; limit ${config.igdb.pageLimit};`;
+    body = body.concat(`where cover != null & popularity > 5 & first_release_date >= ${CURRENT_UNIX_TIME_MS};`);
+    body = body.concat(`sort first_release_date asc;`);
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -58,8 +60,29 @@ export function cachePredefinedUpcomingGames(): Promise<ThumbnailGameResponse[]>
             return new Promise((resolve: any, reject: any) => {
                 const pricesResponse: SteamAPIGetPriceInfoResponse[] = [];
                 const steamids: number[] = rawResponse
-                    .filter((x: RawThumbnailGameResponse) => { return x.external; })
-                    .map((x: RawThumbnailGameResponse) => { return parseInt(x.external.steam); });
+                    .filter((x: RawThumbnailGameResponse) => {
+                        let hasSteamLink: boolean = false;
+
+                        if (!x.external_games) {
+                            return false;
+                        }
+
+                        x.external_games.forEach((y: ExternalGame) => {
+                            if (y.category === IGDBExternalCategoryEnum.steam) {
+                                hasSteamLink = true;
+                            }
+                        });
+                        return hasSteamLink;
+                    })
+                    .map((x: RawThumbnailGameResponse) => {
+                        let steamId: number;
+                        x.external_games.forEach((y: ExternalGame) => {
+                            if (y.category === IGDBExternalCategoryEnum.steam) {
+                                steamId = parseInt(y.uid);
+                            }
+                        });
+                        return steamId;
+                    });
 
                 steamAPIGetPriceInfo(steamids)
                 .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse[]) => {
@@ -71,11 +94,17 @@ export function cachePredefinedUpcomingGames(): Promise<ThumbnailGameResponse[]>
                             steam_url: undefined
                         };
 
-                        if (x.external) {
-                            const steamid: number = parseInt(x.external.steam);
-                            const foundIndex: number = steamAPIGetPriceInfoResponse.findIndex((priceInfo: SteamAPIGetPriceInfoResponse) => { return priceInfo.steamgameid === steamid; });
+                        if (x.external_games) {
+                            let steamId: number = undefined;
+                            x.external_games.forEach((y: ExternalGame) => {
+                                if (y.category === IGDBExternalCategoryEnum.steam) {
+                                    steamId = parseInt(y.uid);
+                                }
+                            });
+
+                            const foundIndex: number = steamAPIGetPriceInfoResponse.findIndex((priceInfo: SteamAPIGetPriceInfoResponse) => { return priceInfo.steamgameid === steamId; });
                             if (foundIndex !== -1) {
-                                priceResponse.steamgameid = steamid;
+                                priceResponse.steamgameid = steamId;
                                 priceResponse.price = steamAPIGetPriceInfoResponse[foundIndex].price;
                                 priceResponse.discount_percent = steamAPIGetPriceInfoResponse[foundIndex].discount_percent;
                                 priceResponse.steam_url = steamAPIGetPriceInfoResponse[foundIndex].steam_url;
@@ -110,9 +139,14 @@ export function cachePredefinedUpcomingGames(): Promise<ThumbnailGameResponse[]>
                             genres = x.genres.map((genreid: number) => { return genrePair[genreid]; }).join(`, `);
                         }
                         let steam_url: string;
-                        if (x.external) {
-                            const steamid: string = x.external.steam;
-                            steam_url = `${config.steam.appURL}/${steamid}`;
+                        if (x.external_games) {
+                            let steamId: number = undefined;
+                            x.external_games.forEach((y: ExternalGame) => {
+                                if (y.category === IGDBExternalCategoryEnum.steam) {
+                                    steamId = parseInt(y.uid);
+                                }
+                            });
+                            steam_url = `${config.steam.appURL}/${steamId}`;
                         }
                         let linkIcons: string[];
                         if (x.platforms) {
@@ -140,7 +174,7 @@ export function cachePredefinedUpcomingGames(): Promise<ThumbnailGameResponse[]>
                         }
                         let cover: string;
                         if (x.cover) {
-                            cover = igdbClient.image( { cloudinary_id: x.cover.cloudinary_id }, "cover_big", "jpg");
+                            cover = IGDBImage(x.cover.image_id, "cover_big", "jpg");
                         }
 
                         const gameResponse: ThumbnailGameResponse = {
@@ -165,14 +199,15 @@ export function cachePredefinedUpcomingGames(): Promise<ThumbnailGameResponse[]>
             });
         };
 
-        axios.get(
-            URL,
-            {
-                headers: {
-                    "user-key": config.igdb.key,
-                    "Accept": "application/json"
-                }
-            })
+        axios({
+            method: "post",
+            url: URL,
+            headers: {
+                "user-key": config.igdb.key,
+                "Accept": "application/json"
+            },
+            data: body
+        })
         .then( (response: AxiosResponse) => {
             const rawResponse: RawThumbnailGameResponse[] = response.data;
             let gamesResponse: ThumbnailGameResponse[] = [];

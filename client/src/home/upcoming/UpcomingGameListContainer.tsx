@@ -23,10 +23,11 @@ class UpcomingGameListContainer extends React.Component<IUpcomingGameListContain
     }
 
     formatUpcomingDate(date: number): string {
-        const CURRENT_UNIX_TIME_MS: number = new Date().getTime();
-        const TARGET_UNIX_TIME_MS: number = date;
+        const CURRENT_UNIX_TIME_MS: number = parseInt(new Date().getTime().toString().slice(0, -3));
+        const TARGET_UNIX_TIME_MS: number = new Date(date).getTime();
         let difference: number = TARGET_UNIX_TIME_MS - CURRENT_UNIX_TIME_MS;
-        let hoursDifference: number = Math.floor(difference / 1000 / 60 / 60);
+        console.log(`Formatting date: Target: ${TARGET_UNIX_TIME_MS} Current: ${CURRENT_UNIX_TIME_MS}`);
+        let hoursDifference: number = Math.floor(difference / 60 / 60);
         
         if (hoursDifference < 1) {
             return `in 1 hrs `; 

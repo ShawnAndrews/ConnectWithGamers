@@ -1,10 +1,9 @@
 import config from "../../../../config";
 import { GenrePair, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
+import axios, { AxiosResponse } from "axios";
 
 const redis = require("redis");
 const redisClient = redis.createClient();
-const igdb = require("igdb-api-node").default;
-const igdbClient = igdb(config.igdb.key);
 
 /**
  * Check if redis key exists.
@@ -46,13 +45,21 @@ export function getCachedGenreList(): Promise<GenrePair[]> {
 export function cacheGenreList(): Promise<GenrePair[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[6];
 
-    return new Promise((resolve: any, reject: any) => {
-        igdbClient.genres({
-            limit: config.igdb.pageLimit
-        }, ["name"])
-        .then( (response: any) => {
-            const genreList: GenrePair[] = response.body;
+    const URL: string = `${config.igdb.apiURL}/genres`;
+    const body: string = `fields name; limit ${config.igdb.pageLimit};`;
 
+    return new Promise((resolve: any, reject: any) => {
+        axios({
+            method: "post",
+            url: URL,
+            headers: {
+                "user-key": config.igdb.key,
+                "Accept": "application/json"
+            },
+            data: body
+        })
+        .then( (response: AxiosResponse) => {
+            const genreList: GenrePair[] = response.data;
             redisClient.set(cacheEntry.key, JSON.stringify(genreList));
 
             if (cacheEntry.expiry !== -1) {

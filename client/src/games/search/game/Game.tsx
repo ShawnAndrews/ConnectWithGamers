@@ -25,19 +25,10 @@ interface IGameProps {
 
 const Game: React.SFC<IGameProps> = (props: IGameProps) => {
 
-    if (props.isLoading) {
+    if (props.isLoading || !props.game) {
         return (
             <div className="menu-center">
                 <Spinner className="text-center mt-5" loadingMsg="Loading game..." />
-            </div>
-        );
-    }
-    
-    if (!props.gameId) {
-        return (
-            <div className="menu-choose-game">
-                <i className="fas fa-arrow-right fa-6x menu-choose-game-arrow" data-fa-transform="rotate-270"/>
-                <strong className="menu-choose-game-text">Search a Game</strong>
             </div>
         );
     }

@@ -5,8 +5,6 @@ import {
 import axios, { AxiosResponse } from "axios";
 const redis = require("redis");
 const redisClient = redis.createClient();
-const igdb = require("igdb-api-node").default;
-const igdbClient = igdb(config.igdb.key);
 
 /**
  * Check if redis key exists.
@@ -47,17 +45,24 @@ export function getCachedNews(): Promise<SingleNewsResponse[]> {
  */
 export function cacheNews(): Promise<SingleNewsResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[10];
-    const CURRENT_UNIX_TIME_MS: number = new Date().getTime();
+    const CURRENT_UNIX_TIME_MS: number = parseInt(new Date().getTime().toString().slice(0, -3));
 
     return new Promise((resolve: any, reject: any) => {
-        axios.get(
-            `https://api-endpoint.igdb.com/pulses/?fields=${SingleNewsResponseFields.join()}&filter[created_at][lte]=${CURRENT_UNIX_TIME_MS}&order=created_at:desc&expand=pulse_source&limit=${config.igdb.pageLimit}&filter[image][exists]=1`,
-            {
-                headers: {
-                    "user-key": config.igdb.key,
-                    "Accept": "application/json"
-                }
-            })
+
+        const URL: string = `${config.igdb.apiURL}/pulses`;
+        let body: string = `fields ${SingleNewsResponseFields.join()}; limit ${config.igdb.pageLimit};`;
+        body = body.concat(`where image != null & created_at <= ${CURRENT_UNIX_TIME_MS};`);
+        body = body.concat(`sort created_at desc;`);
+
+        axios({
+            method: "post",
+            url: URL,
+            headers: {
+                "user-key": config.igdb.key,
+                "Accept": "application/json"
+            },
+            data: body
+        })
         .then( (response: AxiosResponse) => {
             const rawResponse: RawSingleNewsResponse[] = response.data;
             const newsResponse: SingleNewsResponse[] = [];
@@ -67,15 +72,11 @@ export function cacheNews(): Promise<SingleNewsResponse[]> {
                 const title: string =  x.title;
                 const author: string = x.author;
                 const image: string = x.image;
-                const url: string = x.url;
+                const url: string = x.website && x.website.url;
                 const created_at: number = x.created_at;
                 const newsOrg: string = x.pulse_source.name;
-                let video: string = undefined;
-                if (x.videos && x.videos[0].video_id.length < 15) {
-                    video = `https://www.youtube.com/embed/${x.videos[0].video_id}`;
-                }
 
-                const singleNewsResponse: SingleNewsResponse = { id: id, title: title, author: author, image: image, video: video, url: url, created_at: created_at, newsOrg: newsOrg };
+                const singleNewsResponse: SingleNewsResponse = { id: id, title: title, author: author, image: image, url: url, created_at: created_at, newsOrg: newsOrg };
                 newsResponse.push(singleNewsResponse);
             });
 
@@ -85,7 +86,6 @@ export function cacheNews(): Promise<SingleNewsResponse[]> {
             }
 
             return resolve(newsResponse);
-
         })
         .catch((error: string) => {
             return reject(error);
