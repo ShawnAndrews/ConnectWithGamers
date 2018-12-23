@@ -22,7 +22,7 @@ const Platforms: React.SFC<IPlatformsProps> = (props: IPlatformsProps) => {
                 .map((x: IdNamePair, index: number) => {
                     return (
                         <React.Fragment key={x.id}>
-                            <Tooltip disableFocusListener={true} disableTouchListener={true} title={props.release_dates[index].toString() !== `undefined. NaN, NaN` ? props.release_dates[index] : `N/A`}>
+                            <Tooltip disableFocusListener={true} disableTouchListener={true} title={props.release_dates[index].toString() !== `undefined. NaN, NaN` ? new Date(props.release_dates[index] * 1000).toDateString() : `N/A`}>
                                 <Button 
                                     className="platform mx-1 py-1 px-2" 
                                     variant="raised" 
