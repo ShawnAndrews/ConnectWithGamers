@@ -47,7 +47,7 @@ class HomeContainer extends React.Component<Props, IHomeContainerState> {
     }
 
     onSearch(): void {
-        this.props.history.push(`/games/search/filter/?query=${this.state.searchQuery}&sort=popularity-desc`);
+        this.props.history.push(`/games/search/filter/?query=${this.state.searchQuery}`);
     }
 
     onAdvancedSearch(): void {

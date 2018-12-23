@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
+import { GameResponse } from '../../../../client/client-server-common/common';
 import { Card, CardMedia } from '@material-ui/core';
 
 interface IPopularGameListProps {
-    popularGames: PredefinedGameResponse[];
+    popularGames: GameResponse[];
     onClickGame: (id: number) => void;
     listScrollRef: React.RefObject<HTMLDivElement>;
     onScrollLeft: () => void;
@@ -26,7 +26,7 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                 </div>
                 <div className="popular-table-horizontal" ref={props.listScrollRef} onMouseLeave={props.mouseLeave} onMouseMove={props.mouseMove} onMouseDown={props.mouseDown} onMouseUp={props.mouseUp}>
                     {props.popularGames
-                        .map((x: PredefinedGameResponse) => {
+                        .map((x: GameResponse) => {
                             return (
                                 <Card key={x.id} className="popular-table-container cursor-pointer custom-shadow d-inline-block mx-2" onClick={() => { props.onClickGame(x.id); }}>
                                     <CardMedia className="popular-table-image h-75 w-100">
@@ -39,7 +39,7 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                                         </div>
                                         <div className="row">
                                             <div className="col-8 genre pr-1">
-                                                {x.genre}
+                                                {x.genres[0].name}
                                             </div>
                                             {x.aggregated_rating &&
                                                 <div className="col-4 rating p-0">

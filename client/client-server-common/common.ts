@@ -8,6 +8,8 @@ enum RedisExpirationTime {
     INF = -1
 }
 
+export const steamAppUrl: string = `https://store.steampowered.com/app`;
+
 export interface Config {
     useStrictlyHttps: boolean;
     httpPort: number;
@@ -69,12 +71,6 @@ export interface PlatformOption {
     name: string;
 }
 
-export enum SwipeState {
-    "Left",
-    "Middle",
-    "Right"
-}
-
 export const platformOptions: PlatformOption[] = [
     { id: 6,   name: "Steam" },
     { id: 48,  name: "Playstation 4" },
@@ -88,23 +84,17 @@ export const platformOptions: PlatformOption[] = [
 
 export const redisCache: IGDBCacheEntry[] = [
     {key: "upcominggames", expiry: RedisExpirationTime.ONE_HOUR},
-    {key: "games", expiry: RedisExpirationTime.ONE_WEEK},
-    {key: "searchgames", expiry: RedisExpirationTime.ONE_DAY},
-    {key: "platformgames", expiry: RedisExpirationTime.ONE_HOUR},
+    {key: "populargames", expiry: RedisExpirationTime.ONE_DAY},
     {key: "recentgames", expiry: RedisExpirationTime.ONE_HOUR},
-    {key: "genregames", expiry: RedisExpirationTime.ONE_HOUR},
+    {key: "reviewedgames", expiry: RedisExpirationTime.ONE_HOUR},
+    {key: "resultsgames", expiry: RedisExpirationTime.ONE_HOUR},
+    {key: "games", expiry: RedisExpirationTime.ONE_WEEK},
     {key: "genrelist", expiry: RedisExpirationTime.ONE_WEEK},
     {key: "chatusers", expiry: RedisExpirationTime.INF},
-    {key: "populargames", expiry: RedisExpirationTime.ONE_DAY},
-    {key: "reviewedgames", expiry: RedisExpirationTime.ONE_HOUR},
-    {key: "news", expiry: RedisExpirationTime.ONE_HOUR},
-    {key: "predefinedpopulargames", expiry: RedisExpirationTime.ONE_DAY},
-    {key: "predefinedrecentgames", expiry: RedisExpirationTime.ONE_DAY},
-    {key: "predefinedupcominggames", expiry: RedisExpirationTime.ONE_DAY},
-    {key: "filtergames", expiry: RedisExpirationTime.ONE_HOUR}
+    {key: "news", expiry: RedisExpirationTime.ONE_HOUR}
 ];
 
-export enum PredefinedGamesType {
+export enum GamesType {
     Popular,
     Recent,
     Upcoming
@@ -412,124 +402,101 @@ export interface ChatHistoryResponse {
     attachment: string[];
 }
 
-export interface RawSearchGameResponse {
-    id: number;
-    name: string;
-}
-
-export interface SearchGameResponse {
-    id: number;
-    name: string;
-}
-
-export interface SearchGamesResponse {
-    error: string;
-    data?: SearchGameResponse[];
-}
-
-export const SearchGameResponseFields: string[] = [`id`, `name`];
-
 export interface SteamAPIReview {
     text: string;
     hours_played: number;
     up_votes: number;
 }
 
-export interface ThumbnailGamesResponse {
-    error: string;
-    data?: ThumbnailGameResponse[];
+export interface IGDBPlatform {
+    id: number;
+    abbreviation: string;
+    category: number;
+    created_at: number;
+    generation: number;
+    name: string;
+    platform_logo: number;
+    product_family: number;
+    slug: string;
+    summary: string;
+    updated_at: number;
+    url: string;
+    versions: number[];
+    websites: number[];
 }
 
-export interface ThumbnailGameResponse {
+export interface IGDBGenre {
+    created_at: number;
+    name: string;
+    slug: string;
+    updated_at: number;
+    url: string;
+}
+
+export interface IGDBReleaseDate {
+    id: number;
+    category: number;
+    date: number;
+    game: number;
+    human: string;
+    m: number;
+    platform: number;
+    region: number;
+    updated_at: number;
+    y: number;
+}
+
+export interface IdNamePair {
     id: number;
     name: string;
-    rating: number;
-    genres: string;
-    linkIcons: string[];
-    cover?: string;
-    price?: string;
-    discount_percent?: number;
-    steam_url?: string;
 }
-
-export interface RawThumbnailGameResponse {
-    id: number;
-    name: string;
-    rating: number;
-    cover: IGDBImage;
-    genres: number[];
-    platforms: number[];
-    external_games: ExternalGame[];
-}
-
-export const ThumbnailGameResponseFields: string[] = [`id`, `name`, `rating`, `cover.*`, `genres`, `platforms`, `external_games.*`];
 
 export interface GameResponse {
+    id: number;
     name: string;
-    rating?: number;
-    rating_count?: number;
-    price?: string;
-    discount_percent?: number;
-    steam_url?: string;
-    cover?: string;
-    summary?: string;
-    genre_ids?: number[];
-    genres?: string[];
-    platform_ids?: number[];
-    platforms?: string[];
-    platforms_release_dates?: string[];
-    next_release_date?: string;
-    screenshots?: string[];
-    video?: {
-        name: string;
-        youtube_link: string;
-    };
+    aggregated_rating: number;
+    total_rating_count: number;
+    price: string;
+    discount_percent: number;
+    steamid: number;
+    cover: string;
+    summary: string;
+    linkIcons: string[];
+    genres: IdNamePair[];
+    platforms: IdNamePair[];
+    release_dates: number[];
+    first_release_date: number;
+    screenshots: string[];
+    video: string;
 }
 
 export interface RawGameResponse {
     id: number;
     name: string;
-    release_dates: any;
+    first_release_date: number;
+    release_dates: IGDBReleaseDate[];
     cover: IGDBImage;
-    total_rating: number;
+    aggregated_rating: number;
     total_rating_count: number;
     summary: string;
-    genres: any;
-    platforms: any;
-    screenshots: any;
-    videos: any;
+    genres: IGDBGenre[];
+    platforms: IGDBPlatform[];
+    screenshots: IGDBImage[];
+    videos: IGDBVideo[];
     external_games: ExternalGame[];
 }
 
-export const GameResponseFields: string[] = [`name`, `release_dates.*`, `cover.*`, `total_rating`, `total_rating_count`, `summary`, `genres`, `platforms`, `screenshots.*`, `videos.*`, `external_games.*`];
+export const GameResponseFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`];
+
+export interface MultiGameResponse {
+    error: string;
+    data?: GameResponse[];
+}
 
 export interface SingleGameResponse {
     error: string;
     data?: GameResponse;
 }
-
-export interface RawPredefinedGameResponse {
-    id: number;
-    name: string;
-    genres?: any;
-    platforms: number[];
-    first_release_date?: number;
-    aggregated_rating?: number;
-    cover?: IGDBImage;
-    screenshots?: IGDBImage[];
-}
-
-export interface PredefinedGameResponse {
-    id: number;
-    name: string;
-    genre?: string;
-    linkIcons: string[];
-    first_release_date?: number;
-    aggregated_rating?: number;
-    cover?: string;
-}
-
-export const PredefinedGameResponseFields: string[] = [`id`, `name`, `genres`, `platforms`, `first_release_date`, `aggregated_rating`, `cover.*`, `screenshots.*`];
 
 export interface IGDBImage {
     alpha_channel: boolean;
@@ -538,6 +505,11 @@ export interface IGDBImage {
     image_id: string;
     width: number;
     height: number;
+}
+
+export interface IGDBVideo {
+    name: string;
+    video_id: string;
 }
 
 export interface Genre {
@@ -628,11 +600,6 @@ export interface SteamId {
     steamId: number;
 }
 
-export interface PredefinedGamesResponse {
-    error: string;
-    data?: PredefinedGameResponse[];
-}
-
 export interface DbSteamFriendsResponse {
 
     friends: SteamFriend[];
@@ -714,52 +681,6 @@ export interface GenreListResponse {
     error: string;
     data?: GenrePair[];
 }
-
-export interface PlatformGamesResponse {
-    error: string;
-    data?: DbPlatformGamesResponse;
-}
-
-export interface DbPlatformGamesResponse {
-    platformName: string;
-    platformGames: PlatformGame[];
-}
-
-export interface PlatformGame {
-
-    id: number;
-    name: string;
-    rating: string;
-    genres: string;
-    linkIcons: string[];
-    steam_url?: string;
-    cover?: string;
-}
-
-export const PlatformGameResponseFields: string[] = [`id`, `name`, `rating`, `cover.*`, `genres`, `platforms`, `external`];
-
-export interface GenreGamesResponse {
-    error: string;
-    data?: DbGenreGamesResponse;
-}
-
-export interface DbGenreGamesResponse {
-    genreName: string;
-    genreGames: GenreGame[];
-}
-
-export interface GenreGame {
-
-    id: number;
-    name: string;
-    rating: string;
-    genres: string;
-    linkIcons: string[];
-    steam_url?: string;
-    cover?: string;
-}
-
-export const GenreGameResponseFields: string[] = [`id`, `name`, `rating`, `cover.*`, `genres`, `platforms`, `external`];
 
 export interface SteamAPIGetPriceInfoResponse {
     steamgameid: number;

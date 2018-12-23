@@ -2,14 +2,14 @@ const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { ThumbnailGameResponse, ThumbnailGamesResponse, PredefinedGamesType } from '../../../../client-server-common/common';
+import { GameResponse, MultiGameResponse, GamesType } from '../../../../client-server-common/common';
 import Results from './Results';
 
 enum ResultsType {
     SearchResults,
-    PredefinedRecentResults,
-    PredefinedUpcomingResults,
-    PredefinedPopularResults
+    RecentResults,
+    UpcomingResults,
+    PopularResults
 }
 
 interface IResultsContainerProps extends RouteComponentProps<any> {
@@ -21,7 +21,7 @@ interface IResultsContainerState {
     currentQueryPath: string;
     resultsType: ResultsType;
     title: string;
-    games: ThumbnailGameResponse[];
+    games: GameResponse[];
 }
 
 class ResultsContainer extends React.Component<IResultsContainerProps, IResultsContainerState> {
@@ -29,24 +29,24 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
     constructor(props: IResultsContainerProps) {
         super(props);
         this.loadSearchGames = this.loadSearchGames.bind(this);
-        this.loadPredefinedGames = this.loadPredefinedGames.bind(this);
+        this.loadGames = this.loadGames.bind(this);
         this.getTitle = this.getTitle.bind(this);
 
-        const predefinedTypeRaw: string = props.match.params.type;
+        const typeRaw: string = props.match.params.type;
         const resultsTitle: string = this.getTitle(props);
-        let predefinedType: PredefinedGamesType;
+        let type: GamesType;
         let resultsType: ResultsType;
 
-        if (predefinedTypeRaw) {
-            if (predefinedTypeRaw === 'recent') {
-                predefinedType = PredefinedGamesType.Recent;
-                resultsType = ResultsType.PredefinedRecentResults;
-            } else if (predefinedTypeRaw === 'upcoming') {
-                predefinedType = PredefinedGamesType.Upcoming;
-                resultsType = ResultsType.PredefinedUpcomingResults;
-            } else if (predefinedTypeRaw === 'popular') {
-                predefinedType = PredefinedGamesType.Popular;
-                resultsType = ResultsType.PredefinedPopularResults;
+        if (typeRaw) {
+            if (typeRaw === 'recent') {
+                type = GamesType.Recent;
+                resultsType = ResultsType.RecentResults;
+            } else if (typeRaw === 'upcoming') {
+                type = GamesType.Upcoming;
+                resultsType = ResultsType.UpcomingResults;
+            } else if (typeRaw === 'popular') {
+                type = GamesType.Popular;
+                resultsType = ResultsType.PopularResults;
             }
         } else {
             resultsType = ResultsType.SearchResults;
@@ -55,7 +55,7 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
         if (resultsType === ResultsType.SearchResults) {
             this.loadSearchGames(props.location.search);
         } else {
-            this.loadPredefinedGames(predefinedType);
+            this.loadGames(type);
         }
 
         this.state = {
@@ -81,9 +81,9 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
 
     loadSearchGames(queryString: string): void {
         
-        IGDBService.httpGenericGetData<ThumbnailGamesResponse>(`/igdb/games/results/${queryString}`)
-            .then( (response: ThumbnailGamesResponse) => {
-                const games: ThumbnailGameResponse[] = response.data;
+        IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${queryString}`)
+            .then( (response: MultiGameResponse) => {
+                const games: GameResponse[] = response.data;
                 this.setState({ isLoading: false, games: games });
             })
             .catch( (error: string) => {
@@ -92,11 +92,11 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
             });
     }
 
-    loadPredefinedGames(type: PredefinedGamesType): void {
+    loadGames(type: GamesType): void {
 
-        IGDBService.httpGetPredefinedGamesResults(type)
-            .then( (response: ThumbnailGamesResponse) => {
-                const games: ThumbnailGameResponse[] = response.data;
+        IGDBService.httpGetGamesResults(type)
+            .then( (response: MultiGameResponse) => {
+                const games: GameResponse[] = response.data;
                 this.setState({ isLoading: false, games: games });
             })
             .catch( (error: string) => {
@@ -106,15 +106,15 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
     }
 
     getTitle(props: IResultsContainerProps): string {
-        const predefinedTypeRaw: string = props.match.params.type;
+        const typeRaw: string = props.match.params.type;
         let title: string;
 
-        if (predefinedTypeRaw) {
-            if (predefinedTypeRaw === 'recent') {
+        if (typeRaw) {
+            if (typeRaw === 'recent') {
                 title = 'Recently released';
-            } else if (predefinedTypeRaw === 'upcoming') {
+            } else if (typeRaw === 'upcoming') {
                 title = 'Upcoming games';
-            } else if (predefinedTypeRaw === 'popular') {
+            } else if (typeRaw === 'popular') {
                 title = 'Popular games';
             }
         } else {

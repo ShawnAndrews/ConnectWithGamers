@@ -75,7 +75,7 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
 
     onSubmitSearch(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault();
-        this.props.history.push(`/games/search/filter/?query=${this.state.searchQuery}&sort=popularity-desc`);
+        this.props.history.push(`/games/search/filter/?query=${this.state.searchQuery}`);
     }
 
     onSearchQueryChanged(e: React.ChangeEvent<HTMLInputElement>): void {

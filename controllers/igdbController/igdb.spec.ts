@@ -5,9 +5,9 @@ const expect: Chai.ExpectStatic = chai.expect;
 import { routes, GenericCachedRoute, GenericCachedWithDataRoute } from "./igdb";
 import {
     GameResponse,
-    PredefinedGameResponse,
+    GameResponse,
     SingleNewsResponse,
-    ThumbnailGameResponse,
+    GameResponse,
     SearchGameResponse
 } from "../../client/client-server-common/common";
 import { upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames } from "./cache/upcomingGames/main";
@@ -26,23 +26,23 @@ describe("IGDB Routes", function() {
     const igdbRouterPrefix: string = `/igdb`;
 
     it(igdbRouterPrefix.concat(routes.getRoute("predefinedrecent")), function() {
-        expect(GenericCachedRoute<ThumbnailGameResponse[]>(predefinedRecentGamesKeyExists, getCachedPredefinedRecentGames, cachePredefinedRecentGames)).to.eventually.be.fulfilled;
+        expect(GenericCachedRoute<GameResponse[]>(predefinedRecentGamesKeyExists, getCachedPredefinedRecentGames, cachePredefinedRecentGames)).to.eventually.be.fulfilled;
     });
 
     it(igdbRouterPrefix.concat(routes.getRoute("predefinedupcoming")), function() {
-        expect(GenericCachedRoute<ThumbnailGameResponse[]>(predefinedUpcomingGamesKeyExists, getCachedPredefinedUpcomingGames, cachePredefinedUpcomingGames)).to.eventually.be.fulfilled;
+        expect(GenericCachedRoute<GameResponse[]>(predefinedUpcomingGamesKeyExists, getCachedPredefinedUpcomingGames, cachePredefinedUpcomingGames)).to.eventually.be.fulfilled;
     });
 
     it(igdbRouterPrefix.concat(routes.getRoute("predefinedpopular")), function() {
-        expect(GenericCachedRoute<ThumbnailGameResponse[]>(predefinedPopularGamesKeyExists, getCachedPredefinedPopularGames, cachePredefinedPopularGames)).to.eventually.be.fulfilled;
+        expect(GenericCachedRoute<GameResponse[]>(predefinedPopularGamesKeyExists, getCachedPredefinedPopularGames, cachePredefinedPopularGames)).to.eventually.be.fulfilled;
     });
 
     it(igdbRouterPrefix.concat(routes.getRoute("upcominggames")), function() {
-        expect(GenericCachedRoute<PredefinedGameResponse[]>(upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames)).to.eventually.be.fulfilled;
+        expect(GenericCachedRoute<GameResponse[]>(upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames)).to.eventually.be.fulfilled;
     });
 
     it(igdbRouterPrefix.concat(routes.getRoute("reviewedgames")), function() {
-        expect(GenericCachedRoute<PredefinedGameResponse[]>( reviewedGamesKeyExists, getCachedReviewedGames, cacheReviewedGames)).to.eventually.be.fulfilled;
+        expect(GenericCachedRoute<GameResponse[]>( reviewedGamesKeyExists, getCachedReviewedGames, cacheReviewedGames)).to.eventually.be.fulfilled;
     });
 
     it(igdbRouterPrefix.concat(routes.getRoute("news")), function() {
@@ -50,11 +50,11 @@ describe("IGDB Routes", function() {
     });
 
     it(igdbRouterPrefix.concat(routes.getRoute("populargames")), function() {
-        expect(GenericCachedRoute<PredefinedGameResponse[]>(popularGamesKeyExists, getCachedPopularGames, cachePopularGames)).to.eventually.be.fulfilled;
+        expect(GenericCachedRoute<GameResponse[]>(popularGamesKeyExists, getCachedPopularGames, cachePopularGames)).to.eventually.be.fulfilled;
     });
 
     it(igdbRouterPrefix.concat(routes.getRoute("recentgames")), function() {
-        expect(GenericCachedRoute<PredefinedGameResponse[]>(recentGamesKeyExists, getCachedRecentGames, cacheRecentGames)).to.eventually.be.fulfilled;
+        expect(GenericCachedRoute<GameResponse[]>(recentGamesKeyExists, getCachedRecentGames, cacheRecentGames)).to.eventually.be.fulfilled;
     });
 
     it(igdbRouterPrefix.concat(routes.getRoute("searchgames")), function() {
@@ -64,7 +64,7 @@ describe("IGDB Routes", function() {
 
     it(igdbRouterPrefix.concat(routes.getRoute("resultsgames")), function() {
         const query: string = `{"query":"tomb raider","platforms":"6","genres":"31,5","categories":"0","popularity":"60","sort":"releasedate-desc"}`;
-        expect(GenericCachedWithDataRoute<ThumbnailGameResponse[], string>(resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames, query)).to.eventually.be.fulfilled;
+        expect(GenericCachedWithDataRoute<GameResponse[], string>(resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames, query)).to.eventually.be.fulfilled;
     });
 
     it(igdbRouterPrefix.concat(routes.getRoute("game")), function() {

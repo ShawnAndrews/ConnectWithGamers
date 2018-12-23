@@ -159,41 +159,8 @@ export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGe
 
 }
 
-/**
- * Returns an array of X Steam reviews from given steam id.
- */
-export function steamAPIGetReviews(id: number): Promise<SteamAPIGetReviewsResponse> {
-
-    const steamAPIGetReviewsResponse: SteamAPIGetReviewsResponse = {};
-
-    return new Promise((resolve: any, reject: any) => {
-
-        WebRequest.get(`${config.steam.nonApiURL}/appreviews/${id}?json=1&filter=all&cc=us`)
-        .then((response: any) => {
-            const rawReviews: any = JSON.parse(response.message.body).reviews;
-            if (rawReviews) {
-                if (rawReviews.length > 0) {
-                    steamAPIGetReviewsResponse.reviews = [];
-                }
-                rawReviews.forEach((rawReview: any) => {
-                    const steamReview: SteamAPIReview = { hours_played: rawReview.author.playtime_forever, text: rawReview.review, up_votes: rawReview.votes_up };
-                    steamAPIGetReviewsResponse.reviews.push(steamReview);
-                });
-            }
-
-            return resolve(steamAPIGetReviewsResponse);
-        })
-        .catch((error: any): any => {
-            console.log(`Error retrieving Steam price info: ${error}`);
-            return reject(error);
-        });
-
-    });
-
-}
-
 /* IGDB image */
-export function IGDBImage(image_id: string, size: string, type: string): string {
+export function IGDBImageResolve(image_id: string, size: string, type: string): string {
     return "https://images.igdb.com/igdb/image/upload/t_".concat(size, "/").concat(image_id, ".").concat(type);
 }
 

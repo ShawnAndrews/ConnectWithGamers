@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Spinner from '../../../spinner/main';
-import { GameResponse } from '../../../../../client/client-server-common/common';
+import { GameResponse, steamAppUrl } from '../../../../../client/client-server-common/common';
 import Summary from './Summary';
 import Platforms from './Platforms';
 import Genres from './Genres';
@@ -37,11 +37,11 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
         <Paper className="game-details container bg-secondary mx-auto p-3 mt-3 br-0" elevation={24}>
             <Title
                 name={props.game.name}
-                rating={props.game.rating}
+                rating={props.game.aggregated_rating}
             />
             <div className="row">
                 <Media
-                    video={props.game.video && props.game.video.youtube_link}
+                    video={props.game.video}
                     screenshots={props.game.screenshots}
                 />
                 <div className={`cover-container ${props.game.screenshots || props.game.video ? 'col-lg-4' : 'col-lg-12'}`}>
@@ -61,13 +61,13 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                         />
                         <Platforms
                             platforms={props.game.platforms}
-                            platforms_release_dates={props.game.platforms_release_dates}
+                            release_dates={props.game.release_dates}
                             handlePlatformClick={props.handlePlatformClick}
                         />
                     </div>
-                    {props.game.steam_url && 
+                    {props.game.steamid && 
                         <SteamInfo
-                            steam_url={props.game.steam_url}
+                            steam_url={`${steamAppUrl}/${props.game.steamid}`}
                             price={props.game.price}
                             discount_percent={props.game.discount_percent}
                             handleSteamClick={props.handleSteamClick}

@@ -5,16 +5,16 @@ import UpcomingGameListContainer from './upcoming/UpcomingGameListContainer';
 import ReviewedGameListContainer from './reviewed/ReviewedGameListContainer';
 import Profiles from './profiles/Profiles';
 import NewsListContainer from './news/NewsListContainer';
-import { PredefinedGameResponse, SingleNewsResponse } from '../../client-server-common/common';
+import { GameResponse, SingleNewsResponse } from '../../client-server-common/common';
 import Spinner from './../spinner/main';
 
 interface IShowcaseProps {
     isLoading: boolean;
     goToRedirect: (URL: string) => void;
-    reviewedGames: PredefinedGameResponse[];
-    popularGames: PredefinedGameResponse[];
-    recentGames: PredefinedGameResponse[];
-    upcomingGames: PredefinedGameResponse[];
+    reviewedGames: GameResponse[];
+    popularGames: GameResponse[];
+    recentGames: GameResponse[];
+    upcomingGames: GameResponse[];
     news: SingleNewsResponse[];
 }
 

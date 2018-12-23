@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
+import { GameResponse } from '../../../../client/client-server-common/common';
 import { Card, CardMedia } from '@material-ui/core';
 import { formatDate } from '../../util/main';
 
 interface IUpcomingGameListProps {
-    upcomingGames: PredefinedGameResponse[];
+    upcomingGames: GameResponse[];
     onClickGame: (id: number) => void;
     goToRedirectCallback: (URL: string) => void;
 }
@@ -18,7 +18,7 @@ const UpcomingGameList: React.SFC<IUpcomingGameListProps> = (props: IUpcomingGam
                 <i className="fas fa-chevron-right"/>
             </div>
             {props.upcomingGames
-            .map((x: PredefinedGameResponse) => {
+            .map((x: GameResponse) => {
                 return (
                     <Card key={x.id} className="upcoming-table-container custom-shadow row mt-2 mx-0" onClick={() => { props.onClickGame(x.id); }}>
                         <CardMedia className="col-4 p-0 h-100">

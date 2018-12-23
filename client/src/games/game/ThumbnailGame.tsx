@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { ThumbnailGameResponse } from '../../../../client/client-server-common/common';
+import { GameResponse, steamAppUrl, IdNamePair } from '../../../../client/client-server-common/common';
 import { Paper } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 
 interface IThumbnailGameProps {
-    game: ThumbnailGameResponse;
+    game: GameResponse;
     goToGame: () => void;
 }
 
@@ -20,7 +20,8 @@ const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProp
                     {props.game.name}
                 </Textfit>
                 <div className="genres font-italic text-nowrap text-right px-2">
-                    {props.game.genres}
+                    {props.game.genres && 
+                        props.game.genres.map((x: IdNamePair) => x.name)}
                 </div>
                 <div className="icons color-secondary text-nowrap text-right px-2">
                     {props.game.linkIcons && 
@@ -31,7 +32,7 @@ const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProp
                         {props.game.price === 'Free'
                             ? <span className="free-text">Free</span>
                             : <span>${props.game.price} USD{props.game.discount_percent !== 0 && <i className="discount-text ml-1">(-{props.game.discount_percent} % SALE)</i>}</span>}
-                        <a href={props.game.steam_url}><i className="fab fa-steam-square fa-lg color-secondary ml-2"/></a>
+                        <a href={`${steamAppUrl}/${props.game.steamid}`}><i className="fab fa-steam-square fa-lg color-secondary ml-2"/></a>
                     </Textfit>}
             </Paper>
         </div>

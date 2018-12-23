@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ThumbnailGameResponse } from '../../../../client-server-common/common';
+import { GameResponse } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
 import ThumbnailGameContainer from '../../game/ThumbnailGameContainer';
 import TopnavContainer from './topnav/TopnavContainer';
@@ -7,7 +7,7 @@ import TopnavContainer from './topnav/TopnavContainer';
 interface IResultsProps {
     isLoading: boolean;
     title: string;
-    games: ThumbnailGameResponse[];
+    games: GameResponse[];
 }
 
 const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
@@ -25,7 +25,7 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
             />
             <div className="row">
                 {props.games && 
-                    props.games.map((game: ThumbnailGameResponse) => {
+                    props.games.map((game: GameResponse) => {
                         return (
                             <ThumbnailGameContainer
                                 key={game.id}

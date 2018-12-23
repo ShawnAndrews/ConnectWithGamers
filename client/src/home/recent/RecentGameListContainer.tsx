@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
+import { GameResponse } from '../../../../client/client-server-common/common';
 import RecentGameList from './RecentGameList';
 
 interface IRecentGameListContainerProps extends RouteComponentProps<any> {
-    recentGames: PredefinedGameResponse[];
+    recentGames: GameResponse[];
 }
 
 interface IRecentGameListContainerState {
-    recentGames: PredefinedGameResponse[];
+    recentGames: GameResponse[];
 }
 
 class RecentGameListContainer extends React.Component<IRecentGameListContainerProps, IRecentGameListContainerState> {

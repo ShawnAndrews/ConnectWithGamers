@@ -71,11 +71,11 @@ class GameContainer extends React.Component<IGameContainerProps, IGameContainerS
     }
 
     handlePlatformClick(index: number): void {
-        this.props.history.push(`/games/search/filter/?platforms=${this.state.game.platform_ids[index]}`);
+        this.props.history.push(`/games/search/filter/?platforms=${this.state.game.platforms[index].id}`);
     }
     
     handleGenreClick(index: number): void {
-        this.props.history.push(`/games/search/filter/?genres=${this.state.game.genre_ids[index]}`);
+        this.props.history.push(`/games/search/filter/?genres=${this.state.game.genres[index].id}`);
     }
 
     handleReadReviewsClick(): void {

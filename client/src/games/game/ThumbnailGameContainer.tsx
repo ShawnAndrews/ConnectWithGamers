@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { ThumbnailGameResponse } from '../../../../client/client-server-common/common';
+import { GameResponse } from '../../../../client/client-server-common/common';
 import ThumbnailGame from './ThumbnailGame';
 
 interface IThumbnailGameContainerProps extends RouteComponentProps<any> {
-    game: ThumbnailGameResponse;
+    game: GameResponse;
 } 
 
 interface IThumbnailGameContainerState { }

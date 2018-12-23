@@ -11,7 +11,7 @@ const redisClient = redis.createClient();
  * Check if redis key exists.
  */
 export function newsKeyExists(): Promise<boolean> {
-    const cacheEntry: IGDBCacheEntry = redisCache[10];
+    const cacheEntry: IGDBCacheEntry = redisCache[8];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.exists(cacheEntry.key, (error: string, value: boolean) => {
@@ -28,7 +28,7 @@ export function newsKeyExists(): Promise<boolean> {
  * Get redis-cached news.
  */
 export function getCachedNews(): Promise<SingleNewsResponse[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[10];
+    const cacheEntry: IGDBCacheEntry = redisCache[8];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.get(cacheEntry.key, (error: string, stringifiedNews: string) => {
@@ -45,7 +45,7 @@ export function getCachedNews(): Promise<SingleNewsResponse[]> {
  * Cache news.
  */
 export function cacheNews(): Promise<SingleNewsResponse[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[10];
+    const cacheEntry: IGDBCacheEntry = redisCache[8];
     const CURRENT_UNIX_TIME_S: number = getCurrentUnixTimestampInSeconds();
 
     return new Promise((resolve: any, reject: any) => {

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SingleGameResponse, PlatformGamesResponse, PredefinedGamesResponse, SearchGamesResponse, GenreListResponse, GenreGamesResponse, MultiNewsResponse, ThumbnailGamesResponse, PredefinedGamesType } from '../../../client-server-common/common';
+import { GamesType, MultiGameResponse } from '../../../client-server-common/common';
 
 /**
  * Generic HTTP request to get templated response data.
@@ -21,18 +21,18 @@ export function httpGenericGetData<T>(query: string): Promise<T> {
 }
 
 /**
- * HTTP request to get predefined games list.
+ * HTTP request to get games list.
  */
-export function httpGetPredefinedGamesResults(type: PredefinedGamesType): Promise<ThumbnailGamesResponse> {
+export function httpGetGamesResults(type: GamesType): Promise<MultiGameResponse> {
     return new Promise((resolve: any, reject: any) => {
         let url: string;
 
-        if (type === PredefinedGamesType.Popular) {
-            url = '/igdb/games/predefined/popular';
-        } else if (type === PredefinedGamesType.Recent) {
-            url = '/igdb/games/predefined/recent';
-        } else if (type === PredefinedGamesType.Upcoming) {
-            url = '/igdb/games/predefined/upcoming';
+        if (type === GamesType.Popular) {
+            url = '/igdb/games/popular';
+        } else if (type === GamesType.Recent) {
+            url = '/igdb/games/recent';
+        } else if (type === GamesType.Upcoming) {
+            url = '/igdb/games/upcoming';
         }
 
         axios.post(url)
@@ -40,7 +40,7 @@ export function httpGetPredefinedGamesResults(type: PredefinedGamesType): Promis
             if (result.data.error) {
                 return reject(result.data.error);
             }
-            const recentGamesResponse: PredefinedGamesResponse = result.data;
+            const recentGamesResponse: MultiGameResponse = result.data;
             return resolve(recentGamesResponse);
         })
         .catch((error: string) => {

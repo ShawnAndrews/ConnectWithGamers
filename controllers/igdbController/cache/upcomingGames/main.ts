@@ -1,7 +1,8 @@
 import config from "../../../../config";
-import { PredefinedGameResponse, RawPredefinedGameResponse, PredefinedGameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
+import { GameResponse, RawGameResponse, GameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-import { ArrayClean, IGDBImage, getCurrentUnixTimestampInSeconds, buildIGDBRequestBody } from "../../../../util/main";
+import { getCurrentUnixTimestampInSeconds, buildIGDBRequestBody } from "../../../../util/main";
+import { convertRawGameResponse, getGameReponseById } from "../util";
 const redis = require("redis");
 const redisClient = redis.createClient();
 
@@ -25,15 +26,26 @@ export function upcomingGamesKeyExists(): Promise<boolean> {
 /**
  * Get redis-cached upcoming games.
  */
-export function getCachedUpcomingGames(): Promise<PredefinedGameResponse[]> {
+export function getCachedUpcomingGames(): Promise<GameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[0];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.get(cacheEntry.key, (error: string, stringifiedUpcomingGames: string) => {
+        redisClient.get(cacheEntry.key, (error: string, stringifiedGameIds: string) => {
             if (error) {
                 return reject(error);
             }
-            return resolve(JSON.parse(stringifiedUpcomingGames));
+
+            const ids: number[] = JSON.parse(stringifiedGameIds);
+            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getGameReponseById(id));
+
+            Promise.all(gamePromises)
+            .then((gameResponses: GameResponse[]) => {
+                return resolve(gameResponses);
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
+
         });
     });
 
@@ -43,7 +55,7 @@ export function getCachedUpcomingGames(): Promise<PredefinedGameResponse[]> {
 /**
  * Cache upcoming games.
  */
-export function cacheUpcomingGames(): Promise<PredefinedGameResponse[]> {
+export function cacheUpcomingGames(): Promise<GameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[0];
     const CURRENT_UNIX_TIME_S: number = getCurrentUnixTimestampInSeconds();
 
@@ -54,7 +66,7 @@ export function cacheUpcomingGames(): Promise<PredefinedGameResponse[]> {
             `popularity > 5`,
             `first_release_date >= ${CURRENT_UNIX_TIME_S}`
         ],
-        PredefinedGameResponseFields.join(),
+        GameResponseFields.join(),
         undefined,
         `sort first_release_date asc`
     );
@@ -70,49 +82,22 @@ export function cacheUpcomingGames(): Promise<PredefinedGameResponse[]> {
             data: body
         })
         .then((response: AxiosResponse) => {
-            const rawResponse: RawPredefinedGameResponse[] = response.data;
-            const gamesResponse: PredefinedGameResponse[] = [];
+            const ids: number[] = response.data.map((x: any) => x.id);
+            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getGameReponseById(id));
 
-            rawResponse.forEach((x: RawPredefinedGameResponse) => {
-                const id: number = x.id;
-                const name: string = x.name;
-                const aggregated_rating: number = x.aggregated_rating;
-                const first_release_date: number = x.first_release_date;
-                const cover: string = x.cover ? IGDBImage(x.cover.image_id, "cover_big", "jpg") : undefined;
-                let linkIcons: string[];
-                        if (x.platforms) {
-                            linkIcons = x.platforms
-                            .map((platformid: number) => {
-                                if (platformid === 48 || platformid === 45) {
-                                    return "fab fa-playstation";
-                                } else if (platformid === 34) {
-                                    return "fab fa-android";
-                                } else if (platformid === 6) {
-                                    return "fab fa-windows";
-                                } else if (platformid === 14) {
-                                    return "fab fa-apple";
-                                } else if (platformid === 3) {
-                                    return "fab fa-linux";
-                                } else if (platformid === 92) {
-                                    return "fab fa-steam";
-                                } else if (platformid === 49) {
-                                    return "fab fa-xbox";
-                                } else if (platformid === 130) {
-                                    return "fab fa-nintendo-switch";
-                                }
-                            });
-                            linkIcons = ArrayClean(linkIcons, undefined);
-                        }
-                const gameResponse: PredefinedGameResponse = { id: id, name: name, aggregated_rating: aggregated_rating, linkIcons: linkIcons, first_release_date: first_release_date, cover: cover };
-                gamesResponse.push(gameResponse);
-            });
-
-            redisClient.set(cacheEntry.key, JSON.stringify(gamesResponse));
+            redisClient.set(cacheEntry.key, JSON.stringify(ids));
             if (cacheEntry.expiry !== -1) {
                 redisClient.expire(cacheEntry.key, cacheEntry.expiry);
             }
 
-            return resolve(gamesResponse);
+            Promise.all(gamePromises)
+            .then((gameResponses: GameResponse[]) => {
+                return resolve(gameResponses);
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
+
         })
         .catch( (error: any) => {
             return reject(error);

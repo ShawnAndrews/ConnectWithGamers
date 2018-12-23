@@ -1,22 +1,22 @@
 import * as React from 'react';
-import { PredefinedGameResponse } from '../../../client-server-common/common';
+import { GameResponse } from '../../../client-server-common/common';
 import { Card } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 
 interface IReviewedGameListProps {
     randomFilterVals: number[];
-    reviewedGames: PredefinedGameResponse[];
+    reviewedGames: GameResponse[];
     onClickGame: (id: number) => void;
 }
 
 const PopularGameList: React.SFC<IReviewedGameListProps> = (props: IReviewedGameListProps) => {
 
-    const row1col1: PredefinedGameResponse = props.reviewedGames[0];
-    const row1col2: PredefinedGameResponse = props.reviewedGames[1];
-    const row1col3: PredefinedGameResponse = props.reviewedGames[2];
-    const row23col12: PredefinedGameResponse = props.reviewedGames[3];
-    const row2col3: PredefinedGameResponse = props.reviewedGames[4];
-    const row3col3: PredefinedGameResponse = props.reviewedGames[5];
+    const row1col1: GameResponse = props.reviewedGames[0];
+    const row1col2: GameResponse = props.reviewedGames[1];
+    const row1col3: GameResponse = props.reviewedGames[2];
+    const row23col12: GameResponse = props.reviewedGames[3];
+    const row2col3: GameResponse = props.reviewedGames[4];
+    const row3col3: GameResponse = props.reviewedGames[5];
     const rollColor = (): boolean => {
         return Math.random() >= 0.5;
     };
@@ -37,14 +37,14 @@ const PopularGameList: React.SFC<IReviewedGameListProps> = (props: IReviewedGame
                                     {row1col1.name}
                                 </Textfit>
                                 <div className="genre">
-                                    {row1col1.genre}
+                                    {row1col1.genres[0].name}
                                 </div>
                                 {row1col1.aggregated_rating &&
                                     <div className="rating">
                                         {Math.floor(row1col1.aggregated_rating)}%
                                     </div>}
                             </div>
-                            <img className="w-100 h-100" src={row1col1.cover ? row1col1.cover : 'https://i.imgur.com/WcPkTiF.png'}/>
+                            <img className="w-100 h-100" src={row1col1.screenshots ? row1col1.screenshots[0] : 'https://i.imgur.com/WcPkTiF.png'}/>
                         </Card>
                     </div>
                     <div className="cursor-pointer col-4 p-2">
@@ -55,14 +55,14 @@ const PopularGameList: React.SFC<IReviewedGameListProps> = (props: IReviewedGame
                                     {row1col2.name}
                                 </Textfit>
                                 <div className="genre">
-                                    {row1col2.genre}
+                                    {row1col2.genres[0].name}
                                 </div>
                                 {row1col2.aggregated_rating &&
                                     <div className="rating">
                                         {Math.floor(row1col2.aggregated_rating)}%
                                     </div>}
                             </div>
-                            <img className="w-100 h-100" src={row1col2.cover ? row1col2.cover : 'https://i.imgur.com/WcPkTiF.png'}/>
+                            <img className="w-100 h-100" src={row1col2.screenshots ? row1col2.screenshots[0] : 'https://i.imgur.com/WcPkTiF.png'}/>
                         </Card>
                     </div>
                     <div className="cursor-pointer col-4 p-2">
@@ -73,14 +73,14 @@ const PopularGameList: React.SFC<IReviewedGameListProps> = (props: IReviewedGame
                                     {row1col3.name}
                                 </Textfit>
                                 <div className="genre">
-                                    {row1col3.genre}
+                                    {row1col3.genres[0].name}
                                 </div>
                                 {row1col3.aggregated_rating &&
                                     <div className="rating">
                                         {Math.floor(row1col3.aggregated_rating)}%
                                     </div>}
                             </div>
-                            <img className="w-100 h-100" src={row1col3.cover ? row1col3.cover : 'https://i.imgur.com/WcPkTiF.png'}/>
+                            <img className="w-100 h-100" src={row1col3.screenshots ? row1col3.screenshots[0] : 'https://i.imgur.com/WcPkTiF.png'}/>
                         </Card>
                     </div>
                 </div>
@@ -93,14 +93,14 @@ const PopularGameList: React.SFC<IReviewedGameListProps> = (props: IReviewedGame
                                     {row23col12.name}
                                 </Textfit>
                                 <div className="genre">
-                                    {row23col12.genre}
+                                    {row23col12.genres[0].name}
                                 </div>
                                 {row23col12.aggregated_rating &&
                                     <div className="rating">
                                         {Math.floor(row23col12.aggregated_rating)}%
                                     </div>}
                             </div>
-                            <img className="w-100 h-100" src={row23col12.cover ? row23col12.cover : 'https://i.imgur.com/WcPkTiF.png'}/>
+                            <img className="w-100 h-100" src={row23col12.screenshots ? row23col12.screenshots[0] : 'https://i.imgur.com/WcPkTiF.png'}/>
                         </Card>
                     </div>
                     <div className="col-4 p-0">
@@ -112,14 +112,14 @@ const PopularGameList: React.SFC<IReviewedGameListProps> = (props: IReviewedGame
                                         {row2col3.name}
                                     </Textfit>
                                     <div className="genre">
-                                        {row2col3.genre}
+                                        {row2col3.genres[0].name}
                                     </div>
                                     {row2col3.aggregated_rating &&
                                         <div className="rating">
                                             {Math.floor(row2col3.aggregated_rating)}%
                                         </div>}
                                 </div>
-                                <img className="w-100 h-100" src={row2col3.cover ? row2col3.cover : 'https://i.imgur.com/WcPkTiF.png'}/>
+                                <img className="w-100 h-100" src={row2col3.screenshots ? row2col3.screenshots[0] : 'https://i.imgur.com/WcPkTiF.png'}/>
                             </Card>
                         </div>
                         <div className="cursor-pointer col-12 h-50 p-2">
@@ -130,14 +130,14 @@ const PopularGameList: React.SFC<IReviewedGameListProps> = (props: IReviewedGame
                                         {row3col3.name}
                                     </Textfit>
                                     <div className="genre">
-                                        {row3col3.genre}
+                                        {row3col3.genres[0].name}
                                     </div>
                                     {row3col3.aggregated_rating &&
                                         <div className="rating">
                                             {Math.floor(row3col3.aggregated_rating)}%
                                         </div>}
                                 </div>
-                                <img className="w-100 h-100" src={row3col3.cover ? row3col3.cover : 'https://i.imgur.com/WcPkTiF.png'}/>
+                                <img className="w-100 h-100" src={row3col3.screenshots ? row3col3.screenshots[0] : 'https://i.imgur.com/WcPkTiF.png'}/>
                             </Card>   
                         </div> 
                     </div>

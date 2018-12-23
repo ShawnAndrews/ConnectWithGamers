@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as IGDBService from '../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Showcase from './Showcase';
-import { PredefinedGameResponse, PredefinedGamesResponse, SingleNewsResponse, MultiNewsResponse } from '../../client-server-common/common';
+import { GameResponse, MultiGameResponse, SingleNewsResponse, MultiNewsResponse } from '../../client-server-common/common';
 
 interface IShowcaseContainerProps extends RouteComponentProps<any> {
     
@@ -11,10 +11,10 @@ interface IShowcaseContainerProps extends RouteComponentProps<any> {
 
 interface IShowcaseContainerState {
     isLoading: boolean;
-    reviewedGames: PredefinedGameResponse[];
-    popularGames: PredefinedGameResponse[];
-    recentGames: PredefinedGameResponse[];
-    upcomingGames: PredefinedGameResponse[];
+    reviewedGames: GameResponse[];
+    popularGames: GameResponse[];
+    recentGames: GameResponse[];
+    upcomingGames: GameResponse[];
     news: SingleNewsResponse[];
 }
 
@@ -37,37 +37,37 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
     componentDidMount(): void {
         const showcasePromises: Promise<any>[] = [];
 
-        showcasePromises.push(IGDBService.httpGenericGetData<PredefinedGamesResponse>(`/igdb/games/reviewed`));
-        showcasePromises.push(IGDBService.httpGenericGetData<PredefinedGamesResponse>(`/igdb/games/popular`));
-        showcasePromises.push(IGDBService.httpGenericGetData<PredefinedGamesResponse>(`/igdb/games/recent`));
-        showcasePromises.push(IGDBService.httpGenericGetData<PredefinedGamesResponse>(`/igdb/games/upcoming`));
+        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/reviewed`));
+        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/popular`));
+        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/recent`));
+        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/upcoming`));
         showcasePromises.push(IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`));
 
         Promise.all(showcasePromises)
             .then((vals: any) => {
-                let reviewedGames: PredefinedGameResponse[] = undefined;
-                let popularGames: PredefinedGameResponse[] = undefined;
-                let recentGames: PredefinedGameResponse[] = undefined;
-                let upcomingGames: PredefinedGameResponse[] = undefined;
+                let reviewedGames: GameResponse[] = undefined;
+                let popularGames: GameResponse[] = undefined;
+                let recentGames: GameResponse[] = undefined;
+                let upcomingGames: GameResponse[] = undefined;
                 let news: SingleNewsResponse[] = undefined;
 
                 if (vals[0]) {
-                    const response: PredefinedGamesResponse = vals[0];
+                    const response: MultiGameResponse = vals[0];
                     const numOfReviewedGamesToShow: number = 6;
                     reviewedGames = response.data.slice(0, numOfReviewedGamesToShow);
                 }
                 if (vals[1]) {
-                    const response: PredefinedGamesResponse = vals[1];
+                    const response: MultiGameResponse = vals[1];
                     const numOfPopularGamesToShow: number = 20;
                     popularGames = response.data.slice(0, numOfPopularGamesToShow);
                 }
                 if (vals[2]) {
-                    const response: PredefinedGamesResponse = vals[2];
+                    const response: MultiGameResponse = vals[2];
                     const numOfRecentGamesToShow: number = 6;
                     recentGames = response.data.slice(0, numOfRecentGamesToShow);
                 }
                 if (vals[3]) {
-                    const response: PredefinedGamesResponse = vals[3];
+                    const response: MultiGameResponse = vals[3];
                     const numOfUpcomingGamesToShow: number = 6;
                     upcomingGames = response.data.slice(0, numOfUpcomingGamesToShow);
                 }

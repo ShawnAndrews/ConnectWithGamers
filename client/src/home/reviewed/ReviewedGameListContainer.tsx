@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { PredefinedGameResponse } from '../../../client-server-common/common';
+import { GameResponse } from '../../../client-server-common/common';
 import ReviewedGameList from './ReviewedGameList';
 
 interface IReviewedGameListContainerProps extends RouteComponentProps<any> {
-    reviewedGames: PredefinedGameResponse[];
+    reviewedGames: GameResponse[];
 }
 
 interface IReviewedGameListContainerState {
     randomFilterVals: number[];
-    reviewedGames: PredefinedGameResponse[];
+    reviewedGames: GameResponse[];
 }
 
 class ReviewedGameListContainer extends React.Component<IReviewedGameListContainerProps, IReviewedGameListContainerState> {

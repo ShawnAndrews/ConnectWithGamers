@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { PredefinedGameResponse } from '../../../../client/client-server-common/common';
+import { GameResponse } from '../../../../client/client-server-common/common';
 import PopularGameList from './PopularGameList';
 
 enum ScrollDirection {
@@ -9,11 +9,11 @@ enum ScrollDirection {
 }
 
 interface IPopularGameListContainerProps extends RouteComponentProps<any> {
-    popularGames: PredefinedGameResponse[];
+    popularGames: GameResponse[];
 }
 
 interface IPopularGameListContainerState {
-    popularGames: PredefinedGameResponse[];
+    popularGames: GameResponse[];
     listScrollRef: React.RefObject<HTMLDivElement>;
     clicked: boolean;
     clickedX: number;
