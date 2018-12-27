@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Avatar } from '@material-ui/core';
 
 interface INavbarProps {
     index: number;
@@ -8,10 +9,13 @@ interface INavbarProps {
     onToggleAdvancedSearch: () => void;
     onSubmitSearch: (e: React.FormEvent<HTMLFormElement>) => void;
     onSearchQueryChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onRedirect: (URL: string) => void;
+    profileImage: string;
+    profileName: string;
 }
 
 const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
-
+    
     return (
         <div className="brand-navbar navbar bg-secondary-solid pb-0">
             <a className="logo navbar-brand" href="/">
@@ -56,6 +60,12 @@ const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
                 <input className="form-control mr-sm-2" value={props.searchQuery} onChange={props.onSearchQueryChanged} type="search" placeholder="Search games" aria-label="Search"/>
                 <button className="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit"><i className="fas fa-search"/></button>
                 <button className="btn btn-outline-success my-2 my-sm-0" type="button" onClick={props.onToggleAdvancedSearch}><i className="fas fa-cog"/></button>
+                {(props.profileImage || props.profileName) && 
+                    <div className="d-inline-block align-middle cursor-pointer ml-4" onClick={() => props.onRedirect(`/account`)}>
+                        {props.profileImage
+                            ? <Avatar src={props.profileImage}/>
+                            : <Avatar className="bg-primary-solid">{props.profileName.slice(0, 2).toUpperCase()}</Avatar>}
+                    </div>}
             </form>
         </div>
     );

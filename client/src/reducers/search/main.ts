@@ -1,5 +1,8 @@
-import { ReduxActions, SwipeActionType } from '../../actions/main';
-import { SearchReduxState } from '../main';
+import { ReduxActionEnum, ReduxAction } from '../../actions/main';
+
+export interface SearchReduxState {
+    toggleSearch: boolean;
+}
 
 const initialState: SearchReduxState = {
     toggleSearch: false
@@ -9,8 +12,8 @@ const SearchReducer = (state: SearchReduxState = initialState, action: any) => {
 
     switch (action.type) {
 
-        case ReduxActions.TOGGLE_SEARCH_MODAL: {
-            const actionResult: SwipeActionType = action;
+        case ReduxActionEnum.TOGGLE_SEARCH_MODAL: {
+            const actionResult: ReduxAction = action;
             const newState: SearchReduxState = state;
 
             newState.toggleSearch = !state.toggleSearch;

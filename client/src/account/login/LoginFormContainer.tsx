@@ -1,11 +1,25 @@
 const popupS = require('popups');
 import * as React from 'react';
+import * as Redux from 'redux';
+import { connect } from 'react-redux';
 import LoginForm from "./LoginForm";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { validateCredentials } from '../../../../client/client-server-common/common';
 import * as AccountService from '../../service/account/main';
+import { GlobalReduxState } from '../../reducers/main';
+import { setLoggedIn } from '../../actions/main';
 
 interface ILoginFormContainerProps extends RouteComponentProps<any> { }
+
+interface ReduxStateProps {
+
+}
+
+interface ReduxDispatchProps {
+    setLoggedIn: (loggedIn: boolean) => void;
+}
+
+type Props = ILoginFormContainerProps & ReduxStateProps & ReduxDispatchProps;
 
 interface ILoginFormContainerState {
     username: string;
@@ -15,9 +29,9 @@ interface ILoginFormContainerState {
     isLoading: boolean;
 }
 
-class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILoginFormContainerState> {
+class LoginFormContainer extends React.Component<Props, ILoginFormContainerState> {
 
-    constructor(props: ILoginFormContainerProps) {
+    constructor(props: Props) {
         super(props);
         this.usernameChanged = this.usernameChanged.bind(this);
         this.passwordChanged = this.passwordChanged.bind(this);
@@ -63,6 +77,7 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
         this.setState({isLoading: true});
         AccountService.httpLogin(this.state.username, this.state.password, this.state.rememberme)
             .then( () => {
+                this.props.setLoggedIn(true);
                 this.props.history.push('/');
             })
             .catch( (error: string) => {
@@ -123,4 +138,11 @@ class LoginFormContainer extends React.Component<ILoginFormContainerProps, ILogi
 
 }
 
-export default withRouter(LoginFormContainer);
+const mapStateToProps = (state: any, ownProps: ILoginFormContainerProps): ReduxStateProps => ({})
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: ILoginFormContainerProps): ReduxDispatchProps => ({
+    setLoggedIn: (loggedIn: boolean) => { dispatch(setLoggedIn(loggedIn)); },
+});
+
+export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, ILoginFormContainerProps>
+    (mapStateToProps, mapDispatchToProps)(LoginFormContainer));

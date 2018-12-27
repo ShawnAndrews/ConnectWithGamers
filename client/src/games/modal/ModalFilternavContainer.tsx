@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import ModalFilternav from './ModalFilternav';
 import { toggleSearchModal } from '../../actions/main';
-import { SearchReduxState } from '../../reducers/main';
+import { GlobalReduxState } from '../../reducers/main';
 
 export interface NameValuePair {
     name: string;
@@ -305,9 +305,9 @@ class ModalFilternavContainer extends React.Component<Props, IModalFilternavCont
 }
 
 const mapStateToProps = (state: any, ownProps: IModalFilternavContainerProps): ReduxStateProps => {
-    const searchModalReduxState: SearchReduxState = state.search;
+    const globalModalReduxState: GlobalReduxState = state;
     return {
-        toggleSearch: searchModalReduxState.toggleSearch
+        toggleSearch: globalModalReduxState.search.toggleSearch
     };
 };
 

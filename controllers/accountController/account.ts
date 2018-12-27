@@ -2,7 +2,7 @@ const express = require("express");
 const RateLimit = require("express-rate-limit");
 import { Request, Response, Router } from "express";
 const router: Router = express.Router();
-import { AUTH_TOKEN_NAME, validateCredentials, DatalessResponse, DbRecoveryEmailResponse, EmailRecoveryVerifyResponse, RecoverPasswordResponse, DbVerifyEmailResponse, EmailRecoveryResponse, EmailVerifyResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse, TwitchIdResponse, DbTwitchIdResponse, SteamIdResponse, DbSteamIdResponse, DbSteamFriendsResponse, SteamFriendsResponse, DiscordLinkResponse, DbDiscordLinkResponse, TwitchFollowersResponse, DbTwitchFollowsResponse, DbAccountRecoveryResponse } from "../../client/client-server-common/common";
+import { AUTH_TOKEN_NAME, validateCredentials, DatalessResponse, DbRecoveryEmailResponse, EmailRecoveryVerifyResponse, RecoverPasswordResponse, DbVerifyEmailResponse, EmailRecoveryResponse, EmailVerifyResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse, TwitchIdResponse, DbTwitchIdResponse, SteamIdResponse, DbSteamIdResponse, DbSteamFriendsResponse, SteamFriendsResponse, DiscordLinkResponse, DbDiscordLinkResponse, TwitchFollowersResponse, DbTwitchFollowsResponse, DbAccountRecoveryResponse, DbAccountsInfoResponse, PublicAccountInfoResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { accountModel } from "../../models/db/account/main";
 import { securityModel } from "../../models/db/security/main";
@@ -14,6 +14,7 @@ export const routes = new routeModel();
 /* routes */
 routes.addRoute("signup", "/signup");
 routes.addRoute("login", "/login");
+routes.addRoute("public/info", "/public/info");
 routes.addRoute("settings", "/settings");
 routes.addRoute("settings/change", "/settings/change");
 routes.addRoute("settings/twitchId", "/settings/twitchId");
@@ -101,6 +102,34 @@ router.post(routes.getRoute("login"), (req: Request, res: Response) => {
             return res
             .send(datalessResponse);
         });
+
+});
+
+router.post(routes.getRoute("public/info"), (req: Request, res: Response) => {
+
+    const publicAccountInfoResponse: PublicAccountInfoResponse = { error: undefined };
+
+    // authorize
+    securityModel.authorize(req.headers.cookie)
+    .then((response: DbAuthorizeResponse) => {
+        return accountModel.getAccountsInfoById([response.accountid]);
+    })
+    .then((response: DbAccountsInfoResponse) => {
+        publicAccountInfoResponse.data = {
+            image: response.accounts[0].image,
+            username: response.accounts[0].username,
+            discord_url: response.accounts[0].discord_url,
+            steam_url: response.accounts[0].steam_url,
+            twitch_url: response.accounts[0].twitch_url
+        };
+        return res
+        .send(publicAccountInfoResponse);
+    })
+    .catch((error: string) => {
+        publicAccountInfoResponse.error = error;
+        return res
+        .send(publicAccountInfoResponse);
+    });
 
 });
 

@@ -246,6 +246,19 @@ export interface AccountInfo {
     image?: string;
 }
 
+export interface PublicAccountInfo {
+    username: string;
+    steam_url?: string;
+    twitch_url?: string;
+    discord_url?: string;
+    image?: string;
+}
+
+export interface PublicAccountInfoResponse {
+    error: string;
+    data?: PublicAccountInfo;
+}
+
 export interface DbAccountsInfoResponse {
     accounts: AccountInfo[];
 }

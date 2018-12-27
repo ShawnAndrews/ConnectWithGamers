@@ -59,7 +59,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                 {props.image
                     ? <Avatar className="chip mx-auto bg-primary-solid mt-3" src={props.image}/>
                     : <Avatar className="chip mx-auto bg-primary-solid mt-3"/>}
-                {!props.image && <i className="fas fa-plus plus-icon color-primary center "/>}
+                {!props.image && <i className="fas fa-plus plus-icon color-secondary center "/>}
                 <input className="chip-input-hidden rounded-circle" type="file" onChange={props.handleImageChange}/>
             </div>
             {props.image &&

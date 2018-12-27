@@ -1,9 +1,13 @@
 const popupS = require('popups');
+import * as Redux from 'redux';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import SettingsForm from "../settings/SettingsForm";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { AUTH_TOKEN_NAME, GenericResponseModel, AccountImageResponse } from '../../../../client/client-server-common/common';
 import * as AccountService from '../../service/account/main';
+import { GlobalReduxState } from '../../reducers/main';
+import { setLoggedIn } from '../../actions/main';
 
 export interface SettingsData {
     username?: string;
@@ -15,6 +19,16 @@ export interface SettingsData {
 }
 
 interface ISettingsFormContainerProps extends RouteComponentProps<any> { }
+
+interface ReduxStateProps {
+
+}
+
+interface ReduxDispatchProps {
+    setLoggedIn: (loggedIn: boolean) => void;
+}
+
+type Props = ISettingsFormContainerProps & ReduxStateProps & ReduxDispatchProps;
 
 interface ISettingsFormContainerState {
     showLinks: boolean;
@@ -36,9 +50,9 @@ interface ISettingsFormContainerState {
     emailVerified: boolean;
 }
 
-class SettingsFormContainer extends React.Component<ISettingsFormContainerProps, ISettingsFormContainerState> {
+class SettingsFormContainer extends React.Component<Props, ISettingsFormContainerState> {
 
-    constructor(props: ISettingsFormContainerProps) {
+    constructor(props: Props) {
         super(props);
         this.loadSettings = this.loadSettings.bind(this);
         this.onUsernameChanged = this.onUsernameChanged.bind(this);
@@ -136,7 +150,8 @@ class SettingsFormContainer extends React.Component<ISettingsFormContainerProps,
     } 
 
     logout(): void {
-        document.cookie = `${AUTH_TOKEN_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        AccountService.logout();
+        this.props.setLoggedIn(false);
         this.props.history.push(`/`);
     }
 
@@ -299,4 +314,11 @@ class SettingsFormContainer extends React.Component<ISettingsFormContainerProps,
 
 }
 
-export default withRouter(SettingsFormContainer);
+const mapStateToProps = (state: any, ownProps: ISettingsFormContainerProps): ReduxStateProps => ({});
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: ISettingsFormContainerProps): ReduxDispatchProps => ({
+    setLoggedIn: (loggedIn: boolean) => { dispatch(setLoggedIn(loggedIn)); },
+});
+
+export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, ISettingsFormContainerProps>
+    (mapStateToProps, mapDispatchToProps)(SettingsFormContainer));

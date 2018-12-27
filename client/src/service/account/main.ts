@@ -1,7 +1,27 @@
 import axios from 'axios';
-import { GenericResponseModel, AccountImageResponse, EmailVerifyResponse, TwitchIdResponse, SteamIdResponse, EmailRecoveryVerifyResponse, DiscordLinkResponse, SteamFriendsResponse, TwitchFollowersResponse } from '../../../../client/client-server-common/common';
+import { GenericResponseModel, AccountImageResponse, EmailVerifyResponse, TwitchIdResponse, SteamIdResponse, EmailRecoveryVerifyResponse, DiscordLinkResponse, SteamFriendsResponse, TwitchFollowersResponse, PublicAccountInfoResponse } from '../../../../client/client-server-common/common';
 import { AUTH_TOKEN_NAME } from '../../../client-server-common/common';
 import { SettingsData } from '../../../src/account/settings/SettingsFormsContainer';
+
+/**
+ * HTTP request to recover password.
+ */
+export function httpGetPublicAccountInfo (): Promise<PublicAccountInfoResponse> {
+    return new Promise((resolve: any, reject: any) => {
+        axios.post('/account/public/info')
+        .then((result) => {
+            if (result.data.error) {
+                return reject(`Failed to get public account info. ${result.data.error}`);
+            } else {
+                const publicAccountInfoResponse: PublicAccountInfoResponse = result.data;
+                return resolve(publicAccountInfoResponse);
+            }
+        })
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
+        });
+    }); 
+}
 
 /**
  * HTTP request to recover password.
@@ -313,6 +333,15 @@ export function httpGetAccountDiscordLink(): Promise<DiscordLinkResponse> {
  * Check if an account is logged in via cookie
  */
 
- export function loggedIn(): boolean {
-    return (document.cookie.indexOf(`${AUTH_TOKEN_NAME}=`) !== -1);
+export function loggedIn(): boolean {
+    const loggedIn: boolean = document.cookie.indexOf(`${AUTH_TOKEN_NAME}=`) !== -1;
+    return loggedIn;
+}
+
+/**
+ * Logout of an account
+ */
+
+export function logout(): void {
+    document.cookie = `${AUTH_TOKEN_NAME}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }

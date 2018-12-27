@@ -1,3 +1,4 @@
+const popupS = require('popups');
 import * as Redux from 'redux';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -5,6 +6,9 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { NAV_PAGE } from '../app/app';
 import Navbar from './Navbar';
 import { toggleSearchModal } from '../actions/main';
+import { loggedIn, httpGetPublicAccountInfo } from '../service/account/main';
+import { PublicAccountInfoResponse } from '../../client-server-common/common';
+import { GlobalReduxState } from '../reducers/main';
 
 interface INavbarContainerProps extends RouteComponentProps<any> { } 
 
@@ -12,10 +16,12 @@ interface INavbarContainerState {
     index: number;
     searchQuery: string;
     toggleAdvancedSearch: boolean;
+    profileImage: string;
+    profileName: string;
 }
 
 interface ReduxStateProps {
-    
+    loggedIn: boolean;
 }
 
 interface ReduxDispatchProps {
@@ -33,13 +39,21 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         this.onToggleAdvancedSearch = this.onToggleAdvancedSearch.bind(this);
         this.onSubmitSearch = this.onSubmitSearch.bind(this);
         this.onSearchQueryChanged = this.onSearchQueryChanged.bind(this);
+        this.loadPublicAccountInfo = this.loadPublicAccountInfo.bind(this);
+        this.onRedirect = this.onRedirect.bind(this);
 
         const onLoginScreen: boolean = props.history.location.pathname.startsWith(NAV_PAGE.ACCOUNT);
+
+        if (this.props.loggedIn) {
+            this.loadPublicAccountInfo();
+        }
 
         this.state = {
             index: onLoginScreen ? 3 : undefined,
             searchQuery: '',
-            toggleAdvancedSearch: false
+            toggleAdvancedSearch: false,
+            profileImage: undefined,
+            profileName: undefined
         };
     }
 
@@ -47,8 +61,33 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         this.updateNavSelection(this.props.history.location.pathname);
     }
 
-    componentWillReceiveProps(newProps: INavbarContainerProps): void {
+    componentWillReceiveProps(newProps: Props): void {
         this.updateNavSelection(newProps.history.location.pathname);
+        if (newProps.loggedIn != this.props.loggedIn) {
+            if (newProps.loggedIn) {
+                this.loadPublicAccountInfo();
+            } else {
+                this.setState({
+                    profileImage: undefined,
+                    profileName: undefined
+                });
+            }
+        }
+    }
+
+    loadPublicAccountInfo(): void {
+        
+        httpGetPublicAccountInfo()
+        .then((response: PublicAccountInfoResponse) => {
+            this.setState({
+                profileImage: response.data.image,
+                profileName: response.data.username
+            });
+        })
+        .catch((error: string) => {
+            popupS.modal({ content: `<div>• ${error}</div>` });
+        });
+
     }
 
     updateNavSelection(path: string): void {
@@ -82,6 +121,10 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         this.setState({ searchQuery: e.target.value });
     }
 
+    onRedirect(URL: string): void {
+        this.props.history.push(URL);
+    }
+
     render() {
         return (
             <Navbar
@@ -92,13 +135,21 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
                 onToggleAdvancedSearch={this.onToggleAdvancedSearch}
                 onSubmitSearch={this.onSubmitSearch}
                 onSearchQueryChanged={this.onSearchQueryChanged}
+                onRedirect={this.onRedirect}
+                profileImage={this.state.profileImage}
+                profileName={this.state.profileName}
             />
         );
     }
 
 }
 
-const mapStateToProps = (state: any, ownProps: INavbarContainerProps): ReduxStateProps => ({});
+const mapStateToProps = (state: any, ownProps: INavbarContainerProps): ReduxStateProps => {
+    const globalModalReduxState: GlobalReduxState = state;
+    return {
+        loggedIn: globalModalReduxState.topnav.loggedIn
+    };
+};
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: INavbarContainerProps): ReduxDispatchProps => ({
     toggleSearchModal: () => { dispatch(toggleSearchModal()); },
