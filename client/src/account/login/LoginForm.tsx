@@ -29,11 +29,11 @@ const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
     }
 
     return (
-        <Paper className="account bg-primary p-4 mx-auto mt-5" elevation={24}>
+        <Paper className="account bg-secondary-solid p-4 mx-auto mt-5" elevation={24}>
             <div className="logo-img text-center">
                 <img src="https://i.imgur.com/UfeBmAp.gif"/>
             </div>
-            <h3 className="logo-name font-secondary text-center mt-3">
+            <h3 className="logo-name color-primary font-secondary text-center mt-3">
                 Connect With Gamers
             </h3>
             <form className="account-form" noValidate={true} autoComplete="off">
@@ -75,13 +75,13 @@ const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
                     </div>
                     <div className="col-6">
                         <div className="d-table h-100 w-100">
-                            <div className="notamember d-table-cell align-middle color-secondary">
+                            <div className="notamember d-table-cell align-middle color-primary">
                                 Not a member? <u onClick={props.onClickSignUp}>Click here</u>
                             </div>
                         </div>
                     </div>
                 </div>
-                <Button className="login-btn color-primary bg-secondary mt-3" onClick={props.onClickLogin} variant="contained" color="primary" fullWidth={true}>
+                <Button className="login-btn color-secondary bg-primary-solid hover-primary-solid mt-3" onClick={props.onClickLogin} variant="contained" color="primary" fullWidth={true}>
                     Login
                 </Button>
             </form>

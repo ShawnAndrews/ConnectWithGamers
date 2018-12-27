@@ -18,7 +18,7 @@ const SteamListItem: React.SFC<ISteamListItemProps> = (props: ISteamListItemProp
 
     return (
         <div className="col-md-6 col-lg-4 px-4 px-md-2 my-2">
-            <Paper className="friend bg-primary hover-primary position-relative">
+            <Paper className="friend bg-tertiary hover-tertiary-solid position-relative">
                 <div className="profile-img-container steam">
                     <img src={props.profilePicture} alt="Profile picture"/>
                     <div className={`overlay ${props.online ? 'online' : 'offline'}`}/>

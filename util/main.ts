@@ -1,7 +1,6 @@
-import * as WebRequest from "web-request";
-import { get } from "web-request";
+import axios, { AxiosResponse } from "axios";
 import config from "./../config";
-import { SteamAPIReview, SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse } from "../client/client-server-common/common";
+import { SteamAPIGetPriceInfoResponse } from "../client/client-server-common/common";
 
 /**
  * Convert Date->YYYY-MM-DD.
@@ -87,6 +86,120 @@ export function genRandStr(length: number) {
 }
 
 /**
+ * Parse steam app page for discount percent.
+ */
+function getSteamDiscountPercent(webpage: string): number {
+    let discountPercent: number = undefined;
+    const discardPrefix: string = `<table class="table table-fixed table-prices table-hover table-sortable">`;
+    const discardPrefix2: string = `owned`;
+    const discardSuffix: string = `</table>`;
+    const discardSuffix2: string = `</tr>`;
+    const prefix: string = `<span class="price-discount">-`;
+    const alternatePrefix: string = `<span class="price-discount-minor">-`;
+    const suffix: string = `</span>`;
+
+    // discard prefix and suffix
+    const foundDiscardPrefixIndex: number = webpage.search(discardPrefix);
+    if (foundDiscardPrefixIndex === -1) {
+        return discountPercent;
+    }
+    webpage = webpage.substring(foundDiscardPrefixIndex);
+    const foundDiscardSuffixIndex: number = webpage.search(discardSuffix);
+    webpage = webpage.substring(0, foundDiscardSuffixIndex);
+    const foundDiscardPrefix2Index: number = webpage.search(discardPrefix2);
+    webpage = webpage.substring(foundDiscardPrefix2Index);
+    const foundDiscardSuffix2Index: number = webpage.search(discardSuffix2);
+    webpage = webpage.substring(0, foundDiscardSuffix2Index);
+
+    const foundPrefixIndex: number = webpage.search(prefix);
+    const foundAlternatePrefixIndex: number = webpage.search(alternatePrefix);
+    const usingAlternative: boolean = foundPrefixIndex === -1;
+    let foundSuffixIndex: number;
+    if (foundPrefixIndex === -1) {
+        if (foundAlternatePrefixIndex === -1) {
+            return discountPercent;
+        }
+    }
+
+    // remove pre-id text
+    webpage = webpage.substring((Math.max(foundPrefixIndex, foundAlternatePrefixIndex)) + (usingAlternative ? alternatePrefix.length : prefix.length));
+
+    // get id
+    foundSuffixIndex = webpage.search(suffix);
+    discountPercent = parseInt(webpage.substring(0, foundSuffixIndex));
+
+    if (isNaN(discountPercent)) {
+        discountPercent = undefined;
+    }
+
+    return discountPercent;
+}
+
+/**
+ * Parse steam app page for price.
+ */
+function getSteamPrice(webpage: string): string {
+    let price: string = undefined;
+    const discardPrefix: string = `<table class="table table-fixed table-prices table-hover table-sortable">`;
+    const discardPrefix2: string = `owned`;
+    const discardSuffix: string = `</table>`;
+    const discardSuffix2: string = `</tr>`;
+    const prefix: string = `data-sort="`;
+    const suffix: string = `"`;
+
+    // discard prefix and suffix
+    const foundDiscardPrefixIndex: number = webpage.search(discardPrefix);
+    if (foundDiscardPrefixIndex === -1) {
+        return price;
+    }
+    webpage = webpage.substring(foundDiscardPrefixIndex);
+    const foundDiscardSuffixIndex: number = webpage.search(discardSuffix);
+    webpage = webpage.substring(0, foundDiscardSuffixIndex);
+    const foundDiscardPrefix2Index: number = webpage.search(discardPrefix2);
+    webpage = webpage.substring(foundDiscardPrefix2Index);
+    const foundDiscardSuffix2Index: number = webpage.search(discardSuffix2);
+    webpage = webpage.substring(0, foundDiscardSuffix2Index);
+
+    let foundPrefixIndex: number = webpage.search(prefix);
+    let foundSuffixIndex: number;
+
+    // remove pre-id text
+    webpage = webpage.substring(foundPrefixIndex + prefix.length);
+
+    // get id
+    foundSuffixIndex = webpage.search(suffix);
+    price = webpage.substring(0, foundSuffixIndex);
+    if (price === "-1") {
+        return undefined;
+    }
+    price = price.slice(0, price.length - 2) + "." + price.slice(price.length - 2);
+
+    // remove id text
+    webpage = webpage.substring(foundSuffixIndex + suffix.length);
+
+    // find next id
+    foundPrefixIndex = webpage.search(prefix);
+
+    return price;
+}
+
+/**
+ * Parse steam app page for price.
+ */
+function getSteamFreePrice(webpage: string): string {
+    let price: string = undefined;
+    const prefix: string = `aria-label="Free`;
+
+    const foundPrefixIndex: number = webpage.search(prefix);
+
+    if (foundPrefixIndex !== -1) {
+        price = "Free";
+    }
+
+    return price;
+}
+
+/**
  * Returns Steam price info from Steam id.
  */
 export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGetPriceInfoResponse[]> {
@@ -94,46 +207,31 @@ export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGe
     const createPricePromise = (steamgameid: number): Promise<SteamAPIGetPriceInfoResponse> => {
 
         return new Promise((resolve: any, reject: any) => {
-            WebRequest.get(`${config.steam.apiURL}/appdetails?appids=${steamgameid}&cc=us`)
-            .then((response: any) => {
-                const formattedResponse: any = JSON.parse(response.message.body)[steamgameid];
-                const steam_url: string = `${config.steam.appURL}/${steamgameid}`;
-                const steamPriceInfo: SteamAPIGetPriceInfoResponse = {
-                    steamgameid: undefined,
-                    price: undefined,
-                    discount_percent: undefined,
-                    steam_url: undefined
-                };
+            const steamPriceInfo: SteamAPIGetPriceInfoResponse = {
+                steamgameid: steamgameid,
+                price: undefined,
+                discount_percent: undefined,
+                steam_url: `${config.steam.dbURL}/${steamgameid}/?cc=us`
+            };
 
-                if (formattedResponse.success) {
-                    if (formattedResponse.data.is_free) {
-                        steamPriceInfo.price = "Free";
-                        steamPriceInfo.steam_url = steam_url;
-                        steamPriceInfo.steamgameid = steamgameid;
+            axios({
+                method: "get",
+                url: steamPriceInfo.steam_url,
+            })
+            .then((response: AxiosResponse) => {
+                const webpage: string = response.data;
+                const freePrice: string = getSteamFreePrice(webpage);
 
-                        return resolve(steamPriceInfo);
-                    } else {
-                        if (formattedResponse.data.price_overview) {
-                            const price_unformatted: string = (formattedResponse.data.price_overview.final).toString();
-                            const price: string = price_unformatted.slice(0, price_unformatted.length - 2) + `.` + price_unformatted.slice(price_unformatted.length - 2);
-                            const discount_percent: number = formattedResponse.data.price_overview.discount_percent;
-                            steamPriceInfo.steamgameid = steamgameid,
-                            steamPriceInfo.price = price;
-                            steamPriceInfo.discount_percent = discount_percent;
-                            steamPriceInfo.steam_url = steam_url;
+                // discount
+                steamPriceInfo.discount_percent = getSteamDiscountPercent(webpage);
 
-                            return resolve(steamPriceInfo);
-                        }  else {
+                // price
+                steamPriceInfo.price = freePrice || getSteamPrice(webpage) || "Coming Soon";
 
-                            return resolve(steamPriceInfo);
-                        }
-                    }
-                } else {
-                    return resolve(steamPriceInfo);
-                }
+                return resolve(steamPriceInfo);
             })
             .catch((error: any): any => {
-                return reject(error);
+                return resolve(steamPriceInfo);
             });
         });
 
@@ -187,7 +285,7 @@ export function buildIGDBRequestBody(filters: string[], fields: string, limit: n
 
     // process filters
     if (filters.length > 0) {
-        body = body.concat(`where ${filters.join(" & ")} ;`);
+        body = body.concat(`where ${filters.join(" & ")};`);
     }
 
     // process sort

@@ -15,11 +15,9 @@ interface IGameProps {
     gameId: number;
     game: GameResponse;
     summaryExpanded: boolean;
-    reviewsExpanded: boolean;
     handleSteamClick: (url: string) => void;
     handlePlatformClick: (index: number) => void;
     handleGenreClick: (index: number) => void;
-    handleReadReviewsClick: () => void;
     expandSummary: () => void;
 }
 
@@ -34,7 +32,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
     }
     
     return (
-        <Paper className="game-details container bg-secondary mx-auto p-3 mt-3 br-0" elevation={24}>
+        <Paper className="game-details container secondary-shadow bg-secondary-solid mx-auto p-3 mt-3 br-0" elevation={24}>
             <Title
                 name={props.game.name}
                 rating={props.game.aggregated_rating}

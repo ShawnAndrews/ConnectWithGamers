@@ -11,8 +11,8 @@ const NewsArticle: React.SFC<INewsArticleProps> = (props: INewsArticleProps) => 
 
     return (
         <div className="news-article col-6 col-sm-4 col-lg-3 mb-3 px-md-1 px-lg-3" onClick={() => { const win = window.open(props.article.url, '_blank'); win.focus(); }}>
-            <Card className="news-container cursor-pointer custom-shadow bg-primary color-secondary">
-                <div className="hover-primary">
+            <Card className="news-container cursor-pointer primary-shadow bg-tertiary color-secondary">
+                <div className="hover-tertiary-solid">
                     <div className="title p-2">{props.article.title}</div>
                     <div className="row">
                         <div className="author col-8 pl-4 pr-2">By {props.article.author ? props.article.author.split(' ').slice(0, 2).join(' ') : 'Anonymous'} at {props.article.newsOrg}</div>

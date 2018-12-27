@@ -1,19 +1,47 @@
-.custom-shadow {
-    box-shadow: 0 4px 3px 0 rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 2px 1px 0 rgba(0,0,0,.12);
+.primary-shadow {
+    box-shadow: 0 4px 3px 0 rgba(@primary-color,.2),0 1px 1px 0 rgba(@primary-color,.14),0 2px 1px 0 rgba(@primary-color,.12)!important;
+}
+
+.secondary-shadow {
+    box-shadow: 0 4px 3px 0 rgba(@secondary-color,.2),0 1px 1px 0 rgba(@secondary-color,.14),0 2px 1px 0 rgba(@secondary-color,.12)!important;
 }
 
 .hover-primary {
     &:hover {
-        background-color: @primary-highlighted-color!important;
+        background-color: rgba(@primary-highlighted-color,0.5)!important;
+    }
+}
+
+.hover-primary-solid {
+    &:hover {
+        background-color: rgba(@primary-highlighted-color,0.9)!important;
+    }
+}
+
+.hover-tertiary-solid {
+    &:hover {
+        background-color: rgba(@tertiary-highlighted-color,0.9)!important;
     }
 }
 
 .bg-primary {
+    background-color: rgba(@primary-color,0.5)!important;
+}
+
+.bg-primary-solid {
     background-color: @primary-color!important;
 }
 
 .bg-secondary {
+    background-color: rgba(@secondary-color,0.5)!important;
+}
+
+.bg-secondary-solid {
     background-color: @secondary-color!important;
+}
+
+.bg-tertiary {
+    background-color: @tertiary-color!important;
 }
 
 .color-primary {
@@ -21,7 +49,7 @@
 }
 
 .color-secondary {
-    color: white!important;
+    color: @secondary-color!important;
 }
 
 .font-secondary {
@@ -41,6 +69,10 @@
 
 .y-scrollable {
     overflow-y: scroll;
+}
+
+.no-events {
+    pointer-events: none!important;
 }
 
 .custom-scrollbar {
@@ -64,23 +96,45 @@
 
 .custom-account-form-group {
     > div {
-        border-bottom: 1px solid rgba(white, 0.42)!important;
+        border-bottom: 1px solid rgba(@primary-color, 0.42)!important;
 
         &::before {
-            border-bottom: 1px solid rgba(white, 0.42)!important;
+            border-bottom: 1px solid rgba(@primary-color, 0.42)!important;
         }
         &::after {
-            border-bottom: 2px solid white!important;
+            border-bottom: 2px solid @primary-color!important;
         }
         &:hover::before {
-            border-bottom: 2px solid rgba(white, 0.87)!important;
+            border-bottom: 2px solid rgba(@primary-color, 0.87)!important;
         }
         &:hover::after {
-            border-bottom: 2px solid white!important;
+            border-bottom: 2px solid @primary-color!important;
         }
     }
     * {
-        color: white!important;
+        color: @primary-color!important;
+    }
+}
+
+.custom-account-form-group-secondary {
+    > div {
+        border-bottom: 1px solid rgba(@secondary-color, 0.42)!important;
+
+        &::before {
+            border-bottom: 1px solid rgba(@secondary-color, 0.42)!important;
+        }
+        &::after {
+            border-bottom: 2px solid @secondary-color!important;
+        }
+        &:hover::before {
+            border-bottom: 2px solid rgba(@secondary-color, 0.87)!important;
+        }
+        &:hover::after {
+            border-bottom: 2px solid @secondary-color!important;
+        }
+    }
+    * {
+        color: @secondary-color!important;
     }
 }
 
@@ -94,34 +148,4 @@
 .notfound {
     width: 200px;
     border-radius: 20px;
-}
-
-.background-left {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 550px;
-    height: 700px;
-    background: radial-gradient(ellipse at left, rgba(255,255,255,0) 20%,rgba(255,255,255,1) 70%), radial-gradient(ellipse at left, rgba(255,255,255,0) 60%,rgba(255,255,255,1) 70%), linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('https://i.imgur.com/X9PCp1v.jpg');
-    background-size: 100% 100%;
-    z-index: -1;
-
-    @media @lg {
-        display: none;
-    }
-}
-
-.background-right {
-    position: fixed;
-    top: @navbar-height;
-    right: 0;
-    width: 450px;
-    height: 600px;
-    background: radial-gradient(ellipse at right 50%, rgba(255,255,255,0) 20%,rgba(255,255,255,1) 70%), radial-gradient(ellipse at right 50%, rgba(255,255,255,0) 60%,rgba(255,255,255,1) 70%), linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)), url('https://i.imgur.com/rZUW3lw.jpg');
-    background-size: 100% 100%;
-    z-index: -1;
-
-    @media @lg {
-        display: none;
-    }
 }

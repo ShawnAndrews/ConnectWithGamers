@@ -11,10 +11,11 @@ interface IShowcaseContainerProps extends RouteComponentProps<any> {
 
 interface IShowcaseContainerState {
     isLoading: boolean;
-    reviewedGames: GameResponse[];
+    highlightedGames: GameResponse[];
     popularGames: GameResponse[];
     recentGames: GameResponse[];
     upcomingGames: GameResponse[];
+    discountedGames: GameResponse[];
     news: SingleNewsResponse[];
 }
 
@@ -26,10 +27,11 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
 
         this.state = {
             isLoading: true,
-            reviewedGames: undefined,
+            highlightedGames: undefined,
             popularGames: undefined,
             recentGames: undefined,
             upcomingGames: undefined,
+            discountedGames: undefined,
             news: undefined
         };
     }
@@ -37,24 +39,26 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
     componentDidMount(): void {
         const showcasePromises: Promise<any>[] = [];
 
-        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/reviewed`));
+        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/highlighted`));
         showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/popular`));
         showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/recent`));
         showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/upcoming`));
+        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/discounted`));
         showcasePromises.push(IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`));
 
         Promise.all(showcasePromises)
             .then((vals: any) => {
-                let reviewedGames: GameResponse[] = undefined;
+                let highlightedGames: GameResponse[] = undefined;
                 let popularGames: GameResponse[] = undefined;
                 let recentGames: GameResponse[] = undefined;
                 let upcomingGames: GameResponse[] = undefined;
+                let discountedGames: GameResponse[] = undefined;
                 let news: SingleNewsResponse[] = undefined;
 
                 if (vals[0]) {
                     const response: MultiGameResponse = vals[0];
-                    const numOfReviewedGamesToShow: number = 6;
-                    reviewedGames = response.data.slice(0, numOfReviewedGamesToShow);
+                    const numOfHighlightedGamesToShow: number = 9;
+                    highlightedGames = response.data.slice(0, numOfHighlightedGamesToShow);
                 }
                 if (vals[1]) {
                     const response: MultiGameResponse = vals[1];
@@ -63,26 +67,31 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
                 }
                 if (vals[2]) {
                     const response: MultiGameResponse = vals[2];
-                    const numOfRecentGamesToShow: number = 6;
+                    const numOfRecentGamesToShow: number = 5;
                     recentGames = response.data.slice(0, numOfRecentGamesToShow);
                 }
                 if (vals[3]) {
                     const response: MultiGameResponse = vals[3];
-                    const numOfUpcomingGamesToShow: number = 6;
+                    const numOfUpcomingGamesToShow: number = 5;
                     upcomingGames = response.data.slice(0, numOfUpcomingGamesToShow);
                 }
                 if (vals[4]) {
-                    const response: MultiNewsResponse = vals[4];
+                    const response: MultiGameResponse = vals[4];
+                    discountedGames = response.data;
+                }
+                if (vals[5]) {
+                    const response: MultiNewsResponse = vals[5];
                     const numOfNewsArticlesToShow: number = 8;
                     news = response.data.slice(0, numOfNewsArticlesToShow);
                 }
 
                 this.setState({
                     isLoading: false,
-                    reviewedGames: reviewedGames,
+                    highlightedGames: highlightedGames,
                     popularGames: popularGames,
                     recentGames: recentGames,
                     upcomingGames: upcomingGames,
+                    discountedGames: discountedGames,
                     news: news
                 });
             })
@@ -100,10 +109,11 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
             <Showcase
                 isLoading={this.state.isLoading}
                 goToRedirect={this.goToRedirect}
-                reviewedGames={this.state.reviewedGames}
+                highlightedGames={this.state.highlightedGames}
                 popularGames={this.state.popularGames}
                 recentGames={this.state.recentGames}
                 upcomingGames={this.state.upcomingGames}
+                discountedGames={this.state.discountedGames}
                 news={this.state.news}
             />
         );

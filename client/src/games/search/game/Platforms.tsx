@@ -17,7 +17,7 @@ const Platforms: React.SFC<IPlatformsProps> = (props: IPlatformsProps) => {
     
     return (
         <div className="platforms mt-2">
-            <div className="title">Platforms</div>
+            <div className="title my-1">Platforms</div>
             {props.platforms
                 .map((x: IdNamePair, index: number) => {
                     return (

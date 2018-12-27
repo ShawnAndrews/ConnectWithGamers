@@ -15,7 +15,7 @@ const Genres: React.SFC<IGenresProps> = (props: IGenresProps) => {
 
     return (
         <div className="genres mt-2">
-            <div className="title">Genres</div>
+            <div className="title my-1">Genres</div>
             {props.genres
                 .map((x: IdNamePair, index: number) => {
                     return (

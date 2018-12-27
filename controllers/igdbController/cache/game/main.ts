@@ -3,7 +3,7 @@ import { buildIGDBRequestBody } from "../../../../util/main";
 import {
     GameResponse, GameResponseFields, RawGameResponse, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-import { convertRawGameResponse, getGameReponseById } from "../util";
+import { convertRawGameResponse } from "../util";
 const redis = require("redis");
 const redisClient = redis.createClient();
 
@@ -88,6 +88,38 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
                     return reject(error);
                 });
 
+        })
+        .catch((error: string) => {
+            return reject(error);
+        });
+
+    });
+
+}
+
+/**
+ * Cache preloaded game.
+ */
+export function cachePreloadedGame(rawGameResponse: RawGameResponse): Promise<GameResponse> {
+    const cacheEntry: IGDBCacheEntry = redisCache[5];
+    const gameId: number = rawGameResponse.id;
+
+    return new Promise((resolve: any, reject: any) => {
+
+        gameKeyExists(gameId)
+        .then((exists: boolean) => {
+            convertRawGameResponse([rawGameResponse])
+            .then((gameResponses: GameResponse[]) => {
+
+                redisClient.hset(cacheEntry.key, gameId, JSON.stringify(gameResponses[0]));
+                if (cacheEntry.expiry !== -1) {
+                    redisClient.expire(cacheEntry.key, cacheEntry.expiry);
+                }
+                return resolve(gameResponses[0]);
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
         })
         .catch((error: string) => {
             return reject(error);

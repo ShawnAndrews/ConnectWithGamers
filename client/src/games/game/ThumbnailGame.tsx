@@ -10,18 +10,16 @@ interface IThumbnailGameProps {
 
 const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProps) => {
 
-    const deviceWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-
     return (
         <div className="col-md-6 col-lg-4 px-4 px-md-2 my-2">
-            <Paper className="game bg-primary hover-primary position-relative" onClick={props.goToGame}>
+            <Paper className="game bg-tertiary hover-tertiary-solid position-relative" onClick={props.goToGame}>
                 <img className="cover-img" src={props.game.cover ? props.game.cover : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                 <Textfit className="name color-secondary font-weight-bold text-nowrap text-right px-2" min={12} max={18}>
                     {props.game.name}
                 </Textfit>
                 <div className="genres font-italic text-nowrap text-right px-2">
                     {props.game.genres && 
-                        props.game.genres.map((x: IdNamePair) => x.name)}
+                        props.game.genres.map((x: IdNamePair) => x.name).join(", ")}
                 </div>
                 <div className="icons color-secondary text-nowrap text-right px-2">
                     {props.game.linkIcons && 
@@ -29,9 +27,9 @@ const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProp
                 </div>
                 {props.game.price && 
                     <Textfit className="price color-secondary text-nowrap text-right px-2" max={14}>
-                        {props.game.price === 'Free'
-                            ? <span className="free-text">Free</span>
-                            : <span>${props.game.price} USD{props.game.discount_percent !== 0 && <i className="discount-text ml-1">(-{props.game.discount_percent} % SALE)</i>}</span>}
+                        {(props.game.price === 'Free' || props.game.price === 'Coming Soon')
+                            ? <span className="plain-text">{props.game.price}</span>
+                            : <span>${props.game.price} USD{props.game.discount_percent && props.game.discount_percent !== 0 && <i className="discount-text ml-1">(-{props.game.discount_percent} % SALE)</i>}</span>}
                         <a href={`${steamAppUrl}/${props.game.steamid}`}><i className="fab fa-steam-square fa-lg color-secondary ml-2"/></a>
                     </Textfit>}
             </Paper>

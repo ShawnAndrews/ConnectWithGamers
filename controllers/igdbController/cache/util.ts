@@ -1,34 +1,82 @@
-import { RawGameResponse, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, ExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, SteamAPIGetPriceInfoResponse } from "../../../client/client-server-common/common";
-import { IGDBImageResolve, ArrayClean, steamAPIGetPriceInfo } from "../../../util/main";
-import { gameKeyExists, getCachedGame, cacheGame } from "./games/main";
+import { RawGameResponse, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, ExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, SteamAPIGetPriceInfoResponse, GameResponseFields } from "../../../client/client-server-common/common";
+import { IGDBImageResolve, ArrayClean, steamAPIGetPriceInfo, buildIGDBRequestBody } from "../../../util/main";
+import config from "../../../config";
+import axios, { AxiosResponse } from "axios";
+import { cachePreloadedGame } from "./game/main";
 
-export function getGameReponseById(gameId: number): Promise<GameResponse> {
+export function getGamesBySteamIds(steamIds: number[]): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
-        gameKeyExists(gameId)
-            .then((exists: boolean) => {
-                if (exists) {
-                    getCachedGame(gameId)
-                    .then((gameResponse: GameResponse) => {
-                        return resolve(gameResponse);
-                    })
-                    .catch((error: string) => {
-                        return reject(error);
-                    });
-                } else {
-                    cacheGame(gameId)
-                    .then((gameResponse: GameResponse) => {
-                        return resolve(gameResponse);
-                    })
-                    .catch((error: string) => {
-                        return reject(error);
-                    });
-                }
+
+        const URL: string = `${config.igdb.apiURL}/games`;
+        const body: string = buildIGDBRequestBody(
+            [
+                `external_games.uid = (${steamIds.join()})`
+            ],
+            GameResponseFields.join(),
+            undefined
+        );
+
+        axios({
+            method: "post",
+            url: URL,
+            headers: {
+                "user-key": config.igdb.key,
+                "Accept": "application/json"
+            },
+            data: body
+        })
+        .then((response: AxiosResponse) => {
+
+            const rawGamesResponses: RawGameResponse[] = response.data;
+            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => cachePreloadedGame(rawGameResponse));
+
+            Promise.all(gamePromises)
+            .then((gameResponses: GameResponse[]) => {
+                return resolve(gameResponses);
             })
             .catch((error: string) => {
                 return reject(error);
             });
+
+        })
+        .catch( (error: any) => {
+            return reject(error);
+        });
+
     });
+
+}
+
+export function parseSteamIds(webpage: string): number[] {
+
+    const steamIds: number[] = [];
+    const prefix: string = `data-ds-appid="`;
+    const suffix: string = `"`;
+
+    let foundPrefixIndex: number = webpage.search(prefix);
+
+    while (foundPrefixIndex !== -1) {
+        let foundSuffixIndex: number;
+        let steamId: number;
+
+        // remove pre-id text
+        webpage = webpage.substring(foundPrefixIndex + prefix.length);
+
+        // get id
+        foundSuffixIndex = webpage.search(suffix);
+        steamId = parseInt(webpage.substring(0, foundSuffixIndex));
+        steamIds.push(steamId);
+
+        // remove id text
+        webpage = webpage.substring(foundSuffixIndex + suffix.length);
+
+        // find next id
+        foundPrefixIndex = webpage.search(prefix);
+
+    }
+
+    return steamIds;
 }
 
 export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Promise<GameResponse[]> {
@@ -95,6 +143,7 @@ export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Pro
                 return resolve(pricesResponse);
             })
             .catch ((error: string) => {
+                console.log(`FAILED PRICE REQUEST: ${error}`);
                 return reject(error);
             });
 
@@ -234,6 +283,7 @@ export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Pro
             return resolve(gameResponses);
         })
         .catch((error: string) => {
+            console.log(`FAILED PRICE2 REQUEST: ${error}`);
             return reject(error);
         });
 

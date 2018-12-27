@@ -1,8 +1,8 @@
 import config from "../../../../config";
-import { GameResponse, RawGameResponse, GameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
+import { GameResponse, redisCache, IGDBCacheEntry, GameResponseFields, RawGameResponse } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import { buildIGDBRequestBody, getCurrentUnixTimestampInSeconds } from "../../../../util/main";
-import { convertRawGameResponse, getGameReponseById } from "../util";
+import { cachePreloadedGame, getCachedGame } from "../game/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
 
@@ -36,7 +36,7 @@ export function getCachedRecentGames(): Promise<GameResponse[]> {
             }
 
             const ids: number[] = JSON.parse(stringifiedGameIds);
-            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getGameReponseById(id));
+            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getCachedGame(id));
 
             Promise.all(gamePromises)
             .then((gameResponses: GameResponse[]) => {
@@ -68,7 +68,7 @@ export function cacheRecentGames(): Promise<GameResponse[]> {
                 `popularity > 5`,
                 `first_release_date <= ${CURRENT_UNIX_TIME_S}`
             ],
-            `id`,
+            GameResponseFields.join(),
             undefined,
             `sort first_release_date desc`
         );
@@ -83,8 +83,9 @@ export function cacheRecentGames(): Promise<GameResponse[]> {
             data: body
         })
         .then((response: AxiosResponse) => {
-            const ids: number[] = response.data.map((x: any) => x.id);
-            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getGameReponseById(id));
+            const rawGamesResponses: RawGameResponse[] = response.data;
+            const ids: number[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => rawGameResponse.id);
+            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => cachePreloadedGame(rawGameResponse));
 
             redisClient.set(cacheEntry.key, JSON.stringify(ids));
             if (cacheEntry.expiry !== -1) {

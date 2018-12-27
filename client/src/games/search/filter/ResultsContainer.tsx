@@ -22,6 +22,7 @@ interface IResultsContainerState {
     resultsType: ResultsType;
     title: string;
     games: GameResponse[];
+    retry: boolean;
 }
 
 class ResultsContainer extends React.Component<IResultsContainerProps, IResultsContainerState> {
@@ -31,6 +32,7 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
         this.loadSearchGames = this.loadSearchGames.bind(this);
         this.loadGames = this.loadGames.bind(this);
         this.getTitle = this.getTitle.bind(this);
+        this.onRetryClick = this.onRetryClick.bind(this);
 
         const typeRaw: string = props.match.params.type;
         const resultsTitle: string = this.getTitle(props);
@@ -63,7 +65,8 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
             currentQueryPath: props.location.search,
             resultsType: resultsType,
             title: resultsTitle,
-            games: undefined
+            games: undefined,
+            retry: false
         };
     }
 
@@ -87,8 +90,11 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
                 this.setState({ isLoading: false, games: games });
             })
             .catch( (error: string) => {
-                popupS.modal({ content: `<div>• ${error}</div>` });
-                this.setState({ isLoading: false });
+                let retry: boolean = error === "Retry";
+                if (!retry) {
+                    popupS.modal({ content: `<div>• ${error}</div>` });
+                }
+                this.setState({ isLoading: false, retry: retry});
             });
     }
 
@@ -124,12 +130,20 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
         return title;
     }
 
+    onRetryClick(): void {
+        this.setState({ isLoading: true, retry: false }, () => {
+            this.loadSearchGames(this.props.location.search);
+        });
+    }
+
     render() {
         return (
             <Results
                 isLoading={this.state.isLoading}
                 title={this.state.title}
                 games={this.state.games}
+                retry={this.state.retry}
+                onRetryClick={this.onRetryClick}
             />
         );
     }

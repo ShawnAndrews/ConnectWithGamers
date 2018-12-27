@@ -9,23 +9,25 @@ import {
 import routeModel from "../../models/routemodel";
 import { upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames } from "./cache/upcomingGames/main";
 import { recentGamesKeyExists, getCachedRecentGames, cacheRecentGames } from "./cache/recentlyReleased/main";
-import { gameKeyExists, getCachedGame, cacheGame } from "./cache/games/main";
+import { gameKeyExists, getCachedGame, cacheGame } from "./cache/game/main";
 import { popularGamesKeyExists, getCachedPopularGames, cachePopularGames } from "./cache/popularGames/main";
 import { resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames } from "./cache/results/main";
-import { reviewedGamesKeyExists, getCachedReviewedGames, cacheReviewedGames } from "./cache/reviewedGames/main";
+import { highlightedGamesKeyExists, getCachedHighlightedGames, cacheHighlightedGames } from "./cache/highlightedGames/main";
 import { newsKeyExists, getCachedNews, cacheNews } from "./cache/news/main";
+import { discountedGamesKeyExists, getCachedDiscountedGames, cacheDiscountedGames } from "./cache/discountedGames/main";
 
 export const routes = new routeModel();
 
 /* routes */
 routes.addRoute("news", "/games/news");
-routes.addRoute("reviewedgames", "/games/reviewed");
+routes.addRoute("highlightedgames", "/games/highlighted");
 routes.addRoute("populargames", "/games/popular");
 routes.addRoute("resultsgames", "/games/results");
 routes.addRoute("upcominggames", "/games/upcoming");
 routes.addRoute("recentgames", "/games/recent");
 routes.addRoute("platformgames", "/games/platform/:id");
 routes.addRoute("game", "/game/:id");
+routes.addRoute("discountedgames", "/games/discounted");
 
 type CachedRouteTypes = GameResponse[] | GameResponse[] | SingleNewsResponse[] | GameResponse;
 
@@ -105,10 +107,10 @@ router.post(routes.getRoute("upcominggames"), (req: Request, res: Response) => {
         });
 });
 
-/* reviewed games */
-router.post(routes.getRoute("reviewedgames"), (req: Request, res: Response) => {
+/* highlighted games */
+router.post(routes.getRoute("highlightedgames"), (req: Request, res: Response) => {
     const genericResponse: GenericErrorResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>( reviewedGamesKeyExists, getCachedReviewedGames, cacheReviewedGames)
+    GenericCachedRoute<GameResponse[]>(highlightedGamesKeyExists, getCachedHighlightedGames, cacheHighlightedGames)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -180,6 +182,20 @@ router.post(routes.getRoute("game"), (req: Request, res: Response) => {
     const genericResponse: GenericErrorResponse = { error: undefined };
     GenericCachedWithDataRoute<GameResponse, number>(gameKeyExists, getCachedGame, cacheGame, req.params.id)
         .then((data: GameResponse) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* recent games */
+router.post(routes.getRoute("discountedgames"), (req: Request, res: Response) => {
+    const genericResponse: GenericErrorResponse = { error: undefined };
+    GenericCachedRoute<GameResponse[]>(discountedGamesKeyExists, getCachedDiscountedGames, cacheDiscountedGames)
+        .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
         })

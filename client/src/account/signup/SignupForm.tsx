@@ -28,11 +28,11 @@ const SignupForm: React.SFC<ISignupFormProps> = (props: ISignupFormProps) => {
     }
 
     return (
-        <Paper className="account bg-primary p-4 mx-auto mt-5" elevation={24}>
+        <Paper className="account bg-secondary-solid p-4 mx-auto mt-5" elevation={24}>
             <div className="logo-img text-center">
                 <img src="https://i.imgur.com/UfeBmAp.gif"/>
             </div>
-            <h3 className="logo-name font-secondary text-center mt-3">
+            <h3 className="logo-name color-primary font-secondary text-center mt-3">
                 Connect With Gamers
             </h3>
             <form className="account-form" noValidate={true} autoComplete="off">
@@ -73,13 +73,13 @@ const SignupForm: React.SFC<ISignupFormProps> = (props: ISignupFormProps) => {
                 <div className="row mt-3">
                     <div className="col-12">
                         <div className="d-table h-100 w-100">
-                            <div className="alreadyamember d-table-cell align-middle text-center color-secondary">
+                            <div className="alreadyamember d-table-cell align-middle text-center color-primary">
                                 Already a member? <u onClick={props.onClickBack}>Click here</u>
                             </div>
                         </div>
                     </div>
                 </div>
-                <Button className="create-btn color-primary bg-secondary mt-3" onClick={props.onClickCreate} variant="contained" color="primary" fullWidth={true}>
+                <Button className="create-btn color-secondary bg-primary-solid hover-primary-solid mt-3" onClick={props.onClickCreate} variant="contained" color="primary" fullWidth={true}>
                     Create an account
                 </Button>
             </form>

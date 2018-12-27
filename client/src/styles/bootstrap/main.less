@@ -3,9 +3,9 @@
 }
 
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
-    color: @primary-color;
-    background-color: #fff;
-    border-color: rgba(@primary-color, 0.2);
+    color: @secondary-color;
+    background-color: @primary-color;
+    border-color: rgba(@secondary-color, 0.2);
 }
 
 .nav-link {
@@ -17,10 +17,10 @@
 }
 
 .nav-link:hover {
-    color: white!important;
+    color: @primary-color!important;
 
     &.active {
-        color: @primary-color!important;
+        color: @secondary-color!important;
     }
 }
 
@@ -29,19 +29,19 @@
 }
 
 .btn-outline-success {
-    color: white;
-    border-color: white;
+    color: @primary-color;
+    border-color: @primary-color;
 }
 
 .btn-outline-success:hover {
-    color: @primary-color;
-    background-color: white;
-    border-color: white;
+    color: @secondary-color;
+    background-color: @primary-color;
+    border-color: @primary-color;
 }
 
 .btn-outline-success:not(:disabled):not(.disabled).active, .btn-outline-success:not(:disabled):not(.disabled):active, .show>.btn-outline-success.dropdown-toggle {
-    background-color: white;
-    border-color: white;
+    background-color:  @primary-color;
+    border-color:  @primary-color;
 }
 
 .btn-outline-success:not(:disabled):not(.disabled).active:focus, .btn-outline-success:not(:disabled):not(.disabled):active:focus, .show>.btn-outline-success.dropdown-toggle:focus, .btn-outline-success:active, .btn-outline-success:focus {
@@ -49,18 +49,18 @@
 }
 
 button.bg-secondary:focus, button.bg-secondary:hover {
-    background-color: white!important;
+    background-color:  @primary-color!important;
 }
 
 .custom-switch {
 
     > span > span:last-child {
-        background-color: black!important;
+        background-color: @primary-color!important;
     }
 
     &.active {
         > span > span:last-child {
-            background-color: white!important;
+            background-color: @primary-highlighted-color!important;
          }
     }
 }
@@ -85,7 +85,7 @@ button.bg-secondary:focus, button.bg-secondary:hover {
 }
 
 .form-control:focus {
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.2)!important;
+    box-shadow: 0 0 0 0.2rem rgba(@secondary-color, 0.2)!important;
 }
 
 button:focus {
@@ -121,4 +121,8 @@ button:focus {
 
 .h-35 {
     height:35%!important;
+}
+
+.vh-min-100 {
+    min-height: 100vh!important;
 }

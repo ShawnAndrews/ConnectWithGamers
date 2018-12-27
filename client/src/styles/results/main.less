@@ -1,9 +1,14 @@
 @results-game-width: 150px;
 
+.retry {
+    width: 300px;
+}
+
 .results {
 
     .topnav {
         width: 200px;
+        color: rgba(white, 0.7)
     }
 
     .game {
@@ -68,8 +73,13 @@
             overflow: hidden;
             text-overflow: ellipsis;
 
-            .discount-text, .free-text {
+            .discount-text {
                 color: lightgreen;
+            }
+
+            .plain-text {
+                font-style: italic;
+                opacity: 0.5;
             }
         }
     }

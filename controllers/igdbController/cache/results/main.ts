@@ -1,10 +1,10 @@
 import config from "../../../../config";
 import {
     GameResponse,
-    redisCache, IGDBCacheEntry, RawGameResponse } from "../../../../client/client-server-common/common";
-import axios, { AxiosResponse } from "axios";
+    redisCache, IGDBCacheEntry, RawGameResponse, GameResponseFields } from "../../../../client/client-server-common/common";
+import axios, { AxiosResponse, AxiosError } from "axios";
 import { buildIGDBRequestBody } from "../../../../util/main";
-import { getGameReponseById } from "../util";
+import { cachePreloadedGame, getCachedGame } from "../game/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
 
@@ -38,12 +38,7 @@ export function getCachedResultsGames(queryString: string): Promise<GameResponse
             }
 
             const ids: number[] = JSON.parse(stringifiedGameIds);
-            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getGameReponseById(id));
-
-            redisClient.set(cacheEntry.key, JSON.stringify(ids));
-            if (cacheEntry.expiry !== -1) {
-                redisClient.expire(cacheEntry.key, cacheEntry.expiry);
-            }
+            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getCachedGame(id));
 
             Promise.all(gamePromises)
             .then((gameResponses: GameResponse[]) => {
@@ -97,7 +92,7 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
     const URL: string = `${config.igdb.apiURL}/games`;
     const body: string = buildIGDBRequestBody(
         whereFilters,
-        `id`,
+        GameResponseFields.join(),
         undefined,
         undefined,
         queryStringObj.query
@@ -115,8 +110,9 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
             data: body
         })
         .then( (response: AxiosResponse) => {
-            const ids: number[] = response.data.map((x: any) => x.id);
-            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getGameReponseById(id));
+            const rawGamesResponses: RawGameResponse[] = response.data;
+            const ids: number[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => rawGameResponse.id);
+            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => cachePreloadedGame(rawGameResponse));
 
             redisClient.hset(cacheEntry.key, queryString, JSON.stringify(ids));
             if (cacheEntry.expiry !== -1) {
@@ -132,7 +128,10 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
             });
 
         })
-        .catch((error: string) => {
+        .catch((error: AxiosError) => {
+            if (error.response && error.response.status !== 200) {
+                return reject("Retry");
+            }
             return reject(error);
         });
 

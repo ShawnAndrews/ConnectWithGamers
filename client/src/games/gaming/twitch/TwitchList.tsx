@@ -39,12 +39,12 @@ const TwitchList: React.SFC<ITwitchListProps> = (props: ITwitchListProps) => {
     
     return (
         <div className="twitch">
-            <Paper className="title bg-primary p-4 mx-auto mt-3 mb-3 position-relative" elevation={24}>
+            <Paper className="title bg-tertiary p-4 mx-auto mt-3 mb-3 position-relative" elevation={24}>
                 <div className="text-center color-secondary">
                     Twitch streams
                 </div>
                 <TextField
-                    className="custom-account-form-group mt-2"
+                    className="custom-account-form-group-secondary mt-2"
                     label="Search live streams..."
                     type="search"
                     margin="normal"

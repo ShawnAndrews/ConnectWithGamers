@@ -9,7 +9,6 @@ import NavbarContainer from '../nav/NavbarContainer';
 import RecoveryContainer from '../recovery/RecoveryFormContainer';
 import ShowcaseContainer from '../home/ShowcaseContainer';
 import ModalFilternavContainer from '../games/modal/ModalFilternavContainer';
-import Background from '../background/background';
 
 export enum NAV_PAGE {
     HOME = '/',
@@ -50,8 +49,7 @@ class App extends React.Component<IAppProps, IAppState> {
                     ));
 
         return (
-            <div className="h-100">
-                <Background/>
+            <div className="bg-primary-solid vh-min-100">
                 <NavbarContainer/>
                 <Switch>
                     {AuthorizedRoutesRedirect}

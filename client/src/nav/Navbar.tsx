@@ -13,10 +13,10 @@ interface INavbarProps {
 const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
 
     return (
-        <div className="brand-navbar navbar bg-primary pb-0">
+        <div className="brand-navbar navbar bg-secondary-solid pb-0">
             <a className="logo navbar-brand" href="/">
                 <img src="https://i.imgur.com/MwJUdK9.gif" width="40" height="40" className="d-inline-block align-top mx-3" alt=""/>
-                <span className="logo-name align-middle">Connect With Gamers</span>
+                <span className="logo-name color-primary align-middle">Connect With Gamers</span>
             </a>
             <ul className="brand-menu nav nav-tabs" role="tablist">
                 <li className="nav-item mx-md-2">

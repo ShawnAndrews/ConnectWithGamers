@@ -1,12 +1,13 @@
-@home-tables-height: 500px;
+@home-tables-height: 465px;
 @home-profiles-height: 230px;
 @home-popular-height: 230px;
 
 .home {
 
-    .reviewed-table {
+    .highlighted-table {
 
-        .reviewed-header {
+        .highlighted-header {
+            color: rgba(@secondary-color,0.7);
 
             &::before {
                 position: absolute;
@@ -15,7 +16,7 @@
                 content: "";
                 height: 2px;
                 width: 40px;
-                background-color: rgba(blue, 0.8);
+                background-color: rgba(0, 255, 208, 0.8, 0.6);
 
                 @media @lg {
                     left: 0.0rem;
@@ -25,21 +26,31 @@
                     left: 1rem;
                 }
             }
-    
-            * {
-                color: @primary-color;
-            }
         }
     
-        .reviewed-games {
+        .highlighted-games {
             height: calc(@home-tables-height - 25px);
     
             &>.row:nth-child(1) {
                 height: 34%;
+
+                @media @md {
+
+                    &>div:nth-child(3), &>div:nth-child(4) {
+                        display: none;
+                    }
+                }
             }
     
             &>.row:nth-child(2) {
                 height: 66%;
+
+                @media @md {
+
+                    &>div:first-child {
+                        display: none;
+                    }
+                }
             }
 
             .cover-overlay-yellow {
@@ -49,7 +60,7 @@
                 height: calc(100% + 2px);
                 background: linear-gradient(45deg,rgba(241,196,15,.5),rgba(0,0,0,.15));
 
-                &:hover {
+                &.active {
                     background: linear-gradient(45deg,rgba(241,196,15,.8),rgba(0,0,0,.15));
                 }
             }
@@ -61,12 +72,22 @@
                 height: calc(100% + 2px);
                 background: linear-gradient(45deg, rgba(16,175,101,0.5), rgba(0,0,0,0.15));
 
-                &:hover {
+                &.active {
                     background: linear-gradient(45deg, rgba(16,175,101,0.8), rgba(0,0,0,0.15))
                 }
             }
 
-            .reviewed-table-text {
+            .highlighted-table-discount {
+                position: absolute;
+                top: 0;
+                right: 0;
+                color: white;
+                background-color: forestgreen;
+                opacity: 0.7;
+                font-size: 15px;
+            }
+
+            .highlighted-table-text {
                 position: absolute;
                 bottom: 15px;
                 left: 15px;
@@ -133,7 +154,9 @@
         }
 
         .recently-released-table-header, .upcoming-table-header {
+            color: rgba(@secondary-color, 0.7);
             cursor: pointer;
+            font-size: 0.93rem;
 
             &::before {
                 position: absolute;
@@ -142,13 +165,13 @@
                 content: "";
                 height: 2px;
                 width: 53px;
-                background-color: #f1c40f;   
+                background-color: rgba(241, 196, 15, 0.6);   
             }
         }
 
         .recently-released-table-container, .upcoming-table-container {
-            background-color: @primary-color;
-            height: calc((100% - 80px) / 6);
+            background-color: rgba(@primary-color,0.5);
+            height: calc((100% - 80px) / 5);
 
             @media @sm {
                 height: 100px;
@@ -170,8 +193,9 @@
                 overflow: hidden;
 
                 .icon {
-                    color: rgba(white, 0.5)!important;
-                    font-size: .7em!important;
+                    opacity: 0.6;
+                    font-size: 0.7em;
+                    color: @secondary-color;
                 }
             }
 
@@ -183,7 +207,6 @@
             }
 
             * {
-                color: rgba(white, 0.7);
                 cursor: pointer;
             }
         }
@@ -193,6 +216,7 @@
         height: @home-profiles-height;
 
         .profiles-header {
+            color: rgba(@secondary-color,0.7);
             cursor: pointer;
 
             &::before {
@@ -201,7 +225,7 @@
                 content: "";
                 height: 2px;
                 width: 53px;
-                background-color: rgba(red, 0.8);
+                background-color: rgba(red, 0.6);
             }
         }
 
@@ -210,6 +234,11 @@
 
             > button {
                 height: calc((100% - 0.5rem) / 3);
+                background-color: rgba(@secondary-color,0.1);
+
+                &:hover {
+                    background-color: rgba(@secondary-color,0.2);
+                }
             }
         }
     }
@@ -248,6 +277,7 @@
         }
 
         .popular-table-header {
+            color: rgba(@secondary-color,0.7);
             cursor: pointer;
 
             &::before {
@@ -257,7 +287,7 @@
                 content: "";
                 height: 2px;
                 width: 53px;
-                background-color: rgba(gray, 0.8);
+                background-color: rgba(gray, 0.6);
             }
 
             @media @lg {
@@ -327,6 +357,7 @@
         position: relative;
 
         .news-list-header {
+            color: rgba(@secondary-color,0.7);
             cursor: pointer;
 
             &::before {
@@ -335,7 +366,7 @@
                 content: "";
                 height: 2px;
                 width: 28px;
-                background-color: rgba(brown, 0.8);
+                background-color: rgba(brown, 0.6);
             }
         }
     }

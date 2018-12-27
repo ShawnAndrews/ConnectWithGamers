@@ -23,9 +23,9 @@ const SteamInfo: React.SFC<ISteamInfoProps> = (props: ISteamInfoProps) => {
                     Steam page
                 </Button>}
             {props.price && 
-                <div className="price-container d-inline-block bg-primary color-secondary">
-                    {props.price === 'Free'
-                        ? <div className="p-1 px-2">Free</div>
+                <div className="price-container d-inline-block bg-primary-solid color-secondary">
+                    {(props.price === 'Free' || props.price === 'Coming Soon')
+                        ? <div className="p-1 px-2">{props.price}</div>
                         : 
                         <>
                             <div className={`usd ${!discounted ? 'nodiscount' : ''} d-inline-block`}>${props.price} USD</div>

@@ -32,7 +32,7 @@ const TwitchListItem: React.SFC<ITwitchListItemProps> = (props: ITwitchListItemP
 
     return (
         <div className="col-lg-6 px-4 px-md-2 my-2">
-            <Paper className="stream bg-primary hover-primary position-relative">
+            <Paper className="stream bg-tertiary hover-tertiary-solid position-relative">
                 <img className="cover-img" src={props.profilePicLink} alt="Profile picture"/>
                 <div className="name px-2">
                     <div className="d-inline-block color-secondary">{props.name}</div>
@@ -41,7 +41,7 @@ const TwitchListItem: React.SFC<ITwitchListItemProps> = (props: ITwitchListItemP
                 <div className="preview" onClick={() => { props.onProfileLinkClick(props.profileLink); }}>
                     <img src={props.streamPreviewLink} alt="Stream preview picture"/>
                     <Button 
-                        className="color-primary bg-secondary font-weight-bold p-0"
+                        className="color-primary bg-secondary-solid font-weight-bold p-0"
                         variant="raised" 
                     >
                         Watch
@@ -57,21 +57,21 @@ const TwitchListItem: React.SFC<ITwitchListItemProps> = (props: ITwitchListItemP
                     <div className="indicator"/>{`${props.viewerCount} viewers`}
                 </div>
                 <div className="view w-100">
-                    <Button variant="raised" className="color-primary bg-secondary br-0" color="primary" onClick={() => { props.onVideoClick(props.index); }}>
+                    <Button variant="raised" className="color-primary bg-secondary-solid br-0" color="primary" onClick={() => { props.onVideoClick(props.index); }}>
                         Video
                         <i className="fas fa-video color-primary mx-1"/>
                     </Button>
-                    <Button variant="raised" className="color-primary bg-secondary br-0" color="primary" onClick={() => { props.onChatClick(props.index); }}>
+                    <Button variant="raised" className="color-primary bg-secondary-solid br-0" color="primary" onClick={() => { props.onChatClick(props.index); }}>
                         Chat
                         <i className="fas fa-comment-alt color-primary mx-1"/>
                     </Button>
-                    <Button variant="raised" className="color-primary bg-secondary br-0" color="primary" onClick={() => { props.onBothClick(props.index); }}>
+                    <Button variant="raised" className="color-primary bg-secondary-solid br-0" color="primary" onClick={() => { props.onBothClick(props.index); }}>
                         Both
                         <i className="fas fa-video color-primary mx-1"/>
                         <i className="fas fa-comment-alt color-primary mx-1"/>
                     </Button>
                 </div>
-                <Button variant="raised" className="more color-primary bg-secondary w-100 br-0" onClick={() => { props.onExpandClick(props.index); }}>
+                <Button variant="raised" className="more color-primary bg-secondary-solid w-100 br-0" onClick={() => { props.onExpandClick(props.index); }}>
                     More
                     <i className={props.expanded ? "fas fa-chevron-up mx-1" : "fas fa-chevron-down mx-1"}/>
                 </Button>

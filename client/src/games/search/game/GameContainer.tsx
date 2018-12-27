@@ -11,7 +11,6 @@ interface IGameContainerState {
     isLoading: boolean;
     game: GameResponse;
     summaryExpanded: boolean;
-    reviewsExpanded: boolean;
     genre_ids: number[];
     gameid: number;
 }
@@ -24,12 +23,10 @@ class GameContainer extends React.Component<IGameContainerProps, IGameContainerS
             isLoading: false,
             game: undefined,
             summaryExpanded: undefined,
-            reviewsExpanded: undefined,
             genre_ids: undefined,
             gameid: undefined
         };
         this.loadGame = this.loadGame.bind(this);
-        this.handleReadReviewsClick = this.handleReadReviewsClick.bind(this);
         this.handleSteamClick = this.handleSteamClick.bind(this);
         this.handlePlatformClick = this.handlePlatformClick.bind(this);
         this.handleGenreClick = this.handleGenreClick.bind(this);
@@ -78,10 +75,6 @@ class GameContainer extends React.Component<IGameContainerProps, IGameContainerS
         this.props.history.push(`/games/search/filter/?genres=${this.state.game.genres[index].id}`);
     }
 
-    handleReadReviewsClick(): void {
-        this.setState({ reviewsExpanded: !this.state.reviewsExpanded });
-    }
-
     expandSummary(): void {
         this.setState({ summaryExpanded: true });
     }
@@ -93,11 +86,9 @@ class GameContainer extends React.Component<IGameContainerProps, IGameContainerS
                 gameId={this.state.gameid}
                 game={this.state.game}
                 summaryExpanded={this.state.summaryExpanded}
-                reviewsExpanded={this.state.reviewsExpanded}
                 handleSteamClick={this.handleSteamClick}
                 handlePlatformClick={this.handlePlatformClick}
                 handleGenreClick={this.handleGenreClick}
-                handleReadReviewsClick={this.handleReadReviewsClick}
                 expandSummary={this.expandSummary}
             />
         );

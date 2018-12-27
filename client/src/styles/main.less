@@ -1,6 +1,8 @@
-@primary-color: #2b419c;
+@primary-color: #171a21;
 @secondary-color: white;
-@primary-highlighted-color: #142f9e;
+@tertiary-color: #24272b;
+@primary-highlighted-color: #2b2c2f;
+@tertiary-highlighted-color: #373b40;
 @primary-font: "Motiva Sans", Sans-serif;
 @secondary-font: Pacifico;
 @sm: ~"screen and (max-width:576px)";
@@ -10,6 +12,7 @@
 
 html {
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 html, body, #root {
@@ -31,6 +34,7 @@ html, body, #root {
 @import 'home/main';
 @import 'navbar/main';
 @import 'spinner/main';
-@import 'carousel/main';
+@import 'basic-carousel/main';
+@import 'slick-carousel/main';
 @import 'popupS/main';
 @import 'bootstrap/main';

@@ -28,7 +28,7 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                     {props.popularGames
                         .map((x: GameResponse) => {
                             return (
-                                <Card key={x.id} className="popular-table-container cursor-pointer custom-shadow d-inline-block mx-2" onClick={() => { props.onClickGame(x.id); }}>
+                                <Card key={x.id} className="popular-table-container cursor-pointer primary-shadow d-inline-block mx-2" onClick={() => { props.onClickGame(x.id); }}>
                                     <CardMedia className="popular-table-image h-75 w-100">
                                         <img className="w-100 h-100" src={x.cover ? x.cover : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                                     </CardMedia>
@@ -39,7 +39,7 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                                         </div>
                                         <div className="row">
                                             <div className="col-8 genre pr-1">
-                                                {x.genres[0].name}
+                                                {x.genres && x.genres[0].name}
                                             </div>
                                             {x.aggregated_rating &&
                                                 <div className="col-4 rating p-0">

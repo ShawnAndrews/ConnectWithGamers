@@ -12,12 +12,12 @@ interface IHomeProps {
 const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
 
     return (
-        <Paper className="games bg-primary p-4 mx-auto mt-5 position-relative" elevation={24}>
-            <h4 className="title text-center color-secondary">Search for games!</h4>
+        <Paper className="games bg-secondary-solid secondary-shadow p-4 mx-auto mt-5 position-relative" elevation={24}>
+            <h4 className="title text-center color-primary">Search for games!</h4>
             <div className="searchbar mx-auto mt-4">
                 <Grid container={true} spacing={8} alignItems="flex-end">
                     <Grid item={true}>
-                        <i className="fas fa-search color-secondary"/>
+                        <i className="fas fa-search color-primary"/>
                     </Grid>
                     <Grid item={true}>
                         <TextField 
@@ -32,7 +32,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
             </div>
             <Button 
                 variant="raised" 
-                className="color-primary bg-secondary mt-4"
+                className="color-secondary bg-primary-solid hover-primary-solid mt-4"
                 onClick={props.onSearch}
                 fullWidth={true}
             >
@@ -41,7 +41,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
             <div className="text-center">
                 <Button 
                     variant="raised" 
-                    className="advanced-search-btn color-secondary bg-primary mt-2"
+                    className="advanced-search-btn color-primary bg-secondary mt-2"
                     onClick={props.onAdvancedSearch}
                 >
                     Advanced search

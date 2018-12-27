@@ -29,6 +29,7 @@ export interface Config {
         pageLimit: number
     };
     steam: {
+        dbURL: string,
         apiURL: string,
         nonApiURL: string,
         appURL: string,
@@ -86,12 +87,13 @@ export const redisCache: IGDBCacheEntry[] = [
     {key: "upcominggames", expiry: RedisExpirationTime.ONE_HOUR},
     {key: "populargames", expiry: RedisExpirationTime.ONE_DAY},
     {key: "recentgames", expiry: RedisExpirationTime.ONE_HOUR},
-    {key: "reviewedgames", expiry: RedisExpirationTime.ONE_HOUR},
+    {key: "highlightedgames", expiry: RedisExpirationTime.ONE_HOUR},
     {key: "resultsgames", expiry: RedisExpirationTime.ONE_HOUR},
     {key: "games", expiry: RedisExpirationTime.ONE_WEEK},
     {key: "genrelist", expiry: RedisExpirationTime.ONE_WEEK},
     {key: "chatusers", expiry: RedisExpirationTime.INF},
-    {key: "news", expiry: RedisExpirationTime.ONE_HOUR}
+    {key: "news", expiry: RedisExpirationTime.ONE_HOUR},
+    {key: "discountedgames", expiry: RedisExpirationTime.ONE_HOUR},
 ];
 
 export enum GamesType {
@@ -125,7 +127,7 @@ export interface ChatroomInfo {
 }
 
 export const CHATROOMS: ChatroomInfo[] = [
-    { name: "Home", abbrevName: "", imagePath: "https://i.imgur.com/oll7zIX.png", redirect: "/chat" },
+    { name: "Home", abbrevName: "", imagePath: "https://i.imgur.com/7qFiMVy.png", redirect: "/chat" },
     { name: "Hearthstone", abbrevName: "hearthstone", imagePath: "https://i.imgur.com/myONDFo.png", redirect: "/chat/hearthstone" },
     { name: "League Of Legends", abbrevName: "lol", imagePath: "https://i.imgur.com/AuOsUek.png", redirect: "/chat/lol" },
     { name: "Overwatch", abbrevName: "overwatch", imagePath: "https://i.imgur.com/3Bz1ihC.png", redirect: "/chat/overwatch" },
@@ -400,12 +402,6 @@ export interface ChatHistoryResponse {
     text: string[];
     image: string[];
     attachment: string[];
-}
-
-export interface SteamAPIReview {
-    text: string;
-    hours_played: number;
-    up_votes: number;
 }
 
 export interface IGDBPlatform {
@@ -687,8 +683,4 @@ export interface SteamAPIGetPriceInfoResponse {
     price: string;
     discount_percent: number;
     steam_url: string;
-}
-
-export interface SteamAPIGetReviewsResponse {
-    reviews?: SteamAPIReview[];
 }

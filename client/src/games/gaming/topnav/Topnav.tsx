@@ -10,14 +10,14 @@ interface ITopnavProps {
 const Topnav: React.SFC<ITopnavProps> = (props: ITopnavProps) => {
     return (
         <Tabs
-            className="topnav bg-secondary"
+            className="topnav bg-primary-solid"
             onChange={props.onTabChange}
             value={props.index}
             fullWidth={true}
         >
-            <Tab icon={<i className="fab fa-twitch fa-2x color-primary"/>} className="navbar-item-text"/>
-            <Tab icon={<i className="fab fa-steam-square fa-2x color-primary"/>} className="navbar-item-text"/>
-            <Tab icon={<i className="fab fa-discord fa-2x color-primary"/>} className="navbar-item-text"/>
+            <Tab icon={<i className="fab fa-twitch fa-2x color-secondary"/>} className="navbar-item-text"/>
+            <Tab icon={<i className="fab fa-steam-square fa-2x color-secondary"/>} className="navbar-item-text"/>
+            <Tab icon={<i className="fab fa-discord fa-2x color-secondary"/>} className="navbar-item-text"/>
         </Tabs>
     );
 

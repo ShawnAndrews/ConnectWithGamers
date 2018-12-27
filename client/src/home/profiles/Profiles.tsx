@@ -15,15 +15,15 @@ const Profiles: React.SFC<IProfilesProps> = (props: IProfilesProps) => {
                     <i className="fas fa-chevron-right"/>
                 </div>
                 <div className="profiles-buttons">
-                    <Button className="profiles-twitch custom-shadow w-100" variant="contained" color="primary" onClick={() => { props.goToRedirectCallback(`/games/gaming/twitch`); }}>
+                    <Button className="profiles-twitch primary-shadow w-100" variant="contained" color="primary" onClick={() => { props.goToRedirectCallback(`/games/gaming/twitch`); }}>
                         TWITCH
                         <i className="fab fa-twitch ml-2"/>
                     </Button>
-                    <Button className="profiles-steam custom-shadow w-100 mt-1" variant="contained" color="primary" onClick={() => { props.goToRedirectCallback(`/games/gaming/steam`); }}>
+                    <Button className="profiles-steam primary-shadow w-100 mt-1" variant="contained" color="primary" onClick={() => { props.goToRedirectCallback(`/games/gaming/steam`); }}>
                         STEAM
                         <i className="fab fa-steam ml-2"/>
                     </Button>
-                    <Button className="profiles-discord custom-shadow w-100 mt-1" variant="contained" color="primary" onClick={() => { props.goToRedirectCallback(`/games/gaming/discord`); }}>
+                    <Button className="profiles-discord primary-shadow w-100 mt-1" variant="contained" color="primary" onClick={() => { props.goToRedirectCallback(`/games/gaming/discord`); }}>
                         DISCORD
                         <i className="fab fa-discord ml-2"/>
                     </Button>

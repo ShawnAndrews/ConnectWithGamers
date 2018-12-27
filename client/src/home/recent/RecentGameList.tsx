@@ -20,7 +20,7 @@ const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListP
             {props.recentGames
             .map((x: GameResponse) => {
                 return (
-                    <Card key={x.id} className="recently-released-table-container custom-shadow row mt-2 mx-0" onClick={() => { props.onClickGame(x.id); }}>
+                    <Card key={x.id} className="recently-released-table-container primary-shadow row mt-2 mx-0" onClick={() => { props.onClickGame(x.id); }}>
                         <CardMedia className="col-4 p-0 h-100">
                             <img className="h-100 w-100" src={x.cover ? x.cover : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                         </CardMedia>

@@ -19,6 +19,7 @@ const config: Config = {
         pageLimit: 50
     },
     steam: {
+        dbURL: "https://steamdb.info/app",
         apiURL: "http://store.steampowered.com/api",
         nonApiURL: "http://store.steampowered.com",
         appURL: "http://store.steampowered.com/app",

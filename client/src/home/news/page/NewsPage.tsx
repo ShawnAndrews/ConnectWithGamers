@@ -20,7 +20,7 @@ const News: React.SFC<INewsProps> = (props: INewsProps) => {
     
     return (
         <div className="results container">
-            <Paper className="topnav color-secondary bg-primary p-2 mx-auto my-4">
+            <Paper className="topnav bg-tertiary p-2 mx-auto my-4">
                 <div className="text-center">
                     Gaming news
                 </div>

@@ -19,20 +19,20 @@ const DiscordPage: React.SFC<IDiscordPageProps> = (props: IDiscordPageProps) => 
     
     if (!props.link) {
         return (
-            <Paper className="discord bg-primary text-center color-secondary p-4 mx-auto mt-5 position-relative" elevation={24}>To proceed, go to Account → Links and set your Discord invitation link.</Paper>
+            <Paper className="discord bg-secondary-solid text-center color-primary p-4 mx-auto mt-5 position-relative" elevation={24}>To proceed, go to Account → Links and set your Discord invitation link.</Paper>
         );
     }
 
     return (
-        <Paper className="discord bg-primary p-4 mx-auto mt-5 position-relative" elevation={24}>
-            <div className="text-center color-secondary">
+        <Paper className="discord bg-secondary-solid p-4 mx-auto mt-5 position-relative" elevation={24}>
+            <div className="text-center color-primary">
                 Send this invitation link to friends to join your server!
             </div>
             <textarea
-                className="text-readonly color-secondary text-center w-100 mt-4"
+                className="text-readonly color-primary text-center w-100 mt-4"
                 value={props.link}
             />
-            <Button variant="raised" className="bg-secondary color-primary" color="primary" onClick={props.onClickCopy} fullWidth={true}>
+            <Button variant="raised" className="bg-primary-solid hover-primary-solid color-secondary" color="primary" onClick={props.onClickCopy} fullWidth={true}>
                 Copy To Clipboard
             </Button>
         </Paper>

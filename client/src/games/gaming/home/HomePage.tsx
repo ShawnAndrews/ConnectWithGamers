@@ -11,11 +11,11 @@ interface IHomePageProps {
 const HomePage: React.SFC<IHomePageProps> = (props: IHomePageProps) => {
 
     return (
-        <Paper className="homepage bg-primary p-4 mx-auto mt-5 position-relative" elevation={24}>
-            <div className="text-center color-secondary">Welcome to your gaming profiles!</div>
+        <Paper className="homepage bg-secondary-solid p-4 mx-auto mt-5 position-relative" elevation={24}>
+            <div className="text-center color-primary">Welcome to your gaming profiles!</div>
             <Button 
                 variant="raised"
-                className="color-primary bg-secondary mt-4"
+                className="color-secondary bg-primary-solid hover-primary-solid mt-4"
                 onClick={props.onClickTwitch}
                 fullWidth={true}
             >
@@ -24,7 +24,7 @@ const HomePage: React.SFC<IHomePageProps> = (props: IHomePageProps) => {
             </Button>
             <Button 
                 variant="raised"
-                className="color-primary bg-secondary mt-2"
+                className="color-secondary bg-primary-solid hover-primary-solid mt-2"
                 onClick={props.onClickSteam}
                 fullWidth={true}
             >
@@ -33,7 +33,7 @@ const HomePage: React.SFC<IHomePageProps> = (props: IHomePageProps) => {
             </Button>
             <Button 
                 variant="raised"
-                className="color-primary bg-secondary mt-2"
+                className="color-secondary bg-primary-solid hover-primary-solid mt-2"
                 onClick={props.onClickDiscord}
                 fullWidth={true}
             >

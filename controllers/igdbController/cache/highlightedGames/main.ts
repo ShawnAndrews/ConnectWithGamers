@@ -2,14 +2,14 @@ import config from "../../../../config";
 import { GameResponse, RawGameResponse, GameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { buildIGDBRequestBody, getCurrentUnixTimestampInSeconds } from "../../../../util/main";
-import { convertRawGameResponse, getGameReponseById } from "../util";
+import { getCachedGame, cachePreloadedGame } from "../game/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
 
 /**
  * Check if redis key exists.
  */
-export function reviewedGamesKeyExists(): Promise<boolean> {
+export function highlightedGamesKeyExists(): Promise<boolean> {
     const cacheEntry: IGDBCacheEntry = redisCache[3];
 
     return new Promise((resolve: any, reject: any) => {
@@ -24,9 +24,9 @@ export function reviewedGamesKeyExists(): Promise<boolean> {
 }
 
 /**
- * Get redis-cached reviewed games.
+ * Get redis-cached highlighted games.
  */
-export function getCachedReviewedGames(): Promise<GameResponse[]> {
+export function getCachedHighlightedGames(): Promise<GameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[3];
 
     return new Promise((resolve: any, reject: any) => {
@@ -36,7 +36,7 @@ export function getCachedReviewedGames(): Promise<GameResponse[]> {
             }
 
             const ids: number[] = JSON.parse(stringifiedGameIds);
-            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getGameReponseById(id));
+            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getCachedGame(id));
 
             Promise.all(gamePromises)
             .then((gameResponses: GameResponse[]) => {
@@ -51,12 +51,13 @@ export function getCachedReviewedGames(): Promise<GameResponse[]> {
 }
 
 /**
- * Cache reviewed games.
+ * Cache highlighted games.
  */
 
-export function cacheReviewedGames(): Promise<GameResponse[]> {
+export function cacheHighlightedGames(): Promise<GameResponse[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[3];
     const CURRENT_UNIX_TIME_S: number = getCurrentUnixTimestampInSeconds();
+    const THREE_MONTH_AGO_UNIX_TIME_S: number = getCurrentUnixTimestampInSeconds() - (60 * 60 * 24 * 30 * 3);
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -65,10 +66,11 @@ export function cacheReviewedGames(): Promise<GameResponse[]> {
             [
                 `cover != null`,
                 `screenshots != null`,
-                `first_release_date > ${CURRENT_UNIX_TIME_S}`,
+                `first_release_date > ${THREE_MONTH_AGO_UNIX_TIME_S}`,
+                `first_release_date <= ${CURRENT_UNIX_TIME_S}`,
                 `platforms = 6`
             ],
-            `id`,
+            GameResponseFields.join(),
             undefined,
             `sort popularity desc`
         );
@@ -83,8 +85,9 @@ export function cacheReviewedGames(): Promise<GameResponse[]> {
             data: body
         })
         .then( (response: AxiosResponse) => {
-            const ids: number[] = response.data.map((x: any) => x.id);
-            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getGameReponseById(id));
+            const rawGamesResponses: RawGameResponse[] = response.data;
+            const ids: number[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => rawGameResponse.id);
+            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => cachePreloadedGame(rawGameResponse));
 
             redisClient.set(cacheEntry.key, JSON.stringify(ids));
             if (cacheEntry.expiry !== -1) {
