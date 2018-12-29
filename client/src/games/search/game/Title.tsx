@@ -1,18 +1,22 @@
 import * as React from 'react';
 import StarIcon from './StarIcon';
+import { Textfit } from 'react-textfit';
 
 interface ITitleProps {
     name: string;
-    rating: number;   
+    rating: number;
+    nameStyle: Object;
+    starsStyle: Object; 
 }
 
 const Title: React.SFC<ITitleProps> = (props: ITitleProps) => {
 
     return (
-        <div className="name color-primary py-1">
-            {props.name}
+        <>
+            {props.name && 
+                <Textfit className="title font-weight-bold color-secondary" style={props.nameStyle} min={20} max={40}>{props.name}</Textfit>}
             {props.rating && 
-                <div className="stars d-inline-block ml-3">
+                <div className="stars" style={props.starsStyle}>
                     {props.rating > 0
                         ? props.rating <= 10 
                             ? <StarIcon halfStar={true} active={true} />
@@ -39,7 +43,7 @@ const Title: React.SFC<ITitleProps> = (props: ITitleProps) => {
                             : <StarIcon halfStar={false} active={true} />
                         : <StarIcon halfStar={false} active={false} />}
                 </div>}
-        </div>
+        </>
     );
 
 };

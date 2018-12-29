@@ -468,7 +468,7 @@ export interface GameResponse {
     price: string;
     discount_percent: number;
     steamid: number;
-    cover: string;
+    cover: IGDBImage;
     summary: string;
     linkIcons: string[];
     genres: IdNamePair[];

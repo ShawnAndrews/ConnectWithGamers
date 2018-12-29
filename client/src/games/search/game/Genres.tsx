@@ -9,18 +9,14 @@ interface IGenresProps {
 
 const Genres: React.SFC<IGenresProps> = (props: IGenresProps) => {
 
-    if (!props.genres) {
-        return null;
-    }
-
     return (
-        <div className="genres mt-2">
+        <div className="genres color-secondary px-2 mt-2">
             <div className="title my-1">Genres</div>
-            {props.genres
+            {props.genres && props.genres
                 .map((x: IdNamePair, index: number) => {
                     return (
                         <React.Fragment key={x.id}>
-                            <Button variant="raised" className="genre mx-1 py-1 px-2" onClick={() => { props.handleGenreClick(index); }}>
+                            <Button variant="raised" className="genre hover-tertiary-solid m-2 py-1 px-2" onClick={() => { props.handleGenreClick(index); }}>
                                 {x.name}
                             </Button>
                         </React.Fragment>

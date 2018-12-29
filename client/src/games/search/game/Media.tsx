@@ -13,7 +13,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
     }
     
     return (
-        <div className="col-lg-8">
+        <div className="media mt-4 mt-lg-0 col-lg-7">
             <Slideshow trailer={props.video} images={props.screenshots}/>
         </div>
     );

@@ -160,7 +160,7 @@ export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Pro
             let aggregated_rating: number;
             let total_rating_count: number = undefined;
             let steamid: number = undefined;
-            let cover: string = undefined;
+            let cover: IGDBImage = undefined;
             let summary: string = undefined;
             let linkIcons: string[] = undefined;
             let genres: IdNamePair[] = undefined;
@@ -194,7 +194,10 @@ export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Pro
             }
 
             // cover
-            cover = rawGameResponse.cover && IGDBImageResolve(rawGameResponse.cover.image_id, "cover_big", "jpg");
+            if (rawGameResponse.cover) {
+                rawGameResponse.cover.url = IGDBImageResolve(rawGameResponse.cover.image_id, "cover_big", "jpg");
+            }
+            cover = rawGameResponse.cover;
 
             // summary
             summary = rawGameResponse.summary;

@@ -1,136 +1,53 @@
-@game-details-blurred-height: 300px;
-@game-details-cover-height: 150px;
-@game-details-height: calc(100vh - 110px);
-@game-details-general-height: calc(100vh - 265px);
-@game-details-steam-height: calc(100vh - 709px);
+@game-details-highlight-color: #484b50;
+@game-details-screenshot-height: 400px;
+@game-details-price-height: 32px;
+@game-details-media-height: 400px;
 
 .game-details {
-    height: @game-details-height;
+    width: 900px;
 
-    @media @lg {
-        height: 100%;
-    }
+    .background-screenshot-container {
+        height: @game-details-screenshot-height;
 
-    .name {
-        font-size: 26px;
-
-        .stars {
-            position: relative;
-            top: -4px;
-
-            .inactive {
-                display: none;
-            }
+        .filter {
+            position: absolute;
+            top: 0;
+            left: 0;
+            content: "";
+            width: 100%;
+            height: @game-details-screenshot-height;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 50%,rgb(23, 26, 33) 100%);
         }
     }
 
-    .carousel {
-
-        .slider-wrapper {
-            height: @game-details-general-height!important;
-        }
-
-        .slide {
-
-            > img, > iframe {
-                height: @game-details-general-height!important;
-            }
-        }
-
-        .thumb {
-
-            &.selected {
-                border: 3px solid @primary-color!important;
-            }
-
-            > img {
-                height: 50px;
-            }
-        }
+    .cover-discount {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: #fff;
+        background-color: #228b22;
+        opacity: .7;
+        font-size: 20px;
     }
 
-    .cover-container {
-        
-        .general-info {
-            height: @game-details-general-height;
-
-            .blurred-screenshot {
-                height: calc(@game-details-blurred-height + 5px);
-                overflow: hidden;
+    .game-info {
     
-                &:after {
-                    position: absolute;
-                    content:"";
-                    height:100%;
-                    width:100%;
-                    top:0;
-                    left:0;
-                    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,0.5) 10%, rgba(255,255,255,0) 30%),linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(255,255,255,0.5) 10%, rgba(255,255,255,0) 30%),linear-gradient(to top, rgba(255,255,255,1) 0%,rgba(255,255,255,0.5) 10%, rgba(255,255,255,0) 30%),linear-gradient(to top, rgba(255,255,255,1) 0%,rgba(255,255,255,0.5) 10%, rgba(255,255,255,0) 30%),linear-gradient(to right, rgba(255,255,255,1) 0%,rgba(255,255,255,0.5) 10%, rgba(255,255,255,0) 31%),linear-gradient(to right, rgba(255,255,255,1) 0%,rgba(255,255,255,0.5) 10%, rgba(255,255,255,0) 30%),linear-gradient(to left, rgba(255,255,255,1) 0%,rgba(255,255,255,0.5) 10%, rgba(255,255,255,0) 30%),linear-gradient(to left, rgba(255,255,255,1) 0%,rgba(255,255,255,0.5) 10%, rgba(255,255,255,0) 30%);
-                    
-                    @media @lg {
-                        & {
-                            content:none;
-                        }
-                    }
-                }
-    
-                > img {
-                    height: @game-details-blurred-height;
-                    filter: blur(1px);
-                    transform: scale(1.1);
+        .price-container {
+            height: @game-details-price-height;
 
-                    @media @lg {
-                        & {
-                            display: none;
-                        }
-                    }
-                }
+            .steam-btn {
+                float: left;
+                min-width: unset!important;
+                min-height: unset!important;
+                background-color: @game-details-highlight-color!important;
+                color: white!important;
+                font-size: 0.7rem;
+                margin-bottom: 4px;
             }
-    
-            .cover {
-                position: absolute;
-                top: 85px;
-                width: calc(100% - 40px);
 
-                &.without-blur {
-                    position: relative;
-                    top: 0px;
-                    width: 100%;
-                    padding: 20px;
-                }
-
-                > img {
-                    border-radius: 8px;
-                    height: @game-details-cover-height;
-                    -webkit-box-shadow: 10px 10px 10px -5px rgba(0,0,0,0.75);
-                    -moz-box-shadow: 10px 10px 10px -5px rgba(0,0,0,0.75);
-                    box-shadow: 10px 10px 10px -5px rgba(0,0,0,0.75);
-                }
-            }
-    
-            .genres, .platforms, .summary {
-                
-                .genre, .platform {
-                    font-size: 0.5rem;
-                    min-width: unset!important;
-                    min-height: unset!important;
-                    background-color: rgba(@primary-color, 0.65)!important;
-                    color: white!important;
-                }
-    
-                .text {
-                    font-size: 0.8rem;
-                }
-            }
-        }
-
-        .steam-info {
-            height: @game-details-steam-height;
-            padding-top: 36px;
-
-            .price-container {
-                height: 32px;
+            .price {
                 float: right;
+                background-color: @game-details-highlight-color;
 
                 .usd {
                     position: relative;
@@ -148,7 +65,7 @@
                     position: relative;
                     top: 5px;
                     height: 22px;
-                    width: 80px;
+                    width: 38px;
                     color: #a4d007;
                     background: #4c6b22;
     
@@ -163,18 +80,48 @@
                     }
                 }
             }
-
-            .steam-btn {
+        }
+    
+        .platforms, .genres {
+    
+            .platform, .genre {
+                color: rgba(white, 0.6);
+                font-size: 0.65rem;
                 min-width: unset!important;
                 min-height: unset!important;
-                background-color: @primary-color!important;
+                background-color: @game-details-highlight-color;
                 color: white!important;
-                font-size: 0.7rem;
-                margin-bottom: 4px;
-                float: left;
             }
         }
-        
+    }
+
+    .media {
+
+        .carousel {
+
+            .slider-wrapper {
+                height: auto!important;
+            }
+    
+            .slide {
+    
+                > img, > iframe {
+                    height: auto!important;
+                }
+            }
+    
+            .thumb {
+                border: 3px solid @primary-color!important;
+
+                &.selected {
+                    border: 3px solid white!important;
+                }
+
+                > img {
+                    height: 50px;
+                }
+            }
+        }
     }
 
 }

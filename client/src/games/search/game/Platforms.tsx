@@ -10,21 +10,17 @@ interface IPlatformsProps {
 }
 
 const Platforms: React.SFC<IPlatformsProps> = (props: IPlatformsProps) => {
-
-    if (!props.platforms) {
-        return null;
-    }
     
     return (
-        <div className="platforms mt-2">
-            <div className="title my-1">Platforms</div>
-            {props.platforms
+        <div className="platforms color-secondary px-2 mt-4">
+            <div className="title my-2">Platforms</div>
+            {props.platforms && props.platforms
                 .map((x: IdNamePair, index: number) => {
                     return (
                         <React.Fragment key={x.id}>
-                            <Tooltip disableFocusListener={true} disableTouchListener={true} title={props.release_dates[index].toString() !== `undefined. NaN, NaN` ? new Date(props.release_dates[index] * 1000).toDateString() : `N/A`}>
+                            <Tooltip disableFocusListener={true} disableTouchListener={true} title={props.release_dates[index] !== null ? new Date(props.release_dates[index] * 1000).toDateString() : `N/A`}>
                                 <Button 
-                                    className="platform mx-1 py-1 px-2" 
+                                    className="platform hover-tertiary-solid m-2 py-1 px-2" 
                                     variant="raised" 
                                     onClick={() => { props.handlePlatformClick(index); }}
                                 >

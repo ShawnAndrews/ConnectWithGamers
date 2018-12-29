@@ -1,24 +1,18 @@
 import * as React from 'react';
 
 interface ICoverProps {
-    cover: string;
-    screenshots: string[];
+    url: string;
+    discount_percent: number;
+    style: Object;
 }
 
 const Cover: React.SFC<ICoverProps> = (props: ICoverProps) => {
 
-    const blurredScreenshot: string = props.screenshots ? props.screenshots[0] : undefined;
-
     return (
         <>
-            {blurredScreenshot && 
-                <div className="blurred-screenshot position-relative">
-                    <img className="w-100" src={blurredScreenshot}/>
-                </div>}
-            {props.cover &&
-                <div className={`cover text-center ${!blurredScreenshot && 'without-blur'}`}>
-                    <img src={props.cover || 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
-                </div>}
+            <img style={props.style} src={props.url} />
+            {props.discount_percent && 
+                <div className="cover-discount mt-2 px-1">-{props.discount_percent}%</div>}
         </>
     );
 

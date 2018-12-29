@@ -1,5 +1,4 @@
 import * as React from 'react';
-import Truncate from 'react-truncate';
 
 interface ISummaryProps {
     summary: string;
@@ -8,18 +7,13 @@ interface ISummaryProps {
 }
 
 const Summary: React.SFC<ISummaryProps> = (props: ISummaryProps) => {
-
-    if (!props.summary) {
-       return null; 
-    }
+    const maxUnexpandedCharacters: number = 250;
 
     return (
-        <div className="summary">
-            <div className="text">
-                {!props.summaryExpanded
-                    ? <Truncate lines={4} ellipsis={`...`}>{props.summary}</Truncate>
-                    : props.summary}
-            </div>
+        <div className="summary col-lg-5">
+            {!props.summaryExpanded && props.summary.length > maxUnexpandedCharacters
+                ? <div onClick={() => props.expandSummary()}>{props.summary.slice(0, maxUnexpandedCharacters)}...</div>
+                : props.summary}
         </div>
     );
 

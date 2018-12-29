@@ -13,7 +13,7 @@ const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProp
     return (
         <div className="col-md-6 col-lg-4 px-4 px-md-2 my-2">
             <Paper className="game bg-tertiary hover-tertiary-solid position-relative" onClick={props.goToGame}>
-                <img className="cover-img" src={props.game.cover ? props.game.cover : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
+                <img className="cover-img" src={props.game.cover ? props.game.cover.url : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                 <Textfit className="name color-secondary font-weight-bold text-nowrap text-right px-2" min={12} max={18}>
                     {props.game.name}
                 </Textfit>

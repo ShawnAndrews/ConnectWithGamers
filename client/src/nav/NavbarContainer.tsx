@@ -6,7 +6,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { NAV_PAGE } from '../app/app';
 import Navbar from './Navbar';
 import { toggleSearchModal } from '../actions/main';
-import { loggedIn, httpGetPublicAccountInfo } from '../service/account/main';
+import { httpGetPublicAccountInfo } from '../service/account/main';
 import { PublicAccountInfoResponse } from '../../client-server-common/common';
 import { GlobalReduxState } from '../reducers/main';
 
