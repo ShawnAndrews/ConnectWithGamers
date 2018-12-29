@@ -1,5 +1,5 @@
-@discount-carousel-height: 225px;
-@discount-carousel-content-height: 200px;
+@discount-carousel-height: 30vh;
+@discount-carousel-content-height: 25vh;
 
 .discount-carousel {
     height: @discount-carousel-height;
@@ -174,17 +174,17 @@
 
     // overrides
     .slick-list {
-        height: 225px;
+        height: @discount-carousel-height;
 
         .slick-track {
-            height: 225px;
+            height: @discount-carousel-height;
             top: 6%;
         }
     }
 
     .slick-slide {
         opacity: 0.5;
-        margin: 0 20px;
+        margin: 0 30px;
         transition: all 700ms ease;
 
         > div {

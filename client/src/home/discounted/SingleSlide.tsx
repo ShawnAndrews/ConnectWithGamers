@@ -15,7 +15,7 @@ const SingleSlide: React.SFC<ISingleSlideProps> = (props: ISingleSlideProps) => 
     const originalPrice: number = + (parseFloat(game.price) / ((100 - game.discount_percent) / 100)).toFixed(2);
 
     return (
-        <div className="single-slide position-relative px-3">
+        <div className="single-slide position-relative">
             <div className="img-container position-relative" onClick={() => props.onRedirect(game.id)} onMouseOver={() => props.onHoverGame(game.id)} onMouseOut={() => props.onHoverOutGame()}>
                 <img src={game.screenshots[0]} />
                 <div className={`overlay ${props.hoveredGameId === game.id && 'active'}`} />

@@ -28,24 +28,16 @@
     border-bottom: none;
 }
 
-.btn-outline-success {
+.advancedsearch-cog {
     color: @primary-color;
-    border-color: @primary-color;
-}
-
-.btn-outline-success:hover {
-    color: @secondary-color;
-    background-color: @primary-color;
-    border-color: @primary-color;
-}
-
-.btn-outline-success:not(:disabled):not(.disabled).active, .btn-outline-success:not(:disabled):not(.disabled):active, .show>.btn-outline-success.dropdown-toggle {
-    background-color:  @primary-color;
-    border-color:  @primary-color;
-}
-
-.btn-outline-success:not(:disabled):not(.disabled).active:focus, .btn-outline-success:not(:disabled):not(.disabled):active:focus, .show>.btn-outline-success.dropdown-toggle:focus, .btn-outline-success:active, .btn-outline-success:focus {
-    box-shadow: 0 0 0 0.2rem rgba(@primary-color, 0.1) !important;
+    font-size: 22.5px;
+    opacity: 0.25;
+    transition: all .3s ease-in;
+    -webkit-transition: all .3s ease-in;
+    
+    &:hover {
+        opacity: 0.5;
+    }
 }
 
 button.bg-secondary:focus, button.bg-secondary:hover {

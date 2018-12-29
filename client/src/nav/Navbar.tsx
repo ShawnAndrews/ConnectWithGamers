@@ -17,7 +17,7 @@ interface INavbarProps {
 const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
     
     return (
-        <div className="brand-navbar navbar bg-secondary-solid pb-0">
+        <div className="brand-navbar navbar bg-secondary-solid py-0">
             <a className="logo navbar-brand" href="/">
                 <img src="https://i.imgur.com/MwJUdK9.gif" width="40" height="40" className="d-inline-block align-top mx-3" alt=""/>
                 <span className="logo-name color-primary align-middle">Connect With Gamers</span>
@@ -56,12 +56,14 @@ const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
                     </div>
                 </li>
             </ul>
-            <form className="search-form form-inline my-2 mb-3" onSubmit={props.onSubmitSearch}>
-                <input className="form-control mr-sm-2" value={props.searchQuery} onChange={props.onSearchQueryChanged} type="search" placeholder="Search games" aria-label="Search"/>
-                <button className="btn btn-outline-success my-2 my-sm-0 mr-sm-2" type="submit"><i className="fas fa-search"/></button>
-                <button className="btn btn-outline-success my-2 my-sm-0" type="button" onClick={props.onToggleAdvancedSearch}><i className="fas fa-cog"/></button>
+            <form className="search-form form-inline my-2" onSubmit={props.onSubmitSearch}>
+                <div className="searchbar d-inline-block has-search mr-2">
+                    <span className="fa fa-search form-control-feedback"/>
+                    <input type="text" className="form-control" placeholder="Search games" onChange={props.onSearchQueryChanged}/>
+                </div>
+                <i className="fas fa-cog advancedsearch-cog align-middle cursor-pointer mx-2" onClick={props.onToggleAdvancedSearch}/>
                 {(props.profileImage || props.profileName) && 
-                    <div className="d-inline-block align-middle cursor-pointer ml-4" onClick={() => props.onRedirect(`/account`)}>
+                    <div className="icon d-inline-block align-middle cursor-pointer ml-4" onClick={() => props.onRedirect(`/account`)}>
                         {props.profileImage
                             ? <Avatar src={props.profileImage}/>
                             : <Avatar className="bg-primary-solid">{props.profileName.slice(0, 2).toUpperCase()}</Avatar>}
