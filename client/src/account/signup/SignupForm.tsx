@@ -9,8 +9,7 @@ interface ISignupFormProps {
     email: string;
     password: string;
     onClickCreate: (event: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLElement>) => void;
-    onClickBack: React.MouseEventHandler<Element>;
-    onClickHome: React.MouseEventHandler<Element>;
+    onClickAlreadyMember: React.MouseEventHandler<Element>;
     usernameChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
     passwordChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
     emailChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -28,11 +27,11 @@ const SignupForm: React.SFC<ISignupFormProps> = (props: ISignupFormProps) => {
     }
 
     return (
-        <Paper className="account bg-secondary-solid p-4 mx-auto mt-5" elevation={24}>
+        <Paper className="account p-4 mx-auto mt-5" elevation={24}>
             <div className="logo-img text-center">
                 <img src="https://i.imgur.com/UfeBmAp.gif"/>
             </div>
-            <h3 className="logo-name color-primary font-secondary text-center mt-3">
+            <h3 className="logo-name font-secondary text-center mt-3">
                 Connect With Gamers
             </h3>
             <form className="account-form" noValidate={true} autoComplete="off">
@@ -73,13 +72,13 @@ const SignupForm: React.SFC<ISignupFormProps> = (props: ISignupFormProps) => {
                 <div className="row mt-3">
                     <div className="col-12">
                         <div className="d-table h-100 w-100">
-                            <div className="alreadyamember d-table-cell align-middle text-center color-primary">
-                                Already a member? <u onClick={props.onClickBack}>Click here</u>
+                            <div className="alreadyamember d-table-cell align-middle text-center">
+                                Already a member? <u onClick={props.onClickAlreadyMember}>Click here</u>
                             </div>
                         </div>
                     </div>
                 </div>
-                <Button className="create-btn color-secondary bg-primary-solid hover-primary-solid mt-3" onClick={props.onClickCreate} variant="contained" color="primary" fullWidth={true}>
+                <Button className="create-btn mt-3" onClick={props.onClickCreate} variant="contained" fullWidth={true}>
                     Create an account
                 </Button>
             </form>

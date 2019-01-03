@@ -11,7 +11,7 @@ interface IHomePageProps {
 const HomePage: React.SFC<IHomePageProps> = (props: IHomePageProps) => {
 
     return (
-        <Paper className="homepage bg-secondary-solid p-4 mx-auto mt-5 position-relative" elevation={24}>
+        <Paper className="homepage bg-secondary-solid p-4 mx-auto my-5 position-relative" elevation={24}>
             <div className="text-center color-primary">Welcome to your gaming profiles!</div>
             <Button 
                 variant="raised"

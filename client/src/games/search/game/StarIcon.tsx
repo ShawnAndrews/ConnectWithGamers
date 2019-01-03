@@ -8,7 +8,7 @@ interface IStarIconProps {
 const StarIcon: React.SFC<IStarIconProps> = (props: IStarIconProps) => {
     
     return (
-        <img className={`${props.active ? "active" : "inactive"} mx-1`} width="25px" height="25px" src={props.halfStar ? "https://i.imgur.com/cEKRtdD.png" : "https://i.imgur.com/esrvfbT.png"} alt="Half Star"/>
+        <img className={`star ${props.active ? "active" : "inactive"} mx-1`} width="25px" height="25px" src={props.halfStar ? "https://i.imgur.com/cEKRtdD.png" : "https://i.imgur.com/esrvfbT.png"} alt="Half Star"/>
     );
 
 };

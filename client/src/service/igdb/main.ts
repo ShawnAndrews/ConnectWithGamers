@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GamesType, MultiGameResponse } from '../../../client-server-common/common';
+import { ResultsType, MultiGameResponse } from '../../../client-server-common/common';
 
 /**
  * Generic HTTP request to get templated response data.
@@ -23,15 +23,15 @@ export function httpGenericGetData<T>(query: string): Promise<T> {
 /**
  * HTTP request to get games list.
  */
-export function httpGetGamesResults(type: GamesType): Promise<MultiGameResponse> {
+export function httpGetGamesResults(type: ResultsType): Promise<MultiGameResponse> {
     return new Promise((resolve: any, reject: any) => {
         let url: string;
 
-        if (type === GamesType.Popular) {
+        if (type === ResultsType.PopularResults) {
             url = '/igdb/games/popular';
-        } else if (type === GamesType.Recent) {
+        } else if (type === ResultsType.RecentResults) {
             url = '/igdb/games/recent';
-        } else if (type === GamesType.Upcoming) {
+        } else if (type === ResultsType.UpcomingResults) {
             url = '/igdb/games/upcoming';
         }
 

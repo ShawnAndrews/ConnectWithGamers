@@ -8,7 +8,7 @@ const SearchRouter: React.SFC<any> = () => {
 
     return (
         <Switch>
-            <Route exact={true} path="/games/search/:type(popular|upcoming|recent|news)" component={ResultsContainer}/>
+            <Route exact={true} path="/games/:type(popular|upcoming|recent|news)" component={ResultsContainer}/>
             <Route exact={true} path="/games/search/filter/:platforms?/:genres?/:categories?/:date?/:sort?" component={ResultsContainer}/>
             <Route exact={true} path="/games/search/game/:id" component={GameContainer} />
             <Route exact={true} path="/games/search" component={GameContainer} />

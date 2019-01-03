@@ -37,8 +37,7 @@ class LoginFormContainer extends React.Component<Props, ILoginFormContainerState
         this.passwordChanged = this.passwordChanged.bind(this);
         this.remembermeChanged = this.remembermeChanged.bind(this);
         this.onClickLogin = this.onClickLogin.bind(this);
-        this.onClickSignUp = this.onClickSignUp.bind(this);
-        this.onClickHome = this.onClickHome.bind(this);
+        this.onClickNotAMember = this.onClickNotAMember.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
 
         this.state = {
@@ -104,12 +103,8 @@ class LoginFormContainer extends React.Component<Props, ILoginFormContainerState
 
     }
 
-    onClickSignUp(event: React.MouseEvent<HTMLElement>): void {
+    onClickNotAMember(event: React.MouseEvent<HTMLElement>): void {
         this.props.history.push('/account/signup');
-    }
-
-    onClickHome(event: React.MouseEvent<HTMLElement>): void {
-        this.props.history.push('/');
     }
 
     onKeyPress(event: React.KeyboardEvent<Element>): void {
@@ -126,8 +121,7 @@ class LoginFormContainer extends React.Component<Props, ILoginFormContainerState
                 rememberme={this.state.rememberme}
                 isLoading={this.state.isLoading}
                 onClickLogin={this.onClickLogin}
-                onClickSignUp={this.onClickSignUp}
-                onClickHome={this.onClickHome}
+                onClickNotAMember={this.onClickNotAMember}
                 usernameChanged={this.usernameChanged}
                 passwordChanged={this.passwordChanged}
                 remembermeChanged={this.remembermeChanged}

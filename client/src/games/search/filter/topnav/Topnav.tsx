@@ -9,11 +9,11 @@ interface ITopnavProps {
 const Topnav: React.SFC<ITopnavProps> = (props: ITopnavProps) => {
     
     return (
-        <Paper className="topnav bg-tertiary p-2 mx-auto my-4">
+        <div className="topnav p-2 mx-auto my-4">
             <div className="text-center">
                 {props.title}
             </div>
-        </Paper>
+        </div>
     );
 
 }; 

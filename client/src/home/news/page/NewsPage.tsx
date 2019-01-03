@@ -19,13 +19,13 @@ const News: React.SFC<INewsProps> = (props: INewsProps) => {
     }
     
     return (
-        <div className="results container">
+        <Paper className="results bg-primary-solid p-2 overflow-auto">
             <Paper className="topnav bg-tertiary p-2 mx-auto my-4">
                 <div className="text-center">
                     Gaming news
                 </div>
             </Paper>
-            <div className="row">
+            <div className="row w-100 m-0">
                 {props.news && 
                     props.news.map((newsItem: SingleNewsResponse, index: number) => (
                         <NewsArticle 
@@ -33,7 +33,7 @@ const News: React.SFC<INewsProps> = (props: INewsProps) => {
                         />
                     ))}
             </div>
-        </div>
+        </Paper>
     );
 
 }; 

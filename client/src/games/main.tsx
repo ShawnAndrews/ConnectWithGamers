@@ -1,27 +1,44 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import UpcomingGameListContainer from '../home/upcoming/UpcomingGameListContainer';
-import RecentGameListContainer from '../home/recent/RecentGameListContainer';
 import NewsPageContainer from '../home/news/page/NewsPageContainer';
 import HomeContainer from './home/HomeContainer';
 import SearchRouter from './search/main';
 import NotFoundPageContainer from './../notfound/NotFoundPageContainer';
 import GamingSwitch from './gaming/main';
+import SidebarContainer from './sidebar/SidebarContainer';
+import HamburgerContainer from './sidebar/hamburger/HamburgerContainer';
 
-const Menu: React.SFC<any> = () => {
+interface IMainProps {
+    onHamburgerClick: () => void;
+    sidebarExpanded: boolean;
+}
+
+const Main: React.SFC<IMainProps> = (props: IMainProps) => {
 
     return (
-        <Switch>
-            <Route path="/games/search" component={SearchRouter} />
-            <Route path="/games/upcoming" component={UpcomingGameListContainer} />
-            <Route path="/games/recent" component={RecentGameListContainer} />
-            <Route path="/games/news" component={NewsPageContainer} />
-            <Route path="/games/gaming" component={GamingSwitch} />
-            <Route path="/games" component={HomeContainer} />
-            <Route component={NotFoundPageContainer}/>
-        </Switch>
+        <div className="games position-relative">
+            <SidebarContainer
+                sidebarExpanded={props.sidebarExpanded}
+            />
+            <div className={`content d-inline-block overflow-hidden vh-min-100 p-4 ${props.sidebarExpanded ? 'active' : ''}`}>
+                <Switch>
+                    <Route path="/games/search" component={SearchRouter} />
+                    <Route path="/games/popular" component={SearchRouter} />
+                    <Route path="/games/upcoming" component={SearchRouter} />
+                    <Route path="/games/recent" component={SearchRouter} />
+                    <Route path="/games/news" component={NewsPageContainer} />
+                    <Route path="/games/gaming" component={GamingSwitch} />
+                    <Route path="/games" component={HomeContainer} />
+                    <Route component={NotFoundPageContainer}/>
+                </Switch>
+            </div>
+            <HamburgerContainer
+                onHamburgerClick={props.onHamburgerClick}
+                sidebarExpanded={props.sidebarExpanded}
+            />
+        </div>
     );
 
 };
 
-export default Menu;
+export default Main;

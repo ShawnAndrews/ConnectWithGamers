@@ -41,7 +41,7 @@
 }
 
 button.bg-secondary:focus, button.bg-secondary:hover {
-    background-color:  @primary-color!important;
+    background-color:  @secondary-color!important;
 }
 
 .custom-switch {
@@ -52,7 +52,7 @@ button.bg-secondary:focus, button.bg-secondary:hover {
 
     &.active {
         > span > span:last-child {
-            background-color: @primary-highlighted-color!important;
+            background-color: rgba(white, 0.7)!important;
          }
     }
 }
@@ -117,4 +117,22 @@ button:focus {
 
 .vh-min-100 {
     min-height: 100vh!important;
+}
+
+.overflow-auto {
+    overflow: auto!important;
+}
+
+.overflow-visible {
+    overflow: visible!important;
+}
+
+.overflow-hidden {
+    overflow: hidden!important;
+}
+
+.w-md-100 {
+    @media @md {
+        width: 100%!important;
+    }
 }

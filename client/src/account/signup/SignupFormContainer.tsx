@@ -22,8 +22,7 @@ class SignupFormContainer extends React.Component<ISignupFormContainerProps, ISi
         this.emailChanged = this.emailChanged.bind(this);
         this.passwordChanged = this.passwordChanged.bind(this);
         this.onClickCreate = this.onClickCreate.bind(this);
-        this.onClickBack = this.onClickBack.bind(this);
-        this.onClickHome = this.onClickHome.bind(this);
+        this.onClickAlreadyMember = this.onClickAlreadyMember.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
 
         this.state = {
@@ -71,12 +70,8 @@ class SignupFormContainer extends React.Component<ISignupFormContainerProps, ISi
 
     }
 
-    onClickBack(event: React.MouseEvent<Element>): void {
-        this.props.history.goBack();
-    }
-
-    onClickHome(event: React.MouseEvent<Element>): void {
-        this.props.history.push('/');
+    onClickAlreadyMember(event: React.MouseEvent<Element>): void {
+        this.props.history.push('/account/login');
     }
 
     onKeyPress(event: React.KeyboardEvent<Element>): void {
@@ -93,8 +88,7 @@ class SignupFormContainer extends React.Component<ISignupFormContainerProps, ISi
                 email={this.state.email}
                 password={this.state.password}
                 onClickCreate={this.onClickCreate}
-                onClickBack={this.onClickBack}
-                onClickHome={this.onClickHome}
+                onClickAlreadyMember={this.onClickAlreadyMember}
                 usernameChanged={this.usernameChanged}
                 passwordChanged={this.passwordChanged}
                 emailChanged={this.emailChanged}

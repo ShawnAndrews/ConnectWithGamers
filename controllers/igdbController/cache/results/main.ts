@@ -66,25 +66,25 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
         if (key === "genres") {
             const genres: number[] = JSON.parse("[" + queryStringObj[key] + "]");
 
-            whereFilters.push(`genres = (${genres.join()});`);
+            whereFilters.push(`genres = (${genres.join()})`);
         }
 
         if (key === "platforms") {
             const platforms: number[] = JSON.parse("[" + queryStringObj[key] + "]");
 
-            whereFilters.push(`platforms = (${platforms.join()});`);
+            whereFilters.push(`platforms = (${platforms.join()})`);
         }
 
         if (key === "categories") {
             const categories: number[] = JSON.parse("[" + queryStringObj[key] + "]");
 
-            whereFilters.push(`category = ${categories.join()};`);
+            whereFilters.push(`category = ${categories.join()}`);
         }
 
         if (key === "popularity") {
             const popularity: number = parseInt(queryStringObj[key]);
 
-            whereFilters.push(`aggregated_rating >= ${popularity};`);
+            whereFilters.push(`aggregated_rating >= ${popularity}`);
         }
 
     });

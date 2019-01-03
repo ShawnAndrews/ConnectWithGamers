@@ -1,6 +1,10 @@
 const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
+export enum Breakpoints {
+    md = 768
+}
+
 enum RedisExpirationTime {
     ONE_HOUR = 60 * 60,
     ONE_DAY = 60 * 60 * 24,
@@ -72,17 +76,6 @@ export interface PlatformOption {
     name: string;
 }
 
-export const platformOptions: PlatformOption[] = [
-    { id: 6,   name: "Steam" },
-    { id: 48,  name: "Playstation 4" },
-    { id: 49,  name: "Xbox One" },
-    { id: 130, name: "Nintendo Switch" },
-    { id: 9,   name: "Playstation 3" },
-    { id: 12,  name: "Xbox 360" },
-    { id: 18,  name: "Nintendo 64" },
-    { id: 37,  name: "Nintendo 3DS" },
-];
-
 export const redisCache: IGDBCacheEntry[] = [
     {key: "upcominggames", expiry: RedisExpirationTime.ONE_HOUR},
     {key: "populargames", expiry: RedisExpirationTime.ONE_DAY},
@@ -96,10 +89,11 @@ export const redisCache: IGDBCacheEntry[] = [
     {key: "discountedgames", expiry: RedisExpirationTime.ONE_HOUR},
 ];
 
-export enum GamesType {
-    Popular,
-    Recent,
-    Upcoming
+export enum ResultsType {
+    PopularResults,
+    RecentResults,
+    UpcomingResults,
+    SearchResults
 }
 
 export interface UserLog {
@@ -420,6 +414,7 @@ export interface ChatHistoryResponse {
 export interface IGDBPlatform {
     id: number;
     abbreviation: string;
+    alternative_name: string;
     category: number;
     created_at: number;
     generation: number;
@@ -435,6 +430,7 @@ export interface IGDBPlatform {
 }
 
 export interface IGDBGenre {
+    id: number;
     created_at: number;
     name: string;
     slug: string;
@@ -451,6 +447,7 @@ export interface IGDBReleaseDate {
     m: number;
     platform: number;
     region: number;
+    created_at: number;
     updated_at: number;
     y: number;
 }
@@ -508,6 +505,7 @@ export interface SingleGameResponse {
 }
 
 export interface IGDBImage {
+    id: number;
     alpha_channel: boolean;
     animated: boolean;
     url: string;
@@ -517,6 +515,7 @@ export interface IGDBImage {
 }
 
 export interface IGDBVideo {
+    id: number;
     name: string;
     video_id: string;
 }
@@ -542,6 +541,7 @@ export enum IGDBExternalCategoryEnum {
 }
 
 export interface ExternalGame {
+    id: number;
     category: IGDBExternalCategoryEnum;
     created_at: number;
     game: number;

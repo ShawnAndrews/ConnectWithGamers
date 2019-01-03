@@ -3,7 +3,7 @@ import { Route, Redirect, Switch, withRouter, RouteComponentProps } from 'react-
 import Account from '../account/main';
 import { loggedIn } from '../service/account/main';
 import ChatroomMenu from '../chat/main';
-import GamesContainer from '../games/main';
+import GamesContainer from '../games/mainContainer';
 import NotFoundPageContainer from '../notfound/NotFoundPageContainer';
 import NavbarContainer from '../nav/NavbarContainer';
 import RecoveryContainer from '../recovery/RecoveryFormContainer';
@@ -49,7 +49,7 @@ class App extends React.Component<IAppProps, IAppState> {
                     ));
 
         return (
-            <div className="bg-primary-solid vh-min-100">
+            <div className="vh-min-100">
                 <NavbarContainer/>
                 <Switch>
                     {AuthorizedRoutesRedirect}

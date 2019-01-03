@@ -99,7 +99,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
     }
 
     return (
-        <Paper className="game-details bg-primary-solid position-relative p-0 my-3 br-0" elevation={24}>
+        <Paper className="game-details bg-primary-solid overflow-hidden position-relative p-0 br-0" elevation={24}>
             {props.game.screenshots &&
                 <Background
                     screenshots={props.game.screenshots}
@@ -133,7 +133,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                             />}
                     </div>
                 </div>
-                <div className="d-inline-block align-top pl-4 h-100" style={getCoverTitleContainerStyle()}>
+                <div className="d-inline-block align-top pl-4 h-100 w-md-100" style={getCoverTitleContainerStyle()}>
                     <Title
                         name={props.game.name}
                         rating={props.game.aggregated_rating}

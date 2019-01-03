@@ -11,7 +11,7 @@ interface IThumbnailGameProps {
 const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProps) => {
 
     return (
-        <div className="col-md-6 col-lg-4 px-4 px-md-2 my-2">
+        <div className="col-12 col-lg-6 col-xl-4 px-4 px-md-2 my-2">
             <Paper className="game bg-tertiary hover-tertiary-solid position-relative" onClick={props.goToGame}>
                 <img className="cover-img" src={props.game.cover ? props.game.cover.url : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                 <Textfit className="name color-secondary font-weight-bold text-nowrap text-right px-2" min={12} max={18}>
@@ -29,7 +29,7 @@ const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProp
                     <Textfit className="price color-secondary text-nowrap text-right px-2" max={14}>
                         {(props.game.price === 'Free' || props.game.price === 'Coming Soon')
                             ? <span className="plain-text">{props.game.price}</span>
-                            : <span>${props.game.price} USD{props.game.discount_percent && props.game.discount_percent !== 0 && <i className="discount-text ml-1">(-{props.game.discount_percent} % SALE)</i>}</span>}
+                            : <span>${props.game.price} USD{props.game.discount_percent && props.game.discount_percent !== 0 && <i className="discount-text ml-1">(-{props.game.discount_percent}%)</i>}</span>}
                         <a href={`${steamAppUrl}/${props.game.steamid}`}><i className="fab fa-steam-square fa-lg color-secondary ml-2"/></a>
                     </Textfit>}
             </Paper>

@@ -8,7 +8,7 @@ interface IHighlightedGameListContainerProps extends RouteComponentProps<any> {
 }
 
 interface IHighlightedGameListContainerState {
-    highlightedGames: GameResponse[];
+    games: GameResponse[];
     randColors: boolean[];
     hoveredGameId: number;
 }
@@ -26,7 +26,7 @@ class HighlightedGameListContainer extends React.Component<IHighlightedGameListC
         };
 
         this.state = {
-            highlightedGames: props.highlightedGames,
+            games: props.highlightedGames,
             randColors: [rollColor(), rollColor(), rollColor(), rollColor(), rollColor(), rollColor(), rollColor(), rollColor(), rollColor()],
             hoveredGameId: -1
         };
@@ -51,7 +51,7 @@ class HighlightedGameListContainer extends React.Component<IHighlightedGameListC
     render() {
         return (
             <HighlightedGameList
-                highlightedGames={this.state.highlightedGames}
+                games={this.state.games}
                 onClickGame={this.onClickGame}
                 randColors={this.state.randColors}
                 onHoverGame={this.onHoverGame}

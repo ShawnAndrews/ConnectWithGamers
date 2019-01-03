@@ -21,6 +21,7 @@ const Slideshow: React.SFC<ISlideshowProps> = (props: ISlideshowProps) => {
             />
         );
     }
+
     if (props.images) {
         props.images.map((x: any, index: number) => {
             slideshowImages.push(<img key={index} height={deviceWidth} width={deviceWidth} src={x} alt={`Game screenshot ${index}`}/>);
@@ -28,7 +29,7 @@ const Slideshow: React.SFC<ISlideshowProps> = (props: ISlideshowProps) => {
     }
     
     return (
-        <Carousel className="carousel" autoPlay={true} showStatus={false}>
+        <Carousel className="carousel" autoPlay={true} showStatus={false} showThumbs={props.images ? true : false}>
             {slideshowImages}
         </Carousel>
     );

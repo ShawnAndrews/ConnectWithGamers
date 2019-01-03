@@ -13,7 +13,7 @@ const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListP
 
     return (
         <div className="recently-released-table col-6 col-xs-12 col-sm-6 py-0">
-            <div className="recently-released-table-header position-relative" onClick={() => { props.goToRedirectCallback(`/games/search/recent`); }}>
+            <div className="recently-released-table-header position-relative" onClick={() => { props.goToRedirectCallback(`/games/recent`); }}>
                 <a className="mr-2">Recently Released</a>
                 <i className="fas fa-chevron-right"/>
             </div>

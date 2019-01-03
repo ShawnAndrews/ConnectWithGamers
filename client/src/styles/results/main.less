@@ -28,6 +28,7 @@
             width: calc(100% - @results-game-width);
             letter-spacing: 1px;
             height: 28px;
+            overflow: hidden;
 
             > div {
                 position: relative;
@@ -55,7 +56,7 @@
             position: absolute;
             top: 3rem;
             right: 0;
-            opacity: 0.8;
+            opacity: 0.6;
             width: calc(100% - @results-game-width);
             overflow: hidden;
 
@@ -80,6 +81,10 @@
             .plain-text {
                 font-style: italic;
                 opacity: 0.5;
+            }
+
+            svg {
+                color: rgba(white, 0.7);
             }
         }
     }

@@ -57,7 +57,7 @@
 }
 
 .cursor-pointer {
-    * {
+    &, * {
         cursor: pointer;
     }
 }
@@ -96,23 +96,23 @@
 
 .custom-account-form-group {
     > div {
-        border-bottom: 1px solid rgba(@primary-color, 0.42)!important;
+        border-bottom: 1px solid rgba(white, 0.42)!important;
 
         &::before {
-            border-bottom: 1px solid rgba(@primary-color, 0.42)!important;
+            border-bottom: 1px solid rgba(white, 0.42)!important;
         }
         &::after {
-            border-bottom: 2px solid @primary-color!important;
+            border-bottom: 2px solid white!important;
         }
         &:hover::before {
-            border-bottom: 2px solid rgba(@primary-color, 0.87)!important;
+            border-bottom: 2px solid rgba(white, 0.87)!important;
         }
         &:hover::after {
-            border-bottom: 2px solid @primary-color!important;
+            border-bottom: 2px solid white!important;
         }
     }
     * {
-        color: @primary-color!important;
+        color: rgba(white, 0.7)!important;
     }
 }
 
@@ -148,4 +148,14 @@
 .notfound {
     width: 200px;
     border-radius: 20px;
+}
+
+.stars {
+
+    .star {
+        
+        &.inactive {
+            display: none;
+        }
+    }
 }

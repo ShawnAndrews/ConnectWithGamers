@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Spinner from '../../spinner/main';
 import Avatar from '@material-ui/core/Avatar';
-import { Paper, TextField, Button, FormControlLabel, Switch } from '@material-ui/core';
+import { TextField, Button, FormControlLabel, Switch } from '@material-ui/core';
 
 interface ISettingsFormProps {
     isLoading: boolean;
@@ -54,18 +54,18 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
     }
 
     return (
-        <Paper className="settings bg-secondary-solid p-4 mx-auto mt-5 position-relative" elevation={24}>
+        <div className="settings p-4 mx-auto mt-5 position-relative">
             <div className="chip-container position-relative">
                 {props.image
-                    ? <Avatar className="chip mx-auto bg-primary-solid mt-3" src={props.image}/>
-                    : <Avatar className="chip mx-auto bg-primary-solid mt-3"/>}
-                {!props.image && <i className="fas fa-plus plus-icon color-secondary center "/>}
+                    ? <Avatar className="chip mx-auto bg-secondary-solid mt-3" src={props.image}/>
+                    : <Avatar className="chip mx-auto bg-secondary-solid mt-3"/>}
+                {!props.image && <i className="fas fa-plus plus-icon color-primary center "/>}
                 <input className="chip-input-hidden rounded-circle" type="file" onChange={props.handleImageChange}/>
             </div>
             {props.image &&
                 <div className="chip-discard-container position-relative" onClick={props.handleImageDelete}>
-                    <Avatar className="chip-discard mx-auto bg-primary-solid hover-primary mt-2"/>
-                    <i className="far fa-trash-alt color-secondary center no-events"/>
+                    <Avatar className="chip-discard mx-auto bg-secondary-solid mt-2"/>
+                    <i className="far fa-trash-alt color-primary center no-events"/>
                 </div>}
             <div className="username mx-auto mt-4">
                 <TextField
@@ -90,7 +90,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                 </div>
                 {!props.emailVerified &&
                     <div className="col-3 pr-0">
-                        <Button className="resend-btn color-secondary bg-primary-solid hover-primary-solid" onClick={props.resend} variant="contained" fullWidth={true}>
+                        <Button className="resend-btn color-primary" onClick={props.resend} variant="contained" fullWidth={true}>
                             Resend
                         </Button>
                     </div>}
@@ -150,7 +150,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                         />
                     </div>
                 </>}
-            <Button className="logout-btn color-secondary bg-primary-solid hover-primary-solid mt-3" onClick={props.logout} variant="contained" fullWidth={true}>
+            <Button className="logout-btn color-primary mt-3" onClick={props.logout} variant="contained" fullWidth={true}>
                 Logout
             </Button>
             {showSaveChanges && 
@@ -162,7 +162,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                 >
                     Save Changes
                 </Button>}  
-        </Paper>
+        </div>
     );
 };
 

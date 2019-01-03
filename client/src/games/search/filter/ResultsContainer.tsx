@@ -2,15 +2,8 @@ const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { GameResponse, MultiGameResponse, GamesType } from '../../../../client-server-common/common';
+import { GameResponse, MultiGameResponse, ResultsType } from '../../../../client-server-common/common';
 import Results from './Results';
-
-enum ResultsType {
-    SearchResults,
-    RecentResults,
-    UpcomingResults,
-    PopularResults
-}
 
 interface IResultsContainerProps extends RouteComponentProps<any> {
     
@@ -18,9 +11,8 @@ interface IResultsContainerProps extends RouteComponentProps<any> {
 
 interface IResultsContainerState {
     isLoading: boolean;
-    currentQueryPath: string;
+    searchQuery: string;
     resultsType: ResultsType;
-    title: string;
     games: GameResponse[];
     retry: boolean;
 }
@@ -31,55 +23,62 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
         super(props);
         this.loadSearchGames = this.loadSearchGames.bind(this);
         this.loadGames = this.loadGames.bind(this);
-        this.getTitle = this.getTitle.bind(this);
         this.onRetryClick = this.onRetryClick.bind(this);
-
-        const typeRaw: string = props.match.params.type;
-        const resultsTitle: string = this.getTitle(props);
-        let type: GamesType;
-        let resultsType: ResultsType;
-
-        if (typeRaw) {
-            if (typeRaw === 'recent') {
-                type = GamesType.Recent;
-                resultsType = ResultsType.RecentResults;
-            } else if (typeRaw === 'upcoming') {
-                type = GamesType.Upcoming;
-                resultsType = ResultsType.UpcomingResults;
-            } else if (typeRaw === 'popular') {
-                type = GamesType.Popular;
-                resultsType = ResultsType.PopularResults;
-            }
-        } else {
-            resultsType = ResultsType.SearchResults;
-        }
+        this.getResultsTypeByProps = this.getResultsTypeByProps.bind(this);
+        
+        const resultsType: ResultsType = this.getResultsTypeByProps(props);
 
         if (resultsType === ResultsType.SearchResults) {
             this.loadSearchGames(props.location.search);
         } else {
-            this.loadGames(type);
+            this.loadGames(resultsType);
         }
 
         this.state = {
             isLoading: true,
-            currentQueryPath: props.location.search,
+            searchQuery: props.location.search,
             resultsType: resultsType,
-            title: resultsTitle,
             games: undefined,
             retry: false
         };
     }
 
     componentWillReceiveProps(newProps: IResultsContainerProps): void {
-        const oldQueryPath: string = this.state.currentQueryPath;
-        const newQueryPath: string = newProps.location.search;
-        const newTitle: string = this.getTitle(newProps);
+        const newResultsType: ResultsType = this.getResultsTypeByProps(newProps);
+        const newSearchQuery: string = newProps.location.search;
 
-        if (oldQueryPath !== newQueryPath) {
-            this.setState({ isLoading: true, currentQueryPath: newQueryPath, title: newTitle }, () => {
-                this.loadSearchGames(newQueryPath);
+        if (this.state.resultsType !== newResultsType || this.state.searchQuery != newSearchQuery) {
+            if (newResultsType === ResultsType.SearchResults) {
+                this.loadSearchGames(newSearchQuery);
+            } else {
+                this.loadGames(newResultsType);
+            }
+
+            this.setState({
+                isLoading: true,
+                searchQuery: newSearchQuery,
+                resultsType: newResultsType
             });
         }
+    }
+
+    getResultsTypeByProps(someProps: IResultsContainerProps): ResultsType {
+        const typeRaw: string = someProps.match.params.type;
+        let resultsType: ResultsType;
+        
+        if (typeRaw) {
+            if (typeRaw === 'recent') {
+                resultsType = ResultsType.RecentResults;
+            } else if (typeRaw === 'upcoming') {
+                resultsType = ResultsType.UpcomingResults;
+            } else if (typeRaw === 'popular') {
+                resultsType = ResultsType.PopularResults;
+            }
+        } else {
+            resultsType = ResultsType.SearchResults;
+        }
+
+        return resultsType;
     }
 
     loadSearchGames(queryString: string): void {
@@ -98,7 +97,7 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
             });
     }
 
-    loadGames(type: GamesType): void {
+    loadGames(type: ResultsType): void {
 
         IGDBService.httpGetGamesResults(type)
             .then( (response: MultiGameResponse) => {
@@ -111,25 +110,6 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
             });
     }
 
-    getTitle(props: IResultsContainerProps): string {
-        const typeRaw: string = props.match.params.type;
-        let title: string;
-
-        if (typeRaw) {
-            if (typeRaw === 'recent') {
-                title = 'Recently released';
-            } else if (typeRaw === 'upcoming') {
-                title = 'Upcoming games';
-            } else if (typeRaw === 'popular') {
-                title = 'Popular games';
-            }
-        } else {
-            title = 'Search results';
-        }
-
-        return title;
-    }
-
     onRetryClick(): void {
         this.setState({ isLoading: true, retry: false }, () => {
             this.loadSearchGames(this.props.location.search);
@@ -140,10 +120,10 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
         return (
             <Results
                 isLoading={this.state.isLoading}
-                title={this.state.title}
                 games={this.state.games}
                 retry={this.state.retry}
                 onRetryClick={this.onRetryClick}
+                resultsType={this.state.resultsType}
             />
         );
     }

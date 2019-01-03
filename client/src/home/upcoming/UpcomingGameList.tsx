@@ -13,7 +13,7 @@ const UpcomingGameList: React.SFC<IUpcomingGameListProps> = (props: IUpcomingGam
 
     return (
         <div className="upcoming-table col-6 col-xs-12 col-sm-6 py-0">
-            <div className="upcoming-table-header position-relative" onClick={() => { props.goToRedirectCallback(`/games/search/upcoming`); }}>
+            <div className="upcoming-table-header position-relative" onClick={() => { props.goToRedirectCallback(`/games/upcoming`); }}>
                 <a className="mr-2">Upcoming</a>
                 <i className="fas fa-chevron-right"/>
             </div>

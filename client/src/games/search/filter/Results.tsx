@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse } from '../../../../client-server-common/common';
+import { GameResponse, ResultsType } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
 import ThumbnailGameContainer from '../../game/ThumbnailGameContainer';
 import TopnavContainer from './topnav/TopnavContainer';
@@ -7,10 +7,10 @@ import { Paper, Button } from '@material-ui/core';
 
 interface IResultsProps {
     isLoading: boolean;
-    title: string;
     games: GameResponse[];
     retry: boolean;
     onRetryClick: () => void;
+    resultsType: ResultsType;
 }
 
 const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
@@ -34,12 +34,24 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
         );
     }
     
+    let title: string;
+
+    if (props.resultsType === ResultsType.RecentResults) {
+        title = 'Recently released';
+    } else if (props.resultsType === ResultsType.UpcomingResults) {
+        title = 'Upcoming games';
+    } else if (props.resultsType === ResultsType.PopularResults) {
+        title = 'Popular games';
+    } else {
+        title = 'Search results';
+    }
+
     return (
-        <div className="results container">
+        <Paper className="results bg-primary-solid overflow-auto" elevation={24}>
             <TopnavContainer
-                title={props.title}
+                title={title}
             />
-            <div className="row">
+            <div className="row w-100 m-0">
                 {props.games && 
                     props.games.map((game: GameResponse) => {
                         return (
@@ -50,7 +62,7 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
                         );
                     })}
             </div>
-        </div>
+        </Paper>
     );
 
 }; 

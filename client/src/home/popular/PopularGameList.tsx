@@ -20,7 +20,7 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
     return (
         <div className="col-md-12 col-lg-9 px-md-0 pl-lg-3">
             <div className="popular-table">
-                <div className="popular-table-header mb-3 pt-2" onClick={() => { props.goToRedirectCallback(`/games/search/popular`); }}>
+                <div className="popular-table-header mb-3 pt-2" onClick={() => { props.goToRedirectCallback(`/games/popular`); }}>
                     <a className="popular-table-header-link mr-2">Most Popular</a>
                     <i className="fas fa-chevron-right"/>
                 </div>
@@ -38,11 +38,11 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                                             {x.name}
                                         </div>
                                         <div className="row">
-                                            <div className="col-8 genre pr-1">
+                                            <div className="col-8 genre pr-0">
                                                 {x.genres && x.genres[0].name}
                                             </div>
                                             {x.aggregated_rating &&
-                                                <div className="col-4 rating p-0">
+                                                <div className="col-4 rating pl-0">
                                                     {Math.floor(x.aggregated_rating)}%
                                                 </div>}
                                         </div>

@@ -19,12 +19,12 @@ const DiscordPage: React.SFC<IDiscordPageProps> = (props: IDiscordPageProps) => 
     
     if (!props.link) {
         return (
-            <Paper className="discord bg-secondary-solid text-center color-primary p-4 mx-auto mt-5 position-relative" elevation={24}>To proceed, go to Account → Links and set your Discord invitation link.</Paper>
+            <Paper className="discord bg-secondary-solid text-center color-primary p-4 mx-auto my-5 position-relative" elevation={24}>To proceed, go to Account → Links and set your Discord invitation link.</Paper>
         );
     }
 
     return (
-        <Paper className="discord bg-secondary-solid p-4 mx-auto mt-5 position-relative" elevation={24}>
+        <Paper className="discord bg-secondary-solid p-4 mx-auto my-5 position-relative" elevation={24}>
             <div className="text-center color-primary">
                 Send this invitation link to friends to join your server!
             </div>

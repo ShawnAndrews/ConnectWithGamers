@@ -15,7 +15,7 @@ interface IGameContainerState {
     gameid: number;
 }
 
-class GameContainer extends React.Component<IGameContainerProps, IGameContainerState> {
+class GameContainer extends React.PureComponent<IGameContainerProps, IGameContainerState> {
 
     constructor(props: IGameContainerProps) {
         super(props);

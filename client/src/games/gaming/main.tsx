@@ -6,11 +6,12 @@ import SteamListContainer from '../gaming/steam/SteamListContainer';
 import NotFoundPageContainer from '../../notfound/NotFoundPageContainer';
 import TopnavContainer from './topnav/TopnavContainer';
 import DiscordPageContainer from './discord/DiscordPageContainer';
+import { Paper } from '@material-ui/core';
 
 const Menu: React.SFC<any> = () => {
 
     return (
-        <div className="gaming">
+        <Paper className="gaming bg-primary-solid p-2 overflow-auto" elevation={24}>
             <TopnavContainer/>
             <div className="container">
                 <Switch>
@@ -21,7 +22,7 @@ const Menu: React.SFC<any> = () => {
                     <Route component={NotFoundPageContainer}/>
                 </Switch>
             </div>
-        </div>
+        </Paper>
     );
 
 };
