@@ -331,7 +331,7 @@ export function getAllUserInfo(dbUsers: AccountsInfo): Promise<AccountInfo[]> {
                 const now: any = new Date();
                 const lastActive: Date = getLastActiveByIdSync(userLog, element.accountid);
                 const lastActiveMinsAgo: number = lastActive ? Math.abs(Math.round(((new Date(lastActive).getTime() - now.getTime()) / 1000 / 60))) : -1;
-                const AccountInfo: AccountInfo = { username: element.username, steam_url: element.steam_url, discord_url: element.discord_url, twitch_url: element.twitch_url, image: element.image, last_active: lastActiveMinsAgo };
+                const AccountInfo: AccountInfo = { username: element.username, steam: element.steam, discord: element.discord, twitch: element.twitch, image: element.image, last_active: lastActiveMinsAgo };
                 AccountInfos.push(AccountInfo);
             });
             return resolve(AccountInfos);

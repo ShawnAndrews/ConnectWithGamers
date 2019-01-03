@@ -117,7 +117,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                         steamgameid: undefined,
                         price: undefined,
                         discount_percent: undefined,
-                        steam_url: undefined
+                        steam: undefined
                     };
 
                     if (x.external_games) {
@@ -133,7 +133,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                             priceResponse.steamgameid = steamId;
                             priceResponse.price = steamAPIGetPriceInfoResponse[foundIndex].price;
                             priceResponse.discount_percent = steamAPIGetPriceInfoResponse[foundIndex].discount_percent;
-                            priceResponse.steam_url = steamAPIGetPriceInfoResponse[foundIndex].steam_url;
+                            priceResponse.steam = steamAPIGetPriceInfoResponse[foundIndex].steam;
                         }
                     }
 

@@ -95,9 +95,9 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
                 const username = response.data.username;
                 const email = response.data.email;
                 const password = '';
-                const discord = response.data.discord_url;
-                const steam = response.data.steam_url;
-                const twitch = response.data.twitch_url;
+                const discord = response.data.discord;
+                const steam = response.data.steam;
+                const twitch = response.data.twitch;
                 const image = response.data.image;
                 const emailVerified = response.data.emailVerified;
                 this.setState({ 

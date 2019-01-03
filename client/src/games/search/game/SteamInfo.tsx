@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from '@material-ui/core';
 
 interface ISteamInfoProps {
-    steam_url: string;
+    steam: string;
     price: string;
     discount_percent: number;
     handleSteamClick: (url: string) => void;
@@ -14,11 +14,11 @@ const SteamInfo: React.SFC<ISteamInfoProps> = (props: ISteamInfoProps) => {
 
     return (
         <div className="price-container w-100">
-            {props.steam_url && 
+            {props.steam && 
                 <Button
                     className="steam-btn d-inline-block h-100" 
                     variant="raised"
-                    onClick={() => { props.handleSteamClick(props.steam_url); }}
+                    onClick={() => { props.handleSteamClick(props.steam); }}
                 >
                     Buy now
                 </Button>}

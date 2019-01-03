@@ -40,9 +40,9 @@ class SettingsModel extends DatabaseBase {
                     const accountInfo: AccountInfo = {
                         username: username,
                         email: email,
-                        discord_url: discord,
-                        steam_url: steam,
-                        twitch_url: twitch,
+                        discord: discord,
+                        steam: steam,
+                        twitch: twitch,
                         image: image,
                         emailVerified: emailVerified};
                     return resolve(accountInfo);

@@ -204,9 +204,9 @@ class AccountModel extends DatabaseBase {
                             const account: AccountInfo = {
                                 accountid: element.accountid,
                                 username: element.username,
-                                discord_url: element.discord,
-                                steam_url: element.steam,
-                                twitch_url: element.twitch,
+                                discord: element.discord,
+                                steam: element.steam,
+                                twitch: element.twitch,
                                 image: element.image
                             };
                             accounts.push(account);
@@ -244,9 +244,9 @@ class AccountModel extends DatabaseBase {
                             const account: AccountInfo = {
                                 accountid: element.accountid,
                                 username: element.username,
-                                discord_url: element.discord,
-                                steam_url: element.steam,
-                                twitch_url: element.twitch,
+                                discord: element.discord,
+                                steam: element.steam,
+                                twitch: element.twitch,
                                 image: element.image
                             };
                             accounts.push(account);
@@ -281,9 +281,9 @@ class AccountModel extends DatabaseBase {
                         const account: AccountInfo = {
                             accountid: dbResponse.data[0].accountid,
                             username: dbResponse.data[0].username,
-                            discord_url: dbResponse.data[0].discord,
-                            steam_url: dbResponse.data[0].steam,
-                            twitch_url: dbResponse.data[0].twitch,
+                            discord: dbResponse.data[0].discord,
+                            steam: dbResponse.data[0].steam,
+                            twitch: dbResponse.data[0].twitch,
                             image: dbResponse.data[0].image
                         };
                         const dbUser: AccountInfo = account;

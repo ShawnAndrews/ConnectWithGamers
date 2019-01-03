@@ -118,9 +118,9 @@ router.post(routes.getRoute("public/info"), (req: Request, res: Response) => {
         publicAccountInfoResponse.data = {
             image: response.accounts[0].image,
             username: response.accounts[0].username,
-            discord_url: response.accounts[0].discord_url,
-            steam_url: response.accounts[0].steam_url,
-            twitch_url: response.accounts[0].twitch_url
+            discord: response.accounts[0].discord,
+            steam: response.accounts[0].steam,
+            twitch: response.accounts[0].twitch
         };
         return res
         .send(publicAccountInfoResponse);
@@ -146,9 +146,9 @@ router.post(routes.getRoute("settings"), (req: Request, res: Response) => {
         const accountInfo: AccountInfo = {
             username: response.username,
             email: response.email,
-            steam_url: response.steam_url,
-            discord_url: response.discord_url,
-            twitch_url: response.twitch_url,
+            steam: response.steam,
+            discord: response.discord,
+            twitch: response.twitch,
             image: response.image,
             emailVerified: response.emailVerified
         };

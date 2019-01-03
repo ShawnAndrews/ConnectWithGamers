@@ -211,12 +211,12 @@ export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGe
                 steamgameid: steamgameid,
                 price: undefined,
                 discount_percent: undefined,
-                steam_url: `${config.steam.dbURL}/${steamgameid}/?cc=us`
+                steam: `${config.steam.dbURL}/${steamgameid}/?cc=us`
             };
 
             axios({
                 method: "get",
-                url: steamPriceInfo.steam_url,
+                url: steamPriceInfo.steam,
             })
             .then((response: AxiosResponse) => {
                 const webpage: string = response.data;

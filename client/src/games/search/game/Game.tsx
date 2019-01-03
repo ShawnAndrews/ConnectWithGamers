@@ -115,7 +115,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     <div className="game-info my-2">
                         {props.game.steamid && 
                             <SteamInfo
-                                steam_url={`${steamAppUrl}/${props.game.steamid}`}
+                                steam={`${steamAppUrl}/${props.game.steamid}`}
                                 price={props.game.price}
                                 discount_percent={props.game.discount_percent}
                                 handleSteamClick={props.handleSteamClick}

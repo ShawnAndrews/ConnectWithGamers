@@ -222,9 +222,9 @@ export interface AccountInfo {
     last_active?: number;
     username: string;
     email?: string;
-    steam_url: string;
-    twitch_url: string;
-    discord_url: string;
+    steam: string;
+    twitch: string;
+    discord: string;
     image: string;
     emailVerified?: boolean;
 }
@@ -480,7 +480,7 @@ export interface SteamAPIGetPriceInfoResponse {
     steamgameid: number;
     price: string;
     discount_percent: number;
-    steam_url: string;
+    steam: string;
 }
 
 /**
