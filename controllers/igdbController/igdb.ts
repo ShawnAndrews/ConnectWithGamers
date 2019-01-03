@@ -3,8 +3,8 @@ const router = express.Router();
 import { Request, Response } from "express";
 import {
     GameResponse,
-    SingleNewsResponse,
-    GenericErrorResponse
+    NewsArticle,
+    GenericModelResponse
 } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames } from "./cache/upcomingGames/main";
@@ -29,7 +29,7 @@ routes.addRoute("platformgames", "/games/platform/:id");
 routes.addRoute("game", "/game/:id");
 routes.addRoute("discountedgames", "/games/discounted");
 
-type CachedRouteTypes = GameResponse[] | GameResponse[] | SingleNewsResponse[] | GameResponse;
+type CachedRouteTypes = GameResponse[] | GameResponse[] | NewsArticle[] | GameResponse;
 
 /* Generic route function for data cached in Redis */
 export function GenericCachedRoute<T extends CachedRouteTypes> (keyExists: () => Promise<boolean>, getCachedData: () => Promise<T>, cacheData: () => Promise<T>): Promise<T> {
@@ -95,7 +95,7 @@ export function GenericCachedWithDataRoute<T extends CachedRouteTypes, V> (keyEx
 
 /* upcoming games */
 router.post(routes.getRoute("upcominggames"), (req: Request, res: Response) => {
-    const genericResponse: GenericErrorResponse = { error: undefined };
+    const genericResponse: GenericModelResponse = { error: undefined };
     GenericCachedRoute<GameResponse[]>(upcomingGamesKeyExists, getCachedUpcomingGames, cacheUpcomingGames)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
@@ -109,7 +109,7 @@ router.post(routes.getRoute("upcominggames"), (req: Request, res: Response) => {
 
 /* highlighted games */
 router.post(routes.getRoute("highlightedgames"), (req: Request, res: Response) => {
-    const genericResponse: GenericErrorResponse = { error: undefined };
+    const genericResponse: GenericModelResponse = { error: undefined };
     GenericCachedRoute<GameResponse[]>(highlightedGamesKeyExists, getCachedHighlightedGames, cacheHighlightedGames)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
@@ -123,9 +123,9 @@ router.post(routes.getRoute("highlightedgames"), (req: Request, res: Response) =
 
 /* news articles */
 router.post(routes.getRoute("news"), (req: Request, res: Response) => {
-    const genericResponse: GenericErrorResponse = { error: undefined };
-    GenericCachedRoute<SingleNewsResponse[]>(newsKeyExists, getCachedNews, cacheNews)
-        .then((data: SingleNewsResponse[]) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    GenericCachedRoute<NewsArticle[]>(newsKeyExists, getCachedNews, cacheNews)
+        .then((data: NewsArticle[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
         })
@@ -137,7 +137,7 @@ router.post(routes.getRoute("news"), (req: Request, res: Response) => {
 
 /* popular games */
 router.post(routes.getRoute("populargames"), (req: Request, res: Response) => {
-    const genericResponse: GenericErrorResponse = { error: undefined };
+    const genericResponse: GenericModelResponse = { error: undefined };
     GenericCachedRoute<GameResponse[]>(popularGamesKeyExists, getCachedPopularGames, cachePopularGames)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
@@ -151,7 +151,7 @@ router.post(routes.getRoute("populargames"), (req: Request, res: Response) => {
 
 /* recent games */
 router.post(routes.getRoute("recentgames"), (req: Request, res: Response) => {
-    const genericResponse: GenericErrorResponse = { error: undefined };
+    const genericResponse: GenericModelResponse = { error: undefined };
     GenericCachedRoute<GameResponse[]>(recentGamesKeyExists, getCachedRecentGames, cacheRecentGames)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
@@ -165,7 +165,7 @@ router.post(routes.getRoute("recentgames"), (req: Request, res: Response) => {
 
 /* results games */
 router.post(routes.getRoute("resultsgames"), (req: Request, res: Response) => {
-    const genericResponse: GenericErrorResponse = { error: undefined };
+    const genericResponse: GenericModelResponse = { error: undefined };
     GenericCachedWithDataRoute<GameResponse[], string>(resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames, JSON.stringify(req.query))
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
@@ -179,7 +179,7 @@ router.post(routes.getRoute("resultsgames"), (req: Request, res: Response) => {
 
 /* individual games */
 router.post(routes.getRoute("game"), (req: Request, res: Response) => {
-    const genericResponse: GenericErrorResponse = { error: undefined };
+    const genericResponse: GenericModelResponse = { error: undefined };
     GenericCachedWithDataRoute<GameResponse, number>(gameKeyExists, getCachedGame, cacheGame, req.params.id)
         .then((data: GameResponse) => {
             genericResponse.data = data;
@@ -193,7 +193,7 @@ router.post(routes.getRoute("game"), (req: Request, res: Response) => {
 
 /* recent games */
 router.post(routes.getRoute("discountedgames"), (req: Request, res: Response) => {
-    const genericResponse: GenericErrorResponse = { error: undefined };
+    const genericResponse: GenericModelResponse = { error: undefined };
     GenericCachedRoute<GameResponse[]>(discountedGamesKeyExists, getCachedDiscountedGames, cacheDiscountedGames)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;

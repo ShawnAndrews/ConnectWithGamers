@@ -2,7 +2,7 @@ const express = require("express");
 const RateLimit = require("express-rate-limit");
 import { Request, Response, Router } from "express";
 const router: Router = express.Router();
-import { AUTH_TOKEN_NAME, validateCredentials, DatalessResponse, DbRecoveryEmailResponse, EmailRecoveryVerifyResponse, RecoverPasswordResponse, DbVerifyEmailResponse, EmailRecoveryResponse, EmailVerifyResponse, AccountSettingsResponse, AccountImageResponse, DbAccountSettingsResponse, DbAccountImageResponse, DbAuthenticateResponse, DbTokenResponse, DbAuthorizeResponse, TwitchIdResponse, DbTwitchIdResponse, SteamIdResponse, DbSteamIdResponse, DbSteamFriendsResponse, SteamFriendsResponse, DiscordLinkResponse, DbDiscordLinkResponse, TwitchFollowersResponse, DbTwitchFollowsResponse, DbAccountRecoveryResponse, DbAccountsInfoResponse, PublicAccountInfoResponse } from "../../client/client-server-common/common";
+import { AUTH_TOKEN_NAME, validateCredentials, RecoveryEmailInfo, EmailRecoveryVerifyResponse, DatalessResponse, EmailVerifiedFlagResponse, AccountImageResponse, AccountInfo, AuthenticationInfo, TokenInfo, TwitchIdResponse, SteamIdResponse, SteamFriendsResponse, DiscordLinkResponse, TwitchFollowersResponse, AccountInfoResponse, AccountsInfo, SteamFriend, TwitchUser } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { accountModel } from "../../models/db/account/main";
 import { securityModel } from "../../models/db/security/main";
@@ -84,11 +84,11 @@ router.post(routes.getRoute("login"), (req: Request, res: Response) => {
 
     // authenticate
     securityModel.authenticate(req.body.username, req.body.password, req.body.remember)
-        .then((response: DbAuthenticateResponse) => {
+        .then((response: AuthenticationInfo) => {
             // authentication success
             return securityModel.token(response.username, response.remember);
         })
-        .then((response: DbTokenResponse) => {
+        .then((response: TokenInfo) => {
             // token success
             const newToken: string = response.token;
             const newTokenExpiration: Date = response.tokenExpiration;
@@ -107,14 +107,14 @@ router.post(routes.getRoute("login"), (req: Request, res: Response) => {
 
 router.post(routes.getRoute("public/info"), (req: Request, res: Response) => {
 
-    const publicAccountInfoResponse: PublicAccountInfoResponse = { error: undefined };
+    const publicAccountInfoResponse: AccountInfoResponse = { error: undefined };
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return accountModel.getAccountsInfoById([response.accountid]);
+    .then((accountId: number) => {
+        return accountModel.getAccountsInfoById([accountId]);
     })
-    .then((response: DbAccountsInfoResponse) => {
+    .then((response: AccountsInfo) => {
         publicAccountInfoResponse.data = {
             image: response.accounts[0].image,
             username: response.accounts[0].username,
@@ -135,30 +135,31 @@ router.post(routes.getRoute("public/info"), (req: Request, res: Response) => {
 
 router.post(routes.getRoute("settings"), (req: Request, res: Response) => {
 
-    const accountSettingsResponse: AccountSettingsResponse = { error: undefined };
+    const accountInfoResponse: AccountInfoResponse = { error: undefined };
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return settingsModel.getAccountSettings(response.accountid);
+    .then((accountId: number) => {
+        return settingsModel.getAccountInfo(accountId);
     })
-    .then((response: DbAccountSettingsResponse) => {
-        accountSettingsResponse.data = {
+    .then((response: AccountInfo) => {
+        const accountInfo: AccountInfo = {
             username: response.username,
             email: response.email,
-            steam: response.steam,
-            discord: response.discord,
-            twitch: response.twitch,
+            steam_url: response.steam_url,
+            discord_url: response.discord_url,
+            twitch_url: response.twitch_url,
             image: response.image,
             emailVerified: response.emailVerified
         };
+        accountInfoResponse.data = accountInfo;
         return res
-        .send(accountSettingsResponse);
+        .send(accountInfoResponse);
     })
     .catch((error: string) => {
-        accountSettingsResponse.error = error;
+        accountInfoResponse.error = error;
         return res
-        .send(accountSettingsResponse);
+        .send(accountInfoResponse);
     });
 
 });
@@ -169,31 +170,31 @@ router.post(routes.getRoute("settings/change"), (req: Request, res: Response) =>
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
+    .then((accountId: number) => {
         const changePromises: Promise<null>[] = [];
 
         if (newSettings.username) {
-            changePromises.push(settingsModel.changeAccountUsername(response.accountid, newSettings.username));
+            changePromises.push(settingsModel.changeAccountUsername(accountId, newSettings.username));
         }
 
         if (newSettings.email) {
-            changePromises.push(settingsModel.changeAccountEmail(response.accountid, newSettings.email));
+            changePromises.push(settingsModel.changeAccountEmail(accountId, newSettings.email));
         }
 
         if (newSettings.password) {
-            changePromises.push(settingsModel.changeAccountPassword(response.accountid, newSettings.password));
+            changePromises.push(settingsModel.changeAccountPassword(accountId, newSettings.password));
         }
 
         if (newSettings.steam || newSettings.steam === "") {
-            changePromises.push(settingsModel.changeAccountSteam(response.accountid, newSettings.steam));
+            changePromises.push(settingsModel.changeAccountSteam(accountId, newSettings.steam));
         }
 
         if (newSettings.discord || newSettings.discord === "") {
-            changePromises.push(settingsModel.changeAccountDiscord(response.accountid, newSettings.discord));
+            changePromises.push(settingsModel.changeAccountDiscord(accountId, newSettings.discord));
         }
 
         if (newSettings.twitch || newSettings.twitch === "") {
-            changePromises.push(settingsModel.changeAccountTwitch(response.accountid, newSettings.twitch));
+            changePromises.push(settingsModel.changeAccountTwitch(accountId, newSettings.twitch));
         }
 
         Promise.all(changePromises)
@@ -221,11 +222,11 @@ router.post(routes.getRoute("settings/twitchId"), (req: Request, res: Response) 
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return accountModel.getTwitchId(response.accountid);
+    .then((accountId: number) => {
+        return accountModel.getTwitchId(accountId);
     })
-    .then((response: DbTwitchIdResponse) => {
-        twitchIdResponse.data = { twitchId: response.twitchId };
+    .then((response: number) => {
+        twitchIdResponse.data = response;
         return res
         .send(twitchIdResponse);
     })
@@ -242,11 +243,11 @@ router.post(routes.getRoute("settings/twitchFollowers"), (req: Request, res: Res
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return accountModel.getTwitchFollows(response.accountid);
+    .then((accountId: number) => {
+        return accountModel.getTwitchFollows(accountId);
     })
-    .then((response: DbTwitchFollowsResponse) => {
-        twitchFollowersResponse.data = response.follows;
+    .then((follows: TwitchUser[]) => {
+        twitchFollowersResponse.data = follows;
         return res
         .send(twitchFollowersResponse);
     })
@@ -263,11 +264,11 @@ router.post(routes.getRoute("settings/steamId"), (req: Request, res: Response) =
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return accountModel.getSteamId(response.accountid);
+    .then((accountId: number) => {
+        return accountModel.getSteamId(accountId);
     })
-    .then((response: DbSteamIdResponse) => {
-        steamIdResponse.data = { steamId: response.steamId};
+    .then((steamId: number) => {
+        steamIdResponse.data = steamId;
         return res
         .send(steamIdResponse);
     })
@@ -284,11 +285,11 @@ router.post(routes.getRoute("settings/discordLink"), (req: Request, res: Respons
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return accountModel.getDiscordLink(response.accountid);
+    .then((accountId: number) => {
+        return accountModel.getDiscordLink(accountId);
     })
-    .then((response: DbDiscordLinkResponse) => {
-        discordLinkResponse.data = { link: response.discordLink };
+    .then((link: string) => {
+        discordLinkResponse.data = link;
         return res
         .send(discordLinkResponse);
     })
@@ -305,15 +306,15 @@ router.post(routes.getRoute("settings/steamFriends"), (req: Request, res: Respon
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return accountModel.getSteamId(response.accountid);
+    .then((accountId: number) => {
+        return accountModel.getSteamId(accountId);
     })
-    .then((response: DbSteamIdResponse) => {
-        const steamId: number = response.steamId;
+    .then((response: number) => {
+        const steamId: number = response;
         return accountModel.getSteamFriends(steamId);
     })
-    .then((response: DbSteamFriendsResponse) => {
-        steamFriendsResponse.data = response.friends;
+    .then((friends: SteamFriend[]) => {
+        steamFriendsResponse.data = friends;
         return res
         .send(steamFriendsResponse);
     })
@@ -331,11 +332,11 @@ router.post(routes.getRoute("settings/image/change"), (req: Request, res: Respon
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return settingsModel.changeAccountImage(response.accountid, imageBase64);
+    .then((accountId: number) => {
+        return settingsModel.changeAccountImage(accountId, imageBase64);
     })
-    .then((response: DbAccountImageResponse) => {
-        accountImageResponse.link = response.link;
+    .then((link: string) => {
+        accountImageResponse.link = link;
         return res
         .send(accountImageResponse);
     })
@@ -352,8 +353,8 @@ router.post(routes.getRoute("email/resend"), (req: Request, res: Response) => {
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return accountModel.resendAccountEmail(response.accountid);
+    .then((accountId: number) => {
+        return accountModel.resendAccountEmail(accountId);
     })
     .then(() => {
         return res
@@ -368,16 +369,16 @@ router.post(routes.getRoute("email/resend"), (req: Request, res: Response) => {
 });
 
 router.post(routes.getRoute("email/verify"), (req: Request, res: Response) => {
-    const verifyEmailResponse: EmailVerifyResponse = { error: undefined };
+    const verifyEmailResponse: EmailVerifiedFlagResponse = { error: undefined };
     const verificationCode: string = req.body.verificationCode;
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return accountModel.verifyAccountEmail(response.accountid, verificationCode);
+    .then((accountId: number) => {
+        return accountModel.verifyAccountEmail(accountId, verificationCode);
     })
-    .then((response: DbVerifyEmailResponse) => {
-        verifyEmailResponse.data = { verificationSuccessful: response.verificationSuccessful };
+    .then((verificationSuccessful: boolean) => {
+        verifyEmailResponse.data = verificationSuccessful;
         return res
         .send(verifyEmailResponse);
     })
@@ -390,24 +391,24 @@ router.post(routes.getRoute("email/verify"), (req: Request, res: Response) => {
 });
 
 router.post(routes.getRoute("email/recovery"), (req: Request, res: Response) => {
-    const emailRecoveryResponse: EmailRecoveryResponse = { error: undefined };
+    const DatalessResponse: DatalessResponse = { error: undefined };
     const username: string = req.body.username;
 
     // check if username exists, send recovery
     accountModel.getAccountRecoveryInfoByUsername(username)
-    .then((response: DbRecoveryEmailResponse) => {
+    .then((response: RecoveryEmailInfo) => {
         const email: string = response.email;
         const uid: string = response.uid;
         return sendRecoveryEmail(email, uid);
     })
     .then(() => {
         return res
-        .send(emailRecoveryResponse);
+        .send(DatalessResponse);
     })
     .catch((error: string) => {
-        emailRecoveryResponse.error = error;
+        DatalessResponse.error = error;
         return res
-        .send(emailRecoveryResponse);
+        .send(DatalessResponse);
     });
 
 });
@@ -436,11 +437,10 @@ router.post(routes.getRoute("settings/image/delete"), (req: Request, res: Respon
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-    .then((response: DbAuthorizeResponse) => {
-        return settingsModel.deleteAccountImage(response.accountid);
+    .then((accountId: number) => {
+        return settingsModel.deleteAccountImage(accountId);
     })
-    .then((response: DbAccountImageResponse) => {
-        accountImageResponse.link = response.link;
+    .then(() => {
         return res
         .send(accountImageResponse);
     })
@@ -453,22 +453,22 @@ router.post(routes.getRoute("settings/image/delete"), (req: Request, res: Respon
 });
 
 router.post(routes.getRoute("recover/password"), (req: Request, res: Response) => {
-    const recoverPasswordResponse: RecoverPasswordResponse = { error: undefined };
+    const DatalessResponse: DatalessResponse = { error: undefined };
     const password: string = req.body.password;
     const uid: string = req.body.uid;
 
     settingsModel.recoverAccountPassword(password, uid)
-    .then((response: DbAccountRecoveryResponse) => {
-        return settingsModel.resetAccountRecoveryId(response.accountid);
+    .then((accountid: number) => {
+        return settingsModel.resetAccountRecoveryId(accountid);
     })
     .then(() => {
         return res
-        .send(recoverPasswordResponse);
+        .send(DatalessResponse);
     })
     .catch((error: string) => {
-        recoverPasswordResponse.error = error;
+        DatalessResponse.error = error;
         return res
-        .send(recoverPasswordResponse);
+        .send(DatalessResponse);
     });
 
 });
@@ -479,9 +479,9 @@ router.post(routes.getRoute("delete"), (req: Request, res: Response) => {
 
     // authorize
     securityModel.authorize(req.headers.cookie)
-        .then((response: DbAuthorizeResponse) => {
+        .then((accountId: number) => {
             // delete account
-            return accountModel.deleteAccountById(response.accountid);
+            return accountModel.deleteAccountById(accountId);
         })
         .then(() => {
             return res

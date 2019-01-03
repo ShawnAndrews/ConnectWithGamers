@@ -3,7 +3,7 @@ import * as React from 'react';
 import VerifyForm from "./verifyForm";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as AccountService from '../../service/account/main';
-import { EmailVerifyResponse } from '../../../../client/client-server-common/common';
+import { EmailVerifiedFlagResponse } from '../../../../client/client-server-common/common';
 
 interface IVerifyFormContainerProps extends RouteComponentProps<any> { }
 
@@ -29,8 +29,8 @@ class VerifyFormContainer extends React.Component<IVerifyFormContainerProps, IVe
     loadSettings(): void {
         const verificationCode: string = this.props.match.params.id;
         AccountService.httpVerifyEmail(verificationCode)
-            .then( (response: EmailVerifyResponse) => {
-                const verificationSuccessful: boolean = response.data.verificationSuccessful;
+            .then( (response: EmailVerifiedFlagResponse) => {
+                const verificationSuccessful: boolean = response.data;
                 this.setState({ 
                     isLoading: false, 
                     verificationSuccessful: verificationSuccessful});

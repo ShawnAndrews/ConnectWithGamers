@@ -4,7 +4,7 @@ import EmotesCreate from "./EmotesCreate";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as AccountService from '../../../../service/account/main';
 import * as ChatroomService from '../../../../service/chatroom/main';
-import { GenericResponseModel, ChatroomEmotesResponse, AUTH_TOKEN_NAME } from '../../../../../client-server-common/common';
+import { ChatroomEmotesResponse, AUTH_TOKEN_NAME, AccountInfoResponse } from '../../../../../client-server-common/common';
 
 interface IEmotesCreateContainerProps extends RouteComponentProps<any> { }
 
@@ -60,7 +60,7 @@ class EmotesCreateContainer extends React.Component<IEmotesCreateContainerProps,
     loadUsername(): Promise <void> {
         return new Promise( (resolve, reject) => {
             AccountService.httpAccountSettings()
-            .then( (response: GenericResponseModel) => {
+            .then( (response: AccountInfoResponse) => {
                 const username = response.data.username;
                 const email = response.data.email;
                 this.setState({ emotePrefix: username });

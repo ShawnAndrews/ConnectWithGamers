@@ -3,7 +3,7 @@ const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 const expect: Chai.ExpectStatic = chai.expect;
 import { chatroomModel } from "./main";
-import { GenericResponseModel, ChatHistoryResponse, DbChatroomUploadImageResponse, DbChatroomEmotesResponse } from "../../../client/client-server-common/common";
+import { GenericModelResponse, ChatHistoryResponse, DbChatroomUploadImageResponse, DbChatroomEmotesResponse } from "../../../client/client-server-common/common";
 
 describe("Chatroom model", function() {
     let testMessageId: number;
@@ -17,10 +17,10 @@ describe("Chatroom model", function() {
         const messageImage: string = "https://i.imgur.com/PSvhg0Y.png";
         const messageAttachment: string = "https://i.imgur.com/PSvhg0Y.png";
         const messageChatroomid: number = 0;
-        const addMessagePromise: Promise<GenericResponseModel> = chatroomModel.addChatMessage(messageUsername, messageDate, messageText, messageImage, messageAttachment, messageChatroomid);
+        const addMessagePromise: Promise<GenericModelResponse> = chatroomModel.addChatMessage(messageUsername, messageDate, messageText, messageImage, messageAttachment, messageChatroomid);
 
         return addMessagePromise
-            .then((response: GenericResponseModel) => {
+            .then((response: GenericModelResponse) => {
                 expect(response.data.insertid).is.not.undefined;
                 testMessageId = response.data.insertid;
             });
@@ -29,7 +29,7 @@ describe("Chatroom model", function() {
     it("deletes message from chatroom", function() {
         expect(testMessageId).is.not.undefined;
 
-        const deleteMessagePromise: Promise<GenericResponseModel> = chatroomModel.deleteChatMessage(testMessageId);
+        const deleteMessagePromise: Promise<GenericModelResponse> = chatroomModel.deleteChatMessage(testMessageId);
 
         return expect(deleteMessagePromise).to.eventually.be.fulfilled;
     });
@@ -51,7 +51,7 @@ describe("Chatroom model", function() {
     });
 
     it("deletes chat emote", function() {
-        const chatEmoteDeletePromise: Promise<GenericResponseModel> = chatroomModel.deleteChatEmote(chatEmotePrefix, chatEmoteSuffix);
+        const chatEmoteDeletePromise: Promise<GenericModelResponse> = chatroomModel.deleteChatEmote(chatEmotePrefix, chatEmoteSuffix);
 
         return expect(chatEmoteDeletePromise).to.eventually.be.fulfilled;
     });

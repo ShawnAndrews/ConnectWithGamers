@@ -4,7 +4,7 @@ chai.use(chaiAsPromised);
 const expect: Chai.ExpectStatic = chai.expect;
 import { routes } from "./chatroom";
 import { chatroomModel } from "../../models/db/chatroom/main";
-import { DbChatroomEmotesResponse, DbChatroomUploadEmoteResponse, DbChatroomUploadImageResponse, GenericResponseModel } from "../../client/client-server-common/common";
+import { DbChatroomEmotesResponse, DbChatroomUploadEmoteResponse, DbChatroomUploadImageResponse, GenericModelResponse } from "../../client/client-server-common/common";
 
 describe("Chatroom Routes", function() {
     const chatroomRouterPrefix: string = `/chatroom`;
@@ -37,7 +37,7 @@ describe("Chatroom Routes", function() {
     it(chatroomRouterPrefix.concat(routes.getRoute("emote/delete")), function() {
 
         return chatroomModel.deleteChatEmote(emotePrefix, emoteSuffix)
-        .then((response: GenericResponseModel) => {
+        .then((response: GenericModelResponse) => {
             expect(response).is.not.undefined;
         });
     });

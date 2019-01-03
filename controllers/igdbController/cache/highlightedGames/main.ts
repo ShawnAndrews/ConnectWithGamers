@@ -1,5 +1,5 @@
 import config from "../../../../config";
-import { GameResponse, RawGameResponse, GameResponseFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
+import { GameResponse, RawGame, GameFields, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { buildIGDBRequestBody, getCurrentUnixTimestampInSeconds } from "../../../../util/main";
 import { getCachedGame, cachePreloadedGame } from "../game/main";
@@ -72,7 +72,7 @@ export function cacheHighlightedGames(): Promise<GameResponse[]> {
                 `platforms = 6`,
                 `id != 110694`
             ],
-            GameResponseFields.join(),
+            GameFields.join(),
             undefined,
             `sort popularity desc`
         );
@@ -87,10 +87,10 @@ export function cacheHighlightedGames(): Promise<GameResponse[]> {
             data: body
         })
         .then( (response: AxiosResponse) => {
-            const rawGamesResponses: RawGameResponse[] = response.data;
+            const rawGamesResponses: RawGame[] = response.data;
             rawGamesResponses[rawGamesResponses.length - 1] = hardCodedDNM;
-            const ids: number[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => rawGameResponse.id);
-            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => cachePreloadedGame(rawGameResponse));
+            const ids: number[] = rawGamesResponses.map((RawGame: RawGame) => RawGame.id);
+            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((RawGame: RawGame) => cachePreloadedGame(RawGame));
 
             redisClient.set(cacheEntry.key, JSON.stringify(ids));
             if (cacheEntry.expiry !== -1) {
@@ -114,7 +114,7 @@ export function cacheHighlightedGames(): Promise<GameResponse[]> {
 
 }
 
-const hardCodedDNM: RawGameResponse = {
+const hardCodedDNM: RawGame = {
     id: 105196,
     aggregated_rating: 0,
     total_rating_count: 0,

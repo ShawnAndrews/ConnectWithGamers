@@ -2,7 +2,6 @@ const popupS = require('popups');
 import * as React from 'react';
 import * as AccountService from '../../../service/account/main';
 import DiscordPage from './DiscordPage';
-import { DiscordLinkResponse } from '../../../../../client/client-server-common/common';
 
 interface IDiscordPageContainerProps { }
 
@@ -33,8 +32,8 @@ class DiscordPageContainer extends React.Component<IDiscordPageContainerProps, I
 
     loadAccountDiscordLink(): void {
         AccountService.httpGetAccountDiscordLink()
-            .then( (response: DiscordLinkResponse) => {
-                const discordLink: string = response.data ? response.data.link : undefined;
+            .then( (link: string) => {
+                const discordLink: string = link || undefined;
                 this.setState({ isLoading: false, link: discordLink });
             })
             .catch( (error: string) => {

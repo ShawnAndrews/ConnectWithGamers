@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { SingleNewsResponse } from '../../../client-server-common/common';
+import { NewsArticle } from '../../../client-server-common/common';
 import { Card } from '@material-ui/core';
 import { formatDate, onImgError } from '../../util/main';
 
 interface INewsArticleProps {
-    article: SingleNewsResponse;
+    article: NewsArticle;
 }
 
 const NewsArticle: React.SFC<INewsArticleProps> = (props: INewsArticleProps) => {

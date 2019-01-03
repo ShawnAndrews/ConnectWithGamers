@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { ChatroomUser } from '../../../client-server-common/common';
+import { AccountInfo } from '../../../client-server-common/common';
 import { IndicatorStatus } from './RightnavContainer';
 import { Paper, List, ListItem } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 
 interface IRightnavProps {
-    users: ChatroomUser[];
+    users: AccountInfo[];
     goToRedirect: (URL: string) => void;
 }
 
@@ -53,7 +53,7 @@ const Rightnav: React.SFC<IRightnavProps> = (props: IRightnavProps) => {
                     </div>}
                 {props.users.length !== 0 && 
                     <List>
-                        {props.users.map((user: ChatroomUser, index: number) => (
+                        {props.users.map((user: AccountInfo, index: number) => (
                             <React.Fragment key={user.username}>
                                 <ListItem className="user row m-0 p-0" onClick={() => { props.goToRedirect(`/chat/users/${user.username}`); }} button={true}>
                                     <div className="col-lg-2 p-0">

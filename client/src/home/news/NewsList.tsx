@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { SingleNewsResponse } from '../../../client-server-common/common';
+import { NewsArticle as NewsArticleInterface } from '../../../client-server-common/common';
 import NewsArticle from './NewsArticle';
 
 interface INewsProps {
     goToRedirectCallback: (URL: string) => void;
-    news: SingleNewsResponse[];
+    news: NewsArticleInterface[];
 }
 
 const News: React.SFC<INewsProps> = (props: INewsProps) => {
@@ -17,7 +17,7 @@ const News: React.SFC<INewsProps> = (props: INewsProps) => {
             </div>
             <div className="row">
                 {props.news && 
-                    props.news.map((newsItem: SingleNewsResponse) => {
+                    props.news.map((newsItem: NewsArticleInterface) => {
                         return (
                             <NewsArticle 
                                 key={newsItem.id}

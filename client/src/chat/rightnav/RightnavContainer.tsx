@@ -2,7 +2,7 @@ import * as io from 'socket.io-client';
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Rightnav from './Rightnav';
-import { CHAT_SERVER_PORT, CHATROOM_EVENTS, ChatroomUser } from '../../../client-server-common/common';
+import { CHAT_SERVER_PORT, CHATROOM_EVENTS, AccountInfo } from '../../../client-server-common/common';
 
 export enum IndicatorStatus {
     Green, Yellow, Red
@@ -12,7 +12,7 @@ interface IRightnavContainerProps extends RouteComponentProps<any> { }
 
 interface IRightnavContainerState {
     socket: SocketIOClient.Socket;
-    users: ChatroomUser[];
+    users: AccountInfo[];
 }
 
 class RightnavContainer extends React.Component<IRightnavContainerProps, IRightnavContainerState> {
@@ -43,7 +43,7 @@ class RightnavContainer extends React.Component<IRightnavContainerProps, IRightn
         this.props.history.push(URL);
     }
 
-    onGetUsers(users: ChatroomUser[]): void {
+    onGetUsers(users: AccountInfo[]): void {
         this.setState({ users: users });
     }
 

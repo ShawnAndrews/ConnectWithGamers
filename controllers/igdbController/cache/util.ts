@@ -1,4 +1,4 @@
-import { RawGameResponse, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, ExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, SteamAPIGetPriceInfoResponse, GameResponseFields } from "../../../client/client-server-common/common";
+import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, SteamAPIGetPriceInfoResponse, GameFields } from "../../../client/client-server-common/common";
 import { IGDBImageResolve, ArrayClean, steamAPIGetPriceInfo, buildIGDBRequestBody } from "../../../util/main";
 import config from "../../../config";
 import axios, { AxiosResponse } from "axios";
@@ -13,7 +13,7 @@ export function getGamesBySteamIds(steamIds: number[]): Promise<GameResponse[]> 
             [
                 `external_games.uid = (${steamIds.join()})`
             ],
-            GameResponseFields.join(),
+            GameFields.join(),
             undefined
         );
 
@@ -28,8 +28,8 @@ export function getGamesBySteamIds(steamIds: number[]): Promise<GameResponse[]> 
         })
         .then((response: AxiosResponse) => {
 
-            const rawGamesResponses: RawGameResponse[] = response.data;
-            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => cachePreloadedGame(rawGameResponse));
+            const rawGamesResponses: RawGame[] = response.data;
+            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((RawGame: RawGame) => cachePreloadedGame(RawGame));
 
             Promise.all(gamePromises)
             .then((gameResponses: GameResponse[]) => {
@@ -79,30 +79,30 @@ export function parseSteamIds(webpage: string): number[] {
     return steamIds;
 }
 
-export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Promise<GameResponse[]> {
+export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
 
-    const pricePromise = (rawResponse: RawGameResponse[]): Promise<SteamAPIGetPriceInfoResponse[]> => {
+    const pricePromise = (rawResponse: RawGame[]): Promise<SteamAPIGetPriceInfoResponse[]> => {
 
         return new Promise((resolve: any, reject: any) => {
             const pricesResponse: SteamAPIGetPriceInfoResponse[] = [];
             const steamids: number[] = rawResponse
-                .filter((x: RawGameResponse) => {
+                .filter((x: RawGame) => {
                     let hasSteamLink: boolean = false;
 
                     if (!x.external_games) {
                         return false;
                     }
 
-                    x.external_games.forEach((y: ExternalGame) => {
+                    x.external_games.forEach((y: IGDBExternalGame) => {
                         if (y.category === IGDBExternalCategoryEnum.steam) {
                             hasSteamLink = true;
                         }
                     });
                     return hasSteamLink;
                 })
-                .map((x: RawGameResponse) => {
+                .map((x: RawGame) => {
                     let steamId: number;
-                    x.external_games.forEach((y: ExternalGame) => {
+                    x.external_games.forEach((y: IGDBExternalGame) => {
                         if (y.category === IGDBExternalCategoryEnum.steam) {
                             steamId = parseInt(y.uid);
                         }
@@ -112,7 +112,7 @@ export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Pro
 
             steamAPIGetPriceInfo(steamids)
             .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse[]) => {
-                rawResponse.forEach((x: RawGameResponse) => {
+                rawResponse.forEach((x: RawGame) => {
                     const priceResponse: SteamAPIGetPriceInfoResponse = {
                         steamgameid: undefined,
                         price: undefined,
@@ -122,7 +122,7 @@ export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Pro
 
                     if (x.external_games) {
                         let steamId: number = undefined;
-                        x.external_games.forEach((y: ExternalGame) => {
+                        x.external_games.forEach((y: IGDBExternalGame) => {
                             if (y.category === IGDBExternalCategoryEnum.steam) {
                                 steamId = parseInt(y.uid);
                             }
@@ -154,7 +154,7 @@ export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Pro
 
         const gameResponses: GameResponse[] = [];
 
-        rawGameResponses.forEach((rawGameResponse: RawGameResponse) => {
+        RawGames.forEach((RawGame: RawGame) => {
             let id: number = undefined;
             let name: string = undefined;
             let aggregated_rating: number;
@@ -173,37 +173,37 @@ export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Pro
             const discount_percent: number = undefined;
 
             // id
-            id = rawGameResponse.id;
+            id = RawGame.id;
 
             // name
-            name = rawGameResponse.name;
+            name = RawGame.name;
 
             // aggregated_rating
-            aggregated_rating = rawGameResponse.aggregated_rating;
+            aggregated_rating = RawGame.aggregated_rating;
 
             // total_rating_count
-            total_rating_count = rawGameResponse.total_rating_count;
+            total_rating_count = RawGame.total_rating_count;
 
             // steam url
-            if (rawGameResponse.external_games) {
-                const foundSteamIndex: number = rawGameResponse.external_games.findIndex((externalGame: ExternalGame) => { return externalGame.category == IGDBExternalCategoryEnum.steam; });
+            if (RawGame.external_games) {
+                const foundSteamIndex: number = RawGame.external_games.findIndex((IGDBExternalGame: IGDBExternalGame) => { return IGDBExternalGame.category == IGDBExternalCategoryEnum.steam; });
 
                 if (foundSteamIndex !== -1) {
-                    steamid = parseInt(rawGameResponse.external_games[foundSteamIndex].uid);
+                    steamid = parseInt(RawGame.external_games[foundSteamIndex].uid);
                 }
             }
 
             // cover
-            if (rawGameResponse.cover) {
-                rawGameResponse.cover.url = IGDBImageResolve(rawGameResponse.cover.image_id, "cover_big", "jpg");
+            if (RawGame.cover) {
+                RawGame.cover.url = IGDBImageResolve(RawGame.cover.image_id, "cover_big", "jpg");
             }
-            cover = rawGameResponse.cover;
+            cover = RawGame.cover;
 
             // summary
-            summary = rawGameResponse.summary;
+            summary = RawGame.summary;
 
             // link icons
-            linkIcons = rawGameResponse.platforms && rawGameResponse.platforms.map((platform: IGDBPlatform) => {
+            linkIcons = RawGame.platforms && RawGame.platforms.map((platform: IGDBPlatform) => {
                 if (platform.id === 48 || platform.id === 45) {
                     return "fab fa-playstation";
                 } else if (platform.id === 34) {
@@ -222,34 +222,34 @@ export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Pro
                     return "fab fa-nintendo-switch";
                 }
             });
-            linkIcons = rawGameResponse.platforms && ArrayClean(linkIcons, undefined);
+            linkIcons = RawGame.platforms && ArrayClean(linkIcons, undefined);
 
             // genres
-            genres = rawGameResponse.genres && rawGameResponse.genres.map((genre: IGDBPlatform) => { return { id: genre.id, name: genre.name }; });
+            genres = RawGame.genres && RawGame.genres.map((genre: IGDBPlatform) => { return { id: genre.id, name: genre.name }; });
 
             // platforms
-            platforms = rawGameResponse.platforms && rawGameResponse.platforms.map((platform: IGDBPlatform) => { return { id: platform.id, name: platform.name }; });
+            platforms = RawGame.platforms && RawGame.platforms.map((platform: IGDBPlatform) => { return { id: platform.id, name: platform.name }; });
 
             // first release date
-            first_release_date = rawGameResponse.first_release_date;
+            first_release_date = RawGame.first_release_date;
 
             // release dates
-            release_dates = rawGameResponse.release_dates && rawGameResponse.platforms && rawGameResponse.platforms.map((platform: IGDBPlatform) => {
+            release_dates = RawGame.release_dates && RawGame.platforms && RawGame.platforms.map((platform: IGDBPlatform) => {
                 const platformId: number = platform.id;
-                const foundSteamIndex: number = rawGameResponse.release_dates.findIndex((releaseDate: IGDBReleaseDate) => { return releaseDate.platform === platformId; });
-                return foundSteamIndex !== -1 ? rawGameResponse.release_dates[foundSteamIndex].date : undefined;
+                const foundSteamIndex: number = RawGame.release_dates.findIndex((releaseDate: IGDBReleaseDate) => { return releaseDate.platform === platformId; });
+                return foundSteamIndex !== -1 ? RawGame.release_dates[foundSteamIndex].date : undefined;
             });
 
             // screenshots
-            screenshots = rawGameResponse.screenshots && rawGameResponse.screenshots.map((screenshot: IGDBImage) => {
+            screenshots = RawGame.screenshots && RawGame.screenshots.map((screenshot: IGDBImage) => {
                 return IGDBImageResolve(screenshot.image_id, "screenshot_huge", "jpg");
             });
 
             // video
-            if (rawGameResponse.videos) {
-                const foundTrailerVideoIndex: number = rawGameResponse.videos.findIndex((video: IGDBVideo) => { return video.name === "Trailer"; });
+            if (RawGame.videos) {
+                const foundTrailerVideoIndex: number = RawGame.videos.findIndex((video: IGDBVideo) => { return video.name === "Trailer"; });
                 if (foundTrailerVideoIndex !== -1) {
-                    video = `https://www.youtube.com/embed/${rawGameResponse.videos[foundTrailerVideoIndex].video_id}`;
+                    video = `https://www.youtube.com/embed/${RawGame.videos[foundTrailerVideoIndex].video_id}`;
                 }
             }
 
@@ -276,7 +276,7 @@ export function convertRawGameResponse(rawGameResponses: RawGameResponse[]): Pro
         });
 
         // price
-        pricePromise(rawGameResponses)
+        pricePromise(RawGames)
         .then((prices: SteamAPIGetPriceInfoResponse[]) => {
             gameResponses.forEach((x: GameResponse, index: number) => {
                 x.price = prices[index].price;

@@ -3,7 +3,7 @@ import * as React from 'react';
 import RecoveryForm from "./RecoveryForm";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as AccountService from './../service/account/main';
-import { validatePassword, RecoverPasswordResponse, EmailRecoveryVerifyResponse } from '../../client-server-common/common';
+import { validatePassword, DatalessResponse, EmailRecoveryVerifyResponse } from '../../client-server-common/common';
 
 interface IRecoveryFormContainerProps extends RouteComponentProps<any> { }
 
@@ -64,7 +64,7 @@ class RecoveryFormContainer extends React.Component<IRecoveryFormContainerProps,
         
         this.setState({ isLoading: true }, () => {
             AccountService.httpRecoverPassword(this.state.password, this.state.uid)
-                .then( (response: RecoverPasswordResponse) => {
+                .then( (response: DatalessResponse) => {
                     this.setState({ isLoading: false, successful: true });
                 })
                 .catch( (error: string) => {

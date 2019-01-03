@@ -5,7 +5,7 @@ import UpcomingGameListContainer from './upcoming/UpcomingGameListContainer';
 import HighlightedGameListContainer from './highlighted/HighlightedGameListContainer';
 import Profiles from './profiles/Profiles';
 import NewsListContainer from './news/NewsListContainer';
-import { GameResponse, SingleNewsResponse } from '../../client-server-common/common';
+import { GameResponse, NewsArticle } from '../../client-server-common/common';
 import Spinner from './../spinner/main';
 import DiscountedGameListContainer from './discounted/DiscountedGameListContainer';
 
@@ -17,7 +17,7 @@ interface IShowcaseProps {
     recentGames: GameResponse[];
     upcomingGames: GameResponse[];
     discountedGames: GameResponse[];
-    news: SingleNewsResponse[];
+    news: NewsArticle[];
 }
 
 const Showcase: React.SFC<IShowcaseProps> = (props: IShowcaseProps) => {

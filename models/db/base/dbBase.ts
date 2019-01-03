@@ -1,5 +1,5 @@
 import { createConnection, Connection, MysqlError, FieldInfo } from "mysql";
-import { GenericResponseModel } from "../../../client/client-server-common/common";
+import { GenericModelResponse } from "../../../client/client-server-common/common";
 import config from "../../../config";
 
 export default class DatabaseBase {
@@ -32,10 +32,10 @@ export default class DatabaseBase {
     /**
      * SQL Insert wrapper.
      */
-    insert(tableName: string, columnNames: string[], columnValues: any[], preparedValues: string): Promise<GenericResponseModel> {
+    insert(tableName: string, columnNames: string[], columnValues: any[], preparedValues: string): Promise<GenericModelResponse> {
 
         return new Promise((resolve, reject) => {
-            const response: GenericResponseModel = {error: undefined, data: undefined};
+            const response: GenericModelResponse = {error: undefined, data: undefined};
             let preparedVars: any[];
             let query: string;
 
@@ -62,9 +62,9 @@ export default class DatabaseBase {
     /**
      * SQL Select wrapper.
      */
-    select(tableName: string, returnColumns: Array<string>, conditions: string = undefined, conditionVals: any[] = undefined, numRecords: number = undefined): Promise<GenericResponseModel> {
+    select(tableName: string, returnColumns: Array<string>, conditions: string = undefined, conditionVals: any[] = undefined, numRecords: number = undefined): Promise<GenericModelResponse> {
         return new Promise( (resolve, reject) => {
-                const response: GenericResponseModel = {error: undefined, data: undefined};
+                const response: GenericModelResponse = {error: undefined, data: undefined};
                 let preparedVars: any[];
                 let query: string;
 
@@ -99,10 +99,10 @@ export default class DatabaseBase {
     /**
      * SQL Update wrapper.
      */
-    update(tableName: string, preparedValues: string, columnValues: any[], conditions: string = undefined, conditionVals: any[] = undefined): Promise<GenericResponseModel> {
+    update(tableName: string, preparedValues: string, columnValues: any[], conditions: string = undefined, conditionVals: any[] = undefined): Promise<GenericModelResponse> {
 
         return new Promise((resolve, reject) => {
-            const response: GenericResponseModel = {error: undefined, data: undefined};
+            const response: GenericModelResponse = {error: undefined, data: undefined};
             let preparedVars: any[];
             let query: string;
 
@@ -132,10 +132,10 @@ export default class DatabaseBase {
     /**
      * SQL Delete wrapper.
      */
-    delete(tableName: string, preparedValues: string[], values: any[]): Promise<GenericResponseModel> {
+    delete(tableName: string, preparedValues: string[], values: any[]): Promise<GenericModelResponse> {
 
         return new Promise((resolve, reject) => {
-            const response: GenericResponseModel = {error: undefined, data: undefined};
+            const response: GenericModelResponse = {error: undefined, data: undefined};
             let query: string;
 
             // prepare query

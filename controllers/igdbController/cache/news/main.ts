@@ -1,6 +1,6 @@
 import config from "../../../../config";
 import {
-    SingleNewsResponse, RawSingleNewsResponse, SingleNewsResponseFields,
+    NewsArticle, RawNewsArticle, NewsArticleFields,
     redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import { buildIGDBRequestBody, getCurrentUnixTimestampInSeconds } from "../../../../util/main";
@@ -27,7 +27,7 @@ export function newsKeyExists(): Promise<boolean> {
 /**
  * Get redis-cached news.
  */
-export function getCachedNews(): Promise<SingleNewsResponse[]> {
+export function getCachedNews(): Promise<NewsArticle[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[8];
 
     return new Promise((resolve: any, reject: any) => {
@@ -44,7 +44,7 @@ export function getCachedNews(): Promise<SingleNewsResponse[]> {
 /**
  * Cache news.
  */
-export function cacheNews(): Promise<SingleNewsResponse[]> {
+export function cacheNews(): Promise<NewsArticle[]> {
     const cacheEntry: IGDBCacheEntry = redisCache[8];
     const CURRENT_UNIX_TIME_S: number = getCurrentUnixTimestampInSeconds();
 
@@ -56,7 +56,7 @@ export function cacheNews(): Promise<SingleNewsResponse[]> {
                 `image != null`,
                 `created_at <= ${CURRENT_UNIX_TIME_S}`
             ],
-            SingleNewsResponseFields.join(),
+            NewsArticleFields.join(),
             undefined,
             `sort created_at desc`
         );
@@ -71,10 +71,10 @@ export function cacheNews(): Promise<SingleNewsResponse[]> {
             data: body
         })
         .then( (response: AxiosResponse) => {
-            const rawResponse: RawSingleNewsResponse[] = response.data;
-            const newsResponse: SingleNewsResponse[] = [];
+            const rawResponse: RawNewsArticle[] = response.data;
+            const newsResponse: NewsArticle[] = [];
 
-            rawResponse.forEach((x: RawSingleNewsResponse) => {
+            rawResponse.forEach((x: RawNewsArticle) => {
                 const id: number = x.id;
                 const title: string =  x.title;
                 const author: string = x.author;
@@ -83,8 +83,8 @@ export function cacheNews(): Promise<SingleNewsResponse[]> {
                 const created_at: number = x.created_at;
                 const newsOrg: string = x.pulse_source.name;
 
-                const singleNewsResponse: SingleNewsResponse = { id: id, title: title, author: author, image: image, url: url, created_at: created_at, newsOrg: newsOrg };
-                newsResponse.push(singleNewsResponse);
+                const NewsArticle: NewsArticle = { id: id, title: title, author: author, image: image, url: url, created_at: created_at, newsOrg: newsOrg };
+                newsResponse.push(NewsArticle);
             });
 
             redisClient.set(cacheEntry.key, JSON.stringify(newsResponse));

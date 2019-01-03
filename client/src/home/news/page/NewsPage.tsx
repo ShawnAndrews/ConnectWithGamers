@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SingleNewsResponse } from '../../../../client-server-common/common';
+import { NewsArticle as NewsArticleInterface } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
 import NewsArticle from '../NewsArticle';
 import { Paper } from '@material-ui/core';
@@ -7,7 +7,7 @@ import { Paper } from '@material-ui/core';
 interface INewsProps {
     isLoading: boolean;
     goBack: () => void;
-    news: SingleNewsResponse[];
+    news: NewsArticleInterface[];
 }
 
 const News: React.SFC<INewsProps> = (props: INewsProps) => {
@@ -27,7 +27,7 @@ const News: React.SFC<INewsProps> = (props: INewsProps) => {
             </Paper>
             <div className="row w-100 m-0">
                 {props.news && 
-                    props.news.map((newsItem: SingleNewsResponse, index: number) => (
+                    props.news.map((newsItem: NewsArticleInterface, index: number) => (
                         <NewsArticle 
                             article={props.news[index]}
                         />

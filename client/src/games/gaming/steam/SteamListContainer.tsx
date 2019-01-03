@@ -39,7 +39,7 @@ class SteamListContainer extends React.Component<IThumbnailGameContainerProps, S
     loadAccountSteamId(): void {
         AccountService.httpGetAccountSteamId()
             .then( (response: SteamIdResponse) => {
-                const steamId: number = response.data ? response.data.steamId : undefined;
+                const steamId: number = response.data ? response.data : undefined;
 
                 AccountService.httpGetAccountSteamFriends()
                     .then( (response: SteamFriendsResponse) => {

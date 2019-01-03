@@ -3,15 +3,15 @@ const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 const expect: Chai.ExpectStatic = chai.expect;
 import { settingsModel } from "./main";
-import { DbAccountSettingsResponse, DbAccountImageResponse, DbAccountRecoveryResponse } from "../../../client/client-server-common/common";
+import { AccountInfo, DbAccountImageResponse, DbAccountRecoveryResponse } from "../../../client/client-server-common/common";
 
 describe("Settings model", function() {
     const testAccountId: number = 1003;
 
     it("gets account settings", function() {
-        const accountSettingsPromise: Promise<DbAccountSettingsResponse> = settingsModel.getAccountSettings(testAccountId);
+        const AccountInfoPromise: Promise<AccountInfo> = settingsModel.getAccountInfo(testAccountId);
 
-        return expect(accountSettingsPromise).to.eventually.be.fulfilled;
+        return expect(AccountInfoPromise).to.eventually.be.fulfilled;
     });
 
     it("gets account recovery id", function() {

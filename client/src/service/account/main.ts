@@ -1,20 +1,20 @@
 import axios from 'axios';
-import { GenericResponseModel, AccountImageResponse, EmailVerifyResponse, TwitchIdResponse, SteamIdResponse, EmailRecoveryVerifyResponse, DiscordLinkResponse, SteamFriendsResponse, TwitchFollowersResponse, PublicAccountInfoResponse } from '../../../../client/client-server-common/common';
+import { GenericModelResponse, AccountImageResponse, EmailVerifiedFlagResponse, TwitchIdResponse, SteamIdResponse, EmailRecoveryVerifyResponse, SteamFriendsResponse, TwitchFollowersResponse, AccountInfoResponse, DatalessResponse } from '../../../../client/client-server-common/common';
 import { AUTH_TOKEN_NAME } from '../../../client-server-common/common';
 import { SettingsData } from '../../../src/account/settings/SettingsFormsContainer';
 
 /**
  * HTTP request to recover password.
  */
-export function httpGetPublicAccountInfo (): Promise<PublicAccountInfoResponse> {
+export function httpGetPublicAccountInfo (): Promise<AccountInfoResponse> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/account/public/info')
         .then((result) => {
             if (result.data.error) {
                 return reject(`Failed to get public account info. ${result.data.error}`);
             } else {
-                const publicAccountInfoResponse: PublicAccountInfoResponse = result.data;
-                return resolve(publicAccountInfoResponse);
+                const AccountInfoResponse: AccountInfoResponse = result.data;
+                return resolve(AccountInfoResponse);
             }
         })
         .catch((err: string) => {
@@ -26,7 +26,7 @@ export function httpGetPublicAccountInfo (): Promise<PublicAccountInfoResponse> 
 /**
  * HTTP request to recover password.
  */
-export function httpRecoverPassword (password: string, uid: string): Promise<GenericResponseModel> {
+export function httpRecoverPassword (password: string, uid: string): Promise<DatalessResponse> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/account/recover/password', { password: password, uid: uid })
         .then((result) => {
@@ -64,7 +64,7 @@ export function httpVerifyRecoveryLink (uid: string): Promise<EmailRecoveryVerif
 /**
  * HTTP request to get account settings.
  */
-export function httpAccountSettings (): Promise<GenericResponseModel> {
+export function httpAccountSettings(): Promise<AccountInfoResponse> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/account/settings')
         .then((result) => {
@@ -129,7 +129,7 @@ export function httpSignup (username: string, password: string, email: string): 
 /**
  * HTTP request to change account settings.
  */
-export function httpChangeAccountSettings (newSettings: SettingsData): Promise<null> {
+export function httpChangeAccountInfo (newSettings: SettingsData): Promise<null> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/settings/change`, { newSettings })
         .then((result) => {
@@ -148,15 +148,15 @@ export function httpChangeAccountSettings (newSettings: SettingsData): Promise<n
 /**
  * HTTP request to verify email code in URL. 
  */
-export function httpVerifyEmail (verificationCode: string): Promise<EmailVerifyResponse> {
+export function httpVerifyEmail (verificationCode: string): Promise<EmailVerifiedFlagResponse> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/account/email/verify', { verificationCode: verificationCode })
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);
             } else {
-                const emailVerifyResponse: EmailVerifyResponse = result.data;
-                return resolve(emailVerifyResponse);
+                const EmailVerifiedFlagResponse: EmailVerifiedFlagResponse = result.data;
+                return resolve(EmailVerifiedFlagResponse);
             }
         })
         .catch((err: string) => {
@@ -312,15 +312,15 @@ export function httpGetAccountSteamFriends(): Promise<SteamFriendsResponse> {
  * HTTP request to get an account's Discord link.
  */
 
-export function httpGetAccountDiscordLink(): Promise<DiscordLinkResponse> {
+export function httpGetAccountDiscordLink(): Promise<string> {
     return new Promise((resolve: any, reject: any) => {
         axios.post(`/account/settings/discordLink`, {})
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);
             } else {
-                const discordLinkResponse: DiscordLinkResponse = result.data;
-                return resolve(discordLinkResponse);
+                const link: string = result.data;
+                return resolve(link);
             }
         })
         .catch((err: string) => {

@@ -6,7 +6,7 @@ import { routes, GenericCachedRoute, GenericCachedWithDataRoute } from "./igdb";
 import {
     GameResponse,
     GameResponse,
-    SingleNewsResponse,
+    NewsArticle,
     GameResponse,
     SearchGameResponse
 } from "../../client/client-server-common/common";
@@ -46,7 +46,7 @@ describe("IGDB Routes", function() {
     });
 
     it(igdbRouterPrefix.concat(routes.getRoute("news")), function() {
-        expect(GenericCachedRoute<SingleNewsResponse[]>(newsKeyExists, getCachedNews, cacheNews)).to.eventually.be.fulfilled;
+        expect(GenericCachedRoute<NewsArticle[]>(newsKeyExists, getCachedNews, cacheNews)).to.eventually.be.fulfilled;
     });
 
     it(igdbRouterPrefix.concat(routes.getRoute("populargames")), function() {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import Userlist from "./Userlist";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import * as io from 'socket.io-client';
-import { ChatroomUser, CHATROOM_EVENTS, CHAT_SERVER_PORT } from '../../../../client/client-server-common/common';
+import { AccountInfo, CHATROOM_EVENTS, CHAT_SERVER_PORT } from '../../../../client/client-server-common/common';
 
 enum UserListState {
     Search,
@@ -19,7 +19,7 @@ interface IUserlistContainerProps extends RouteComponentProps<any> { }
 
 interface IUserlistContainerState {
     socket: SocketIOClient.Socket;
-    userlist: ChatroomUser[];
+    userlist: AccountInfo[];
     listState: UserListState;
     searchText: string;
 }
@@ -70,8 +70,8 @@ class UserlistContainer extends React.Component<IUserlistContainerProps, IUserli
         return searchState;
     }
 
-    onUsers(users: ChatroomUser[]): void {
-        const newUserlist: ChatroomUser[] = users;
+    onUsers(users: AccountInfo[]): void {
+        const newUserlist: AccountInfo[] = users;
         this.setState({ userlist: newUserlist });
     }
 

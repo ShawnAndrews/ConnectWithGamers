@@ -11,7 +11,7 @@ export interface NameValuePair {
     value: number;
 }
 
-export enum FilterPlatformOptions {
+export enum FilterAccountInfo {
     PC = 6,
     PS4 = 48,
     XboxOne = 49,
@@ -116,14 +116,14 @@ class ModalFilternavContainer extends React.Component<Props, IModalFilternavCont
             platformExpanded: false,
             filterOptions: this.getDefaultFilterOptionsDeepCopy,
             platforms: [
-                { name: 'PC', value: FilterPlatformOptions.PC },
-                { name: 'PS4', value: FilterPlatformOptions.PS4 },
-                { name: 'Xbox One', value: FilterPlatformOptions.XboxOne },
-                { name: 'Switch', value: FilterPlatformOptions.Switch },
-                { name: 'PS3', value: FilterPlatformOptions.PS3 },
-                { name: 'Xbox 360', value: FilterPlatformOptions.Xbox360 },
-                { name: 'N64', value: FilterPlatformOptions.N64 },
-                { name: 'Nintendo 3DS', value: FilterPlatformOptions.Nintendo3DS },
+                { name: 'PC', value: FilterAccountInfo.PC },
+                { name: 'PS4', value: FilterAccountInfo.PS4 },
+                { name: 'Xbox One', value: FilterAccountInfo.XboxOne },
+                { name: 'Switch', value: FilterAccountInfo.Switch },
+                { name: 'PS3', value: FilterAccountInfo.PS3 },
+                { name: 'Xbox 360', value: FilterAccountInfo.Xbox360 },
+                { name: 'N64', value: FilterAccountInfo.N64 },
+                { name: 'Nintendo 3DS', value: FilterAccountInfo.Nintendo3DS },
             ],
             genres: [
                 { name: 'Real Time Strategy', value: FilterGenreOptions.RealTimeStategy },

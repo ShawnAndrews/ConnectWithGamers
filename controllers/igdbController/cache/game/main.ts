@@ -1,9 +1,9 @@
 import config from "../../../../config";
 import { buildIGDBRequestBody } from "../../../../util/main";
 import {
-    GameResponse, GameResponseFields, RawGameResponse, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
+    GameResponse, GameFields, RawGame, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-import { convertRawGameResponse } from "../util";
+import { convertRawGame } from "../util";
 const redis = require("redis");
 const redisClient = redis.createClient();
 
@@ -58,7 +58,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
             [
                 `id = ${gameId}`
             ],
-            GameResponseFields.join(),
+            GameFields.join(),
             undefined
         );
 
@@ -72,9 +72,9 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
             data: body
         })
         .then( (response: AxiosResponse) => {
-            const rawGameResponse: RawGameResponse = response.data[0];
+            const RawGame: RawGame = response.data[0];
 
-            convertRawGameResponse([rawGameResponse])
+            convertRawGame([RawGame])
                 .then((gameResponses: GameResponse[]) => {
 
                     redisClient.hset(cacheEntry.key, gameId, JSON.stringify(gameResponses[0]));
@@ -100,15 +100,15 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
 /**
  * Cache preloaded game.
  */
-export function cachePreloadedGame(rawGameResponse: RawGameResponse): Promise<GameResponse> {
+export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
     const cacheEntry: IGDBCacheEntry = redisCache[5];
-    const gameId: number = rawGameResponse.id;
+    const gameId: number = RawGame.id;
 
     return new Promise((resolve: any, reject: any) => {
 
         gameKeyExists(gameId)
         .then((exists: boolean) => {
-            convertRawGameResponse([rawGameResponse])
+            convertRawGame([RawGame])
             .then((gameResponses: GameResponse[]) => {
 
                 redisClient.hset(cacheEntry.key, gameId, JSON.stringify(gameResponses[0]));

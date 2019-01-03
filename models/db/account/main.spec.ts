@@ -3,7 +3,7 @@ const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 const expect: Chai.ExpectStatic = chai.expect;
 import { accountModel } from "./main";
-import { GenericResponseModel, DbAccountImageResponse, DbRecoveryEmailResponse, DbAccountsInfoResponse, DbAccountInfoResponse, DbTwitchIdResponse, DbTwitchFollowsResponse, DbSteamIdResponse, DbSteamFriendsResponse, DbDiscordLinkResponse, DbVerifyEmailResponse } from "../../../client/client-server-common/common";
+import { GenericModelResponse, DbAccountImageResponse, RecoveryEmailInfo, AccountsInfo, DbAccountInfoResponse, DbTwitchIdResponse, DbTwitchFollowsResponse, DbSteamIdResponse, DbSteamFriendsResponse, DbDiscordLinkResponse, DbVerifyEmailResponse } from "../../../client/client-server-common/common";
 
 describe("Database model", function() {
     const accountUsername: string = "Tester";
@@ -27,14 +27,14 @@ describe("Database model", function() {
 
     it("gets account id from username", function() {
         expect(accountId).is.not.undefined;
-        const createAccountPromise: Promise<GenericResponseModel> = accountModel.getAccountId(accountUsername);
+        const createAccountPromise: Promise<GenericModelResponse> = accountModel.getAccountId(accountUsername);
 
         return expect(createAccountPromise).to.eventually.be.fulfilled;
     });
 
     it("gets account username from id", function() {
         expect(accountId).is.not.undefined;
-        const createAccountPromise: Promise<GenericResponseModel> = accountModel.getAccountUsername(accountId);
+        const createAccountPromise: Promise<GenericModelResponse> = accountModel.getAccountUsername(accountId);
 
         return expect(createAccountPromise).to.eventually.be.fulfilled;
     });
@@ -48,7 +48,7 @@ describe("Database model", function() {
 
     it("gets account recovery info", function() {
         expect(accountId).is.not.undefined;
-        const getAccountRecoveryInfoPromise: Promise<DbRecoveryEmailResponse> = accountModel.getAccountRecoveryInfoByUsername(accountUsername);
+        const getAccountRecoveryInfoPromise: Promise<RecoveryEmailInfo> = accountModel.getAccountRecoveryInfoByUsername(accountUsername);
 
         return expect(getAccountRecoveryInfoPromise).to.eventually.be.fulfilled;
     });
@@ -64,7 +64,7 @@ describe("Database model", function() {
     it("gets public accounts info by username filter", function() {
         expect(accountId).is.not.undefined;
         const usernameFilter: string = "anon";
-        const getAccountsInfoPromise: Promise<DbAccountsInfoResponse> = accountModel.getAccountsByUsernameFilter(usernameFilter);
+        const getAccountsInfoPromise: Promise<AccountsInfo> = accountModel.getAccountsByUsernameFilter(usernameFilter);
 
         return expect(getAccountsInfoPromise).to.eventually.be.fulfilled;
     });
@@ -72,14 +72,14 @@ describe("Database model", function() {
     it("gets public accounts info by username filter", function() {
         expect(accountId).is.not.undefined;
         const usernameFilter: string = "anon";
-        const getAccountsInfoPromise: Promise<DbAccountsInfoResponse> = accountModel.getAccountsByUsernameFilter(usernameFilter);
+        const getAccountsInfoPromise: Promise<AccountsInfo> = accountModel.getAccountsByUsernameFilter(usernameFilter);
 
         return expect(getAccountsInfoPromise).to.eventually.be.fulfilled;
     });
 
     it("gets multiple public accounts info by ids", function() {
         expect(accountId).is.not.undefined;
-        const getAccountsInfoPromise: Promise<DbAccountsInfoResponse> = accountModel.getAccountsInfoById([accountId]);
+        const getAccountsInfoPromise: Promise<AccountsInfo> = accountModel.getAccountsInfoById([accountId]);
 
         return expect(getAccountsInfoPromise).to.eventually.be.fulfilled;
     });
@@ -93,7 +93,7 @@ describe("Database model", function() {
 
     it("gets account twitch link", function() {
         expect(accountId).is.not.undefined;
-        const getTwitchLinkPromise: Promise<DbTwitchIdResponse> = accountModel.getTwitchId(accountId);
+        const getTwitchLinkPromise: Promise<number> = accountModel.getTwitchId(accountId);
 
         return expect(getTwitchLinkPromise).to.eventually.be.fulfilled;
     });

@@ -7,7 +7,7 @@ import { NAV_PAGE } from '../app/app';
 import Navbar from './Navbar';
 import { toggleSearchModal } from '../actions/main';
 import { httpGetPublicAccountInfo } from '../service/account/main';
-import { PublicAccountInfoResponse } from '../../client-server-common/common';
+import { AccountInfoResponse } from '../../client-server-common/common';
 import { GlobalReduxState } from '../reducers/main';
 
 interface INavbarContainerProps extends RouteComponentProps<any> { } 
@@ -78,7 +78,7 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
     loadPublicAccountInfo(): void {
         
         httpGetPublicAccountInfo()
-        .then((response: PublicAccountInfoResponse) => {
+        .then((response: AccountInfoResponse) => {
             this.setState({
                 profileImage: response.data.image,
                 profileName: response.data.username

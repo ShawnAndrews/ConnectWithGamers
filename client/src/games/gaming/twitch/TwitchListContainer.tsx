@@ -50,7 +50,7 @@ class TwitchListContainer extends React.Component<ITwitchListContainerProps, ITw
     loadAccountTwitchFollowers(): void {
         AccountService.httpGetAccountTwitchId()
             .then( (response: TwitchIdResponse) => {
-                const twitchId: number = response.data ? response.data.twitchId : undefined;
+                const twitchId: number = response.data ? response.data : undefined;
 
                 AccountService.httpGetAccountTwitchFollowers()
                 .then( (response: TwitchFollowersResponse) => {

@@ -4,7 +4,7 @@ import DatabaseBase from "../base/dbBase";
 import { EMAIL_VERIFICATION_LEN, SALT_RNDS, ACCOUNT_RECOVERYID_LEN } from "../account/main";
 import {
     validateUsername, validateEmail, validateURL, validatePassword,
-    GenericResponseModel, DbAccountSettingsResponse, DbAccountImageResponse, DbAccountRecoveryResponse } from "../../../client/client-server-common/common";
+    GenericModelResponse, AccountInfo } from "../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 const bcrypt = require("bcryptjs");
 const imgur = require("imgur");
@@ -20,7 +20,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Get necessary information displayed on Account Settings screen.
      */
-    getAccountSettings(accountid: number): Promise<DbAccountSettingsResponse> {
+    getAccountInfo(accountid: number): Promise<AccountInfo> {
 
         return new Promise( (resolve, reject) => {
 
@@ -29,7 +29,7 @@ class SettingsModel extends DatabaseBase {
                 ["username", "email", "discord", "steam", "twitch", "image", "emailVerification"],
                 `accountid=?`,
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     const username = dbResponse.data[0].username;
                     const email = dbResponse.data[0].email;
                     const discord = dbResponse.data[0].discord || "";
@@ -37,15 +37,15 @@ class SettingsModel extends DatabaseBase {
                     const twitch = dbResponse.data[0].twitch || "";
                     const image = dbResponse.data[0].image;
                     const emailVerified = dbResponse.data[0].emailVerification === null;
-                    const dbAccountSettingsResponse: DbAccountSettingsResponse = {
+                    const accountInfo: AccountInfo = {
                         username: username,
                         email: email,
-                        discord: discord,
-                        steam: steam,
-                        twitch: twitch,
+                        discord_url: discord,
+                        steam_url: steam,
+                        twitch_url: twitch,
                         image: image,
                         emailVerified: emailVerified};
-                    return resolve(dbAccountSettingsResponse);
+                    return resolve(accountInfo);
                 })
                 .catch((error: string) => {
                     return reject(error);
@@ -66,7 +66,7 @@ class SettingsModel extends DatabaseBase {
                 ["recoveryid"],
                 `username=?`,
                 [username])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     const recoveryid: string = dbResponse.data[0].recoveryid;
                     return resolve(recoveryid);
                 })
@@ -80,7 +80,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Change the account profile picture given a base64 encoded string.
      */
-    changeAccountImage(accountid: number, imageBase64: string): Promise<DbAccountImageResponse> {
+    changeAccountImage(accountid: number, imageBase64: string): Promise<string> {
         return new Promise( (resolve, reject) => {
             imgur.uploadBase64(imageBase64)
                 .then((response: any) => {
@@ -91,10 +91,9 @@ class SettingsModel extends DatabaseBase {
                         [link],
                         "accountid=?",
                         [accountid])
-                        .then((dbResponse: GenericResponseModel) => {
+                        .then((dbResponse: GenericModelResponse) => {
                             if (dbResponse.data.affectedRows == 1) {
-                                const dbAccountImageResponse: DbAccountImageResponse = { link: link };
-                                return resolve(dbAccountImageResponse);
+                                return resolve(link);
                             } else {
                                 return reject(`Database error.`);
                             }
@@ -113,7 +112,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Delete the current account's profile picture, if assigned.
      */
-    deleteAccountImage(accountid: number): Promise<DbAccountImageResponse> {
+    deleteAccountImage(accountid: number): Promise<void> {
         return new Promise( (resolve, reject) => {
             this.update(
                 "accounts",
@@ -121,10 +120,9 @@ class SettingsModel extends DatabaseBase {
                 [undefined],
                 "accountid=?",
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {
-                        const dbAccountImageResponse: DbAccountImageResponse = { link: undefined };
-                        return resolve(dbAccountImageResponse);
+                        return resolve();
                     } else {
                         return reject(`Database error.`);
                     }
@@ -153,7 +151,7 @@ class SettingsModel extends DatabaseBase {
                 [newUsername],
                 "accountid=?",
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {
                         return resolve();
                     } else {
@@ -187,7 +185,7 @@ class SettingsModel extends DatabaseBase {
                 [newEmail, emailVerification],
                 "accountid=?",
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {
                         return resolve();
                     } else {
@@ -222,7 +220,7 @@ class SettingsModel extends DatabaseBase {
                 [hash, salt],
                 "accountid=?",
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {
                         return resolve();
                     } else {
@@ -256,7 +254,7 @@ class SettingsModel extends DatabaseBase {
                 [newDiscord === "" ? undefined : newDiscord],
                 "accountid=?",
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {
                         return resolve();
                     } else {
@@ -283,7 +281,7 @@ class SettingsModel extends DatabaseBase {
                     [newTwitch === "" ? undefined : newTwitch],
                     "accountid=?",
                     [accountid])
-                    .then((dbResponse: GenericResponseModel) => {
+                    .then((dbResponse: GenericModelResponse) => {
                         if (dbResponse.data.affectedRows == 1) {
                             return resolve();
                         } else {
@@ -349,7 +347,7 @@ class SettingsModel extends DatabaseBase {
                     [newSteam === "" ? undefined : newSteam],
                     "accountid=?",
                     [accountid])
-                    .then((dbResponse: GenericResponseModel) => {
+                    .then((dbResponse: GenericModelResponse) => {
                         if (dbResponse.data.affectedRows == 1) {
                             return resolve();
                         } else {
@@ -399,7 +397,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Change the account's password via account recovery.
      */
-    recoverAccountPassword(newPassword: string, uid: string): Promise<DbAccountRecoveryResponse> {
+    recoverAccountPassword(newPassword: string, uid: string): Promise<number> {
 
         return new Promise( (resolve, reject) => {
 
@@ -413,13 +411,12 @@ class SettingsModel extends DatabaseBase {
                 ["accountid"],
                 "recoveryid=?",
                 [uid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
                         const accountid: number = dbResponse.data[0].accountid;
                         this.changeAccountPassword(accountid, newPassword)
                         .then(() => {
-                            const dbAccountRecoveryResponse: DbAccountRecoveryResponse = { accountid: accountid };
-                            return resolve(dbAccountRecoveryResponse);
+                            return resolve(accountid);
                         });
                     } else {
                         return reject(`Incorrect recovery id.`);
@@ -445,7 +442,7 @@ class SettingsModel extends DatabaseBase {
                 [genRandStr(ACCOUNT_RECOVERYID_LEN)],
                 "accountid=?",
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {
                         return resolve();
                     } else {

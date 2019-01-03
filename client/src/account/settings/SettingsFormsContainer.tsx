@@ -4,9 +4,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import SettingsForm from "../settings/SettingsForm";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { AUTH_TOKEN_NAME, GenericResponseModel, AccountImageResponse } from '../../../../client/client-server-common/common';
+import { AccountImageResponse, AccountInfoResponse } from '../../../../client/client-server-common/common';
 import * as AccountService from '../../service/account/main';
-import { GlobalReduxState } from '../../reducers/main';
 import { setLoggedIn } from '../../actions/main';
 
 export interface SettingsData {
@@ -92,13 +91,13 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
 
     loadSettings(): void {
         AccountService.httpAccountSettings()
-            .then( (response: GenericResponseModel) => {
+            .then( (response: AccountInfoResponse) => {
                 const username = response.data.username;
                 const email = response.data.email;
                 const password = '';
-                const discord = response.data.discord;
-                const steam = response.data.steam;
-                const twitch = response.data.twitch;
+                const discord = response.data.discord_url;
+                const steam = response.data.steam_url;
+                const twitch = response.data.twitch_url;
                 const image = response.data.image;
                 const emailVerified = response.data.emailVerified;
                 this.setState({ 
@@ -198,7 +197,7 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
         }
 
         this.setState({ isLoading: true, loadingMsg: `Changing account settings...` }, () => {
-            AccountService.httpChangeAccountSettings(newSettings)
+            AccountService.httpChangeAccountInfo(newSettings)
                 .then( () => {
                     this.setState({ 
                         isLoading: false,

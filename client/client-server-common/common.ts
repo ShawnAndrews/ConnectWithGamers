@@ -66,11 +66,6 @@ export interface Config {
     };
 }
 
-export interface IGDBCacheEntry {
-    key: string;
-    expiry: number; // seconds
-}
-
 export interface PlatformOption {
     id: number;
     name: string;
@@ -222,118 +217,36 @@ export function validateCredentials(username: string, password: string, email?: 
 
 }
 
-export interface ChatroomUser {
-    username: string;
-    last_active: number;
-    steam_url?: string;
-    twitch_url?: string;
-    discord_url?: string;
-    image?: string;
-}
-
 export interface AccountInfo {
-    accountid: number;
+    accountid?: number;
+    last_active?: number;
     username: string;
-    steam_url?: string;
-    twitch_url?: string;
-    discord_url?: string;
-    image?: string;
+    email?: string;
+    steam_url: string;
+    twitch_url: string;
+    discord_url: string;
+    image: string;
+    emailVerified?: boolean;
 }
 
-export interface PublicAccountInfo {
-    username: string;
-    steam_url?: string;
-    twitch_url?: string;
-    discord_url?: string;
-    image?: string;
-}
-
-export interface PublicAccountInfoResponse {
-    error: string;
-    data?: PublicAccountInfo;
-}
-
-export interface DbAccountsInfoResponse {
+export interface AccountsInfo {
     accounts: AccountInfo[];
 }
 
-export interface DbAccountInfoResponse {
-    account: AccountInfo;
-}
-
-export interface DbTwitchIdResponse {
-    twitchId: number;
-}
-
-export interface DbSteamIdResponse {
-    steamId: number;
-}
-
-export interface DbDiscordLinkResponse {
-    discordLink: string;
-}
-
-export interface DatalessResponse {
-    error: string;
-}
-
-export interface DbAuthenticateResponse {
+export interface AuthenticationInfo {
     accountid: number;
     username: string;
     remember: boolean;
 }
 
-export interface DbTokenResponse {
+export interface TokenInfo {
     token: string;
     tokenExpiration: Date;
 }
 
-export interface DbAuthorizeResponse {
-    accountid: number;
-}
-
-export interface DbVerifyEmailResponse {
-    verificationSuccessful: boolean;
-}
-
-export interface DbRecoveryEmailResponse {
+export interface RecoveryEmailInfo {
     email: string;
     uid: string;
-}
-
-export interface DbAccountRecoveryResponse {
-    accountid: number;
-}
-
-export interface DbAccountSettingsResponse {
-    username: string;
-    email: string;
-    discord: string;
-    steam: string;
-    twitch: string;
-    image: string;
-    emailVerified: boolean;
-}
-
-export interface DbAccountImageResponse {
-    link: string;
-}
-
-export interface DbChatroomUploadEmoteResponse {
-    link: string;
-}
-
-export interface DbChatroomEmotesResponse {
-    emotes: ChatroomEmote[];
-}
-
-export interface DbChatroomUploadImageResponse {
-    link: string;
-}
-
-export interface GenericResponseModel {
-    error: string;
-    data: any;
 }
 
 export interface SingleChatHistory {
@@ -345,111 +258,10 @@ export interface SingleChatHistory {
     chatroomid: number;
 }
 
-export interface AccountSettingsResponse {
-    error: string;
-    data?: {
-        username: string;
-        email: string;
-        discord: string;
-        steam: string;
-        twitch: string;
-        image: string;
-        emailVerified: boolean;
-    };
-}
-
-export interface EmailVerifyResponse {
-    error: string;
-    data?: {
-        verificationSuccessful: boolean;
-    };
-}
-
-export interface EmailRecoveryResponse {
-    error: string;
-}
-
-export interface EmailRecoveryVerifyResponse {
-    error: string;
-    verifiedLink?: boolean;
-}
-
-export interface AccountImageResponse {
-    error: string;
-    link?: string;
-}
-
-export interface RecoverPasswordResponse {
-    error: string;
-}
-
 export interface ChatroomEmote {
     link: string;
     prefix: string;
     suffix: string;
-}
-
-export interface ChatroomEmotesResponse {
-    error: string;
-    emotes?: ChatroomEmote[];
-}
-
-export interface ChatroomUploadImageResponse {
-    error: string;
-    link?: string;
-}
-
-export interface ChatUploadEmoteResponse {
-    error?: string;
-}
-
-export interface ChatHistoryResponse {
-    name: string[];
-    date: string[];
-    text: string[];
-    image: string[];
-    attachment: string[];
-}
-
-export interface IGDBPlatform {
-    id: number;
-    abbreviation: string;
-    alternative_name: string;
-    category: number;
-    created_at: number;
-    generation: number;
-    name: string;
-    platform_logo: number;
-    product_family: number;
-    slug: string;
-    summary: string;
-    updated_at: number;
-    url: string;
-    versions: number[];
-    websites: number[];
-}
-
-export interface IGDBGenre {
-    id: number;
-    created_at: number;
-    name: string;
-    slug: string;
-    updated_at: number;
-    url: string;
-}
-
-export interface IGDBReleaseDate {
-    id: number;
-    category: number;
-    date: number;
-    game: number;
-    human: string;
-    m: number;
-    platform: number;
-    region: number;
-    created_at: number;
-    updated_at: number;
-    y: number;
 }
 
 export interface IdNamePair {
@@ -457,26 +269,7 @@ export interface IdNamePair {
     name: string;
 }
 
-export interface GameResponse {
-    id: number;
-    name: string;
-    aggregated_rating: number;
-    total_rating_count: number;
-    price: string;
-    discount_percent: number;
-    steamid: number;
-    cover: IGDBImage;
-    summary: string;
-    linkIcons: string[];
-    genres: IdNamePair[];
-    platforms: IdNamePair[];
-    release_dates: number[];
-    first_release_date: number;
-    screenshots: string[];
-    video: string;
-}
-
-export interface RawGameResponse {
+export interface RawGame {
     id: number;
     name: string;
     first_release_date: number;
@@ -489,36 +282,10 @@ export interface RawGameResponse {
     platforms: IGDBPlatform[];
     screenshots: IGDBImage[];
     videos: IGDBVideo[];
-    external_games: ExternalGame[];
+    external_games: IGDBExternalGame[];
 }
 
-export const GameResponseFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`];
-
-export interface MultiGameResponse {
-    error: string;
-    data?: GameResponse[];
-}
-
-export interface SingleGameResponse {
-    error: string;
-    data?: GameResponse;
-}
-
-export interface IGDBImage {
-    id: number;
-    alpha_channel: boolean;
-    animated: boolean;
-    url: string;
-    image_id: string;
-    width: number;
-    height: number;
-}
-
-export interface IGDBVideo {
-    id: number;
-    name: string;
-    video_id: string;
-}
+export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`];
 
 export interface Genre {
     id: number;
@@ -530,35 +297,7 @@ export interface Platform {
     name: string;
 }
 
-export enum IGDBExternalCategoryEnum {
-    "steam" = 1,
-    "gog" = 5,
-    "youtube" = 10,
-    "microsoft" = 11,
-    "apple" = 13,
-    "twitch" = 14,
-    "android" = 15
-}
-
-export interface ExternalGame {
-    id: number;
-    category: IGDBExternalCategoryEnum;
-    created_at: number;
-    game: number;
-    name: string;
-    uid: string;
-    updated_at: number;
-    url: string;
-    year: number;
-}
-
-export interface IGDBWebsite {
-    id: number;
-    trusted: boolean;
-    url: string;
-}
-
-export interface RawSingleNewsResponse {
+export interface RawNewsArticle {
     id: number;
     title: string;
     author: string;
@@ -570,7 +309,7 @@ export interface RawSingleNewsResponse {
     };
 }
 
-export interface SingleNewsResponse {
+export interface NewsArticle {
     id: number;
     title: string;
     author: string;
@@ -580,53 +319,9 @@ export interface SingleNewsResponse {
     newsOrg: string;
 }
 
-export const SingleNewsResponseFields: string[] = [`id`, `title`, `author`, `image`, `website.*`, `created_at`, `pulse_source.*`];
-
-export interface TwitchFollowersResponse {
-    error: string;
-    data?: TwitchUser[];
-}
-
-export interface TwitchIdResponse {
-
-    error: string;
-    data?: TwitchId;
-}
-
-export interface TwitchId {
-
-    twitchId: number;
-}
-
-export interface SteamIdResponse {
-
-    error: string;
-    data?: SteamId;
-}
-
-export interface SteamId {
-
-    steamId: number;
-}
-
-export interface DbSteamFriendsResponse {
-
-    friends: SteamFriend[];
-}
-
-export interface SteamFriendsResponse {
-
-    error: string;
-    data?: SteamFriend[];
-}
-
-export interface GenericErrorResponse {
-    error: string;
-    data?: any;
-}
+export const NewsArticleFields: string[] = [`id`, `title`, `author`, `image`, `website.*`, `created_at`, `pulse_source.*`];
 
 export interface SteamFriend {
-
     id: number;
     name: string;
     online: boolean;
@@ -663,27 +358,117 @@ export interface TwitchEmote {
     link: string;
 }
 
-export interface DbTwitchFollowsResponse {
-    follows: TwitchUser[];
+export interface GenrePair {
+    id: number;
+    name: string;
+}
+
+/**
+ * Response Models
+ */
+export interface GenericModelResponse {
+    error: string;
+    data?: any;
+}
+
+export interface DatalessResponse {
+    error: string;
+}
+
+export interface AccountInfoResponse {
+    error: string;
+    data?: AccountInfo;
+}
+
+export interface EmailVerifiedFlagResponse {
+    error: string;
+    data?: boolean;
+}
+
+export interface EmailRecoveryVerifyResponse {
+    error: string;
+    verifiedLink?: boolean;
+}
+
+export interface AccountImageResponse {
+    error: string;
+    link?: string;
+}
+
+export interface ChatroomEmotesResponse {
+    error: string;
+    emotes?: ChatroomEmote[];
+}
+
+export interface ChatroomUploadImageResponse {
+    error: string;
+    link?: string;
+}
+
+export interface ChatHistoryResponse {
+    name: string[];
+    date: string[];
+    text: string[];
+    image: string[];
+    attachment: string[];
+}
+
+export interface GameResponse {
+    id: number;
+    name: string;
+    aggregated_rating: number;
+    total_rating_count: number;
+    price: string;
+    discount_percent: number;
+    steamid: number;
+    cover: IGDBImage;
+    summary: string;
+    linkIcons: string[];
+    genres: IdNamePair[];
+    platforms: IdNamePair[];
+    release_dates: number[];
+    first_release_date: number;
+    screenshots: string[];
+    video: string;
+}
+export interface MultiGameResponse {
+    error: string;
+    data?: GameResponse[];
+}
+
+export interface SingleGameResponse {
+    error: string;
+    data?: GameResponse;
+}
+
+export interface TwitchFollowersResponse {
+    error: string;
+    data?: TwitchUser[];
+}
+
+export interface TwitchIdResponse {
+    error: string;
+    data?: number;
+}
+
+export interface SteamIdResponse {
+    error: string;
+    data?: number;
+}
+
+export interface SteamFriendsResponse {
+    error: string;
+    data?: SteamFriend[];
 }
 
 export interface DiscordLinkResponse {
     error: string;
-    data?: DiscordLink;
-}
-
-export interface DiscordLink {
-    link: string;
+    data?: string;
 }
 
 export interface MultiNewsResponse {
     error: string;
-    data?: SingleNewsResponse[];
-}
-
-export interface GenrePair {
-    id: number;
-    name: string;
+    data?: NewsArticle[];
 }
 
 export interface GenreListResponse {
@@ -696,4 +481,98 @@ export interface SteamAPIGetPriceInfoResponse {
     price: string;
     discount_percent: number;
     steam_url: string;
+}
+
+/**
+ *  IGDB Types
+ */
+
+export interface IGDBCacheEntry {
+    key: string;
+    expiry: number; // seconds
+}
+
+export interface IGDBPlatform {
+    id: number;
+    abbreviation: string;
+    alternative_name: string;
+    category: number;
+    created_at: number;
+    generation: number;
+    name: string;
+    platform_logo: number;
+    product_family: number;
+    slug: string;
+    summary: string;
+    updated_at: number;
+    url: string;
+    versions: number[];
+    websites: number[];
+}
+
+export interface IGDBGenre {
+    id: number;
+    created_at: number;
+    name: string;
+    slug: string;
+    updated_at: number;
+    url: string;
+}
+
+export enum IGDBExternalCategoryEnum {
+    "steam" = 1,
+    "gog" = 5,
+    "youtube" = 10,
+    "microsoft" = 11,
+    "apple" = 13,
+    "twitch" = 14,
+    "android" = 15
+}
+
+export interface IGDBReleaseDate {
+    id: number;
+    category: number;
+    date: number;
+    game: number;
+    human: string;
+    m: number;
+    platform: number;
+    region: number;
+    created_at: number;
+    updated_at: number;
+    y: number;
+}
+
+export interface IGDBImage {
+    id: number;
+    alpha_channel: boolean;
+    animated: boolean;
+    url: string;
+    image_id: string;
+    width: number;
+    height: number;
+}
+
+export interface IGDBVideo {
+    id: number;
+    name: string;
+    video_id: string;
+}
+
+export interface IGDBWebsite {
+    id: number;
+    trusted: boolean;
+    url: string;
+}
+
+export interface IGDBExternalGame {
+    id: number;
+    category: IGDBExternalCategoryEnum;
+    created_at: number;
+    game: number;
+    name: string;
+    uid: string;
+    updated_at: number;
+    url: string;
+    year: number;
 }

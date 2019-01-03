@@ -1,7 +1,7 @@
 import config from "../../../config";
 import DatabaseBase from "./../base/dbBase";
 import {
-    GenericResponseModel, ChatHistoryResponse, DbChatroomUploadImageResponse, DbChatroomEmotesResponse, ChatroomEmote } from "../../../client/client-server-common/common";
+    GenericModelResponse, ChatHistoryResponse, ChatroomEmote } from "../../../client/client-server-common/common";
 const imgur = require("imgur");
 
 imgur.setClientId(config.imgur.clientId);
@@ -15,17 +15,17 @@ class ChatroomModel extends DatabaseBase {
     /**
      * Add a chat message to the database.
      */
-    addChatMessage(username: string, date: number, text: string, image: string, attachment: string, chatroomid: number): Promise<GenericResponseModel> {
+    addChatMessage(username: string, date: number, text: string, image: string, attachment: string, chatroomid: number): Promise<GenericModelResponse> {
 
         return new Promise( (resolve, reject) => {
-            const response: GenericResponseModel = {error: undefined, data: undefined};
+            const response: GenericModelResponse = {error: undefined, data: undefined};
 
             this.insert(
                 "chatroom",
                 ["username", "date", "text", "image", "attachment", "chatroomid"],
                 [username, date / 1000, text, image, attachment, chatroomid],
                 "?, FROM_UNIXTIME(?), ?, ?, ?, ?")
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.error) {
                         return reject(dbResponse.error);
                     } else {
@@ -41,16 +41,16 @@ class ChatroomModel extends DatabaseBase {
     /**
      * Delete a chat message from the database.
      */
-    deleteChatMessage(messageid: number): Promise<GenericResponseModel> {
+    deleteChatMessage(messageid: number): Promise<GenericModelResponse> {
 
         return new Promise( (resolve, reject) => {
-            const response: GenericResponseModel = {error: undefined, data: undefined};
+            const response: GenericModelResponse = {error: undefined, data: undefined};
 
             this.delete(
                 "chatroom",
                 ["id=?"],
                 [messageid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.error) {
                         return reject(dbResponse.error);
                     } else {
@@ -75,7 +75,7 @@ class ChatroomModel extends DatabaseBase {
                 "chatroomid=?",
                 [chatroomid],
                 config.chatHistoryCount)
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     const chatHistoryResponse: ChatHistoryResponse = { name: [], date: [], text: [], image: [], attachment: [] };
 
                     dbResponse.data.forEach((chat: any) => {
@@ -106,7 +106,7 @@ class ChatroomModel extends DatabaseBase {
                 ["prefix", "suffix", "emoteurl", "createdOn"],
                 [emotePrefix, emoteSuffix, emoteURL, Date.now() / 1000],
                 "?, ?, ?, FROM_UNIXTIME(?)")
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     const insertid: number = dbResponse.data.insertId;
                     return resolve(insertid);
                 })
@@ -121,12 +121,12 @@ class ChatroomModel extends DatabaseBase {
     /**
      * Delete a chat emote.
      */
-    deleteChatEmote(emotePrefix: string, emoteSuffix: string): Promise<GenericResponseModel> {
+    deleteChatEmote(emotePrefix: string, emoteSuffix: string): Promise<GenericModelResponse> {
         return new Promise( (resolve, reject) => {
             this.delete("chatemotes",
                 ["prefix=?", "suffix=?"],
                 [emotePrefix, emoteSuffix])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     return resolve(dbResponse);
                 })
                 .catch((err: string) => {
@@ -139,13 +139,12 @@ class ChatroomModel extends DatabaseBase {
     /**
      * Upload base64 string to Imgur and return URL to image.
      */
-    uploadImage(imageBase64: string): Promise <DbChatroomUploadImageResponse> {
+    uploadImage(imageBase64: string): Promise <string> {
         return new Promise( (resolve, reject) => {
             imgur.uploadBase64(imageBase64)
                 .then((response: any) => {
                     const link: string = response.data.link;
-                    const DbChatroomUploadImageResponse: DbChatroomUploadImageResponse = { link: link };
-                    return resolve(DbChatroomUploadImageResponse);
+                    return resolve(link);
                 })
                 .catch((error: string) => {
                     return reject(`Error uploading chatroom message attachment. ${error}`);
@@ -156,13 +155,12 @@ class ChatroomModel extends DatabaseBase {
     /**
      * Get chatroom emotes.
      */
-    getEmotes(): Promise <DbChatroomEmotesResponse> {
+    getEmotes(): Promise <ChatroomEmote[]> {
         return new Promise( (resolve, reject) => {
             this.select(
                 "chatemotes",
                 ["prefix", "suffix", "emoteurl"])
-                .then((dbResponse: GenericResponseModel) => {
-                    const dbChatroomEmotesResponse: DbChatroomEmotesResponse = { emotes: undefined };
+                .then((dbResponse: GenericModelResponse) => {
                     const chatroomEmotes: ChatroomEmote[] = [];
 
                     dbResponse.data.forEach((rawEmote: any) => {
@@ -170,9 +168,7 @@ class ChatroomModel extends DatabaseBase {
                         chatroomEmotes.push(chatroomEmote);
                     });
 
-                    dbChatroomEmotesResponse.emotes = chatroomEmotes;
-
-                    return resolve(dbChatroomEmotesResponse);
+                    return resolve(chatroomEmotes);
                 })
                 .catch((err: string) => {
                     return reject(err);

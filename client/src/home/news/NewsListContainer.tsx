@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { SingleNewsResponse } from '../../../client-server-common/common';
+import { NewsArticle } from '../../../client-server-common/common';
 import NewsList from './NewsList';
 
 interface INewsContainerProps extends RouteComponentProps<any> {
-    news: SingleNewsResponse[];
+    news: NewsArticle[];
 }
 
 interface INewsListContainerState {
-    news: SingleNewsResponse[];
+    news: NewsArticle[];
 }
 
 class NewsListContainer extends React.Component<INewsContainerProps, INewsListContainerState> {

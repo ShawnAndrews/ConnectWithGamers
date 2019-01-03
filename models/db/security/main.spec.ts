@@ -3,7 +3,7 @@ const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 const expect: Chai.ExpectStatic = chai.expect;
 import { securityModel } from "./main";
-import { DbAuthenticateResponse, DbAuthorizeResponse, DbTokenResponse } from "../../../client/client-server-common/common";
+import { Authentication, number, TokenInfo } from "../../../client/client-server-common/common";
 
 describe("Security model", function() {
 
@@ -11,14 +11,14 @@ describe("Security model", function() {
         const accountName: string = "Anonymous";
         const accountPassword: string = "123456";
         const accountRememberMe: boolean = false;
-        const accountAuthenticationPromise: Promise<DbAuthenticateResponse> = securityModel.authenticate(accountName, accountPassword, accountRememberMe);
+        const accountAuthenticationPromise: Promise<Authentication> = securityModel.authenticate(accountName, accountPassword, accountRememberMe);
 
         return expect(accountAuthenticationPromise).to.eventually.be.fulfilled;
     });
 
     it("authorizes an account", function() {
         const accountCookie: string = "authToken=geQUp8CfnRYP5FagUqTKlGd2DRRRL4qo";
-        const accountAuthorizePromise: Promise<DbAuthorizeResponse> = securityModel.authorize(accountCookie);
+        const accountAuthorizePromise: Promise<number> = securityModel.authorize(accountCookie);
 
         return expect(accountAuthorizePromise).to.eventually.be.rejectedWith("Valid auth token not found in database");
     });
@@ -26,7 +26,7 @@ describe("Security model", function() {
     it("issues new account token", function() {
         const accountName: string = "Anonymous";
         const accountRememberMe: boolean = false;
-        const accountAuthorizePromise: Promise<DbTokenResponse> = securityModel.token(accountName, accountRememberMe);
+        const accountAuthorizePromise: Promise<TokenInfo> = securityModel.token(accountName, accountRememberMe);
 
         return expect(accountAuthorizePromise).to.eventually.be.fulfilled;
     });

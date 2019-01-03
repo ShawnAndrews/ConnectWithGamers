@@ -3,7 +3,7 @@ const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 const expect: Chai.ExpectStatic = chai.expect;
 import DatabaseBase from "./dbBase";
-import { GenericResponseModel } from "../../../client/client-server-common/common";
+import { GenericModelResponse } from "../../../client/client-server-common/common";
 import { MysqlError } from "mysql";
 
 describe("Database base model", function() {
@@ -21,13 +21,13 @@ describe("Database base model", function() {
         const chatEmotePrefix: string = "b";
         const chatEmoteSuffix: string = "C";
 
-        const insertPromise: Promise<GenericResponseModel> = dbBase.insert("chatemotes",
+        const insertPromise: Promise<GenericModelResponse> = dbBase.insert("chatemotes",
             ["prefix", "suffix", "emoteurl", "createdOn"],
             [chatEmotePrefix, chatEmoteSuffix, chatEmoteURL, Date.now() / 1000],
             "?, ?, ?, FROM_UNIXTIME(?)");
 
         return insertPromise
-            .then((response: GenericResponseModel) => {
+            .then((response: GenericModelResponse) => {
                 expect(response.data.insertId).is.not.undefined;
                 testEmoteId = response.data.insertId;
             });
@@ -35,7 +35,7 @@ describe("Database base model", function() {
 
     it("selects", function() {
         expect(testEmoteId).is.not.undefined;
-        const selectPromise: Promise<GenericResponseModel> = dbBase.select("chatemotes",
+        const selectPromise: Promise<GenericModelResponse> = dbBase.select("chatemotes",
             ["prefix", "suffix", "emoteurl", "createdOn"],
             "emoteid=?",
             [testEmoteId]);
@@ -47,7 +47,7 @@ describe("Database base model", function() {
         expect(testEmoteId).is.not.undefined;
         const chatNewEmoteURL: string = "https://i.imgur.com/Y74t2Fm.png";
 
-        const updatePromise: Promise<GenericResponseModel> = dbBase.update("chatemotes",
+        const updatePromise: Promise<GenericModelResponse> = dbBase.update("chatemotes",
             "emoteurl=?",
             [chatNewEmoteURL],
             "emoteid=?",
@@ -58,7 +58,7 @@ describe("Database base model", function() {
 
     it("deletes", function() {
         expect(testEmoteId).is.not.undefined;
-        const deletePromise: Promise<GenericResponseModel> = dbBase.delete("chatemotes", ["emoteid=?"], [testEmoteId]);
+        const deletePromise: Promise<GenericModelResponse> = dbBase.delete("chatemotes", ["emoteid=?"], [testEmoteId]);
 
         return expect(deletePromise).to.eventually.be.fulfilled;
     });

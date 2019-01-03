@@ -3,7 +3,7 @@ import axios from "axios";
 import DatabaseBase from "../base/dbBase";
 import { genRandStr } from "../../../util/main";
 import { sendVerificationEmail } from "../../../util/nodemailer";
-import { GenericResponseModel, DbVerifyEmailResponse, DbAccountImageResponse, DbAccountInfoResponse, DbRecoveryEmailResponse, DbAccountsInfoResponse, DbTwitchIdResponse, DbSteamIdResponse, DbDiscordLinkResponse, DbSteamFriendsResponse, SteamFriend, DbTwitchFollowsResponse, TwitchUser, TwitchEmote, TwitchPair, AccountInfo } from "../../../client/client-server-common/common";
+import { GenericModelResponse, RecoveryEmailInfo, AccountsInfo, SteamFriend, TwitchUser, TwitchEmote, TwitchPair, AccountInfo } from "../../../client/client-server-common/common";
 import config from "../../../config";
 
 export const SALT_RNDS = 10;
@@ -49,7 +49,7 @@ class AccountModel extends DatabaseBase {
                 columnNames,
                 columnValues,
                 `?, ?, ?, ?, FROM_UNIXTIME(?), ?, ?${defaultTwitch ? ", ?" : ""}${defaultSteam ? ", ?" : ""}${defaultDiscord ? ", ?" : ""}`)
-                .then((response: GenericResponseModel) => {
+                .then((response: GenericModelResponse) => {
                     sendVerificationEmail(email, `http://www.connectwithgamers.com/account/verify/${emailVerification}`)
                     .then(() => {
                         const accountId: number = response.data.insertId;
@@ -70,18 +70,18 @@ class AccountModel extends DatabaseBase {
     /**
      * Get account id.
      */
-    getAccountId(username: string): Promise<GenericResponseModel> {
+    getAccountId(username: string): Promise<GenericModelResponse> {
 
         return new Promise( (resolve, reject) => {
 
-            const response: GenericResponseModel = {error: undefined, data: undefined};
+            const response: GenericModelResponse = {error: undefined, data: undefined};
 
             this.select(
                 "accounts",
                 ["accountid"],
                 `username=?`,
                 [username])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     const accountid: number = dbResponse.data[0].accountid;
                     response.data = { accountid: accountid };
                     return resolve(response);
@@ -97,18 +97,18 @@ class AccountModel extends DatabaseBase {
     /**
      * Get account username.
      */
-    getAccountUsername(accountid: number): Promise<GenericResponseModel> {
+    getAccountUsername(accountid: number): Promise<GenericModelResponse> {
 
         return new Promise( (resolve, reject) => {
 
-            const response: GenericResponseModel = {error: undefined, data: undefined};
+            const response: GenericModelResponse = {error: undefined, data: undefined};
 
             this.select(
                 "accounts",
                 ["username"],
                 `accountid=?`,
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     const username = dbResponse.data[0].username;
                     response.data = { username: username };
                     return resolve(response);
@@ -124,7 +124,7 @@ class AccountModel extends DatabaseBase {
     /**
      * Get link to account's profile picture.
      */
-    getAccountImage(accountid: number): Promise<DbAccountImageResponse> {
+    getAccountImage(accountid: number): Promise<string> {
 
         return new Promise( (resolve, reject) => {
             this.select(
@@ -132,9 +132,8 @@ class AccountModel extends DatabaseBase {
                 ["image"],
                 `accountid=?`,
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
-                    const dbAccountImageResponse: DbAccountImageResponse = { link: dbResponse.data[0].image };
-                    return resolve(dbAccountImageResponse);
+                .then((dbResponse: GenericModelResponse) => {
+                    return resolve(dbResponse.data[0].image);
                 })
                 .catch((error: string) => {
                     return reject(`Database error. ${error}`);
@@ -145,7 +144,7 @@ class AccountModel extends DatabaseBase {
     /**
      * Get account recovery info by username.
      */
-    getAccountRecoveryInfoByUsername(username: string): Promise<DbRecoveryEmailResponse> {
+    getAccountRecoveryInfoByUsername(username: string): Promise<RecoveryEmailInfo> {
 
         return new Promise( (resolve, reject) => {
             this.select(
@@ -153,9 +152,9 @@ class AccountModel extends DatabaseBase {
                 ["email", "recoveryid"],
                 `username=?`,
                 [username])
-                .then((dbResponse: GenericResponseModel) => {
-                    const dbRecoveryEmailResponse: DbRecoveryEmailResponse = { email: dbResponse.data[0].email, uid: dbResponse.data[0].recoveryid };
-                    return resolve(dbRecoveryEmailResponse);
+                .then((dbResponse: GenericModelResponse) => {
+                    const RecoveryEmailInfo: RecoveryEmailInfo = { email: dbResponse.data[0].email, uid: dbResponse.data[0].recoveryid };
+                    return resolve(RecoveryEmailInfo);
                 })
                 .catch((error: string) => {
                     return reject(`Username not found in database.`);
@@ -174,7 +173,7 @@ class AccountModel extends DatabaseBase {
                 ["accountid"],
                 `recoveryid=?`,
                 [uid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
                         return resolve(true);
                     } else {
@@ -190,7 +189,7 @@ class AccountModel extends DatabaseBase {
     /**
      * Get public account information by username filter.
      */
-    getAccountsByUsernameFilter(usernameFilter: string): Promise<DbAccountsInfoResponse> {
+    getAccountsByUsernameFilter(usernameFilter: string): Promise<AccountsInfo> {
         return new Promise( (resolve, reject) => {
 
             this.select(
@@ -198,7 +197,7 @@ class AccountModel extends DatabaseBase {
                 ["accountid", "username", "discord", "steam", "twitch", "image"],
                 `username LIKE ${usernameFilter ? `?` : `'%'`}`,
                 [`%${usernameFilter}%`])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     const accounts: AccountInfo[] = [];
                     if (dbResponse.data.length > 0) {
                         dbResponse.data.forEach((element: any) => {
@@ -214,7 +213,7 @@ class AccountModel extends DatabaseBase {
                         });
                     }
 
-                    const dbUsers: DbAccountsInfoResponse = { accounts: accounts };
+                    const dbUsers: AccountsInfo = { accounts: accounts };
                     return resolve(dbUsers);
                 })
                 .catch((err: string) => {
@@ -228,7 +227,7 @@ class AccountModel extends DatabaseBase {
     /**
      * Get All public accounts information.
      */
-    getAccountsInfoById(accountIds: number[]): Promise<DbAccountsInfoResponse> {
+    getAccountsInfoById(accountIds: number[]): Promise<AccountsInfo> {
 
         return new Promise( (resolve, reject) => {
 
@@ -237,7 +236,7 @@ class AccountModel extends DatabaseBase {
                 ["accountid", "username", "discord", "steam", "twitch", "image"],
                 `accountid IN (${accountIds.join(",")})`,
                 accountIds)
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     const accounts: AccountInfo[] = [];
 
                     if (dbResponse.data.length > 0) {
@@ -254,7 +253,7 @@ class AccountModel extends DatabaseBase {
                         });
                     }
 
-                    const dbUsers: DbAccountsInfoResponse = { accounts: accounts };
+                    const dbUsers: AccountsInfo = { accounts: accounts };
                     return resolve(dbUsers);
                 })
                 .catch((err: string) => {
@@ -268,7 +267,7 @@ class AccountModel extends DatabaseBase {
     /**
      * Get public account information.
      */
-    getAccountInfo(accountid: number): Promise<DbAccountInfoResponse> {
+    getAccountInfo(accountid: number): Promise<AccountInfo> {
 
         return new Promise( (resolve, reject) => {
 
@@ -277,7 +276,7 @@ class AccountModel extends DatabaseBase {
                 ["accountid", "username", "discord", "steam", "twitch", "image"],
                 "accountid=?",
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
                         const account: AccountInfo = {
                             accountid: dbResponse.data[0].accountid,
@@ -287,7 +286,7 @@ class AccountModel extends DatabaseBase {
                             twitch_url: dbResponse.data[0].twitch,
                             image: dbResponse.data[0].image
                         };
-                        const dbUser: DbAccountInfoResponse = { account: account };
+                        const dbUser: AccountInfo = account;
                         return resolve(dbUser);
                     } else {
                         return reject(accountid);
@@ -304,7 +303,7 @@ class AccountModel extends DatabaseBase {
     /**
      * Return resolved twitch id from name.
      */
-    getTwitchId(accountid: number): Promise<DbTwitchIdResponse> {
+    getTwitchId(accountid: number): Promise<number> {
 
         return new Promise( (resolve, reject) => {
 
@@ -313,7 +312,7 @@ class AccountModel extends DatabaseBase {
                 ["twitch"],
                 "accountid=?",
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0 && dbResponse.data[0].twitch !== null) {
                         const twitchName: string = dbResponse.data[0].twitch;
 
@@ -328,8 +327,7 @@ class AccountModel extends DatabaseBase {
                         .then((result) => {
                             if (result.data.data.length > 0) {
                                 const twitchId: number = result.data.data[0].id;
-                                const dbTwitchIdResponse: DbTwitchIdResponse = { twitchId: twitchId };
-                                return resolve(dbTwitchIdResponse);
+                                return resolve(twitchId);
                             } else {
                                 return reject("Twitch username does not exist.");
                             }
@@ -353,7 +351,7 @@ class AccountModel extends DatabaseBase {
     /**
      * Return live streams from Twitch's following list.
      */
-    getTwitchFollows(accountid: number): Promise<DbTwitchFollowsResponse> {
+    getTwitchFollows(accountid: number): Promise<TwitchUser[]> {
 
         const getLiveFollows = (followIds: TwitchPair[]): Promise<TwitchUser[]> => {
 
@@ -583,8 +581,8 @@ class AccountModel extends DatabaseBase {
             let twitchId: number = undefined;
 
             this.getTwitchId(accountid)
-            .then((result: DbTwitchIdResponse) => {
-                twitchId = result.twitchId;
+            .then((result: number) => {
+                twitchId = result;
                 return getNumberOfFollows(twitchId);
             })
             .then((followCount: number) => {
@@ -594,8 +592,7 @@ class AccountModel extends DatabaseBase {
                 return getLiveFollows(followPairs);
             })
             .then((follows: TwitchUser[]) => {
-                const dbTwitchFollowsResponse: DbTwitchFollowsResponse = { follows: follows };
-                return resolve(dbTwitchFollowsResponse);
+                return resolve(follows);
             })
             .catch((err: string) => {
                 return reject(err);
@@ -608,7 +605,7 @@ class AccountModel extends DatabaseBase {
     /**
      * Return resolved steam id from name.
      */
-    getSteamId(accountid: number): Promise<DbSteamIdResponse > {
+    getSteamId(accountid: number): Promise<number > {
 
         return new Promise( (resolve, reject) => {
 
@@ -617,7 +614,7 @@ class AccountModel extends DatabaseBase {
                 ["steam"],
                 `accountid=?`,
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0 && dbResponse.data[0].steam !== null) {
                         const steamName: string = dbResponse.data[0].steam;
 
@@ -626,8 +623,7 @@ class AccountModel extends DatabaseBase {
                         .then((result: any) => {
                             if (result.data.response.steamid) {
                                 const steamId: number = result.data.response.steamid;
-                                    const dbSteamIdResponse: DbSteamIdResponse = { steamId: steamId };
-                                    return resolve(dbSteamIdResponse);
+                                    return resolve(steamId);
                             } else {
                                 return reject("Steam username does not exist.");
                             }
@@ -651,7 +647,7 @@ class AccountModel extends DatabaseBase {
     /**
      * Return data about Steam friends.
      */
-    getSteamFriends(accountSteamId: number): Promise<DbSteamFriendsResponse > {
+    getSteamFriends(accountSteamId: number): Promise<SteamFriend[] > {
 
         const resolveSteamIdToFriendData = (steamids: number[]): Promise<SteamFriend[]> => {
             return new Promise( (resolve, reject) => {
@@ -776,8 +772,8 @@ class AccountModel extends DatabaseBase {
                                 friends.push(y);
                             });
                         });
-                        const dbSteamFriendsResponse: DbSteamFriendsResponse = { friends: friends };
-                        return resolve(dbSteamFriendsResponse);
+                        const steamFriends: SteamFriend[] = friends;
+                        return resolve(steamFriends);
                     })
                     .catch((error: string) => {
                         return reject(`Error retrieving Steam friend data: ${error}`);
@@ -790,7 +786,7 @@ class AccountModel extends DatabaseBase {
             .catch((err: any) => {
                 if (err.response.status === 401) {
                     // Steam profile is set to Private
-                    const steamFriendsResponse: DbSteamFriendsResponse = { friends: undefined };
+                    const steamFriendsResponse: SteamFriend[] = undefined;
                     return resolve(steamFriendsResponse);
                 }
                 return reject(err);
@@ -802,7 +798,7 @@ class AccountModel extends DatabaseBase {
     /**
      * Return account's Discord link.
      */
-    getDiscordLink(accountid: number): Promise<DbDiscordLinkResponse > {
+    getDiscordLink(accountid: number): Promise<string > {
 
         return new Promise( (resolve, reject) => {
 
@@ -811,11 +807,10 @@ class AccountModel extends DatabaseBase {
                 ["discord"],
                 `accountid=?`,
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0 && dbResponse.data[0].discord !== null) {
                         const discordLink: string = dbResponse.data[0].discord;
-                        const dbDiscordLinkResponse: DbDiscordLinkResponse = { discordLink: discordLink };
-                        return resolve(dbDiscordLinkResponse);
+                        return resolve(discordLink);
                     } else {
                         return reject();
                     }
@@ -840,7 +835,7 @@ class AccountModel extends DatabaseBase {
                 ["email", "emailVerification"],
                 "accountid=?",
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     const dbEmailVerification: string = dbResponse.data[0].emailVerification;
                     const dbEmail: string = dbResponse.data[0].email;
                     sendVerificationEmail(dbEmail, `www.connectwithgamers.com/account/verify/${dbEmailVerification}`)
@@ -862,7 +857,7 @@ class AccountModel extends DatabaseBase {
     /**
      * Verify visited URL contains a valid email verification code.
      */
-    verifyAccountEmail(accountid: number, verificationCode: string): Promise<DbVerifyEmailResponse> {
+    verifyAccountEmail(accountid: number, verificationCode: string): Promise<boolean> {
 
         return new Promise( (resolve, reject) => {
 
@@ -871,12 +866,11 @@ class AccountModel extends DatabaseBase {
                 ["emailVerification"],
                 "accountid=?",
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     const dbEmailVerification: string = dbResponse.data[0].emailVerification;
 
                     if (dbEmailVerification !== verificationCode) {
-                        const dbVerifyEmailResponse: DbVerifyEmailResponse = { verificationSuccessful: false };
-                        return resolve(dbVerifyEmailResponse);
+                        return resolve(false);
                     }
 
                     return this.update(
@@ -885,10 +879,9 @@ class AccountModel extends DatabaseBase {
                         [undefined],
                         "accountid=?",
                         [accountid])
-                        .then((dbResponse: GenericResponseModel) => {
+                        .then((dbResponse: GenericModelResponse) => {
                             if (dbResponse.data.affectedRows == 1) {
-                                const dbVerifyEmailResponse: DbVerifyEmailResponse = { verificationSuccessful: true };
-                                return resolve(dbVerifyEmailResponse);
+                                return resolve(true);
                             } else {
                                 return reject(`Database error: Failed to update.`);
                             }
@@ -915,7 +908,7 @@ class AccountModel extends DatabaseBase {
                 "accounts",
                 ["accountid=?"],
                 [accountid])
-                .then((dbResponse: GenericResponseModel) => {
+                .then((dbResponse: GenericModelResponse) => {
                     return resolve();
                 })
                 .catch((error: string) => {

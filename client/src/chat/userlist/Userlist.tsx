@@ -1,11 +1,11 @@
 import * as React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Paper from '@material-ui/core/Paper';
-import { ChatroomUser } from '../../../../client/client-server-common/common';
+import { AccountInfo } from '../../../../client/client-server-common/common';
 import { Textfit } from 'react-textfit';
 
 interface IUserlistProps {
-    userlist: ChatroomUser[];
+    userlist: AccountInfo[];
     onSearch: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
@@ -42,7 +42,7 @@ const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
                 :
                 <div className={`userlist y-scrollable custom-scrollbar h-100 px-4 px-sm-5`}>
                     {props.userlist
-                        .map((x: ChatroomUser, index: number) => {
+                        .map((x: AccountInfo, index: number) => {
                             return (
                                 <Paper
                                     key={index}

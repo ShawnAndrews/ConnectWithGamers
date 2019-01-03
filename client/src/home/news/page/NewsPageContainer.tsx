@@ -2,7 +2,7 @@ const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { SingleNewsResponse, MultiNewsResponse } from '../../../../client-server-common/common';
+import { NewsArticle, MultiNewsResponse } from '../../../../client-server-common/common';
 import NewsPage from './NewsPage';
 
 interface INewsPageContainerProps extends RouteComponentProps<any> {
@@ -11,7 +11,7 @@ interface INewsPageContainerProps extends RouteComponentProps<any> {
 
 interface INewsPageContainerState {
     isLoading: boolean;
-    news: SingleNewsResponse[];
+    news: NewsArticle[];
 }
 
 class NewsPageContainer extends React.Component<INewsPageContainerProps, INewsPageContainerState> {
@@ -29,7 +29,7 @@ class NewsPageContainer extends React.Component<INewsPageContainerProps, INewsPa
     loadNews(): void {
         IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`)
             .then( (response: MultiNewsResponse) => {
-                const news: SingleNewsResponse[] = response.data;
+                const news: NewsArticle[] = response.data;
                 this.setState({ isLoading: false, news: news });
             })
             .catch( (error: string) => {

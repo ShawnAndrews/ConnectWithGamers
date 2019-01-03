@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as IGDBService from '../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Showcase from './Showcase';
-import { GameResponse, MultiGameResponse, SingleNewsResponse, MultiNewsResponse } from '../../client-server-common/common';
+import { GameResponse, MultiGameResponse, NewsArticle, MultiNewsResponse } from '../../client-server-common/common';
 
 interface IShowcaseContainerProps extends RouteComponentProps<any> {
     
@@ -16,7 +16,7 @@ interface IShowcaseContainerState {
     recentGames: GameResponse[];
     upcomingGames: GameResponse[];
     discountedGames: GameResponse[];
-    news: SingleNewsResponse[];
+    news: NewsArticle[];
 }
 
 class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowcaseContainerState> {
@@ -53,7 +53,7 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
                 let recentGames: GameResponse[] = undefined;
                 let upcomingGames: GameResponse[] = undefined;
                 let discountedGames: GameResponse[] = undefined;
-                let news: SingleNewsResponse[] = undefined;
+                let news: NewsArticle[] = undefined;
 
                 if (vals[0]) {
                     const response: MultiGameResponse = vals[0];

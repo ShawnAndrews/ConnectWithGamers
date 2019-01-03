@@ -1,7 +1,7 @@
 import config from "../../../../config";
 import {
     GameResponse,
-    redisCache, IGDBCacheEntry, RawGameResponse, GameResponseFields } from "../../../../client/client-server-common/common";
+    redisCache, IGDBCacheEntry, RawGame, GameFields } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { buildIGDBRequestBody } from "../../../../util/main";
 import { cachePreloadedGame, getCachedGame } from "../game/main";
@@ -92,7 +92,7 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
     const URL: string = `${config.igdb.apiURL}/games`;
     const body: string = buildIGDBRequestBody(
         whereFilters,
-        GameResponseFields.join(),
+        GameFields.join(),
         undefined,
         undefined,
         queryStringObj.query
@@ -110,9 +110,9 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
             data: body
         })
         .then( (response: AxiosResponse) => {
-            const rawGamesResponses: RawGameResponse[] = response.data;
-            const ids: number[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => rawGameResponse.id);
-            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((rawGameResponse: RawGameResponse) => cachePreloadedGame(rawGameResponse));
+            const rawGamesResponses: RawGame[] = response.data;
+            const ids: number[] = rawGamesResponses.map((RawGame: RawGame) => RawGame.id);
+            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((RawGame: RawGame) => cachePreloadedGame(RawGame));
 
             redisClient.hset(cacheEntry.key, queryString, JSON.stringify(ids));
             if (cacheEntry.expiry !== -1) {
