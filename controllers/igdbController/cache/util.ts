@@ -143,7 +143,6 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 return resolve(pricesResponse);
             })
             .catch ((error: string) => {
-                console.log(`FAILED PRICE REQUEST: ${error}`);
                 return reject(error);
             });
 
@@ -194,7 +193,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             }
 
             // cover
-            if (RawGame.cover) {
+            if (RawGame.cover && isNaN(Number(RawGame.cover))) {
                 RawGame.cover.url = IGDBImageResolve(RawGame.cover.image_id, "cover_big", "jpg");
             }
             cover = RawGame.cover;
@@ -286,7 +285,6 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             return resolve(gameResponses);
         })
         .catch((error: string) => {
-            console.log(`FAILED PRICE2 REQUEST: ${error}`);
             return reject(error);
         });
 

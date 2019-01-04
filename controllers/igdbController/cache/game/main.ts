@@ -110,7 +110,6 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
         .then((exists: boolean) => {
             convertRawGame([RawGame])
             .then((gameResponses: GameResponse[]) => {
-
                 redisClient.hset(cacheEntry.key, gameId, JSON.stringify(gameResponses[0]));
                 if (cacheEntry.expiry !== -1) {
                     redisClient.expire(cacheEntry.key, cacheEntry.expiry);

@@ -95,7 +95,7 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
                     news: news
                 });
             })
-            .catch((error: string) => {
+            .catch((error: any) => {
                 popupS.modal({ content: `<div>• Error loading menu.</div>` });
             });
     }

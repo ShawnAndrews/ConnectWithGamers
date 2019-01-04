@@ -29,7 +29,7 @@ module.exports = {
       {
         test: /\.tsx?$/,
         loader: ['babel-loader', 'ts-loader'],
-        exclude: ['node_modules', './dist']
+        exclude: [/node_modules/, /.dist/]
       }
     ]
   },
