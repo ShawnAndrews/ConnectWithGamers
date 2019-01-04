@@ -70,7 +70,7 @@
 <br/>
 
 <p align="center">
-  <img src="https://i.imgur.com/RXENBuI.png" />
+  <img src="https://i.imgur.com/qOtIr8R.png" />
 </p>
 
 ## Updates
