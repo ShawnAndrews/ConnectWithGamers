@@ -34,6 +34,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                     const isEditorsChoiceGame: boolean = index === 0;
                     const isFeatureGame: boolean = featureGames.findIndex((x: number) => x === index) !== -1;
                     const isSubFeatureGame: boolean = subFeatureGames.findIndex((x: number) => x === index) !== -1;
+                    const originalPrice: number = + (parseFloat(game.price) / ((100 - game.discount_percent) / 100)).toFixed(2);
 
                     return (
                         <Card className={`game-${index} ${isFeatureGame ? 'feature' : ''} ${isSubFeatureGame ? 'sub-feature' : ''} ${isEditorsChoiceGame ? 'overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onClick={() => props.goToRedirect(`/games/search/game/${game.id}`)} onMouseOver={() => props.onHoverGame(index)} onMouseOut={() => props.onHoverOutGame(index)}>
@@ -64,10 +65,6 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                                             <div className="genre">
                                                 {game.genres[0].name}
                                             </div>}
-                                        {game.aggregated_rating &&
-                                            <div className="rating">
-                                                {Math.floor(game.aggregated_rating)}%
-                                            </div>}
                                     </>
                                     :
                                     <>
@@ -82,10 +79,19 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                                             variant="raised"
                                             onClick={() => props.goToRedirect(`${steamAppUrl}/${game.steamid}`) }
                                         >
-                                            Buy now
+                                            Buy now for ${game.price} USD
                                         </Button>
                                     </>}
                             </div>
+                            {!isEditorsChoiceGame && game.price &&
+                                <div className={`price-container ${!game.discount_percent ? 'no-discount': ''} mt-1`}>
+                                    {game.discount_percent && 
+                                        <>
+                                            <div className="discount d-inline-block px-1">-{game.discount_percent}%</div>
+                                            <div className="original-price d-inline-block px-1"><del>${originalPrice} USD</del></div>
+                                        </>}
+                                    <div className={`final-price d-inline-block ${game.discount_percent ? 'px-1' : 'px-3'}`}>{!isNaN(Number(game.price)) ? `$${game.price} USD` : game.price}</div>
+                                </div>}
                         </Card>
                     );
                 })}

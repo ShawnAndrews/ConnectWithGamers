@@ -11,7 +11,7 @@ const redisClient = redis.createClient();
  * Check if redis key exists.
  */
 export function gameKeyExists(gameId: number): Promise<boolean> {
-    const cacheEntry: IGDBCacheEntry = redisCache[5];
+    const cacheEntry: IGDBCacheEntry = redisCache[1];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.hexists(cacheEntry.key, gameId, (error: string, value: boolean) => {
@@ -29,7 +29,7 @@ export function gameKeyExists(gameId: number): Promise<boolean> {
  * Get redis-cached games.
  */
 export function getCachedGame(gameId: number): Promise<GameResponse> {
-    const cacheEntry: IGDBCacheEntry = redisCache[5];
+    const cacheEntry: IGDBCacheEntry = redisCache[1];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.hget(cacheEntry.key, gameId, (error: string, stringifiedGame: string) => {
@@ -49,7 +49,7 @@ export function getCachedGame(gameId: number): Promise<GameResponse> {
  * Cache game.
  */
 export function cacheGame(gameId: number): Promise<GameResponse> {
-    const cacheEntry: IGDBCacheEntry = redisCache[5];
+    const cacheEntry: IGDBCacheEntry = redisCache[1];
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -101,7 +101,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
  * Cache preloaded game.
  */
 export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
-    const cacheEntry: IGDBCacheEntry = redisCache[5];
+    const cacheEntry: IGDBCacheEntry = redisCache[1];
     const gameId: number = RawGame.id;
 
     return new Promise((resolve: any, reject: any) => {
@@ -117,6 +117,7 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
                 return resolve(gameResponses[0]);
             })
             .catch((error: string) => {
+                console.log(`error converting raw #${RawGame.id}: ${error}`);
                 return reject(error);
             });
         })

@@ -10,7 +10,7 @@ const redisClient = redis.createClient();
  * Check if redis key exists.
  */
 export function genreListKeyExists(): Promise<boolean> {
-    const cacheEntry: IGDBCacheEntry = redisCache[6];
+    const cacheEntry: IGDBCacheEntry = redisCache[2];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.exists(cacheEntry.key, (error: string, value: boolean) => {
@@ -27,7 +27,7 @@ export function genreListKeyExists(): Promise<boolean> {
  * Get redis-cached genre list.
  */
 export function getCachedGenreList(): Promise<GenrePair[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[6];
+    const cacheEntry: IGDBCacheEntry = redisCache[2];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.get(cacheEntry.key, (error: string, stringifiedGenreList: string) => {
@@ -44,7 +44,7 @@ export function getCachedGenreList(): Promise<GenrePair[]> {
  * Cache genre list.
  */
 export function cacheGenreList(): Promise<GenrePair[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[6];
+    const cacheEntry: IGDBCacheEntry = redisCache[2];
 
     const URL: string = `${config.igdb.apiURL}/genres`;
     const body: string = buildIGDBRequestBody(

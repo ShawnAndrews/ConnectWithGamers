@@ -12,7 +12,7 @@ interface IHighlightedGameListProps {
     hoveredGameId: number;
 }
 
-const PopularGameList: React.SFC<IHighlightedGameListProps> = (props: IHighlightedGameListProps) => {
+const HighlightedGameList: React.SFC<IHighlightedGameListProps> = (props: IHighlightedGameListProps) => {
 
     const featuredGames: number[] = [4];
 
@@ -55,4 +55,4 @@ const PopularGameList: React.SFC<IHighlightedGameListProps> = (props: IHighlight
 
 };
 
-export default PopularGameList;
+export default HighlightedGameList;

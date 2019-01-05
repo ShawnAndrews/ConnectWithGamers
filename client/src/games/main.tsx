@@ -23,9 +23,6 @@ const Main: React.SFC<IMainProps> = (props: IMainProps) => {
             <div className={`content d-inline-block overflow-hidden vh-min-100 p-4 ${props.sidebarExpanded ? 'active' : ''}`}>
                 <Switch>
                     <Route path="/games/search" component={SearchRouter} />
-                    <Route path="/games/popular" component={SearchRouter} />
-                    <Route path="/games/upcoming" component={SearchRouter} />
-                    <Route path="/games/recent" component={SearchRouter} />
                     <Route path="/games/news" component={NewsPageContainer} />
                     <Route path="/games/gaming" component={GamingSwitch} />
                     <Route path="/games" component={HomeContainer} />

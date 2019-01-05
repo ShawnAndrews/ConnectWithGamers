@@ -81,7 +81,7 @@
     
                 .genre {
                     font-size: 0.9em;
-                    width: 80%;
+                    width: 100%;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -90,16 +90,6 @@
                 .genres {
                     font-size: 0.8rem;
                     margin-bottom: 10px;
-                }
-
-                .rating {
-                    position: absolute;
-                    right: 0;
-                    bottom: 0;
-                    width: 20%;
-                    text-align: end;
-                    font-weight: bold;
-                    color: rgba(orange, 0.7);
                 }
 
                 &.editors-choice {
@@ -135,6 +125,53 @@
 
                 * {
                     color: rgba(white, 0.8);
+                }
+            }
+
+            .price-container {
+                position: absolute;
+                top: 0;
+                right: 0;
+                color: white;
+                background-color: rgba(black, 0.5);
+                width: 100px;
+                height: 22px;
+
+                .discount {
+                    color: rgba(white, 0.6);
+                    background-color: rgba(green, 0.5);
+                }
+
+                .original-price {
+                    position: absolute;
+                    top: 0px;
+                    right: 0px;
+                    opacity: 0.5;
+                    font-size: 7px;
+
+                    del {
+                        vertical-align: text-top;
+                    }
+                }
+
+                .final-price {
+                    position: absolute;
+                    bottom: 0px;
+                    right: 0px;
+                    opacity: 0.7;
+                    font-size: 8px;
+                }
+
+                &.no-discount {
+                    width: auto;
+                    height: auto;
+                    background: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0) 100%);
+
+                    .final-price {
+                        position: relative;
+                        opacity: 0.85;
+                        font-size: 11px;
+                    }
                 }
             }
 

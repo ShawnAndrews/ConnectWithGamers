@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse } from '../../../../client/client-server-common/common';
+import { GameResponse, GamesPresets } from '../../../../client/client-server-common/common';
 import { Card, CardMedia } from '@material-ui/core';
 
 interface IPopularGameListProps {
@@ -20,7 +20,7 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
     return (
         <div className="col-md-12 col-lg-9 px-md-0 pl-lg-3">
             <div className="popular-table">
-                <div className="popular-table-header mb-3 pt-2" onClick={() => { props.goToRedirectCallback(`/games/popular`); }}>
+                <div className="popular-table-header mb-3 pt-2" onClick={() => { props.goToRedirectCallback(`/games/search/filter/${GamesPresets.popular}`); }}>
                     <a className="popular-table-header-link mr-2">Most Popular</a>
                     <i className="fas fa-chevron-right"/>
                 </div>
@@ -28,7 +28,7 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                     {props.popularGames
                         .map((x: GameResponse) => {
                             return (
-                                <Card key={x.id} className="popular-table-container cursor-pointer primary-shadow d-inline-block mx-2" onClick={() => { props.onClickGame(x.id); }}>
+                                <div key={x.id} className="popular-table-container cursor-pointer primary-shadow d-inline-block mx-2" onClick={() => { props.onClickGame(x.id); }}>
                                     <CardMedia className="popular-table-image h-75 w-100">
                                         <img className="w-100 h-100" src={x.cover ? x.cover.url : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                                     </CardMedia>
@@ -38,16 +38,17 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                                             {x.name}
                                         </div>
                                         <div className="row">
-                                            <div className="col-8 genre pr-0">
-                                                {x.genres && x.genres[0].name}
-                                            </div>
+                                            {x.genres &&
+                                                <div className="col-8 genre pr-0">
+                                                    {x.genres[0].name}
+                                                </div>}
                                             {x.aggregated_rating &&
-                                                <div className="col-4 rating pl-0">
+                                                <div className={`col-${x.genres ? 4 : 12} rating pl-0`}>
                                                     {Math.floor(x.aggregated_rating)}%
                                                 </div>}
                                         </div>
                                     </div>
-                                </Card>
+                                </div>
                             );
                         })}
                 </div>

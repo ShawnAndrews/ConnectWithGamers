@@ -12,7 +12,7 @@ const redisClient = redis.createClient();
  * Check if redis key exists.
  */
 export function resultsGamesKeyExists(queryString: string): Promise<boolean> {
-    const cacheEntry: IGDBCacheEntry = redisCache[4];
+    const cacheEntry: IGDBCacheEntry = redisCache[0];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.hexists(cacheEntry.key, queryString, (error: string, value: boolean) => {
@@ -29,8 +29,7 @@ export function resultsGamesKeyExists(queryString: string): Promise<boolean> {
  * Get redis-cached games.
  */
 export function getCachedResultsGames(queryString: string): Promise<GameResponse[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[4];
-
+    const cacheEntry: IGDBCacheEntry = redisCache[0];
     return new Promise((resolve: any, reject: any) => {
         redisClient.hget(cacheEntry.key, queryString, (error: string, stringifiedGameIds: string) => {
             if (error) {
@@ -57,9 +56,10 @@ export function getCachedResultsGames(queryString: string): Promise<GameResponse
  * Cache results game.
  */
 export function cacheResultsGames(queryString: string): Promise<GameResponse[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[4];
+    const cacheEntry: IGDBCacheEntry = redisCache[0];
     const queryStringObj: any = JSON.parse(queryString);
     const whereFilters: string[] = [];
+    let sortFilter: string = undefined;
 
     Object.keys(queryStringObj).forEach((key: string) => {
 
@@ -87,6 +87,38 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
             whereFilters.push(`aggregated_rating >= ${popularity}`);
         }
 
+        if (key === "cover") {
+            const cover: boolean = queryStringObj[key] === "true";
+
+            whereFilters.push(`cover ${cover ? "!=" : "=="} null`);
+        }
+
+        if (key === "released_before") {
+            const releasedBefore: number = parseInt(queryStringObj[key]);
+
+            whereFilters.push(`first_release_date < ${releasedBefore}`);
+        }
+
+        if (key === "released_after") {
+            const releasedBefore: number = parseInt(queryStringObj[key]);
+
+            whereFilters.push(`first_release_date > ${releasedBefore}`);
+        }
+
+        if (key === "sort") {
+            const split: string[] = queryStringObj[key].split(":");
+            let type: string = split[0];
+            const order: string = split[1];
+
+            if (type === "popularity") {
+                type = "aggregated_rating";
+            } else if (type === "release_date") {
+                type = "first_release_date";
+            }
+
+            sortFilter = `sort ${type} ${order}`;
+        }
+
     });
 
     const URL: string = `${config.igdb.apiURL}/games`;
@@ -94,7 +126,7 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
         whereFilters,
         GameFields.join(),
         undefined,
-        undefined,
+        sortFilter,
         queryStringObj.query
     );
 

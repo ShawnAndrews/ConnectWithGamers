@@ -1,9 +1,9 @@
 import config from "../../../../config";
 import {
     NewsArticle, RawNewsArticle, NewsArticleFields,
-    redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
+    redisCache, IGDBCacheEntry, getTodayUnixTimestampInSeconds } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-import { buildIGDBRequestBody, getCurrentUnixTimestampInSeconds } from "../../../../util/main";
+import { buildIGDBRequestBody } from "../../../../util/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
 
@@ -11,7 +11,7 @@ const redisClient = redis.createClient();
  * Check if redis key exists.
  */
 export function newsKeyExists(): Promise<boolean> {
-    const cacheEntry: IGDBCacheEntry = redisCache[8];
+    const cacheEntry: IGDBCacheEntry = redisCache[4];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.exists(cacheEntry.key, (error: string, value: boolean) => {
@@ -28,7 +28,7 @@ export function newsKeyExists(): Promise<boolean> {
  * Get redis-cached news.
  */
 export function getCachedNews(): Promise<NewsArticle[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[8];
+    const cacheEntry: IGDBCacheEntry = redisCache[4];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.get(cacheEntry.key, (error: string, stringifiedNews: string) => {
@@ -45,8 +45,8 @@ export function getCachedNews(): Promise<NewsArticle[]> {
  * Cache news.
  */
 export function cacheNews(): Promise<NewsArticle[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[8];
-    const CURRENT_UNIX_TIME_S: number = getCurrentUnixTimestampInSeconds();
+    const cacheEntry: IGDBCacheEntry = redisCache[4];
+    const CURRENT_UNIX_TIME_S: number = getTodayUnixTimestampInSeconds();
 
     return new Promise((resolve: any, reject: any) => {
 

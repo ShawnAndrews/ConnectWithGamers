@@ -2,7 +2,7 @@ const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { GameResponse, MultiGameResponse, ResultsType } from '../../../../client-server-common/common';
+import { GameResponse, MultiGameResponse, ResultsType, GamesPresets } from '../../../../client-server-common/common';
 import Results from './Results';
 
 interface IResultsContainerProps extends RouteComponentProps<any> {
@@ -95,19 +95,24 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
                 }
                 this.setState({ isLoading: false, retry: retry});
             });
+            
     }
 
     loadGames(type: ResultsType): void {
 
-        IGDBService.httpGetGamesResults(type)
-            .then( (response: MultiGameResponse) => {
-                const games: GameResponse[] = response.data;
-                this.setState({ isLoading: false, games: games });
-            })
-            .catch( (error: string) => {
+        IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets[type]}`)
+        .then( (response: MultiGameResponse) => {
+            const games: GameResponse[] = response.data;
+            this.setState({ isLoading: false, games: games });
+        })
+        .catch( (error: string) => {
+            let retry: boolean = error === "Retry";
+            if (!retry) {
                 popupS.modal({ content: `<div>• ${error}</div>` });
-                this.setState({ isLoading: false });
-            });
+            }
+            this.setState({ isLoading: false, retry: retry});
+        });
+
     }
 
     onRetryClick(): void {

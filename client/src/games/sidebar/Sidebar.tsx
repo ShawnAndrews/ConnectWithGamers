@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { GamesPresets } from '../../../client-server-common/common';
 
 interface ISidebarProps {
     goToRedirect: (URL: string) => void;
@@ -24,13 +25,13 @@ const Sidebar: React.SFC<ISidebarProps> = (props: ISidebarProps) => {
                     <div className="text-uppercase">
                         Browse Categories
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/popular`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.popular}`)}>
                         Most Popular
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/recent`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.recentlyReleased}`)}>
                         Recently Released
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/upcoming`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.upcoming}`)}>
                         Upcoming
                     </div>
                     <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/news`)}>
@@ -40,53 +41,53 @@ const Sidebar: React.SFC<ISidebarProps> = (props: ISidebarProps) => {
                     <div className="text-uppercase mt-3">
                         Platforms
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?platforms=6`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.pc}`)}>
                         PC
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?platforms=162,165`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.virtualReality}`)}>
                         Virtual Reality
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?platforms=48`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.playstation4}`)}>
                         Playstation 4
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?platforms=49`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.xboxOne}`)}>
                         Xbox One
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?platforms=130`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.nintendoSwitch}`)}>
                         Nintendo Switch
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?platforms=3`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.linux}`)}>
                         Linux
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?platforms=14`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.mac}`)}>
                         Mac
                     </div>
 
                     <div className="text-uppercase mt-3">
                         Genres
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?genres=14`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.action}`)}>
                         Action
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?genres=31`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.adventure}`)}>
                         Adventure
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?genres=5`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.shooter}`)}>
                         Shooter
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?genres=13`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.simulation}`)}>
                         Simulation
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?genres=12`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.rpg}`)}>
                         RPG
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?genres=10`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.racing}`)}>
                         Racing
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?genres=9`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.puzzle}`)}>
                         Puzzle
                     </div>
-                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/?genres=15,16,11`)}>
+                    <div className="pl-3 mt-1 cursor-pointer" onClick={() => props.goToRedirect(`/games/search/filter/${GamesPresets.strategy}`)}>
                         Strategy
                     </div>
 

@@ -92,8 +92,11 @@ function getSteamDiscountPercent(webpage: string): number {
     let discountPercent: number = undefined;
     const discardPrefix: string = `<table class="table table-fixed table-prices table-hover table-sortable">`;
     const discardPrefix2: string = `owned`;
+    const discardPrefix3: string = `<td>`;
+    const discardPrefix4: string = `<td>`;
     const discardSuffix: string = `</table>`;
     const discardSuffix2: string = `</tr>`;
+    const discardSuffix4: string = `</td>`;
     const prefix: string = `<span class="price-discount">-`;
     const alternatePrefix: string = `<span class="price-discount-minor">-`;
     const suffix: string = `</span>`;
@@ -110,6 +113,12 @@ function getSteamDiscountPercent(webpage: string): number {
     webpage = webpage.substring(foundDiscardPrefix2Index);
     const foundDiscardSuffix2Index: number = webpage.search(discardSuffix2);
     webpage = webpage.substring(0, foundDiscardSuffix2Index);
+    const foundDiscardPrefix3Index: number = webpage.search(discardPrefix3);
+    webpage = webpage.substring(foundDiscardPrefix3Index);
+    const foundDiscardPrefix4Index: number = webpage.search(discardPrefix4);
+    webpage = webpage.substring(foundDiscardPrefix4Index);
+    const foundDiscardSuffix4Index: number = webpage.search(discardSuffix4);
+    webpage = webpage.substring(0, foundDiscardSuffix4Index);
 
     const foundPrefixIndex: number = webpage.search(prefix);
     const foundAlternatePrefixIndex: number = webpage.search(alternatePrefix);
@@ -221,12 +230,13 @@ export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGe
             .then((response: AxiosResponse) => {
                 const webpage: string = response.data;
                 const freePrice: string = getSteamFreePrice(webpage);
+                const finalPrice: string = getSteamPrice(webpage);
 
                 // discount
                 steamPriceInfo.discount_percent = getSteamDiscountPercent(webpage);
 
                 // price
-                steamPriceInfo.price = freePrice || getSteamPrice(webpage) || "Coming Soon";
+                steamPriceInfo.price = freePrice || finalPrice || "Coming Soon";
 
                 return resolve(steamPriceInfo);
             })
@@ -260,13 +270,6 @@ export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGe
 /* IGDB image */
 export function IGDBImageResolve(image_id: string, size: string, type: string): string {
     return "https://images.igdb.com/igdb/image/upload/t_".concat(size, "/").concat(image_id, ".").concat(type);
-}
-
-/**
- * Get the current Unix Timestamp in seconds.
- */
-export function getCurrentUnixTimestampInSeconds(): number {
-    return parseInt(new Date().getTime().toString().slice(0, -3));
 }
 
 /**

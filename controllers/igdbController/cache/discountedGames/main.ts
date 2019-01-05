@@ -9,7 +9,7 @@ const redisClient = redis.createClient();
  * Check if redis key exists.
  */
 export function discountedGamesKeyExists(): Promise<boolean> {
-    const cacheEntry: IGDBCacheEntry = redisCache[9];
+    const cacheEntry: IGDBCacheEntry = redisCache[5];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.exists(cacheEntry.key, (error: string, value: boolean) => {
@@ -26,7 +26,7 @@ export function discountedGamesKeyExists(): Promise<boolean> {
  * Get redis-cached discounted games.
  */
 export function getCachedDiscountedGames(): Promise<GameResponse[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[9];
+    const cacheEntry: IGDBCacheEntry = redisCache[5];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.get(cacheEntry.key, (error: string, stringifiedGameIds: string) => {
@@ -55,7 +55,7 @@ export function getCachedDiscountedGames(): Promise<GameResponse[]> {
  */
 
 export function cacheDiscountedGames(): Promise<GameResponse[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[9];
+    const cacheEntry: IGDBCacheEntry = redisCache[5];
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -71,7 +71,7 @@ export function cacheDiscountedGames(): Promise<GameResponse[]> {
 
             getGamesBySteamIds(steamIds)
             .then((gameResponses: GameResponse[]) => {
-                const excludeGameIds: number[] = [111674, 36529, 15108];
+                const excludeGameIds: number[] = [111674, 36529, 15108, 103232];
                 const ids: number[] = gameResponses.filter((x: GameResponse) => excludeGameIds.indexOf(x.id) === -1).map((x: GameResponse) => x.id);
                 gameResponses = gameResponses.filter((x: GameResponse) => excludeGameIds.indexOf(x.id) === -1);
 
