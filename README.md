@@ -70,7 +70,8 @@
 <br/>
 
 <p align="center">
-  <img src="https://i.imgur.com/qOtIr8R.png" />
+  <img src="https://cdn.discordapp.com/attachments/507670507433361473/530260639835357221/hh.png" />
+  <img src="https://cdn.discordapp.com/attachments/507670507433361473/530260603567341570/h.png" />
 </p>
 
 ## Updates
