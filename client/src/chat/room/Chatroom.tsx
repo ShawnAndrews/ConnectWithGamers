@@ -46,8 +46,8 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
     };
 
     return (
-        <div className="h-100">
-            <div className="chatroom-messages py-3">
+        <>
+            <div className="chatroom-messages py-3 pr-2">
                 <div className={`chatroom-messages-container y-scrollable custom-scrollbar h-100`}>
                     {props.messagesLoading && 
                         <div className="chatroom-messages-loading">
@@ -72,7 +72,7 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
             <MessageBoxContainer
                 onSendCallback={props.onSendCallback}
             />
-        </div>
+        </>
     );
 
 };

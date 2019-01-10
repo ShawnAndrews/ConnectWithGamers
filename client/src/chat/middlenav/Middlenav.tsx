@@ -7,12 +7,14 @@ import EmotesCreateContainer from '../menu/emotes/create/EmotesCreateContainer';
 import { CHATROOMS, ChatroomInfo } from '../../../client-server-common/common';
 import { Paper } from '@material-ui/core';
 
-interface IMiddlenavProps { }
+interface IMiddlenavProps {
+    expanded: boolean;
+}
 
 const Middlenav: React.SFC<IMiddlenavProps> = (props: IMiddlenavProps) => {
 
     return (
-        <Paper className="col-9 br-0">
+        <Paper className={`middlenav ${props.expanded ? 'expanded' : ''} d-inline-block h-100 br-0`}>
             <Switch>
                 <Route path="/chat/emotes/create" render={() => <EmotesCreateContainer/>}/>
                 <Route path="/chat/emotes" render={() => <EmotesViewContainer/>}/>

@@ -80,11 +80,11 @@
         box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
         border-radius: 10px;
-        background-color: #F5F5F5;
+        background-color: rgba(white, 0.15);
     }
     &::-webkit-scrollbar {
         width: 12px;
-        background-color: #F5F5F5;
+        background: transparent;
     }
     &::-webkit-scrollbar-thumb {
         border-radius: 10px;
@@ -157,5 +157,96 @@
         &.inactive {
             display: none;
         }
+    }
+}
+
+.slider {
+
+    * {
+        background-color: @games-filter-color!important;
+        box-shadow: none!important;
+    }
+}
+
+.date-picker {
+
+    input {
+        width: 80px;
+        height: 30px;
+        background: transparent;
+        border: solid 1px @games-filter-color;
+        color: @games-filter-color;
+        border-radius: 5px;
+        text-align: center;
+
+        &::placeholder {
+            color: @games-filter-color;
+            text-align: center;
+        }
+    }
+}
+
+.filter-select {
+    border: 1px solid @games-filter-color;
+    color: @games-filter-color!important;
+
+    &:hover::before, &::after {
+        border-bottom: none!important;
+    }
+
+    svg {
+        color: @games-filter-color;
+    }
+
+}
+
+.filter-multi-select {
+
+    > label {
+        color: @games-filter-color!important;
+    }
+
+    > div::before, > div::after {
+        border-bottom: 2px solid @games-filter-color!important;
+    }
+
+    > div > div > div {
+        padding-top: 0px;
+
+        > div {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+    }
+
+    svg {
+        color: @games-filter-color;
+    }
+
+    span {
+        font-size: 11px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .chip {
+        background-color: @games-filter-color;
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+.filter-checkbox {
+    padding-bottom: 0;
+
+    span {
+        color: @games-filter-color!important;
+        overflow: visible!important;
+    }
+
+    .check {
+        padding-top: 0px;
+        padding-bottom: 0px;
     }
 }

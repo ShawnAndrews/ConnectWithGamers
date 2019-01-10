@@ -36,12 +36,14 @@ const TripleSlide: React.SFC<ITripleSlideProps> = (props: ITripleSlideProps) => 
                     <div className="h-50 position-relative cursor-pointer" onClick={() => props.onRedirect(gameTwo.id)} onMouseOver={() => props.onHoverGame(gameTwo.id)} onMouseOut={() => props.onHoverOutGame()}>
                         <img className="w-100 h-100" src={gameTwo.cover.url} />
                         <div className={`overlay ${props.hoveredGameId === gameTwo.id && 'active'}`} />
-                        <div className="discount-percent mt-1 px-1">-{gameTwo.discount_percent}%</div>
+                        {gameTwo.discount_percent && 
+                            <div className="discount-percent mt-1 px-1">-{gameTwo.discount_percent}%</div>}
                     </div>
                     <div className="h-50 position-relative cursor-pointer" onClick={() => props.onRedirect(gameThree.id)} onMouseOver={() => props.onHoverGame(gameThree.id)} onMouseOut={() => props.onHoverOutGame()}>
                         <img className="w-100 h-100" src={gameThree.cover.url} />
                         <div className={`overlay ${props.hoveredGameId === gameThree.id && 'active'}`} />
-                        <div className="discount-percent mt-1 px-1">-{gameThree.discount_percent}%</div>
+                        {gameThree.discount_percent && 
+                            <div className="discount-percent mt-1 px-1">-{gameThree.discount_percent}%</div>}
                     </div>
                 </div>
             </div>

@@ -1,71 +1,113 @@
 @message-box-height: 50px;
-@navbar-height: 71px;
+@navbar-height: 55px;
+@userlist-large-height: 60px;
+@userlist-extralarge-height: 300px;
 
 .chatroom {
-    height: calc(100vh - @navbar-height - 24px);
+    height: calc(100vh - @navbar-height);
+
+    @media @lg {
+        height: calc(100vh - 41px);
+    }
 
     .topbar {
-        background-color: @secondary-color;
         padding: .05rem 1rem!important;
-        border-top-left-radius: 15px;
-        border-top-right-radius: 15px;
+        box-shadow: 0px 3px 5px 0px rgba(0,0,0,0.2)!important;
+
+        i {
+            width: 50px;
+            font-size: 1.4rem;
+            opacity: 0.5;
+
+            &.active{
+                opacity: 1;
+            }
+
+            > svg {
+                vertical-align: middle;
+            }
+        }
 
         .nav {
-            color: @primary-color;
+            color: rgba(white, 0.6);
+        }
 
-            .title {
-                display: flex;
-                justify-content: center;
-                flex-direction: column;
+        .title {
+            height: 30px;
+            width: calc(100% - 400px);
+            color: rgba(white, 0.6);
+
+            @media @md {
+                width: calc(100% - 175px);
             }
         }
 
         .searchbar {
 
-            @media @sm {
+            @media @md {
                 display: none;
             }
 
             &.has-search .form-control {
                 padding-left: 2.375rem;
+                background-color: rgba(white, 0.1);
+                border: none;
+                color: rgba(white, 0.6);
             }
             
             &.has-search .form-control-feedback {
                 position: absolute;
-                z-index: 2;
-                display: block;
                 width: 2.375rem;
-                height: 2.375rem;
-                line-height: 2.375rem;
                 text-align: center;
-                pointer-events: none;
-                color: @primary-color;
+                color: rgba(white, 0.6);
 
                 > svg {
                     opacity: 0.7;
                 }
             }
 
-            > input:focus {
-                border-color: @primary-color!important;
+            input {
+                width: 200px;
+
+                &:focus {
+                    box-shadow: none;
+                }
             }
         }
     }
     
     .content {
-        height: calc(100% - 24px - 61px);
+        height: calc(100% - 62px);
+
+        > div {
+            background: transparent;
+        }
 
         .chatroom-messages {
             height: calc(100% - @message-box-height);
 
             .chatroom-messages-container {
+                overflow-x: hidden;
 
                 .message {
                     cursor: default!important;
                     user-select: auto!important;
 
+                    .attachment {
+                        max-width: 25%;
+                        min-width: 125px;
+                    }
+
+                    .avatar {
+                        background-color: rgba(white, 0.9);
+                    }
+
+                    .name {
+                        color: rgba(white, 0.9);
+                    }
+
                     .time {
-                        opacity: 0.5;
+                        color: rgba(white,0.4);
                         font-size: 0.65em;
                     }
 
@@ -76,22 +118,26 @@
                         line-height: 1.46429em;
 
                         > span {
-                            color: rgba(black, 0.5);
+                            color: rgba(white, 0.6);
                         } 
                     }
+                }
+
+                li {
+                    color: rgba(white,0.4);
+                    font-size: 1.0rem;
                 }
             }
         }
         
         .chatroom-messagebox {
             height: @message-box-height;
-            background-color: @secondary-color;
-            box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
-            
+            box-shadow: 0px -3px 2px 0px rgba(0,0,0,0.15);
+
             .attachment-icon {
-                color: @primary-color;
-                cursor: pointer;
-                
+                color: rgba(white, 0.6);
+                width: 60px;
+
                 i {
                     position: absolute;
                     width: 100%;
@@ -102,35 +148,32 @@
             }
 
             .messagefield {
+                width: calc(100% - 60px);
                 
                 > div {
                     height: 100%;
 
                     &::before {
-                        border-bottom: 1px solid @primary-color!important;
+                        border-bottom: 1px solid rgba(white, 0.6)!important;
                     }
 
                     &::after {
-                        border-bottom: 2px solid @primary-color!important;
+                        border-bottom: 2px solid rgba(white, 0.6)!important;
                     }
                 }
 
                 * {
-                    color: @primary-color;
-                }
-            }
-
-            .chatroom-input-send {
-                background-color: rgba(@primary-color,0.9);
-
-                &:hover {
-                    background-color: rgba(@primary-color,0.8);
+                    color: rgba(white, 0.6);
                 }
             }
         }
 
         .emotes-view {
 
+            > div {
+                background-color: rgba(white,.8);
+            }
+            
             .create-container {
 
                 .image-container {
@@ -138,15 +181,14 @@
                     width: 40px;
                     height: 40px;
                     margin: 0 auto;
-
+                    background-color: rgba(black,0.15);
+                    box-shadow: 3px 4px rgba(0,0,0, 0.2);
+                    
                     .image {
                         position: absolute!important;
-                        background-color: rgba(@primary-color,0.1)!important;
+                        background-color: rgba(white,0.1)!important;
                         border-radius: 0!important;
-                        box-shadow: 3px 4px rgba(0,0,0,.3);
-                        -moz-box-shadow: 3px 4px rgba(0,0,0,.3);
-                        -webkit-box-shadow: 3px 4px rgba(0, 0, 0, 0.3);
-                        -o-box-shadow: 3px 4px rgba(0,0,0,.3);
+                        box-shadow: none!important;
                     }
 
                     .image-overlay {
@@ -157,7 +199,7 @@
                         display: inline-flex;
 
                         > i {
-                            color: @primary-color;
+                            color: rgba(white, 0.6);
                             margin: auto auto auto 2px;
                         }
                     }
@@ -204,28 +246,25 @@
         }
 
         .serverlist {
+            width: 70px;
+            background-color: rgba(white,0.03);
+
+            @media @md {
+                width: 40px;
+            }
 
             .server {
                 transition: all .3s ease-in;
                 -webkit-transition: all .3s ease-in;
 
                 > img {
-                    opacity: 0.2;
-                    width: 35%;
+                    width: 50%;
                     transition: all .3s ease-in;
                     -webkit-transition: all .3s ease-in;
-
-                    @media @lg {
-                        width: 50%;
-                    }
                 }
 
                 &.active {
-                    border-left: 3px solid red;
-
-                    > img {
-                        opacity: 1.0;
-                    }
+                    border-left: 3px solid rgba(white, 0.6);
                 }
             }
 
@@ -234,7 +273,80 @@
             }
         }
 
+        .middlenav {
+            width: calc(100% - 70px);
+
+            &.expanded {
+                width: calc(100% - 70px - @userlist-extralarge-height);
+            }
+
+            @media @md {
+                width: calc(100% - 40px);
+
+                &.expanded {
+                    width: calc(100% - 40px - @userlist-large-height);
+                }
+            }
+
+            .chatroom-userlist {
+    
+                .noresults {
+                    color: rgba(white,0.6);
+                    font-size: 1.5em;
+                }
+    
+                .userlist {
+    
+                    .user {
+                        background-color: rgba(white,0.1);
+                        color: rgba(white,0.6);
+    
+                        .user-text { 
+    
+                            .time {
+                                color: #fbab1a;
+                            }
+                        }
+    
+                        .user-image {
+                            flex: none!important;
+
+                            &.default {
+                                background-color: rgba(white,0.8);
+                            }
+                        }
+    
+                        .user-links {
+    
+                            @media @md {
+                                display: none
+                            }
+    
+                            i {
+                                color: rgba(white,0.6);
+    
+                                @media @lg {
+                                    font-size: 0.7em;
+                                }
+                            }
+                        }
+                    }
+                    
+                }
+            }
+        }
+
         .chatroom-users {
+            width: 0px;
+            background-color: rgba(white,0.04);
+
+            &.expanded {
+                width: @userlist-extralarge-height;
+
+                @media @md {
+                    width: @userlist-large-height;
+                }
+            }
 
             .user {
                 
@@ -250,6 +362,7 @@
                     user-select: none;
                     border-radius: 50%;
                     justify-content: center;
+                    margin-left: 10px;
 
                     img {
                         width: 100%;
@@ -259,11 +372,10 @@
                     }
 
                     &.default {
-                        color: white;
-                        background-color: @primary-color
+                        background-color: rgba(white,0.8);
                     }
 
-                    @media @lg {
+                    @media @md {
                         margin: auto!important;
                     }
                 
@@ -292,13 +404,13 @@
                 .user-text {
                     height: 40px;
 
-                    @media @lg {
+                    @media @md {
                         display: none;
                     }
                     
                     .name {
                         position: relative;
-                        color: @primary-color;
+                        color: rgba(white, 0.6);
                         overflow: hidden;
                         font-weight: 700;
                         height: 60%;
@@ -322,7 +434,7 @@
             .empty-container {
 
                 .empty {
-                    color: @primary-color;
+                    color: rgba(white, 0.6);
 
                     i {
                         font-size: 2em;
@@ -341,7 +453,7 @@
             }
 
             .translucent-hr {
-                background-color: black;
+                background-color: rgba(white, 0.4);
                 opacity: 0.15;
             }
 
@@ -350,50 +462,5 @@
             }
         }
 
-        .chatroom-userlist {
-
-            .noresults {
-                color: @primary-color;
-                font-size: 1.5em;
-            }
-
-            .userlist {
-
-                .user {
-                    color: @primary-color;
-
-                    .user-text { 
-
-                        .time {
-                            color: #fbab1a;
-                        }
-                    }
-
-                    .user-image {
-                        flex: none!important;
-
-                        &.default {
-                            background-color: @primary-color;
-                        }
-                    }
-
-                    .user-links {
-
-                        @media @md {
-                            display: none
-                        }
-
-                        i {
-                            color: @primary-color;
-
-                            @media @lg {
-                                font-size: 0.7em;
-                            }
-                        }
-                    }
-                }
-                
-            }
-        }
     }
 }

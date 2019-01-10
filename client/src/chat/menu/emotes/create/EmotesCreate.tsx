@@ -41,10 +41,10 @@ const EmotesCreate: React.SFC<IEmotesCreateProps> = (props: IEmotesCreateProps) 
                     <div className="completion-container">
                         <i className="far fa-check-circle fa-5x d-block text-center color-primary"/>
                         <p className="text-center my-3">Successfully created emote!</p>
-                        <Button variant="raised" className="w-100 mt-3" color="primary" onClick={props.onClickCreateBack}>
+                        <Button variant="raised" className="bg-primary-solid w-100 mt-3" color="primary" onClick={props.onClickCreateBack}>
                             Back
                         </Button>
-                        <Button variant="raised" className="w-100 mt-2" color="primary" onClick={props.onClickCreateGoToEmotes}>
+                        <Button variant="raised" className="bg-primary-solid w-100 mt-2" color="primary" onClick={props.onClickCreateGoToEmotes}>
                             Go to emotes
                         </Button>
                     </div>}
@@ -64,7 +64,7 @@ const EmotesCreate: React.SFC<IEmotesCreateProps> = (props: IEmotesCreateProps) 
                                 : <Avatar className="image"/>}
                             {!props.uploadedImage && 
                                 <div className="image-overlay">
-                                    <i className="fas fa-plus create-chip-overlay-plus"/>
+                                    <i className="fas fa-plus create-chip-overlay-plus color-primary"/>
                                 </div>}
                             <input className="image-hidden-input" type="file" onChange={props.handleImageChange} />
                         </div>

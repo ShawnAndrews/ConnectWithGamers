@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.8.1",
+    "@material-ui/lab": "^3.0.0-alpha.27",
     "@types/jquery": "^3.3.29",
     "@types/react-redux": "^6.0.12",
     "@types/react-router": "^4.4.3",
@@ -26,6 +27,7 @@
     "react": "^16.7.0",
     "react-bootstrap": "^0.32.4",
     "react-crossfade-image": "^1.1.1",
+    "react-datepicker": "^2.0.0",
     "react-dom": "^16.7.0",
     "react-redux": "^6.0.0",
     "react-responsive-carousel": "^3.1.45",

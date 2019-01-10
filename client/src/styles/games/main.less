@@ -1,6 +1,7 @@
 @games-searchbar-icon-size: 32px;
 @games-sidebar-width: 300px;
 @games-hamburger-width: 30px;
+@games-filter-color: #90d793;
 
 .games {
  
@@ -356,9 +357,58 @@
                 }
 
             }
-            
-            > div:hover {
-                color: rgba(white, 0.65);
+        }
+
+        .filter {
+            min-height: 40px;
+            max-height: 42px;
+            line-height: 40px;
+            border-radius: 5px;
+            border: 1px solid rgba(white,0.3);
+            transition: all .6s ease-in;
+            -webkit-transition: all .6s ease-in;
+
+            * {
+                outline: 0;
+            }
+
+            &.expanded {
+                max-height: 900px;
+            }
+
+            .title {
+                font-size: 1.05rem;
+                letter-spacing: 1px;
+            }
+
+            .options {
+
+                .release-date {
+
+                    .divider {
+                        width: 30px;
+                    }
+                }
+
+                .sorting {
+                    
+                    > div {
+                        width: 100%;
+                    }
+                }
+
+                .refresh {
+                    height: 40px;
+                    line-height: 40px;
+                    border-bottom-right-radius: 5px;
+                    border-bottom-left-radius: 5px;
+                    background-color: @games-filter-color;
+                    font-size: 1.1rem;
+
+                    &:hover {
+                        background-color: #90d793;
+                    }
+                }
             }
         }
     }

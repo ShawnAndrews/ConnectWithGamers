@@ -2,13 +2,12 @@ import * as React from 'react';
 import { Route, Redirect, Switch, withRouter, RouteComponentProps } from 'react-router-dom';
 import Account from '../account/main';
 import { loggedIn } from '../service/account/main';
-import ChatroomMenu from '../chat/main';
+import ChatroomContainer from '../chat/mainContainer';
 import GamesContainer from '../games/mainContainer';
 import NotFoundPageContainer from '../notfound/NotFoundPageContainer';
 import NavbarContainer from '../nav/NavbarContainer';
 import RecoveryContainer from '../recovery/RecoveryFormContainer';
 import ShowcaseContainer from '../home/ShowcaseContainer';
-import ModalFilternavContainer from '../games/modal/ModalFilternavContainer';
 
 export enum NAV_PAGE {
     HOME = '/',
@@ -54,13 +53,12 @@ class App extends React.Component<IAppProps, IAppState> {
                 <Switch>
                     {AuthorizedRoutesRedirect}
                     <Route path="/account" component={Account}/>
-                    <Route path="/chat" component={ChatroomMenu}/>
+                    <Route path="/chat" component={ChatroomContainer}/>
                     <Route path="/games" component={GamesContainer}/>
                     <Route path="/recovery/:uid" component={RecoveryContainer}/>
                     <Route path="/" component={ShowcaseContainer}/>
                     <Route component={NotFoundPageContainer}/>
                 </Switch>
-                <ModalFilternavContainer/>
             </div>
         );
 

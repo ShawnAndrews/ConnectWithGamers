@@ -56,15 +56,15 @@ class Message extends React.PureComponent<IMessageProps, null> {
         const formattedDateTime: string = `${formattedDate} ${formattedTime}`;
                                 
         return (
-            <ListItem className="message" button={true}>
+            <ListItem className="message px-5" button={true}>
                 {this.props.chat.image
                     ? <Avatar src={this.props.chat.image}/>
-                    : <Avatar className="bg-primary">{this.props.chat.name.slice(0, 2).toUpperCase()}</Avatar>}
+                    : <Avatar className="avatar color-primary">{this.props.chat.name.slice(0, 2).toUpperCase()}</Avatar>}
                 <ListItemText>
-                    <div><span className="name color-primary font-weight-bold">{`${this.props.chat.name}   `}</span><span className="time">{`${formattedDateTime}`}</span></div>
+                    <div><span className="name font-weight-bold">{`${this.props.chat.name}   `}</span><span className="time">{`${formattedDateTime}`}</span></div>
                     <p className="text">{this.decodeEmotesAndLinks(this.props.chat.text)}</p>
                     {this.props.chat.attachment && 
-                        <img className="w-25" src={this.props.chat.attachment}/>}
+                        <img className="attachment mt-1" src={this.props.chat.attachment}/>}
                 </ListItemText>
             </ListItem> 
         );

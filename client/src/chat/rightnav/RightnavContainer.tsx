@@ -8,7 +8,9 @@ export enum IndicatorStatus {
     Green, Yellow, Red
 }
 
-interface IRightnavContainerProps extends RouteComponentProps<any> { }
+interface IRightnavContainerProps extends RouteComponentProps<any> {
+    expanded: boolean;
+}
 
 interface IRightnavContainerState {
     socket: SocketIOClient.Socket;
@@ -53,6 +55,7 @@ class RightnavContainer extends React.Component<IRightnavContainerProps, IRightn
             <Rightnav
                 users={this.state.users}
                 goToRedirect={this.goToRedirect}
+                expanded={this.props.expanded}
             />
         );
     }

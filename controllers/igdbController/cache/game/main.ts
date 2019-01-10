@@ -1,7 +1,6 @@
 import config from "../../../../config";
-import { buildIGDBRequestBody } from "../../../../util/main";
 import {
-    GameResponse, GameFields, RawGame, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
+    GameResponse, GameFields, RawGame, redisCache, IGDBCacheEntry, buildIGDBRequestBody } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import { convertRawGame } from "../util";
 const redis = require("redis");

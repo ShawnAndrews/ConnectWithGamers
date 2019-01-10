@@ -1,5 +1,5 @@
-import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, SteamAPIGetPriceInfoResponse, GameFields } from "../../../client/client-server-common/common";
-import { IGDBImageResolve, ArrayClean, steamAPIGetPriceInfo, buildIGDBRequestBody } from "../../../util/main";
+import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, SteamAPIGetPriceInfoResponse, GameFields, buildIGDBRequestBody } from "../../../client/client-server-common/common";
+import { IGDBImageResolve, ArrayClean, steamAPIGetPriceInfo } from "../../../util/main";
 import config from "../../../config";
 import axios, { AxiosResponse } from "axios";
 import { cachePreloadedGame } from "./game/main";
@@ -11,7 +11,8 @@ export function getGamesBySteamIds(steamIds: number[]): Promise<GameResponse[]> 
         const URL: string = `${config.igdb.apiURL}/games`;
         const body: string = buildIGDBRequestBody(
             [
-                `external_games.uid = (${steamIds.join()})`
+                `external_games.uid = (${steamIds.join()})`,
+                `screenshots != null`
             ],
             GameFields.join(),
             undefined

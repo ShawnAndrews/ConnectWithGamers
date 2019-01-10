@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { GamesPresets } from '../../../client-server-common/common';
+import FilterContainer from './filter/FilterContainer';
 
 interface ISidebarProps {
     goToRedirect: (URL: string) => void;
     onSearchKeypress: (event: React.KeyboardEvent<Element>) => void;
     onSearchQueryChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
     sidebarExpanded: boolean;
+    updateFilterOptions: (filterOptions: string) => void;
+    searchTerm: string;
 }
 
 const Sidebar: React.SFC<ISidebarProps> = (props: ISidebarProps) => {
@@ -17,11 +20,15 @@ const Sidebar: React.SFC<ISidebarProps> = (props: ISidebarProps) => {
                     <div className="searchbar-title text-center h4 mb-2">
                         Search
                     </div>
-                    <div className="searchbar w-100 has-search mb-4">
+                    <div className="searchbar w-100 has-search mb-2">
                         <span className="fa fa-search form-control-feedback"/>
                         <input type="text" className="form-control" placeholder="Search games" onChange={props.onSearchQueryChanged} onKeyPress={props.onSearchKeypress} />
                     </div>
-                    
+                    <FilterContainer
+                        searchTerm={props.searchTerm}
+                        updateFilterOptions={props.updateFilterOptions}
+                    />
+
                     <div className="text-uppercase">
                         Browse Categories
                     </div>

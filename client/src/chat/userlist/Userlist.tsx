@@ -51,7 +51,7 @@ const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
                                 >
                                     {x.image
                                         ? <Avatar className="user-image col-2 col-lg-1 p-0" src={x.image}/>
-                                        : <Avatar className="user-image default col-2 col-lg-1">{x.username.slice(0, 2).toUpperCase()}</Avatar>}
+                                        : <Avatar className="user-image default color-primary col-2 col-lg-1">{x.username.slice(0, 2).toUpperCase()}</Avatar>}
                                     <div className="user-text col-10 col-md-6 col-lg-8">
                                         <Textfit className="name font-weight-bold h-50">{x.username}</Textfit>
                                         <Textfit className="time h-50" max={12}>{lastActive(x.last_active)}</Textfit>

@@ -85,7 +85,6 @@ class MessageBoxContainer extends React.Component<IMessageBoxContainerProps, IMe
                 text={this.state.text}
                 onTextChanged={this.onTextChanged}
                 onKeyPress={this.onKeyPress}
-                onSend={this.onSend}
                 handleAttachmentUpload={this.handleAttachmentUpload}
             />
         );

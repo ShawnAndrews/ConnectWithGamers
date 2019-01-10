@@ -5,18 +5,26 @@ import RightnavContainer from './rightnav/RightnavContainer';
 import MiddlenavContainer from './middlenav/MiddlenavContainer';
 
 interface IChatroomMenuProps {
-    
+    expanded: boolean;
+    toggleExpanded: () => void;
 }
 
 const ChatroomMenu: React.SFC<IChatroomMenuProps> = (props: IChatroomMenuProps) => {
     
     return (
-        <div className="container chatroom mt-4">
-            <TopnavContainer/>
-            <div className="content row mx-0">
+        <div className="chatroom overflow-hidden">
+            <TopnavContainer
+                expanded={props.expanded}
+                toggleExpanded={props.toggleExpanded}
+            />
+            <div className="content mx-0">
                 <LeftnavContainer/>
-                <MiddlenavContainer/>
-                <RightnavContainer/>
+                <MiddlenavContainer
+                    expanded={props.expanded}
+                />
+                <RightnavContainer
+                    expanded={props.expanded}
+                />
             </div>
         </div>
     );

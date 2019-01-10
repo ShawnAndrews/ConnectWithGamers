@@ -1,5 +1,33 @@
+import config from "../../config";
 const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
+
+export function buildIGDBRequestBody(filters: string[], fields: string, limit: number, sort?: string, search?: string): string {
+    let body: string = "";
+
+    // process search
+    if (search) {
+        body = body.concat(`search "${search}";`);
+    }
+
+    // process fields
+    body = body.concat(`fields ${fields || "*"};`);
+
+    // process filters
+    if (filters.length > 0) {
+        body = body.concat(`where ${filters.join(" & ")};`);
+    }
+
+    // process sort
+    if (sort) {
+        body = body.concat(`${sort};`);
+    }
+
+    // process limit
+    body = body.concat(`limit ${limit || config.igdb.pageLimit};`);
+
+    return body;
+}
 
 export function getTodayUnixTimestampInSeconds(): number {
     const now: Date = new Date();
@@ -35,6 +63,35 @@ export const GamesPresets = {
     puzzle: `?genres=9&cover=true&popularity=25&platforms=6&sort=popularity:desc`,
     strategy: `?genres=15,16,11&cover=true&popularity=25&platforms=6&sort=popularity:desc`
 };
+
+export enum IGDBGenreEnums {
+    action = 14,
+    adventure = 31,
+    shooter = 5,
+    simulation = 13,
+    rpg = 12,
+    racing = 10,
+    puzzle = 9,
+    strategy = 15
+}
+
+export enum IGDBPlatformEnums {
+    pc = 6,
+    vr = 162,
+    ps4 = 48,
+    xboxone = 49,
+    switch = 130,
+    linux = 3,
+    mac = 14
+}
+
+export enum IGDBCategoryEnums {
+    maingame = 0,
+    dlc = 1,
+    expansion = 2,
+    bundle = 3,
+    standaloneexpansion = 4
+}
 
 export enum Breakpoints {
     md = 768
@@ -147,7 +204,7 @@ export interface ChatroomInfo {
 }
 
 export const CHATROOMS: ChatroomInfo[] = [
-    { name: "Home", abbrevName: "", imagePath: "https://i.imgur.com/7qFiMVy.png", redirect: "/chat" },
+    { name: "Home", abbrevName: "", imagePath: "https://i.imgur.com/QH0Iqwo.png", redirect: "/chat" },
     { name: "Hearthstone", abbrevName: "hearthstone", imagePath: "https://i.imgur.com/myONDFo.png", redirect: "/chat/hearthstone" },
     { name: "League Of Legends", abbrevName: "lol", imagePath: "https://i.imgur.com/AuOsUek.png", redirect: "/chat/lol" },
     { name: "Overwatch", abbrevName: "overwatch", imagePath: "https://i.imgur.com/3Bz1ihC.png", redirect: "/chat/overwatch" },
@@ -316,7 +373,7 @@ export interface RawGame {
     external_games: IGDBExternalGame[];
 }
 
-export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`];
+export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`];
 
 export interface Genre {
     id: number;

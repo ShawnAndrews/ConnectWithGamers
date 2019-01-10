@@ -1,9 +1,8 @@
 import config from "../../../../config";
 import {
     GameResponse,
-    redisCache, IGDBCacheEntry, RawGame, GameFields } from "../../../../client/client-server-common/common";
+    redisCache, IGDBCacheEntry, RawGame, GameFields, buildIGDBRequestBody } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse, AxiosError } from "axios";
-import { buildIGDBRequestBody } from "../../../../util/main";
 import { cachePreloadedGame, getCachedGame } from "../game/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
@@ -60,6 +59,7 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
     const queryStringObj: any = JSON.parse(queryString);
     const whereFilters: string[] = [];
     let sortFilter: string = undefined;
+    const searchKeyUsed: boolean = false;
 
     Object.keys(queryStringObj).forEach((key: string) => {
 
@@ -78,7 +78,7 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
         if (key === "categories") {
             const categories: number[] = JSON.parse("[" + queryStringObj[key] + "]");
 
-            whereFilters.push(`category = ${categories.join()}`);
+            whereFilters.push(`category = (${categories.join()})`);
         }
 
         if (key === "popularity") {
@@ -105,7 +105,23 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
             whereFilters.push(`first_release_date > ${releasedBefore}`);
         }
 
-        if (key === "sort") {
+        if (key === "required") {
+            const requiredSplit: string[] = queryStringObj[key].split();
+
+            requiredSplit.forEach((x: string) => {
+
+                if (x === "cover") {
+                    whereFilters.push(`cover != null`);
+                } else if (x === "screenshots") {
+                    whereFilters.push(`screenshots != null`);
+                } else if (x === "trailer") {
+                    whereFilters.push(`videos != null`);
+                }
+
+            });
+        }
+
+        if (key === "sort" && !queryStringObj.query) {
             const split: string[] = queryStringObj[key].split(":");
             let type: string = split[0];
             const order: string = split[1];
@@ -114,6 +130,8 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
                 type = "aggregated_rating";
             } else if (type === "release_date") {
                 type = "first_release_date";
+            } else if (type === "alphabetic") {
+                type = "name";
             }
 
             sortFilter = `sort ${type} ${order}`;

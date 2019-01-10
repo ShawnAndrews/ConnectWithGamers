@@ -4,9 +4,7 @@ import { Avatar } from '@material-ui/core';
 interface INavbarProps {
     index: number;
     searchQuery: string;
-    toggleAdvancedSearch: boolean;
     onTabClick: (path: string) => void;
-    onToggleAdvancedSearch: () => void;
     onSubmitSearch: (e: React.FormEvent<HTMLFormElement>) => void;
     onSearchQueryChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onRedirect: (URL: string) => void;
@@ -61,7 +59,6 @@ const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
                     <span className="fa fa-search form-control-feedback"/>
                     <input type="text" className="form-control" placeholder="Search games" onChange={props.onSearchQueryChanged}/>
                 </div>
-                <i className="fas fa-cog advancedsearch-cog align-middle cursor-pointer mx-2" onClick={props.onToggleAdvancedSearch}/>
                 {(props.profileImage || props.profileName) && 
                     <div className="icon d-inline-block align-middle cursor-pointer ml-4" onClick={() => props.onRedirect(`/account`)}>
                         {props.profileImage

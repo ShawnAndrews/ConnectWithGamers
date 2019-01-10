@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { NAV_PAGE } from '../app/app';
 import Navbar from './Navbar';
-import { toggleSearchModal } from '../actions/main';
 import { httpGetPublicAccountInfo } from '../service/account/main';
 import { AccountInfoResponse } from '../../client-server-common/common';
 import { GlobalReduxState } from '../reducers/main';
@@ -15,7 +14,6 @@ interface INavbarContainerProps extends RouteComponentProps<any> { }
 interface INavbarContainerState {
     index: number;
     searchQuery: string;
-    toggleAdvancedSearch: boolean;
     profileImage: string;
     profileName: string;
 }
@@ -25,7 +23,7 @@ interface ReduxStateProps {
 }
 
 interface ReduxDispatchProps {
-    toggleSearchModal: () => void;
+    
 }
 
 type Props = INavbarContainerProps & ReduxStateProps & ReduxDispatchProps;
@@ -36,7 +34,6 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         super(props);
         this.onTabClick = this.onTabClick.bind(this);
         this.updateNavSelection = this.updateNavSelection.bind(this);
-        this.onToggleAdvancedSearch = this.onToggleAdvancedSearch.bind(this);
         this.onSubmitSearch = this.onSubmitSearch.bind(this);
         this.onSearchQueryChanged = this.onSearchQueryChanged.bind(this);
         this.loadPublicAccountInfo = this.loadPublicAccountInfo.bind(this);
@@ -51,7 +48,6 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         this.state = {
             index: onLoginScreen ? 3 : undefined,
             searchQuery: '',
-            toggleAdvancedSearch: false,
             profileImage: undefined,
             profileName: undefined
         };
@@ -108,10 +104,6 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         this.props.history.push(path);
     }
 
-    onToggleAdvancedSearch(): void {
-        this.props.toggleSearchModal();
-    }
-
     onSubmitSearch(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault();
         this.props.history.push(`/games/search/filter/?query=${this.state.searchQuery}`);
@@ -130,9 +122,7 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
             <Navbar
                 index={this.state.index}
                 searchQuery={this.state.searchQuery}
-                toggleAdvancedSearch={this.state.toggleAdvancedSearch}
                 onTabClick={this.onTabClick}
-                onToggleAdvancedSearch={this.onToggleAdvancedSearch}
                 onSubmitSearch={this.onSubmitSearch}
                 onSearchQueryChanged={this.onSearchQueryChanged}
                 onRedirect={this.onRedirect}
@@ -152,7 +142,7 @@ const mapStateToProps = (state: any, ownProps: INavbarContainerProps): ReduxStat
 };
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: INavbarContainerProps): ReduxDispatchProps => ({
-    toggleSearchModal: () => { dispatch(toggleSearchModal()); },
+    
 });
 
 export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, INavbarContainerProps>

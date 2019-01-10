@@ -1,9 +1,8 @@
 import config from "../../../../config";
 import {
     NewsArticle, RawNewsArticle, NewsArticleFields,
-    redisCache, IGDBCacheEntry, getTodayUnixTimestampInSeconds } from "../../../../client/client-server-common/common";
+    redisCache, IGDBCacheEntry, getTodayUnixTimestampInSeconds, buildIGDBRequestBody } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-import { buildIGDBRequestBody } from "../../../../util/main";
 const redis = require("redis");
 const redisClient = redis.createClient();
 

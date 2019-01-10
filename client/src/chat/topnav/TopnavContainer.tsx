@@ -3,7 +3,10 @@ import Topnav from './Topnav';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { CHATROOMS, ChatroomInfo } from '../../../client-server-common/common';
 
-interface ITopnavContainerProps extends RouteComponentProps<any> { }
+interface ITopnavContainerProps extends RouteComponentProps<any> {
+    expanded: boolean;
+    toggleExpanded: () => void;
+}
 
 interface ITopnavContainerState {
     title: string;
@@ -96,6 +99,8 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, ITopnavCont
                 onCreateEmoteLinkClick={this.onCreateEmoteLinkClick}
                 onViewEmotesLinkClick={this.onViewEmotesLinkClick}
                 onUserlistLinkClick={this.onUserlistLinkClick}
+                expanded={this.props.expanded}
+                toggleExpanded={this.props.toggleExpanded}
             />
         );
     }

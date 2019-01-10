@@ -2,7 +2,9 @@ import * as React from 'react';
 import Middlenav from "./Middlenav";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
-interface IMiddlenavContainerProps extends RouteComponentProps<any> { }
+interface IMiddlenavContainerProps extends RouteComponentProps<any> {
+    expanded: boolean;
+}
 
 interface ISwipeContainerState { }
 
@@ -18,7 +20,9 @@ class MiddlenavContainer extends React.Component<IMiddlenavContainerProps, ISwip
 
     render() {
         return (
-            <Middlenav/>
+            <Middlenav
+                expanded={this.props.expanded}
+            />
         );
     }
 
