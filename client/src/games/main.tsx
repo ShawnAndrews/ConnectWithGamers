@@ -5,22 +5,22 @@ import HomeContainer from './home/HomeContainer';
 import SearchRouter from './search/main';
 import NotFoundPageContainer from './../notfound/NotFoundPageContainer';
 import GamingSwitch from './gaming/main';
-import SidebarContainer from './sidebar/SidebarContainer';
-import HamburgerContainer from './sidebar/hamburger/HamburgerContainer';
+import FilterContainer from './filter/FilterContainer';
+import HamburgerContainer from './filter/hamburger/HamburgerContainer';
 
 interface IMainProps {
     onHamburgerClick: () => void;
-    sidebarExpanded: boolean;
+    filterExpanded: boolean;
 }
 
 const Main: React.SFC<IMainProps> = (props: IMainProps) => {
 
     return (
         <div className="games position-relative">
-            <SidebarContainer
-                sidebarExpanded={props.sidebarExpanded}
+            <FilterContainer
+                filterExpanded={props.filterExpanded}
             />
-            <div className={`content d-inline-block overflow-hidden vh-min-100 p-4 ${props.sidebarExpanded ? 'active' : ''}`}>
+            <div className={`content d-inline-block overflow-hidden vh-min-100 p-4 ${props.filterExpanded ? 'active' : ''}`}>
                 <Switch>
                     <Route path="/games/search" component={SearchRouter} />
                     <Route path="/games/news" component={NewsPageContainer} />
@@ -31,7 +31,7 @@ const Main: React.SFC<IMainProps> = (props: IMainProps) => {
             </div>
             <HamburgerContainer
                 onHamburgerClick={props.onHamburgerClick}
-                sidebarExpanded={props.sidebarExpanded}
+                filterExpanded={props.filterExpanded}
             />
         </div>
     );

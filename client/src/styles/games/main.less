@@ -1,5 +1,5 @@
 @games-searchbar-icon-size: 32px;
-@games-sidebar-width: 300px;
+@games-filter-width: 300px;
 @games-hamburger-width: 30px;
 @games-filter-color: #90d793;
 
@@ -306,109 +306,95 @@
           
     }
 
-    .sidebar {
+    .filter {
         width: 0;
         background: linear-gradient(to right, rgba(white,0.03) 0%,rgba(white,0.03) 100%);
         color: rgba(white, 0.4);
         font-size: 0.8rem;
-        transition: all .3s ease-in;
-        -webkit-transition: all .3s ease-in;
 
         &.active {
-            width: @games-sidebar-width;
+            width: @games-filter-width;
         }
 
-        .list {
-            
-            .searchbar-title {
-                font-family: Pacifico!important;
-                letter-spacing: 4px;
-            }
-
-            .searchbar {
-                transition: all .3s ease-in;
-                -webkit-transition: all .3s ease-in;
-    
-                &.has-search .form-control {
-                    padding-left: 2.375rem;
-                }
-                
-                &.has-search .form-control-feedback {
-                    position: absolute;
-                    z-index: 2;
-                    display: block;
-                    width: 2.375rem;
-                    height: 2.375rem;
-                    line-height: 2.375rem;
-                    text-align: center;
-                    pointer-events: none;
-                    color: @primary-color;
-    
-                    > svg {
-                        opacity: 0.4;
-                        color: white;
-                    }
-                }
-    
-                > input {
-                    color: rgba(white, 0.4)!important;
-                    border: 1px solid rgba(white, 0.3)!important;
-                    background-color: rgba(white, 0.06)
-                }
-
-            }
+        * {
+            outline: 0;
         }
 
-        .filter {
-            min-height: 40px;
-            max-height: 42px;
+        .title {
+            font-size: 1.05rem;
+            letter-spacing: 1px;
             line-height: 40px;
-            border-radius: 5px;
-            border: 1px solid rgba(white,0.3);
-            transition: all .6s ease-in;
-            -webkit-transition: all .6s ease-in;
+        }
 
-            * {
-                outline: 0;
+        .searchbar {
+
+            &.has-search .form-control {
+                padding-left: 2.375rem;
+            }
+            
+            &.has-search .form-control-feedback {
+                position: absolute;
+                z-index: 2;
+                display: block;
+                width: 2.375rem;
+                height: 2.375rem;
+                line-height: 2.375rem;
+                text-align: center;
+                pointer-events: none;
+                color: @games-filter-color;
+
+                > svg {
+                    opacity: 0.4;
+                    color: @games-filter-color;
+                }
             }
 
-            &.expanded {
-                max-height: 900px;
+            > input {
+                border: 1px solid @games-filter-color!important;
+                background-color: transparent;
+                
+                &, &::placeholder {
+                    color: @games-filter-color!important;
+                }
+
+                &:focus {
+                    box-shadow: none!important;
+                }
             }
 
-            .title {
-                font-size: 1.05rem;
-                letter-spacing: 1px;
+        }
+
+        .options {
+
+            .release-date {
+
+                .divider {
+                    width: 30px;
+                }
             }
 
-            .options {
-
-                .release-date {
-
-                    .divider {
-                        width: 30px;
-                    }
+            .sorting {
+                
+                > div {
+                    width: 100%;
                 }
+            }
 
-                .sorting {
-                    
-                    > div {
-                        width: 100%;
-                    }
+            .refresh {
+                height: 40px;
+                line-height: 40px;
+                border-bottom-right-radius: 5px;
+                border-bottom-left-radius: 5px;
+                background-color: @games-filter-color;
+                font-size: 1.1rem;
+
+                &:hover {
+                    background-color: #90d793;
                 }
+            }
 
-                .refresh {
-                    height: 40px;
-                    line-height: 40px;
-                    border-bottom-right-radius: 5px;
-                    border-bottom-left-radius: 5px;
-                    background-color: @games-filter-color;
-                    font-size: 1.1rem;
-
-                    &:hover {
-                        background-color: #90d793;
-                    }
-                }
+            .disabled {
+                opacity: 0.2;
             }
         }
     }
@@ -419,7 +405,7 @@
         -webkit-transition: all .3s ease-in;
 
         &.active {
-            width: calc(100% - @games-sidebar-width);
+            width: calc(100% - @games-filter-width);
         }
     }
 }

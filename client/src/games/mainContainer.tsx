@@ -5,7 +5,7 @@ import { Breakpoints } from '../../client-server-common/common';
 
 interface IMainContainerProps extends RouteComponentProps<any> { }
 interface IMainContainerState {
-    sidebarExpanded: boolean;
+    filterExpanded: boolean;
 }
 
 class MainContainer extends React.Component<IMainContainerProps, IMainContainerState> {
@@ -15,13 +15,13 @@ class MainContainer extends React.Component<IMainContainerProps, IMainContainerS
         this.onHamburgerClick = this.onHamburgerClick.bind(this);
 
         this.state = {
-            sidebarExpanded: window.innerWidth >= Breakpoints.md
+            filterExpanded: window.innerWidth >= Breakpoints.md
         };
     }
 
     onHamburgerClick(): void {
         this.setState({
-            sidebarExpanded: !this.state.sidebarExpanded
+            filterExpanded: !this.state.filterExpanded
         });
     }
 
@@ -29,7 +29,7 @@ class MainContainer extends React.Component<IMainContainerProps, IMainContainerS
         return (
             <Main
                 onHamburgerClick={this.onHamburgerClick}
-                sidebarExpanded={this.state.sidebarExpanded}
+                filterExpanded={this.state.filterExpanded}
             />
         );
     }

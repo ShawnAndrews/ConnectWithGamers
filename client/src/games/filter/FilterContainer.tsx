@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Filter from './Filter';
-import { IdNamePair, IGDBGenreEnums, IGDBPlatformEnums, IGDBCategoryEnums } from '../../../../client-server-common/common';
+import { IdNamePair, IGDBGenreEnums, IGDBPlatformEnums, IGDBCategoryEnums, GamesPresets } from '../../../client-server-common/common';
 
 export enum SortingOptionEnum {
     "PopularityAsc",
@@ -13,12 +13,15 @@ export enum SortingOptionEnum {
 }
 
 interface IFilterContainerProps extends RouteComponentProps<any> {
-    searchTerm: string;
-    updateFilterOptions: (filterOptions: string) => void;
+    filterExpanded: boolean;
 }
 
 interface IFilterContainerState {
-    expanded: boolean;
+    searchTerm: string;
+    browsePopularSelected: boolean;
+    browseRecentSelected: boolean;
+    browseUpcomingSelected: boolean;
+    browseNewsSelected: boolean;
     popularity: number;
     releaseDateStart: Date;
     releaseDateEnd: Date;
@@ -33,13 +36,13 @@ interface IFilterContainerState {
     cover: boolean;
     screenshots: boolean;
     trailer: boolean;
+    disableNonBrowse: boolean;
 }
 
 class FilterContainer extends React.Component<IFilterContainerProps, IFilterContainerState> {
 
     constructor(props: IFilterContainerProps) {
         super(props);
-        this.onExpandClick = this.onExpandClick.bind(this);
         this.onPopularityChange = this.onPopularityChange.bind(this);
         this.onReleaseDateStartChange = this.onReleaseDateStartChange.bind(this);
         this.onReleaseDateEndChange = this.onReleaseDateEndChange.bind(this);
@@ -51,6 +54,12 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         this.onCoverClick = this.onCoverClick.bind(this);
         this.onScreenshotsClick = this.onScreenshotsClick.bind(this);
         this.onTrailerClick = this.onTrailerClick.bind(this);
+        this.onSearchQueryChanged = this.onSearchQueryChanged.bind(this);
+        this.onSearchKeypress = this.onSearchKeypress.bind(this);
+        this.onPopularClick = this.onPopularClick.bind(this);
+        this.onRecentClick = this.onRecentClick.bind(this);
+        this.onUpcomingClick = this.onUpcomingClick.bind(this);
+        this.onNewsClick = this.onNewsClick.bind(this);
 
         const sortingOptions: IdNamePair[] = [
             { id: SortingOptionEnum.PopularityAsc, name: 'Popularity ↑' },
@@ -90,7 +99,11 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         ];
 
         this.state = {
-            expanded: false,
+            searchTerm: '',
+            browsePopularSelected: false,
+            browseRecentSelected: false,
+            browseUpcomingSelected: false,
+            browseNewsSelected: false,
             popularity: 0,
             releaseDateStart: undefined,
             releaseDateEnd: undefined,
@@ -104,14 +117,9 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
             categorySelection: [],
             cover: false,
             screenshots: false,
-            trailer: false
+            trailer: false,
+            disableNonBrowse: false
         };
-    }
-
-    onExpandClick(): void {
-        this.setState({
-            expanded: !this.state.expanded
-        });
     }
 
     onPopularityChange(value: number): void {
@@ -194,8 +202,8 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         const filters: string[] = [];
         const required: string[] = [];
 
-        if (this.props.searchTerm) {
-            filters.push(`query=${this.props.searchTerm}`);
+        if (this.state.searchTerm) {
+            filters.push(`query=${this.state.searchTerm}`);
         }
 
         if (this.state.releaseDateStart) {
@@ -282,12 +290,84 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         });
     }
 
+    onSearchQueryChanged(e: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({ searchTerm: e.target.value });
+    }
+
+    onSearchKeypress(event: React.KeyboardEvent<Element>): void {
+        if (event.key === `Enter`) {
+            this.props.history.push(`/games/search/filter/?query=${this.state.searchTerm}`);
+        }
+    }
+
+    onPopularClick(checked: boolean): void {
+
+        this.setState({
+            browsePopularSelected: checked,
+            browseRecentSelected: false,
+            browseUpcomingSelected: false,
+            browseNewsSelected: false,
+            disableNonBrowse: checked
+        });
+
+        if (checked) {
+            this.props.history.push(`/games/search/filter/${GamesPresets.popular}`);
+        }
+    }
+
+    onRecentClick(checked: boolean): void {
+
+        this.setState({
+            browsePopularSelected: false,
+            browseRecentSelected: checked,
+            browseUpcomingSelected: false,
+            browseNewsSelected: false,
+            disableNonBrowse: checked
+        });
+
+        if (checked) {
+            this.props.history.push(`/games/search/filter/${GamesPresets.recentlyReleased}`);
+        }
+    }
+
+    onUpcomingClick(checked: boolean): void {
+
+        this.setState({
+            browsePopularSelected: false,
+            browseRecentSelected: false,
+            browseUpcomingSelected: checked,
+            browseNewsSelected: false,
+            disableNonBrowse: checked
+        });
+
+        if (checked) {
+            this.props.history.push(`/games/search/filter/${GamesPresets.upcoming}`);
+        }
+    }
+
+    onNewsClick(checked: boolean): void {
+
+        this.setState({
+            browsePopularSelected: false,
+            browseRecentSelected: false,
+            browseUpcomingSelected: false,
+            browseNewsSelected: checked,
+            disableNonBrowse: checked
+        });
+
+        if (checked) {
+            this.props.history.push(`/games/news`);
+        }
+    }
+
     render() {
         return (
             <Filter
-                expanded={this.state.expanded}
+                browsePopularSelected={this.state.browsePopularSelected}
+                browseRecentSelected={this.state.browseRecentSelected}
+                browseUpcomingSelected={this.state.browseUpcomingSelected}
+                browseNewsSelected={this.state.browseNewsSelected}
                 popularity={this.state.popularity}
-                onExpandClick={this.onExpandClick}
                 onPopularityChange={this.onPopularityChange}
                 releaseDateStart={this.state.releaseDateStart}
                 releaseDateEnd={this.state.releaseDateEnd}
@@ -309,9 +389,17 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
                 onCoverClick={this.onCoverClick}
                 onScreenshotsClick={this.onScreenshotsClick}
                 onTrailerClick={this.onTrailerClick}
+                onSearchKeypress={this.onSearchKeypress}
+                onSearchQueryChanged={this.onSearchQueryChanged}
+                onPopularClick={this.onPopularClick}
+                onRecentClick={this.onRecentClick}
+                onUpcomingClick={this.onUpcomingClick}
+                onNewsClick={this.onNewsClick}
                 cover={this.state.cover}
                 screenshots={this.state.screenshots}
                 trailer={this.state.trailer}
+                filterExpanded={this.props.filterExpanded}
+                disableNonBrowse={this.state.disableNonBrowse}
             />
         );
     }

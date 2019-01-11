@@ -3,7 +3,7 @@ import Hamburger from './Hamburger';
 
 interface IHamburgerContainerProps {
     onHamburgerClick: () => void;
-    sidebarExpanded: boolean;
+    filterExpanded: boolean;
 }
 
 interface IHamburgerContainerState { }
@@ -20,7 +20,7 @@ class HamburgerContainer extends React.Component<IHamburgerContainerProps, IHamb
         return (
             <Hamburger
                 onHamburgerClick={this.props.onHamburgerClick}
-                sidebarExpanded={this.props.sidebarExpanded}
+                filterExpanded={this.props.filterExpanded}
             />
         );
     }
