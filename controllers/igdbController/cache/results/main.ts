@@ -106,7 +106,7 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
         }
 
         if (key === "required") {
-            const requiredSplit: string[] = queryStringObj[key].split();
+            const requiredSplit: string[] = queryStringObj[key].split(`,`);
 
             requiredSplit.forEach((x: string) => {
 
