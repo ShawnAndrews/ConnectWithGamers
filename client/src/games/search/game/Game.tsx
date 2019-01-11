@@ -140,13 +140,15 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                         nameStyle={getCoverTitleStyle()}
                         starsStyle={getCoverStarsStyle()}
                     />
-                    <div className="row color-secondary" style={getCoverContentStyle()}>
-                        {props.game.summary && 
-                            <Summary
-                                summary={props.game.summary}
-                                summaryExpanded={props.summaryExpanded}
-                                expandSummary={props.expandSummary}
-                            />}
+                    <div style={getCoverContentStyle()}>
+                        <div className="row color-secondary pl-3">
+                            {props.game.summary && 
+                                <Summary
+                                    summary={props.game.summary}
+                                    summaryExpanded={props.summaryExpanded}
+                                    expandSummary={props.expandSummary}
+                                />}
+                        </div>
                         <Media
                             video={props.game.video}
                             screenshots={props.game.screenshots}
