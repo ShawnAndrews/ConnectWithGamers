@@ -16,36 +16,43 @@ const DiscountedGameList: React.SFC<IDiscountGameListProps> = (props: IDiscountG
 
     return (
         <div className="discount-carousel col-12 p-0 my-3">
-            <SingleSlide
-                games={props.discountedGames.slice(0, 1)}
-                onRedirect={props.onRedirect}
-                onHoverGame={props.onHoverGame}
-                onHoverOutGame={props.onHoverOutGame}
-                hoveredGameId={props.hoveredGameId}
-            />
-            <QuadrupleSlide
-                games={props.discountedGames.slice(1, 5)}
-                onRedirect={props.onRedirect}
-                onHoverGame={props.onHoverGame}
-                onHoverOutGame={props.onHoverOutGame}
-                hoveredGameId={props.hoveredGameId}
-            />
-            <TripleSlide
-                games={props.discountedGames.slice(5, 8)}
-                onRedirect={props.onRedirect}
-                onHoverGame={props.onHoverGame}
-                onHoverOutGame={props.onHoverOutGame}
-                hoveredGameId={props.hoveredGameId}
-            />
-            <QuadrupleSlide
-                games={props.discountedGames.slice(8, 12)}
-                onRedirect={props.onRedirect}
-                onHoverGame={props.onHoverGame}
-                onHoverOutGame={props.onHoverOutGame}
-                hoveredGameId={props.hoveredGameId}
-            />
+            {props.discountedGames.length > 12 && 
+                <>
+                    {props.discountedGames.length > 1 &&
+                        <SingleSlide
+                            games={props.discountedGames.slice(0, 1)}
+                            onRedirect={props.onRedirect}
+                            onHoverGame={props.onHoverGame}
+                            onHoverOutGame={props.onHoverOutGame}
+                            hoveredGameId={props.hoveredGameId}
+                        />}
+                    {props.discountedGames.length > 5 &&
+                        <QuadrupleSlide
+                            games={props.discountedGames.slice(1, 5)}
+                            onRedirect={props.onRedirect}
+                            onHoverGame={props.onHoverGame}
+                            onHoverOutGame={props.onHoverOutGame}
+                            hoveredGameId={props.hoveredGameId}
+                        />}
+                    {props.discountedGames.length > 8 &&
+                        <TripleSlide
+                            games={props.discountedGames.slice(5, 8)}
+                            onRedirect={props.onRedirect}
+                            onHoverGame={props.onHoverGame}
+                            onHoverOutGame={props.onHoverOutGame}
+                            hoveredGameId={props.hoveredGameId}
+                        />}
+                    {props.discountedGames.length > 12 &&
+                        <QuadrupleSlide
+                            games={props.discountedGames.slice(8, 12)}
+                            onRedirect={props.onRedirect}
+                            onHoverGame={props.onHoverGame}
+                            onHoverOutGame={props.onHoverOutGame}
+                            hoveredGameId={props.hoveredGameId}
+                        />}
+                </>}
             {props.discountedGames && 
-                props.discountedGames.slice(12).map((game: GameResponse) => (
+                props.discountedGames.slice(props.discountedGames.length > 12 ? 12 : 0).map((game: GameResponse) => (
                     <SingleSlide
                         games={[game]}
                         onRedirect={props.onRedirect}

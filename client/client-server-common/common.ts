@@ -40,28 +40,28 @@ const CURRENT_UNIX_TIME_S: number = getTodayUnixTimestampInSeconds();
 const THREE_MONTH_AGO_UNIX_TIME_S: number = getTodayUnixTimestampInSeconds() - (60 * 60 * 24 * 30 * 3);
 
 export const GamesPresets = {
-    highlighted: `?cover=true&screenshots=true&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&popularity=55&platforms=6&sort=popularity:desc`,
+    highlighted: `?required=cover,screenshots&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&popularity=55&platforms=6&sort=popularity:desc`,
 
-    upcoming: `?cover=true&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
-    recentlyReleased: `?cover=true&popularity=5&released_before=${CURRENT_UNIX_TIME_S}&sort=release_date:desc`,
-    popular: `?cover=true&popularity=15&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&sort=popularity:desc`,
+    upcoming: `?required=cover&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
+    recentlyReleased: `?required=cover&popularity=5&released_before=${CURRENT_UNIX_TIME_S}&sort=release_date:desc`,
+    popular: `?required=cover&popularity=15&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&sort=popularity:desc`,
 
-    pc: `?platforms=6&cover=true&popularity=25&sort=popularity:desc`,
-    virtualReality: `?platforms=162,165&cover=true&popularity=25&sort=popularity:desc`,
-    playstation4: `?platforms=48&cover=true&popularity=25&sort=popularity:desc`,
-    xboxOne: `?platforms=49&cover=true&popularity=25&sort=popularity:desc`,
-    nintendoSwitch: `?platforms=130&cover=true&popularity=25&sort=popularity:desc`,
-    linux: `?platforms=3&cover=true&popularity=25&sort=popularity:desc`,
-    mac: `?platforms=14&cover=true&popularity=25&sort=popularity:desc`,
+    pc: `?platforms=6&required=cover&popularity=25&sort=popularity:desc`,
+    virtualReality: `?platforms=162,165&required=cover&popularity=25&sort=popularity:desc`,
+    playstation4: `?platforms=48&required=cover&popularity=25&sort=popularity:desc`,
+    xboxOne: `?platforms=49&required=cover&popularity=25&sort=popularity:desc`,
+    nintendoSwitch: `?platforms=130&required=cover&popularity=25&sort=popularity:desc`,
+    linux: `?platforms=3&required=cover&popularity=25&sort=popularity:desc`,
+    mac: `?platforms=14&required=cover&popularity=25&sort=popularity:desc`,
 
-    action: `?genres=14&cover=true&popularity=25&platforms=6&sort=popularity:desc`,
-    adventure: `?genres=31&cover=true&popularity=25&platforms=6&sort=popularity:desc`,
-    shooter: `?genres=5&cover=true&popularity=25&platforms=6&sort=popularity:desc`,
-    simulation: `?genres=13&cover=true&popularity=25&platforms=6&sort=popularity:desc`,
-    rpg: `?genres=12&cover=true&popularity=25&platforms=6&sort=popularity:desc`,
-    racing: `?genres=10&cover=true&popularity=25&platforms=6&sort=popularity:desc`,
-    puzzle: `?genres=9&cover=true&popularity=25&platforms=6&sort=popularity:desc`,
-    strategy: `?genres=15,16,11&cover=true&popularity=25&platforms=6&sort=popularity:desc`
+    action: `?genres=14&required=cover&popularity=25&platforms=6&sort=popularity:desc`,
+    adventure: `?genres=31&required=cover&popularity=25&platforms=6&sort=popularity:desc`,
+    shooter: `?genres=5&required=cover&popularity=25&platforms=6&sort=popularity:desc`,
+    simulation: `?genres=13&required=cover&popularity=25&platforms=6&sort=popularity:desc`,
+    rpg: `?genres=12&required=cover&popularity=25&platforms=6&sort=popularity:desc`,
+    racing: `?genres=10&required=cover&popularity=25&platforms=6&sort=popularity:desc`,
+    puzzle: `?genres=9&required=cover&popularity=25&platforms=6&sort=popularity:desc`,
+    strategy: `?genres=15,16,11&required=cover&popularity=25&platforms=6&sort=popularity:desc`
 };
 
 export enum IGDBGenreEnums {
