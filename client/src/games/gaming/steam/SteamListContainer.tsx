@@ -9,7 +9,7 @@ export interface SteamFriendOption {
     label: string;
 }
 
-interface IThumbnailGameContainerProps { }
+interface ISteamGameContainerProps { }
 
 interface SteamListContainerState {
     isLoading: boolean;
@@ -19,9 +19,9 @@ interface SteamListContainerState {
     filter: string;
 }
 
-class SteamListContainer extends React.Component<IThumbnailGameContainerProps, SteamListContainerState> {
+class SteamListContainer extends React.Component<ISteamGameContainerProps, SteamListContainerState> {
 
-    constructor(props: IThumbnailGameContainerProps) {
+    constructor(props: ISteamGameContainerProps) {
         super(props);
         this.state = { 
             isLoading: true,

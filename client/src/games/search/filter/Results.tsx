@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GameResponse, ResultsType } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
-import ThumbnailGameContainer from '../../game/ThumbnailGameContainer';
+import RegularGameContainer from '../../game/regular/RegularGameContainer';
 import TopnavContainer from './topnav/TopnavContainer';
 import { Paper, Button } from '@material-ui/core';
 
@@ -55,7 +55,7 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
                 {props.games && 
                     props.games.map((game: GameResponse) => {
                         return (
-                            <ThumbnailGameContainer
+                            <RegularGameContainer
                                 key={game.id}
                                 game={game}
                             />

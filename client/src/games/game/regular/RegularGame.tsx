@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { GameResponse, steamAppUrl, IdNamePair } from '../../../../client/client-server-common/common';
+import { GameResponse, steamAppUrl, IdNamePair } from '../../../../client-server-common/common';
 import { Paper } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 
-interface IThumbnailGameProps {
+interface IRegularGameProps {
     game: GameResponse;
     goToGame: () => void;
 }
 
-const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProps) => {
+const RegularGame: React.SFC<IRegularGameProps> = (props: IRegularGameProps) => {
 
     return (
         <div className="col-12 col-lg-6 col-xl-4 px-4 px-md-2 my-2">
@@ -38,4 +38,4 @@ const ThumbnailGame: React.SFC<IThumbnailGameProps> = (props: IThumbnailGameProp
 
 };
 
-export default ThumbnailGame;
+export default RegularGame;
