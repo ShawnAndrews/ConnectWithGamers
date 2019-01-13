@@ -48,7 +48,7 @@ class FullsizeGameContainer extends React.Component<IFullsizeGameContainerProps,
         this.setState({
             hoveredTimeout: window.setTimeout(() => {
                 this.setState({ 
-                    hoveredInterval: window.setInterval(() => this.nextScreenshotIndex(), 1100) 
+                    hoveredInterval: window.setInterval(() => this.nextScreenshotIndex(), 1250) 
                 });
             })
         });

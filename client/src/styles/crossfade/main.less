@@ -1,0 +1,18 @@
+.crossfade {
+
+    img {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        opacity: 1.0;
+        -webkit-transition: opacity 0.3s ease-in-out;
+        -moz-transition: opacity 0.3s ease-in-out;
+        -ms-transition: opacity 0.3s ease-in-out;
+        -o-transition: opacity 0.3s ease-in-out;
+        transition: opacity 0.3s ease-in-out;
+
+        &.hide {
+            opacity: 0.0;
+        }
+    }
+}
