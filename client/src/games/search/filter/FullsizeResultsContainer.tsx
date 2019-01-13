@@ -65,8 +65,6 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
         .then( (response: MultiGameResponse) => {
             const games: GameResponse[] = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
 
-            this.setState({ isLoading: false, games: games });
-
             this.setState({
                 loadingMsg: 'Loading images...',
                 games: games
