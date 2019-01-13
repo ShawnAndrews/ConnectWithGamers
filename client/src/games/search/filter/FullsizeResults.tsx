@@ -10,6 +10,9 @@ interface IFullsizeResultsProps {
     games: GameResponse[];
     retry: boolean;
     onRetryClick: () => void;
+    editorsGamesIndicies: number[];
+    featureGamesIndicies: number[];
+    subFeatureGamesIndicies: number[];
 }
 
 const FullsizeResults: React.SFC<IFullsizeResultsProps> = (props: IFullsizeResultsProps) => {
@@ -33,17 +36,13 @@ const FullsizeResults: React.SFC<IFullsizeResultsProps> = (props: IFullsizeResul
         );
     }
 
-    const editorsGames: number[] = []; 
-    const featureGames: number[] = [7,22];
-    const subFeatureGames: number[] = [2,16,28,33];
-
     return (
         <div className="fullsize-results">
             {props.games && props.games
                 .map((game: GameResponse, index: number) => {
-                    const isEditorsChoiceGame: boolean = editorsGames.findIndex((x: number) => x === index) !== -1;
-                    const isFeatureGame: boolean = featureGames.findIndex((x: number) => x === index) !== -1;
-                    const isSubFeatureGame: boolean = subFeatureGames.findIndex((x: number) => x === index) !== -1;
+                    const isEditorsChoiceGame: boolean = props.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
+                    const isFeatureGame: boolean = props.featureGamesIndicies.findIndex((x: number) => x === index) !== -1;
+                    const isSubFeatureGame: boolean = props.subFeatureGamesIndicies.findIndex((x: number) => x === index) !== -1;
 
                     return (
                         <FullsizeGameContainer

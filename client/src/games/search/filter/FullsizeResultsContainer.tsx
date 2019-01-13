@@ -3,7 +3,7 @@ const loadImage = require('image-promise');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { GameResponse, MultiGameResponse, GamesPresets, ExcludedGameIds } from '../../../../client-server-common/common';
+import { GameResponse, MultiGameResponse, GamesPresets, ExcludedGameIds, getIGDBImage, IGDBImageSizeEnums, IGDBImage } from '../../../../client-server-common/common';
 import FullsizeResults from './FullsizeResults';
 
 interface IFullsizeResultsContainerProps extends RouteComponentProps<any> {
@@ -16,6 +16,9 @@ interface IFullsizeResultsContainerState {
     resultsType: string;
     games: GameResponse[];
     retry: boolean;
+    editorsGamesIndicies: number[];
+    featureGamesIndicies: number[];
+    subFeatureGamesIndicies: number[];
 }
 
 class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainerProps, IFullsizeResultsContainerState> {
@@ -32,7 +35,10 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
             loadingMsg: "Loading games...",
             resultsType: props.match.params.type,
             games: undefined,
-            retry: false
+            retry: false,
+            editorsGamesIndicies: [],
+            featureGamesIndicies: [7,22],
+            subFeatureGamesIndicies: [2,16,28,33]
         };
     }
 
@@ -64,6 +70,20 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
         IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${query}`)
         .then( (response: MultiGameResponse) => {
             const games: GameResponse[] = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
+
+            games.forEach((game: GameResponse, index: number) => {
+                game.screenshots.forEach((screenshot: IGDBImage) => {
+                    if (this.state.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1) {
+                        screenshot.url = getIGDBImage(screenshot.image_id, IGDBImageSizeEnums.screenshot_big);
+                    } else if (this.state.featureGamesIndicies.findIndex((x: number) => x === index) !== -1) {
+                        screenshot.url = getIGDBImage(screenshot.image_id, IGDBImageSizeEnums.screenshot_big);
+                    } else if (this.state.subFeatureGamesIndicies.findIndex((x: number) => x === index) !== -1) {
+                        screenshot.url = getIGDBImage(screenshot.image_id, IGDBImageSizeEnums.screenshot_med);
+                    } else {
+                        screenshot.url = getIGDBImage(screenshot.image_id, IGDBImageSizeEnums.screenshot_med);
+                    }
+                })
+            });
 
             this.setState({
                 loadingMsg: 'Loading images...',
@@ -104,6 +124,9 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
                 games={this.state.games}
                 retry={this.state.retry}
                 onRetryClick={this.onRetryClick}
+                editorsGamesIndicies={this.state.editorsGamesIndicies}
+                featureGamesIndicies={this.state.featureGamesIndicies}
+                subFeatureGamesIndicies={this.state.subFeatureGamesIndicies}
             />
         );
     }
