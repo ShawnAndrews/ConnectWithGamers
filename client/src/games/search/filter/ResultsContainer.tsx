@@ -25,7 +25,7 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
         this.loadGames = this.loadGames.bind(this);
         this.onRetryClick = this.onRetryClick.bind(this);
         this.getResultsTypeByProps = this.getResultsTypeByProps.bind(this);
-        
+
         const resultsType: ResultsType = this.getResultsTypeByProps(props);
 
         if (resultsType === ResultsType.SearchResults) {

@@ -23,7 +23,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
     return (
         <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
             <div className="screenshot w-100 h-100">
-                <CrossfadeImage src={props.game.screenshots ? props.game.screenshots[props.hoveredScreenshotIndex] : 'https://i.imgur.com/WcPkTiF.png'} />
+                <CrossfadeImage src={props.game.screenshots ? props.game.screenshots[props.hoveredScreenshotIndex].url : 'https://i.imgur.com/WcPkTiF.png'} />
             </div>
             <div className='overlay'/>
             <div className='text-overlay'/>
@@ -58,13 +58,14 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                         <div className='genres'>
                             {props.game.genres && props.game.genres.map((x: IGDBGenre) => x.name).join(', ')}
                         </div>
-                        <Button
-                            className="steam-btn" 
-                            variant="raised"
-                            onClick={props.goToSteamPage}
-                        >
-                            Buy now for ${props.game.price} USD
-                        </Button>
+                        {props.game.price && 
+                            <Button
+                                className="steam-btn" 
+                                variant="raised"
+                                onClick={props.goToSteamPage}
+                            >
+                                Buy now for ${props.game.price} USD
+                            </Button>}
                     </>}
             </div>
             {!props.isEditorsChoiceGame && props.game.price &&

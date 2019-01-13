@@ -45,7 +45,7 @@ const HighlightedGameList: React.SFC<IHighlightedGameListProps> = (props: IHighl
                                             {Math.floor(game.aggregated_rating)}%
                                         </div>}
                                 </div>
-                                <img className="w-100 h-100" src={game.screenshots ? game.screenshots[0] : 'https://i.imgur.com/WcPkTiF.png'}/>
+                                <img className="w-100 h-100" src={game.screenshots ? game.screenshots[0].url : 'https://i.imgur.com/WcPkTiF.png'}/>
                             </Card>
                         );
                     })}

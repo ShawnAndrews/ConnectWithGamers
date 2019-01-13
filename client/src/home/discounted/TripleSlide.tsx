@@ -21,7 +21,7 @@ const TripleSlide: React.SFC<ITripleSlideProps> = (props: ITripleSlideProps) => 
             <div className="row">
                 <div className="col-10 pl-0">
                     <div className="img-container position-relative cursor-pointer" onClick={() => props.onRedirect(gameOne.id)} onMouseOver={() => props.onHoverGame(gameOne.id)} onMouseOut={() => props.onHoverOutGame()}>
-                        <img src={gameOne.screenshots[0]} />
+                        <img src={gameOne.screenshots[0].url} />
                         <div className={`overlay ${props.hoveredGameId === gameOne.id && 'active'}`} />
                         <div className="name px-2 mb-2">{gameOne.name}</div>
                         {gameOne.discount_percent &&
@@ -33,14 +33,16 @@ const TripleSlide: React.SFC<ITripleSlideProps> = (props: ITripleSlideProps) => 
                     </div>
                 </div>
                 <div className="covers col-2 p-0">
-                    <div className="h-50 position-relative cursor-pointer" onClick={() => props.onRedirect(gameTwo.id)} onMouseOver={() => props.onHoverGame(gameTwo.id)} onMouseOut={() => props.onHoverOutGame()}>
-                        <img className="w-100 h-100" src={gameTwo.cover.url} />
+                    <div className="h-50 position-relative cursor-pointer pb-1" onClick={() => props.onRedirect(gameTwo.id)} onMouseOver={() => props.onHoverGame(gameTwo.id)} onMouseOut={() => props.onHoverOutGame()}>
+                        {gameTwo.cover && 
+                            <img className="w-100 h-100" src={gameTwo.cover.url} />} 
                         <div className={`overlay ${props.hoveredGameId === gameTwo.id && 'active'}`} />
                         {gameTwo.discount_percent && 
                             <div className="discount-percent mt-1 px-1">-{gameTwo.discount_percent}%</div>}
                     </div>
-                    <div className="h-50 position-relative cursor-pointer" onClick={() => props.onRedirect(gameThree.id)} onMouseOver={() => props.onHoverGame(gameThree.id)} onMouseOut={() => props.onHoverOutGame()}>
-                        <img className="w-100 h-100" src={gameThree.cover.url} />
+                    <div className="h-50 position-relative cursor-pointer pt-1" onClick={() => props.onRedirect(gameThree.id)} onMouseOver={() => props.onHoverGame(gameThree.id)} onMouseOut={() => props.onHoverOutGame()}>
+                        {gameThree.cover && 
+                            <img className="w-100 h-100" src={gameThree.cover.url} />} 
                         <div className={`overlay ${props.hoveredGameId === gameThree.id && 'active'}`} />
                         {gameThree.discount_percent && 
                             <div className="discount-percent mt-1 px-1">-{gameThree.discount_percent}%</div>}

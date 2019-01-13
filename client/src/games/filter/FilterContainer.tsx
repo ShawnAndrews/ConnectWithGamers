@@ -311,7 +311,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         });
 
         if (checked) {
-            this.props.history.push(`/games/search/filter/${GamesPresets.popular}`);
+            this.props.history.push(`/games/search/popular`);
         }
     }
 
@@ -326,7 +326,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         });
 
         if (checked) {
-            this.props.history.push(`/games/search/filter/${GamesPresets.recentlyReleased}`);
+            this.props.history.push(`/games/search/recent`);
         }
     }
 
@@ -341,7 +341,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         });
 
         if (checked) {
-            this.props.history.push(`/games/search/filter/${GamesPresets.upcoming}`);
+            this.props.history.push(`/games/search/upcoming`);
         }
     }
 

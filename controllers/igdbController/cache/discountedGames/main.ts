@@ -69,9 +69,9 @@ export function cacheDiscountedGames(): Promise<GameResponse[]> {
             const steamWebpage: string = response.data;
             const steamIds: number[] = parseSteamIds(steamWebpage);
 
-            getGamesBySteamIds(steamIds)
+            getGamesBySteamIds(steamIds, true)
             .then((gameResponses: GameResponse[]) => {
-                const excludeGameIds: number[] = [111674, 36529, 15108, 103232];
+                const excludeGameIds: number[] = [111674, 36529, 15108, 103232, 15736, 24462];
                 const ids: number[] = gameResponses.filter((x: GameResponse) => excludeGameIds.indexOf(x.id) === -1).map((x: GameResponse) => x.id);
                 gameResponses = gameResponses.filter((x: GameResponse) => excludeGameIds.indexOf(x.id) === -1);
 

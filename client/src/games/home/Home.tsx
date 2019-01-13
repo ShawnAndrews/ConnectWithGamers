@@ -7,6 +7,9 @@ interface IHomeProps {
     isLoading: boolean;
     loadingMsg: string;
     games: GameResponse[];
+    editorsGamesIndicies: number[];
+    featureGamesIndicies: number[];
+    subFeatureGamesIndicies: number[];
 }
 
 const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
@@ -17,16 +20,13 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
         );
     }
 
-    const featureGames: number[] = [0,42];
-    const subFeatureGames: number[] = [10,17,28,33];
-
     return (
-        <div className="home">
+        <div className="fullsize-results">
             {props.games && props.games
                 .map((game: GameResponse, index: number) => {
-                    const isEditorsChoiceGame: boolean = index === 0;
-                    const isFeatureGame: boolean = featureGames.findIndex((x: number) => x === index) !== -1;
-                    const isSubFeatureGame: boolean = subFeatureGames.findIndex((x: number) => x === index) !== -1;
+                    const isEditorsChoiceGame: boolean = props.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
+                    const isFeatureGame: boolean = props.featureGamesIndicies.findIndex((x: number) => x === index) !== -1;
+                    const isSubFeatureGame: boolean = props.subFeatureGamesIndicies.findIndex((x: number) => x === index) !== -1;
 
                     return (
                         <FullsizeGameContainer

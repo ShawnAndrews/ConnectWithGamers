@@ -25,7 +25,7 @@ const QuadrupleSlide: React.SFC<IQuadrupleSlideProps> = (props: IQuadrupleSlideP
             <div className="row h-50 w-100 p-0">
                 <div className="col-6 p-0">
                     <div className="img-container h-100 mb-1 mr-1 position-relative cursor-pointer" onClick={() => props.onRedirect(gameOne.id)} onMouseOver={() => props.onHoverGame(gameOne.id)} onMouseOut={() => props.onHoverOutGame()}>
-                        <img className="w-100" src={gameOne.screenshots[0]} />
+                        <img className="w-100" src={gameOne.screenshots[0].url} />
                         <div className={`overlay ${props.hoveredGameId === gameOne.id && 'active'}`} />
                         <div className="name px-2 mb-2">{gameOne.name}</div>
                         {gameOne.discount_percent &&
@@ -38,7 +38,7 @@ const QuadrupleSlide: React.SFC<IQuadrupleSlideProps> = (props: IQuadrupleSlideP
                 </div>
                 <div className="col-6 p-0">
                     <div className="img-container h-100 ml-1 mb-1 position-relative cursor-pointer" onClick={() => props.onRedirect(gameTwo.id)} onMouseOver={() => props.onHoverGame(gameTwo.id)} onMouseOut={() => props.onHoverOutGame()}>
-                        <img className="w-100" src={gameTwo.screenshots[0]} />
+                        <img className="w-100" src={gameTwo.screenshots[0].url} />
                         <div className={`overlay ${props.hoveredGameId === gameTwo.id && 'active'}`} />
                         <div className="name px-2 mb-2">{gameTwo.name}</div>
                         {gameTwo.discount_percent &&
@@ -53,7 +53,7 @@ const QuadrupleSlide: React.SFC<IQuadrupleSlideProps> = (props: IQuadrupleSlideP
             <div className="row h-50 w-100 p-0">
                 <div className="col-6 p-0">
                     <div className="img-container h-100 mr-1 mt-1 position-relative cursor-pointer" onClick={() => props.onRedirect(gameThree.id)} onMouseOver={() => props.onHoverGame(gameThree.id)} onMouseOut={() => props.onHoverOutGame()}>
-                        <img className="w-100" src={gameThree.screenshots[0]} />
+                        <img className="w-100" src={gameThree.screenshots[0].url} />
                         <div className={`overlay ${props.hoveredGameId === gameThree.id && 'active'}`} />
                         <div className="name px-2 mb-2">{gameThree.name}</div>
                         {gameThree.discount_percent &&
@@ -66,7 +66,7 @@ const QuadrupleSlide: React.SFC<IQuadrupleSlideProps> = (props: IQuadrupleSlideP
                 </div>
                 <div className="col-6 p-0">
                     <div className="img-container h-100 ml-1 mt-1 position-relative cursor-pointer" onClick={() => props.onRedirect(gameFour.id)} onMouseOver={() => props.onHoverGame(gameFour.id)} onMouseOut={() => props.onHoverOutGame()}>
-                        <img className="w-100" src={gameFour.screenshots[0]} />
+                        <img className="w-100" src={gameFour.screenshots[0].url} />
                         <div className={`overlay ${props.hoveredGameId === gameFour.id && 'active'}`} />
                         <div className="name px-2 mb-2">{gameFour.name}</div>
                         {gameFour.discount_percent &&

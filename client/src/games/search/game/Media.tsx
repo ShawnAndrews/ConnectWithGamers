@@ -1,9 +1,10 @@
 import * as React from 'react';
 import Slideshow from './Slideshow';
+import { IGDBImage } from '../../../../client-server-common/common';
 
 interface IMediaProps {
     video: string;
-    screenshots: string[];
+    screenshots: IGDBImage[];
 }
 
 const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {

@@ -2,6 +2,10 @@ import config from "../../config";
 const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
+export function getIGDBImage(uid: string, size: IGDBImageSizeEnums): string {
+    return `https://images.igdb.com/igdb/image/upload/t_${size}/${uid}.jpg`;
+}
+
 export function buildIGDBRequestBody(filters: string[], fields: string, limit: number, sort?: string, search?: string): string {
     let body: string = "";
 
@@ -42,9 +46,9 @@ const THREE_MONTH_AGO_UNIX_TIME_S: number = getTodayUnixTimestampInSeconds() - (
 export const GamesPresets = {
     highlighted: `?required=cover,screenshots&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&popularity=55&platforms=6&sort=popularity:desc`,
 
-    upcoming: `?required=cover&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
-    recentlyReleased: `?required=cover&popularity=5&released_before=${CURRENT_UNIX_TIME_S}&sort=release_date:desc`,
-    popular: `?required=cover&popularity=15&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&sort=popularity:desc`,
+    upcoming: `?required=cover,screenshots&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
+    recentlyReleased: `?required=cover,screenshots&popularity=5&released_before=${CURRENT_UNIX_TIME_S}&sort=release_date:desc`,
+    popular: `?required=cover,screenshots&popularity=15&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&sort=popularity:desc`,
 
     pc: `?platforms=6&required=cover&popularity=25&sort=popularity:desc`,
     virtualReality: `?platforms=162,165&required=cover&popularity=25&sort=popularity:desc`,
@@ -91,6 +95,18 @@ export enum IGDBCategoryEnums {
     expansion = 2,
     bundle = 3,
     standaloneexpansion = 4
+}
+
+export enum IGDBImageSizeEnums {
+    micro = "micro",
+    thumb = "thumb",
+    cover_small = "cover_small",
+    logo_med = "logo_med",
+    cover_big = "cover_big",
+    screenshot_med = "screenshot_med",
+    screenshot_big = "screenshot_big",
+    "720p" = "720p",
+    "1080p" = "1080p"
 }
 
 export enum Breakpoints {
@@ -376,7 +392,7 @@ export interface RawGame {
 export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`];
 
 export interface Genre {
-    id: number;
+    // id: number;
     name: string;
 }
 
@@ -516,9 +532,10 @@ export interface GameResponse {
     platforms: IdNamePair[];
     release_dates: number[];
     first_release_date: number;
-    screenshots: string[];
+    screenshots: IGDBImage[];
     video: string;
 }
+
 export interface MultiGameResponse {
     error: string;
     data?: GameResponse[];

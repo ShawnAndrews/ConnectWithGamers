@@ -1,19 +1,22 @@
-import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, SteamAPIGetPriceInfoResponse, GameFields, buildIGDBRequestBody } from "../../../client/client-server-common/common";
-import { IGDBImageResolve, ArrayClean, steamAPIGetPriceInfo } from "../../../util/main";
+import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, SteamAPIGetPriceInfoResponse, GameFields, buildIGDBRequestBody, getIGDBImage, IGDBImageSizeEnums } from "../../../client/client-server-common/common";
+import { ArrayClean, steamAPIGetPriceInfo } from "../../../util/main";
 import config from "../../../config";
 import axios, { AxiosResponse } from "axios";
 import { cachePreloadedGame } from "./game/main";
 
-export function getGamesBySteamIds(steamIds: number[]): Promise<GameResponse[]> {
+export function getGamesBySteamIds(steamIds: number[], requiredMedia?: boolean): Promise<GameResponse[]> {
+    const filters: string[] = [`external_games.uid = (${steamIds.join()})`];
+
+    if (requiredMedia) {
+        filters.push(`screenshots != null`);
+        filters.push(`cover != null`);
+    }
 
     return new Promise((resolve: any, reject: any) => {
 
         const URL: string = `${config.igdb.apiURL}/games`;
         const body: string = buildIGDBRequestBody(
-            [
-                `external_games.uid = (${steamIds.join()})`,
-                `screenshots != null`
-            ],
+            filters,
             GameFields.join(),
             undefined
         );
@@ -167,7 +170,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             let platforms: IdNamePair[] = undefined;
             let first_release_date: number = undefined;
             let release_dates: number[] = undefined;
-            let screenshots: string[] = undefined;
+            let screenshots: IGDBImage[] = undefined;
             let video: string = undefined;
             const price: string = undefined;
             const discount_percent: number = undefined;
@@ -195,7 +198,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
 
             // cover
             if (RawGame.cover && isNaN(Number(RawGame.cover))) {
-                RawGame.cover.url = IGDBImageResolve(RawGame.cover.image_id, "cover_big", "jpg");
+                RawGame.cover.url = getIGDBImage(RawGame.cover.image_id, IGDBImageSizeEnums.cover_big);
             }
             cover = RawGame.cover;
 
@@ -241,8 +244,9 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             });
 
             // screenshots
-            screenshots = RawGame.screenshots && RawGame.screenshots.map((screenshot: IGDBImage) => {
-                return IGDBImageResolve(screenshot.image_id, "screenshot_huge", "jpg");
+            screenshots = RawGame.screenshots && RawGame.screenshots.map((x: IGDBImage) => {
+                x.url = getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big);
+                return x;
             });
 
             // video

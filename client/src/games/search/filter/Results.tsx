@@ -33,23 +33,11 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
             </Paper>
         );
     }
-    
-    let title: string;
-
-    if (props.resultsType === ResultsType.RecentResults) {
-        title = 'Recently released';
-    } else if (props.resultsType === ResultsType.UpcomingResults) {
-        title = 'Upcoming games';
-    } else if (props.resultsType === ResultsType.PopularResults) {
-        title = 'Popular games';
-    } else {
-        title = 'Search results';
-    }
 
     return (
         <Paper className="results bg-primary-solid overflow-auto" elevation={24}>
             <TopnavContainer
-                title={title}
+                title="Search results"
             />
             <div className="row w-100 m-0">
                 {props.games && 

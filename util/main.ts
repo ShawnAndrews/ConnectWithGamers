@@ -266,8 +266,3 @@ export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGe
     });
 
 }
-
-/* IGDB image */
-export function IGDBImageResolve(image_id: string, size: string, type: string): string {
-    return "https://images.igdb.com/igdb/image/upload/t_".concat(size, "/").concat(image_id, ".").concat(type);
-}
