@@ -3,7 +3,7 @@ const loadImage = require('image-promise');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { GameResponse, MultiGameResponse, GamesPresets } from '../../../../client-server-common/common';
+import { GameResponse, MultiGameResponse, GamesPresets, ExcludedGameIds } from '../../../../client-server-common/common';
 import FullsizeResults from './FullsizeResults';
 
 interface IFullsizeResultsContainerProps extends RouteComponentProps<any> {
@@ -63,7 +63,8 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
 
         IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${query}`)
         .then( (response: MultiGameResponse) => {
-            const games: GameResponse[] = response.data;
+            const games: GameResponse[] = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
+
             this.setState({ isLoading: false, games: games });
 
             this.setState({

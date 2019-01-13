@@ -2,6 +2,8 @@ import config from "../../config";
 const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
+export const ExcludedGameIds: number[] = [59227, 25260, 2126, 24462, 109458, 89554, 113209];
+
 export function getIGDBImage(uid: string, size: IGDBImageSizeEnums): string {
     return `https://images.igdb.com/igdb/image/upload/t_${size}/${uid}.jpg`;
 }

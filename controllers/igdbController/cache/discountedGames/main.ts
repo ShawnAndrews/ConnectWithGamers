@@ -71,9 +71,7 @@ export function cacheDiscountedGames(): Promise<GameResponse[]> {
 
             getGamesBySteamIds(steamIds, true)
             .then((gameResponses: GameResponse[]) => {
-                const excludeGameIds: number[] = [111674, 36529, 15108, 103232, 15736, 24462];
-                const ids: number[] = gameResponses.filter((x: GameResponse) => excludeGameIds.indexOf(x.id) === -1).map((x: GameResponse) => x.id);
-                gameResponses = gameResponses.filter((x: GameResponse) => excludeGameIds.indexOf(x.id) === -1);
+                const ids: number[] = gameResponses.map((x: GameResponse) => x.id);
 
                 redisClient.set(cacheEntry.key, JSON.stringify(ids));
                 if (cacheEntry.expiry !== -1) {

@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as IGDBService from '../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Showcase from './Showcase';
-import { GameResponse, MultiGameResponse, NewsArticle, MultiNewsResponse, GamesPresets } from '../../client-server-common/common';
+import { GameResponse, MultiGameResponse, NewsArticle, MultiNewsResponse, GamesPresets, ExcludedGameIds } from '../../client-server-common/common';
 
 interface IShowcaseContainerProps extends RouteComponentProps<any> {
     
@@ -57,26 +57,31 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
 
                 if (vals[0]) {
                     const response: MultiGameResponse = vals[0];
+                    response.data = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
                     const numOfHighlightedGamesToShow: number = 9;
                     highlightedGames = response.data.slice(0, numOfHighlightedGamesToShow);
                 }
                 if (vals[1]) {
                     const response: MultiGameResponse = vals[1];
+                    response.data = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
                     const numOfPopularGamesToShow: number = 20;
                     popularGames = response.data.slice(0, numOfPopularGamesToShow);
                 }
                 if (vals[2]) {
                     const response: MultiGameResponse = vals[2];
+                    response.data = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
                     const numOfRecentGamesToShow: number = 5;
                     recentGames = response.data.slice(0, numOfRecentGamesToShow);
                 }
                 if (vals[3]) {
                     const response: MultiGameResponse = vals[3];
+                    response.data = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
                     const numOfUpcomingGamesToShow: number = 5;
                     upcomingGames = response.data.slice(0, numOfUpcomingGamesToShow);
                 }
                 if (vals[4]) {
                     const response: MultiGameResponse = vals[4];
+                    response.data = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
                     discountedGames = response.data;
                 }
                 if (vals[5]) {

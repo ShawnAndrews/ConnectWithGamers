@@ -3,7 +3,7 @@ const loadImage = require('image-promise');
 import * as React from 'react';
 import Home from './Home';
 import * as IGDBService from '../../service/igdb/main';
-import { MultiGameResponse, GameResponse, GamesPresets, IGDBImage, IGDBImageSizeEnums, getIGDBImage } from '../../../client-server-common/common';
+import { MultiGameResponse, GameResponse, GamesPresets, IGDBImage, IGDBImageSizeEnums, getIGDBImage, ExcludedGameIds } from '../../../client-server-common/common';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 interface IHomeContainerProps extends RouteComponentProps<any> { }
@@ -37,7 +37,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
 
         IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.highlighted}`)
         .then((gamesResponse: MultiGameResponse) => {
-            const games: GameResponse[] = gamesResponse.data;
+            const games: GameResponse[] = gamesResponse.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
 
             games.forEach((game: GameResponse, index: number) => {
                 game.screenshots.forEach((screenshot: IGDBImage) => {
@@ -55,7 +55,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
 
             this.setState({
                 loadingMsg: 'Loading images...',
-                games: gamesResponse.data
+                games: games
             }, () => {
                 const allScreenshots: string[] = [].concat(...this.state.games.map((x: GameResponse) => x.screenshots));
 
