@@ -19,7 +19,7 @@ interface IRecentGameListProps {
 const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListProps) => {
 
     return (
-        <div className="recently-released-table w-100 mb-3 p-0">
+        <div className="recently-released-table w-100 mb-5 p-0">
             <div className="recently-released-table-header position-relative mb-3" onClick={() => { props.goToRedirectCallback(`/games/search/recent`); }}>
                 <a className="mr-2">Recently Released</a>
                 <i className="fas fa-chevron-right"/>

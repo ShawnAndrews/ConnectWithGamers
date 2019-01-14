@@ -17,7 +17,7 @@ const HighlightedGameList: React.SFC<IHighlightedGameListProps> = (props: IHighl
     const featuredGames: number[] = [4];
 
     return (
-        <div className="highlighted-table mb-4">
+        <div className="highlighted-table mb-5">
             <div className="highlighted-header position-relative mb-2">
                 <a className="mr-2">Highlights</a>
                 <i className="fas fa-chevron-right"/>

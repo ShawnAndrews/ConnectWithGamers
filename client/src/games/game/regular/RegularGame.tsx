@@ -12,7 +12,7 @@ const RegularGame: React.SFC<IRegularGameProps> = (props: IRegularGameProps) => 
 
     return (
         <div className="col-12 col-lg-6 col-xl-4 px-4 px-md-2 my-2">
-            <Paper className="game bg-tertiary hover-tertiary-solid position-relative" onClick={props.goToGame}>
+            <Paper className="game hover-tertiary-solid cursor-pointer position-relative" onClick={props.goToGame}>
                 <img className="cover-img" src={props.game.cover ? props.game.cover.url : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                 <Textfit className="name color-secondary font-weight-bold text-nowrap text-right px-2" min={12} max={18}>
                     {props.game.name}

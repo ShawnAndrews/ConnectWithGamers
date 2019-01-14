@@ -52,6 +52,10 @@
     color: @secondary-color!important;
 }
 
+.color-tertiary {
+    color: @tertiary-color!important;
+}
+
 .font-secondary {
     font-family: @secondary-font!important;
 }
@@ -96,23 +100,23 @@
 
 .custom-account-form-group {
     > div {
-        border-bottom: 1px solid rgba(white, 0.42)!important;
+        border-bottom: 1px solid rgba(@tertiary-color, 0.42)!important;
 
         &::before {
-            border-bottom: 1px solid rgba(white, 0.42)!important;
+            border-bottom: 1px solid rgba(@tertiary-color, 0.42)!important;
         }
         &::after {
-            border-bottom: 2px solid white!important;
+            border-bottom: 2px solid @tertiary-color!important;
         }
         &:hover::before {
-            border-bottom: 2px solid rgba(white, 0.87)!important;
+            border-bottom: 2px solid rgba(@tertiary-color, 0.87)!important;
         }
         &:hover::after {
-            border-bottom: 2px solid white!important;
+            border-bottom: 2px solid @tertiary-color!important;
         }
     }
     * {
-        color: rgba(white, 0.7)!important;
+        color: rgba(@tertiary-color, 0.7)!important;
     }
 }
 
@@ -248,5 +252,21 @@
     .check {
         padding-top: 0px;
         padding-bottom: 0px;
+    }
+}
+
+.footer {
+    letter-spacing: 0.5px;
+    color: #8bf94e;
+    background-color: rgba(white,0.05);
+    height: 40px;
+    font-size: 16px;
+
+    > div {
+        margin: 8px 0;
+    }
+
+    > a {
+        margin: 4px 0;
     }
 }

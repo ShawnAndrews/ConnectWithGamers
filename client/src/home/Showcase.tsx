@@ -8,6 +8,7 @@ import NewsListContainer from './news/NewsListContainer';
 import { GameResponse, NewsArticle } from '../../client-server-common/common';
 import Spinner from './../spinner/main';
 import DiscountedGameListContainer from './discounted/DiscountedGameListContainer';
+import Footer from '../footer/footer';
 
 interface IShowcaseProps {
     isLoading: boolean;
@@ -29,40 +30,43 @@ const Showcase: React.SFC<IShowcaseProps> = (props: IShowcaseProps) => {
     }
 
     return (
-        <div className="home">
-            <div className="banner">
-                
-            </div>
-            <DiscountedGameListContainer
-                discountedGames={props.discountedGames}
-            />
-            <div className="container">
-                <div className="px-xs-4 px-lg-0">
-                    <HighlightedGameListContainer
-                        highlightedGames={props.highlightedGames}
-                    />
-                    <div className="h-100">
-                        <RecentGameListContainer
-                            recentGames={props.recentGames}
+        <>
+            <div className="home">
+                <div className="banner">
+                    
+                </div>
+                <DiscountedGameListContainer
+                    discountedGames={props.discountedGames}
+                />
+                <div className="container">
+                    <div className="px-xs-4 px-lg-0">
+                        <HighlightedGameListContainer
+                            highlightedGames={props.highlightedGames}
                         />
-                        <UpcomingGameListContainer
-                            upcomingGames={props.upcomingGames}
+                        <div className="h-100">
+                            <RecentGameListContainer
+                                recentGames={props.recentGames}
+                            />
+                            <UpcomingGameListContainer
+                                upcomingGames={props.upcomingGames}
+                            />
+                        </div>
+                        <div className="row mx-0 mb-5">
+                            <Profiles
+                                goToRedirectCallback={props.goToRedirect}
+                            />
+                            <PopularGameListContainer
+                                popularGames={props.popularGames}
+                            />
+                        </div>
+                        <NewsListContainer
+                            news={props.news}
                         />
                     </div>
-                    <div className="row m-0">
-                        <Profiles
-                            goToRedirectCallback={props.goToRedirect}
-                        />
-                        <PopularGameListContainer
-                            popularGames={props.popularGames}
-                        />
-                    </div>
-                    <NewsListContainer
-                        news={props.news}
-                    />
                 </div>
             </div>
-        </div>
+            <Footer/>
+        </>
     );
 
 };

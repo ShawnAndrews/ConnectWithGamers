@@ -11,7 +11,7 @@ const NewsArticle: React.SFC<INewsArticleProps> = (props: INewsArticleProps) => 
 
     return (
         <div className="news-article col-6 col-sm-4 col-lg-3 mb-3 px-md-1 px-lg-3" onClick={() => { const win = window.open(props.article.url, '_blank'); win.focus(); }}>
-            <Card className="news-container cursor-pointer primary-shadow bg-tertiary color-secondary">
+            <Card className="news-container cursor-pointer primary-shadow color-secondary">
                 <div className="hover-tertiary-solid">
                     <div className="title p-2">{props.article.title}</div>
                     <div className="row">

@@ -39,7 +39,7 @@ const Topnav: React.SFC<ITopnavProps> = (props: ITopnavProps) => {
                 <MenuItem onClick={props.onUserlistLinkClick}>User list</MenuItem>
             </Menu>
             <div className="nav">
-                <i className={`fas fa-users text-center ${props.expanded ? 'active' : ''}`} onClick={props.toggleExpanded}/>
+                <i className={`fas fa-users color-tertiary text-center ${props.expanded ? 'active' : ''}`} onClick={props.toggleExpanded}/>
                 <div className="searchbar form-inline has-search">
                     <span className="fa fa-search form-control-feedback"/>
                     <input type="text" className="form-control" placeholder="Search user" onKeyPress={props.handleSearchKeyPress} onChange={props.onSearchTextChange}/>

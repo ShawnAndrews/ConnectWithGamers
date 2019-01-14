@@ -19,7 +19,7 @@ interface IUpcomingGameListProps {
 const UpcomingGameList: React.SFC<IUpcomingGameListProps> = (props: IUpcomingGameListProps) => {
 
     return (
-        <div className="upcoming-table w-100 mb-3 p-0">
+        <div className="upcoming-table w-100 mb-5 p-0">
             <div className="upcoming-table-header position-relative mb-3" onClick={() => { props.goToRedirectCallback(`/games/search/upcoming`); }}>
                 <a className="mr-2">Upcoming</a>
                 <i className="fas fa-chevron-right"/>

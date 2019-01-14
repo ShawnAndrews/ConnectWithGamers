@@ -7,6 +7,7 @@ import NotFoundPageContainer from './../notfound/NotFoundPageContainer';
 import GamingSwitch from './gaming/main';
 import FilterContainer from './filter/FilterContainer';
 import HamburgerContainer from './filter/hamburger/HamburgerContainer';
+import Footer from '../footer/footer';
 
 interface IMainProps {
     onHamburgerClick: () => void;
@@ -16,24 +17,27 @@ interface IMainProps {
 const Main: React.SFC<IMainProps> = (props: IMainProps) => {
 
     return (
-        <div className="games position-relative">
-            <FilterContainer
-                filterExpanded={props.filterExpanded}
-            />
-            <div className={`content d-inline-block overflow-hidden vh-min-100 p-4 ${props.filterExpanded ? 'active' : ''}`}>
-                <Switch>
-                    <Route path="/games/search" component={SearchRouter} />
-                    <Route path="/games/news" component={NewsPageContainer} />
-                    <Route path="/games/gaming" component={GamingSwitch} />
-                    <Route path="/games" component={HomeContainer} />
-                    <Route component={NotFoundPageContainer}/>
-                </Switch>
+        <>
+            <div className="games position-relative">
+                <FilterContainer
+                    filterExpanded={props.filterExpanded}
+                />
+                <div className={`content d-inline-block overflow-hidden vh-min-100 p-4 ${props.filterExpanded ? 'active' : ''}`}>
+                    <Switch>
+                        <Route path="/games/search" component={SearchRouter} />
+                        <Route path="/games/news" component={NewsPageContainer} />
+                        <Route path="/games/gaming" component={GamingSwitch} />
+                        <Route path="/games" component={HomeContainer} />
+                        <Route component={NotFoundPageContainer}/>
+                    </Switch>
+                </div>
+                <HamburgerContainer
+                    onHamburgerClick={props.onHamburgerClick}
+                    filterExpanded={props.filterExpanded}
+                />
             </div>
-            <HamburgerContainer
-                onHamburgerClick={props.onHamburgerClick}
-                filterExpanded={props.filterExpanded}
-            />
-        </div>
+            <Footer/>
+        </>
     );
 
 };

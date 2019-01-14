@@ -57,14 +57,14 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
         <div className="settings p-4 mx-auto mt-5 position-relative">
             <div className="chip-container position-relative">
                 {props.image
-                    ? <Avatar className="chip mx-auto bg-secondary-solid mt-3" src={props.image}/>
-                    : <Avatar className="chip mx-auto bg-secondary-solid mt-3"/>}
+                    ? <Avatar className="chip mx-auto mt-3" src={props.image}/>
+                    : <Avatar className="chip mx-auto mt-3"/>}
                 {!props.image && <i className="fas fa-plus plus-icon color-primary center "/>}
                 <input className="chip-input-hidden rounded-circle" type="file" onChange={props.handleImageChange}/>
             </div>
             {props.image &&
                 <div className="chip-discard-container position-relative" onClick={props.handleImageDelete}>
-                    <Avatar className="chip-discard mx-auto bg-secondary-solid mt-2"/>
+                    <Avatar className="chip-discard mx-auto mt-2"/>
                     <i className="far fa-trash-alt color-primary center no-events"/>
                 </div>}
             <div className="username mx-auto mt-4">

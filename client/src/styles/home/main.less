@@ -10,7 +10,7 @@
     .highlighted-table {
 
         .highlighted-header {
-            color: #39caeb;
+            color: @tertiary-color;
             font-size: 1.15rem;
 
             &::before {
@@ -104,7 +104,7 @@
                         text-overflow: ellipsis;
                     
                         > div {
-                            color: #90d793;
+                            color: #90d794;
                             font-weight: bold;
                         }
         
@@ -191,7 +191,7 @@
         }
 
         .recently-released-table-header, .upcoming-table-header {
-            color: #39caeb;
+            color: @tertiary-color;
             cursor: pointer;
             font-size: 0.93rem;
 
@@ -211,7 +211,7 @@
         height: @home-profiles-height;
 
         .profiles-header {
-            color: #39caeb;
+            color: @tertiary-color;
             cursor: pointer;
 
             &::before {
@@ -242,7 +242,7 @@
         height: @home-popular-height;
 
         .popular-table-header {
-            color: #39caeb;
+            color: @tertiary-color;
             cursor: pointer;
 
             &::before {
@@ -266,7 +266,7 @@
         position: relative;
 
         .news-list-header {
-            color: #39caeb;
+            color: @tertiary-color;
             cursor: pointer;
 
             &::before {
@@ -311,7 +311,7 @@
     }
 
     > div {
-        background-color: @primary-color;
+        background-color: rgba(white,0.05)
     }
 
     img {
@@ -352,7 +352,7 @@
             }
             
             .name {
-                color: #90d793;
+                color: #90d794;
                 font-size: 9px;
                 line-height: 10px;
                 padding-top: 3px;
@@ -366,7 +366,7 @@
                 position: absolute;
                 bottom: 25px;
                 display: block;
-                color: #90d793;
+                color: #90d794;
                 font-size: .8em;
                 max-height: 2.6em;
                 line-height: 1rem;
@@ -400,16 +400,6 @@
                 pointer-events: none;
             }
 
-            // .name {
-            //     display: block;
-            //     color: #90d793;
-            //     font-size: .8em;
-            //     height: 2.6em;
-            //     line-height: 1rem;
-            //     overflow: hidden;
-            //     margin-top: 2px;
-            // }
-
             .icons {
                 position: absolute;
                 bottom: 0;
@@ -428,7 +418,7 @@
                 top: 5px;
                 right: 0;
                 background-color: rgba(@primary-color, 0.85);
-                color: #39caeb;
+                color: @tertiary-color;
                 font-weight: bold;
                 font-size: .75em;
                 padding: 2px 0px;
@@ -436,13 +426,12 @@
 
             * {
                 outline:none;
-                -webkit-touch-callout: none; /* iOS Safari */
-                -webkit-user-select: none; /* Safari */
-                -khtml-user-select: none; /* Konqueror HTML */
-                -moz-user-select: none; /* Firefox */
-                    -ms-user-select: none; /* Internet Explorer/Edge */
-                        user-select: none; /* Non-prefixed version, currently
-                                            supported by Chrome and Opera */
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                    -ms-user-select: none;
+                        user-select: none;
             }
         }
     }
@@ -456,7 +445,7 @@
         height: 43px;
 
         > i {
-            color: #39caeb;
+            color: @tertiary-color;
         }
 
         svg {
