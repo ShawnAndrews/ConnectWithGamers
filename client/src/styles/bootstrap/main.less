@@ -2,25 +2,24 @@
     border-bottom: none;
 }
 
+.nav-item {
+    height: 42px;
+}
+
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
-    color: @secondary-color;
-    background-color: #22252a;
-    border-color: rgba(@secondary-color, 0.2);
+    background-color: rgba(black, 0.1);
+    border-color: transparent;
 }
 
 .nav-link {
     border-bottom: none!important;
 
-    &:focus, &:hover {
-        border-bottom: none!important;
-    }
-}
+    &:not(.active) {
 
-.nav-link:hover {
-    color: @primary-color!important;
-
-    &.active {
-        color: @secondary-color!important;
+        &:focus, &:hover {
+            border-bottom: none!important;
+            border-color: rgba(black, 0.1) rgba(black, 0.1) rgba(black, 0.1)!important;
+        }
     }
 }
 

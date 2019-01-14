@@ -1,18 +1,32 @@
-@home-tables-height: 465px;
 @home-profiles-height: 230px;
 @home-popular-height: 230px;
 
 .home {
 
+    .banner {
+        height: 200px;
+    }
+
     .highlighted-table {
 
         .highlighted-header {
-            color: rgba(@secondary-color,0.7);
+            color: #39caeb;
+            font-size: 1.15rem;
+
+            &::before {
+                position: absolute;
+                bottom: -3px;
+                left: 0;
+                content: "";
+                height: 2px;
+                width: 53px;
+                background-color: rgba(241,196,15,0.6);
+            }
         }
     
         .highlighted-games {
             display: grid;
-            grid-gap: 10px;
+            grid-gap: 15px;
             grid-template-columns: auto auto auto auto;
             grid-auto-rows: auto;
             height: calc(100% - 30px);
@@ -104,36 +118,72 @@
                             background-color: rgba(247, 157, 0, 0.75);
                         }
                     }
-        
+
                     .genre {
                         font-size: 0.9em;
-                        width: 80%;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
                     }
 
-                    .rating {
-                        position: absolute;
-                        right: 0;
-                        bottom: 0;
-                        width: 20%;
-                        text-align: end;
-                        font-weight: bold;
-                        color: rgba(orange, 0.7);
-                    }
-                
                     * {
                         color: rgba(white, 0.8);
                     }
                 }
+
+                .price-container {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    color: white;
+                    background-color: rgba(black, 0.5);
+                    width: 100px;
+                    height: 22px;
+    
+                    .discount {
+                        color: rgba(white, 0.6);
+                        background-color: rgba(green, 0.5);
+                    }
+    
+                    .original-price {
+                        position: absolute;
+                        top: 0px;
+                        right: 0px;
+                        opacity: 0.5;
+                        font-size: 7px;
+    
+                        del {
+                            vertical-align: text-top;
+                        }
+                    }
+    
+                    .final-price {
+                        position: absolute;
+                        bottom: 0px;
+                        right: 0px;
+                        opacity: 0.7;
+                        font-size: 8px;
+                    }
+    
+                    &.no-discount {
+                        width: auto;
+                        height: auto;
+                        background: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0) 100%);
+    
+                        .final-price {
+                            position: relative;
+                            opacity: 0.85;
+                            font-size: 11px;
+                        }
+                    }
+                }
+
             }
             
         }
     }
 
     .recently-released-table, .upcoming-table {
-        height: @home-tables-height;
         padding: 10px;
 
         @media @sm {
@@ -141,7 +191,7 @@
         }
 
         .recently-released-table-header, .upcoming-table-header {
-            color: rgba(@secondary-color, 0.7);
+            color: #39caeb;
             cursor: pointer;
             font-size: 0.93rem;
 
@@ -155,54 +205,13 @@
                 background-color: rgba(241, 196, 15, 0.6);   
             }
         }
-
-        .recently-released-table-container, .upcoming-table-container {
-            height: calc((100% - 67px) / 5);
-
-            @media @sm {
-                height: 100px;
-            }
-
-            .name {
-                display: block;
-                color: #90d793;
-                font-size: .8em;
-                height: 2.6em;
-                line-height: 1rem;
-                overflow: hidden;
-                margin-top: 2px;
-            }
-
-            .icons {
-                position: absolute;
-                bottom: 15px;
-                overflow: hidden;
-
-                .icon {
-                    opacity: 0.6;
-                    font-size: 0.7em;
-                    color: @secondary-color;
-                }
-            }
-
-            .date {
-                position: absolute;
-                bottom: 2px;
-                color: rgba(orange, 0.8);
-                font-size: .75em;
-            }
-
-            * {
-                cursor: pointer;
-            }
-        }
     }
 
     .profiles-table {
         height: @home-profiles-height;
 
         .profiles-header {
-            color: rgba(@secondary-color,0.7);
+            color: #39caeb;
             cursor: pointer;
 
             &::before {
@@ -232,41 +241,8 @@
     .popular-table {
         height: @home-popular-height;
 
-        .popular-table-container {
-
-            .name {
-                color: #90d793;
-                font-size: 9px;
-                line-height: 10px;
-                padding-top: 3px;
-                height: 24px;
-                white-space: pre-line;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .genre {
-                padding-top: 2px;
-                padding-left: 15px;
-                font-size: 9px;
-                line-height: 15px;
-                height: 20px;
-                color: rgba(white, 0.7);
-                overflow: hidden;
-                text-overflow: clip;
-                white-space: normal;
-            }
-
-            .rating {
-                font-size: 12px;
-                padding-right: 15px;
-                color: orange;
-                text-align: right;
-            }
-        }
-
         .popular-table-header {
-            color: rgba(@secondary-color,0.7);
+            color: #39caeb;
             cursor: pointer;
 
             &::before {
@@ -284,69 +260,13 @@
             }
         }
 
-        .popular-table-horizontal {
-            position: relative;
-            height: calc(222px - 32px);
-            width: auto;
-            overflow: hidden;
-            white-space: nowrap;
-            transition: all .4s ease-in-out;
-
-            .popular-table-container {
-                width: 100px;
-                height: calc(100% - 14px);
-
-                img {
-                    pointer-events: none;
-                }
-
-                * {
-                    outline:none;
-                    -webkit-touch-callout: none; /* iOS Safari */
-                    -webkit-user-select: none; /* Safari */
-                     -khtml-user-select: none; /* Konqueror HTML */
-                       -moz-user-select: none; /* Firefox */
-                        -ms-user-select: none; /* Internet Explorer/Edge */
-                            user-select: none; /* Non-prefixed version, currently
-                                                  supported by Chrome and Opera */
-                }
-            }
-
-            &::-webkit-scrollbar {
-                width: 0px;
-                background: transparent;
-            }
-            &::-webkit-scrollbar-thumb {
-                background: transparent;
-            }
-        }
-
-        .popular-table-arrow {
-            position: absolute;
-            top: 50%;
-            padding: 3px;
-            background-color: rgba(@primary-color, 0.8);
-
-            > i {
-                color: rgba(white, 0.8);
-            }
-
-            &.left {
-                left: 20px;
-            }
-
-            &.right {
-                right: 20px;
-            }
-        }
-
     }
 
     .news-list-container {
         position: relative;
 
         .news-list-header {
-            color: rgba(@secondary-color,0.7);
+            color: #39caeb;
             cursor: pointer;
 
             &::before {
@@ -361,7 +281,9 @@
     }
 }
 
-//shared
+/**
+    SHARED
+*/
 .news-article {
 
     .title {
@@ -398,5 +320,166 @@
 
     * {
         color: white;
+    }
+}
+
+
+.table-horizontal {
+
+    .scroll-horizontal {
+        position: relative;
+        height: calc(222px - 32px);
+        width: auto;
+        overflow: hidden;
+        white-space: nowrap;
+        transition: all .4s ease-in-out;
+
+        .table-container {
+            width: auto;
+            height: 100%;
+
+            &.popular {
+                width: 100px;
+            }
+
+            .overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: calc(100% + 1px);
+                height: 100%; 
+                background: linear-gradient(to top, rgba(black, 1) 0%, rgba(black, 0.0) 70%, rgba(black, 0) 0%);
+            }
+            
+            .name {
+                color: #90d793;
+                font-size: 9px;
+                line-height: 10px;
+                padding-top: 3px;
+                height: 24px;
+                white-space: pre-line;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .name-overlay {
+                position: absolute;
+                bottom: 25px;
+                display: block;
+                color: #90d793;
+                font-size: .8em;
+                max-height: 2.6em;
+                line-height: 1rem;
+                width: calc(100% - 20px);
+                margin: 0 10px;
+                word-wrap: break-word;
+                white-space: pre-line;
+                overflow: hidden;
+            }
+
+            .genre {
+                padding-top: 2px;
+                padding-left: 15px;
+                font-size: 9px;
+                line-height: 15px;
+                height: 20px;
+                color: rgba(white, 0.7);
+                overflow: hidden;
+                text-overflow: clip;
+                white-space: normal;
+            }
+
+            .rating {
+                font-size: 12px;
+                padding-right: 15px;
+                color: orange;
+                text-align: right;
+            }
+
+            img {
+                pointer-events: none;
+            }
+
+            // .name {
+            //     display: block;
+            //     color: #90d793;
+            //     font-size: .8em;
+            //     height: 2.6em;
+            //     line-height: 1rem;
+            //     overflow: hidden;
+            //     margin-top: 2px;
+            // }
+
+            .icons {
+                position: absolute;
+                bottom: 0;
+                width: calc(100% - 20px);
+                margin: 0 10px;
+                overflow: hidden;
+
+                .icon {
+                    opacity: 0.6;
+                    color: @secondary-color;
+                }
+            }
+
+            .date {
+                position: absolute;
+                top: 5px;
+                right: 0;
+                background-color: rgba(@primary-color, 0.85);
+                color: #39caeb;
+                font-weight: bold;
+                font-size: .75em;
+                padding: 2px 0px;
+            }
+
+            * {
+                outline:none;
+                -webkit-touch-callout: none; /* iOS Safari */
+                -webkit-user-select: none; /* Safari */
+                -khtml-user-select: none; /* Konqueror HTML */
+                -moz-user-select: none; /* Firefox */
+                    -ms-user-select: none; /* Internet Explorer/Edge */
+                        user-select: none; /* Non-prefixed version, currently
+                                            supported by Chrome and Opera */
+            }
+        }
+    }
+
+    .table-arrow {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        margin-top: auto;
+        margin-bottom: auto;
+        height: 43px;
+
+        > i {
+            color: #39caeb;
+        }
+
+        svg {
+            background-color: rgba(black,0.8);
+            padding: 5px;
+            height: 43px;
+            width: 30px;
+        }
+
+        &.left {
+            left: 20px;
+        }
+
+        &.right {
+            right: 20px;
+        }
+    }
+
+    &::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: transparent;
     }
 }

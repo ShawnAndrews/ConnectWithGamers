@@ -63,13 +63,13 @@ class PopularGameListContainer extends React.Component<IPopularGameListContainer
     }
 
     onScrollLeft(): void {
-        const element: Element = document.getElementsByClassName('popular-table-horizontal')[0];
+        const element: Element = document.querySelector('.popular-table .scroll-horizontal');
         const scrollDistance: number = 105;
         this.smoothScroll(element, ScrollDirection.LEFT, 25, scrollDistance, 5);
     }
 
     onScrollRight(): void {
-        const element: Element = document.getElementsByClassName('popular-table-horizontal')[0];
+        const element: Element = document.querySelector('.popular-table .scroll-horizontal');
         const scrollDistance: number = 105;
         this.smoothScroll(element, ScrollDirection.RIGHT, 25, scrollDistance, 5);
     }
@@ -80,7 +80,7 @@ class PopularGameListContainer extends React.Component<IPopularGameListContainer
 
     mouseMove(event: React.MouseEvent<HTMLDivElement>): void {
         if (this.state.clicked) {
-            const element: Element = document.getElementsByClassName('popular-table-horizontal')[0];
+            const element: Element = document.querySelector('.popular-table .scroll-horizontal');
             element.scrollLeft = element.scrollLeft + (this.state.clickedX - event.pageX);
             this.setState({ mouseMoved: true, clickedX: event.pageX });
         }

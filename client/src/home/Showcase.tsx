@@ -30,30 +30,33 @@ const Showcase: React.SFC<IShowcaseProps> = (props: IShowcaseProps) => {
 
     return (
         <div className="home">
+            <div className="banner">
+                
+            </div>
             <DiscountedGameListContainer
                 discountedGames={props.discountedGames}
             />
             <div className="container">
-                <div className="row px-xs-4 px-lg-0">
+                <div className="px-xs-4 px-lg-0">
                     <HighlightedGameListContainer
                         highlightedGames={props.highlightedGames}
                     />
-                    <div className="col-md-9 col-lg-4 px-md-0 py-md-3 py-lg-0">
-                        <div className="row pl-md-0 pl-lg-4 h-100">
-                            <RecentGameListContainer
-                                recentGames={props.recentGames}
-                            />
-                            <UpcomingGameListContainer
-                                upcomingGames={props.upcomingGames}
-                            />
-                        </div>
+                    <div className="h-100">
+                        <RecentGameListContainer
+                            recentGames={props.recentGames}
+                        />
+                        <UpcomingGameListContainer
+                            upcomingGames={props.upcomingGames}
+                        />
                     </div>
-                    <Profiles
-                        goToRedirectCallback={props.goToRedirect}
-                    />
-                    <PopularGameListContainer
-                        popularGames={props.popularGames}
-                    />
+                    <div className="row m-0">
+                        <Profiles
+                            goToRedirectCallback={props.goToRedirect}
+                        />
+                        <PopularGameListContainer
+                            popularGames={props.popularGames}
+                        />
+                    </div>
                     <NewsListContainer
                         news={props.news}
                     />

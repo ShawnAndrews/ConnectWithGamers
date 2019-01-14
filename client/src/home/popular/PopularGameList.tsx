@@ -24,39 +24,41 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                     <a className="popular-table-header-link mr-2">Most Popular</a>
                     <i className="fas fa-chevron-right"/>
                 </div>
-                <div className="popular-table-horizontal" ref={props.listScrollRef} onMouseLeave={props.mouseLeave} onMouseMove={props.mouseMove} onMouseDown={props.mouseDown} onMouseUp={props.mouseUp}>
-                    {props.popularGames
-                        .map((x: GameResponse) => {
-                            return (
-                                <div key={x.id} className="popular-table-container cursor-pointer primary-shadow d-inline-block mx-2" onClick={() => { props.onClickGame(x.id); }}>
-                                    <CardMedia className="popular-table-image h-75 w-100">
-                                        <img className="w-100 h-100" src={x.cover ? x.cover.url : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
-                                    </CardMedia>
-                                    <div className="hover-primary h-25">
-                                        <div className="clear"/>
-                                        <div className="name mx-1 text-center">
-                                            {x.name}
-                                        </div>
-                                        <div className="row">
-                                            {x.genres &&
-                                                <div className="col-8 genre pr-0">
-                                                    {x.genres[0].name}
-                                                </div>}
-                                            {x.aggregated_rating &&
-                                                <div className={`col-${x.genres ? 4 : 12} rating pl-0`}>
-                                                    {Math.floor(x.aggregated_rating)}%
-                                                </div>}
+                <div className="table-horizontal position-relative">
+                    <div className="scroll-horizontal" ref={props.listScrollRef} onMouseLeave={props.mouseLeave} onMouseMove={props.mouseMove} onMouseDown={props.mouseDown} onMouseUp={props.mouseUp}>
+                        {props.popularGames
+                            .map((x: GameResponse) => {
+                                return (
+                                    <div key={x.id} className="table-container popular cursor-pointer primary-shadow d-inline-block mx-2" onClick={() => { props.onClickGame(x.id); }}>
+                                        <CardMedia className="h-75 w-100">
+                                            <img className="w-100 h-100" src={x.cover ? x.cover.url : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
+                                        </CardMedia>
+                                        <div className="hover-primary h-25">
+                                            <div className="clear"/>
+                                            <div className="name mx-1 text-center">
+                                                {x.name}
+                                            </div>
+                                            <div className="row">
+                                                {x.genres &&
+                                                    <div className="col-8 genre pr-0">
+                                                        {x.genres[0].name}
+                                                    </div>}
+                                                {x.aggregated_rating &&
+                                                    <div className={`col-${x.genres ? 4 : 12} rating pl-0`}>
+                                                        {Math.floor(x.aggregated_rating)}%
+                                                    </div>}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        })}
-                </div>
-                <div className="popular-table-arrow left" onClick={props.onScrollLeft}>
-                    <i className="fas fa-2x fa-chevron-left"/>
-                </div>
-                <div className="popular-table-arrow right" onClick={props.onScrollRight}>
-                    <i className="fas fa-2x fa-chevron-right"/>
+                                );
+                            })}
+                    </div>
+                    <div className="table-arrow left" onClick={props.onScrollLeft}>
+                        <i className="fas fa-2x fa-chevron-left"/>
+                    </div>
+                    <div className="table-arrow right" onClick={props.onScrollRight}>
+                        <i className="fas fa-2x fa-chevron-right"/>
+                    </div>
                 </div>
             </div>
         </div>

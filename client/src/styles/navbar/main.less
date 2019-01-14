@@ -1,4 +1,5 @@
 .brand-navbar {
+    background-color: #39caeb;
     border-bottom: 1px solid rgba(@primary-color, 0.2);
     z-index: 1;
 
@@ -12,21 +13,16 @@
     
     .logo-name {
         font-family: 'Pacifico'!important;
-        vertical-align: -webkit-baseline-middle;
+        vertical-align: middle;
+        font-size: 0.9rem;
     }
     
     .brand-menu {
-        position: relative;
-        top: 7px;
 
         @media @sm {
             i {
                 display: none;
             }
-        }
-
-        @media @lg {
-            top: 1px;
         }
 
         a {
@@ -47,8 +43,6 @@
         color: @primary-color;
 
         .searchbar {
-            transition: all .3s ease-in;
-            -webkit-transition: all .3s ease-in;
 
             &.has-search .form-control {
                 padding-left: 2.375rem;
@@ -73,20 +67,8 @@
             > input {
                 border-radius: 8px;
                 border: none;
-                background-color: rgba(0, 0, 0, 0.08)
-            }
-
-            &:focus {
-                transition: all .3s ease-in;
-                -webkit-transition: all .3s ease-in;
-
-                > input {
-                    background-color: rgba(0, 0, 0, 0.12)
-                }
-
-                svg {
-                    opacity: 0.8;
-                }
+                background-color: rgba(0, 0, 0, 0.08);
+                height: 35px!important;
             }
         }
 

@@ -33,12 +33,11 @@ class DiscountedGameListContainer extends React.Component<IDiscountedGameListCon
             centerMode: true,
             centerPadding: '60px',
             slidesToShow: 3,
-            arrows: false,
+            dots: true,
             responsive: [
               {
                 breakpoint: 992,
                 settings: {
-                  arrows: false,
                   centerMode: true,
                   centerPadding: '40px',
                   slidesToShow: 1

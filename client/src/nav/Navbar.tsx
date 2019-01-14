@@ -15,9 +15,9 @@ interface INavbarProps {
 const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
     
     return (
-        <div className="brand-navbar navbar bg-secondary-solid py-0">
+        <div className="brand-navbar navbar py-0">
             <a className="logo navbar-brand" href="/">
-                <img src="https://i.imgur.com/MwJUdK9.gif" width="40" height="40" className="d-inline-block align-top mx-3" alt=""/>
+                <img src="https://i.imgur.com/MwJUdK9.gif" width="30" height="30" className="d-inline-block align-top mx-3" alt=""/>
                 <span className="logo-name color-primary">Connect With Gamers</span>
             </a>
             <ul className="brand-menu nav nav-tabs" role="tablist">
@@ -54,7 +54,7 @@ const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
                     </div>
                 </li>
             </ul>
-            <form className="search-form form-inline my-2" onSubmit={props.onSubmitSearch}>
+            <form className="search-form form-inline my-1" onSubmit={props.onSubmitSearch}>
                 <div className="searchbar d-inline-block has-search mr-2">
                     <span className="fa fa-search form-control-feedback"/>
                     <input type="text" className="form-control" placeholder="Search games" onChange={props.onSearchQueryChanged}/>

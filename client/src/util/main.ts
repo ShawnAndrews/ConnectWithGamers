@@ -29,7 +29,9 @@ export function formatDate(date: number, dateBeforeCurrent): string {
     let hoursDifference: number = Math.floor(difference / 60 / 60);
     const textWrap = (num: number, unit: string): string => { return dateBeforeCurrent ? `${num} ${unit} ago` : `in ${num} ${unit}`}
 
-    if (hoursDifference < 1) {
+    if (hoursDifference <= 0) {
+        return "now";
+    } else if (hoursDifference < 1) {
         const minutes: number = Math.floor(60 * (difference / 60 / 60));
         return textWrap(minutes, "mins");
     } else if (hoursDifference < 24) {

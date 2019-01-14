@@ -15,7 +15,7 @@ interface IDiscountGameListProps {
 const DiscountedGameList: React.SFC<IDiscountGameListProps> = (props: IDiscountGameListProps) => {
 
     return (
-        <div className="discount-carousel col-12 p-0 my-3">
+        <div className="discount-carousel col-12 p-0 my-3 mb-5">
             {props.discountedGames.length > 12 && 
                 <>
                     {props.discountedGames.length > 1 &&
