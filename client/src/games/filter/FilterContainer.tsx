@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Filter from './Filter';
-import { IdNamePair, IGDBGenreEnums, IGDBPlatformEnums, IGDBCategoryEnums, GamesPresets } from '../../../client-server-common/common';
+import { IdNamePair, IGDBGenreEnums, IGDBPlatformEnums, IGDBCategoryEnums } from '../../../client-server-common/common';
 
 export enum SortingOptionEnum {
     "PopularityAsc",
@@ -21,6 +21,8 @@ interface IFilterContainerState {
     browsePopularSelected: boolean;
     browseRecentSelected: boolean;
     browseUpcomingSelected: boolean;
+    browseIOSSoonSelected: boolean;
+    browseAndroidSoonSelected: boolean;
     browseNewsSelected: boolean;
     popularity: number;
     releaseDateStart: Date;
@@ -59,6 +61,8 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         this.onPopularClick = this.onPopularClick.bind(this);
         this.onRecentClick = this.onRecentClick.bind(this);
         this.onUpcomingClick = this.onUpcomingClick.bind(this);
+        this.onIOSSoonClick = this.onIOSSoonClick.bind(this);
+        this.onAndroidSoonClick = this.onAndroidSoonClick.bind(this);
         this.onNewsClick = this.onNewsClick.bind(this);
 
         const sortingOptions: IdNamePair[] = [
@@ -103,6 +107,8 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
             browsePopularSelected: false,
             browseRecentSelected: false,
             browseUpcomingSelected: false,
+            browseIOSSoonSelected: false,
+            browseAndroidSoonSelected: false,
             browseNewsSelected: false,
             popularity: 0,
             releaseDateStart: undefined,
@@ -306,6 +312,8 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
             browsePopularSelected: checked,
             browseRecentSelected: false,
             browseUpcomingSelected: false,
+            browseIOSSoonSelected: false,
+            browseAndroidSoonSelected: false,
             browseNewsSelected: false,
             disableNonBrowse: checked
         });
@@ -321,6 +329,8 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
             browsePopularSelected: false,
             browseRecentSelected: checked,
             browseUpcomingSelected: false,
+            browseIOSSoonSelected: false,
+            browseAndroidSoonSelected: false,
             browseNewsSelected: false,
             disableNonBrowse: checked
         });
@@ -336,12 +346,48 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
             browsePopularSelected: false,
             browseRecentSelected: false,
             browseUpcomingSelected: checked,
+            browseIOSSoonSelected: false,
+            browseAndroidSoonSelected: false,
             browseNewsSelected: false,
             disableNonBrowse: checked
         });
 
         if (checked) {
             this.props.history.push(`/games/search/upcoming`);
+        }
+    }
+
+    onIOSSoonClick(checked: boolean): void {
+
+        this.setState({
+            browsePopularSelected: false,
+            browseRecentSelected: false,
+            browseUpcomingSelected: false,
+            browseIOSSoonSelected: checked,
+            browseAndroidSoonSelected: false,
+            browseNewsSelected: false,
+            disableNonBrowse: checked
+        });
+
+        if (checked) {
+            this.props.history.push(`/games/search/ios-coming-soon`);
+        }
+    }
+
+    onAndroidSoonClick(checked: boolean): void {
+
+        this.setState({
+            browsePopularSelected: false,
+            browseRecentSelected: false,
+            browseUpcomingSelected: false,
+            browseIOSSoonSelected: false,
+            browseAndroidSoonSelected: checked,
+            browseNewsSelected: false,
+            disableNonBrowse: checked
+        });
+
+        if (checked) {
+            this.props.history.push(`/games/search/android-coming-soon`);
         }
     }
 
@@ -366,6 +412,8 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
                 browsePopularSelected={this.state.browsePopularSelected}
                 browseRecentSelected={this.state.browseRecentSelected}
                 browseUpcomingSelected={this.state.browseUpcomingSelected}
+                browseIOSSoonSelected={this.state.browseIOSSoonSelected}
+                browseAndroidSoonSelected={this.state.browseAndroidSoonSelected}
                 browseNewsSelected={this.state.browseNewsSelected}
                 popularity={this.state.popularity}
                 onPopularityChange={this.onPopularityChange}
@@ -394,6 +442,8 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
                 onPopularClick={this.onPopularClick}
                 onRecentClick={this.onRecentClick}
                 onUpcomingClick={this.onUpcomingClick}
+                onIOSSoonClick={this.onIOSSoonClick}
+                onAndroidSoonClick={this.onAndroidSoonClick}
                 onNewsClick={this.onNewsClick}
                 cover={this.state.cover}
                 screenshots={this.state.screenshots}

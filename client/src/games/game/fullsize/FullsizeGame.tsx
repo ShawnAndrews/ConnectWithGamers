@@ -30,11 +30,11 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
             {props.isEditorsChoiceGame &&
                 <>
                     <div className="filter w-100 h-100" />
-                    <img className="editor-banner" src="https://i.imgur.com/fRULvuf.png" />
+                    <img className="editor-banner" src="https://i.imgur.com/B57fSZj.png" />
                     <div className="editor-banner-text">Editor's Choice</div>
                     {props.game.discount_percent && 
                         <>
-                            <img className="discount-banner" src="https://i.imgur.com/taEmL2H.png" />
+                            <img className="discount-banner" src="https://i.imgur.com/vkHYtW8.png" />
                             <div className="discount-banner-text">{props.game.discount_percent}% off</div>
                         </>}
                 </>}

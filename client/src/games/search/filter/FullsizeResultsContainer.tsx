@@ -65,6 +65,10 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
             query = GamesPresets.recentlyReleased;
         } else if (type === "upcoming") {
             query = GamesPresets.upcoming;
+        } else if (type === "ios-coming-soon") {
+            query = GamesPresets.ioscomingsoon;
+        } else if (type === "android-coming-soon") {
+            query = GamesPresets.androidcomingsoon;
         }
 
         IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${query}`)

@@ -10,6 +10,8 @@ interface IFilterProps {
     browsePopularSelected: boolean;
     browseRecentSelected: boolean;
     browseUpcomingSelected: boolean;
+    browseIOSSoonSelected: boolean;
+    browseAndroidSoonSelected: boolean;
     browseNewsSelected: boolean;
     popularity: number;
     onPopularityChange: (value: number) => void;
@@ -38,6 +40,8 @@ interface IFilterProps {
     onPopularClick: (checked: boolean) => void;
     onRecentClick: (checked: boolean) => void;
     onUpcomingClick: (checked: boolean) => void;
+    onIOSSoonClick: (checked: boolean) => void;
+    onAndroidSoonClick: (checked: boolean) => void;
     onNewsClick: (checked: boolean) => void;
     cover: boolean;
     screenshots: boolean;
@@ -51,7 +55,7 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
     return (
         <div className={`filter ${props.filterExpanded ? 'active' : ''} d-inline-block align-top overflow-hidden`}>
             {props.filterExpanded &&
-                <div className="w-75 mx-auto my-5">
+                <div className="w-85 mx-auto my-5">
                     <div className="title text-center text-uppercase font-weight-bold">
                         Search
                     </div>
@@ -82,6 +86,20 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                     <Checkbox className="check" checked={props.browseUpcomingSelected} value={props.browseUpcomingSelected} onChange={(event: any, checked: boolean) => props.onUpcomingClick(checked)} />
                                 }
                                 label="Upcoming"
+                            />
+                            <FormControlLabel
+                                className="filter-checkbox"
+                                control={
+                                    <Checkbox className="check" checked={props.browseIOSSoonSelected} value={props.browseIOSSoonSelected} onChange={(event: any, checked: boolean) => props.onIOSSoonClick(checked)} />
+                                }
+                                label="IOS Apps Coming Soon"
+                            />
+                            <FormControlLabel
+                                className="filter-checkbox"
+                                control={
+                                    <Checkbox className="check" checked={props.browseAndroidSoonSelected} value={props.browseAndroidSoonSelected} onChange={(event: any, checked: boolean) => props.onAndroidSoonClick(checked)} />
+                                }
+                                label="Android Apps Coming Soon"
                             />
                             <FormControlLabel
                                 className="filter-checkbox"

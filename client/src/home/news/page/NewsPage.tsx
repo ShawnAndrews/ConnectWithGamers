@@ -3,6 +3,7 @@ import { NewsArticle as NewsArticleInterface } from '../../../../client-server-c
 import Spinner from '../../../spinner/main';
 import NewsArticle from '../NewsArticle';
 import { Paper } from '@material-ui/core';
+import TopnavContainer from '../../../games/search/filter/topnav/TopnavContainer';
 
 interface INewsProps {
     isLoading: boolean;
@@ -20,11 +21,9 @@ const News: React.SFC<INewsProps> = (props: INewsProps) => {
     
     return (
         <Paper className="results bg-primary-solid p-2 overflow-auto">
-            <Paper className="topnav bg-tertiary p-2 mx-auto my-4">
-                <div className="text-center">
-                    Gaming news
-                </div>
-            </Paper>
+            <TopnavContainer
+                title="Gaming news"
+            />
             <div className="row w-100 m-0">
                 {props.news && 
                     props.news.map((newsItem: NewsArticleInterface, index: number) => (
