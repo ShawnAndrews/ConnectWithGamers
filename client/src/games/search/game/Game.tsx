@@ -66,17 +66,18 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
         };
     }
 
-    const getCoverTitleStyle = (): Object => {
+    const getCoverInfoStyle = (): Object => {
 
         return {
-            height: `${titleHeight}px`
+            background: `linear-gradient(to right, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.5) 5%, rgba(0,0,0,0.5) 76%,rgba(0,0,0,0.0) 100%)`,
         };
     }
 
-    const getCoverStarsStyle = (): Object => {
+    const getCoverNameStyle = (): Object => {
 
         return {
-            height: `${starsHeight}px`
+            height: `${titleHeight}px`,
+            color: `rgba(255,255,255,0.8)`
         };
     }
 
@@ -137,8 +138,8 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     <Title
                         name={props.game.name}
                         rating={props.game.aggregated_rating}
-                        nameStyle={getCoverTitleStyle()}
-                        starsStyle={getCoverStarsStyle()}
+                        containerStyle={getCoverInfoStyle()}
+                        nameStyle={getCoverNameStyle()}
                     />
                     <div style={getCoverContentStyle()}>
                         <div className="row color-secondary pl-3">

@@ -1,49 +1,29 @@
 import * as React from 'react';
-import StarIcon from './StarIcon';
 import { Textfit } from 'react-textfit';
+import ReactStars from 'react-stars';
 
 interface ITitleProps {
     name: string;
     rating: number;
+    containerStyle: Object;
     nameStyle: Object;
-    starsStyle: Object; 
 }
 
 const Title: React.SFC<ITitleProps> = (props: ITitleProps) => {
 
     return (
-        <>
+        <div className="px-2 pb-3" style={props.containerStyle}>
             {props.name && 
-                <Textfit className="title font-weight-bold color-secondary" style={props.nameStyle} min={20} max={40}>{props.name}</Textfit>}
+                <Textfit className="title font-weight-bold" style={props.nameStyle} min={20} max={40}>{props.name}</Textfit>}
             {props.rating && 
-                <div className="stars" style={props.starsStyle}>
-                    {props.rating > 0
-                        ? props.rating <= 10 
-                            ? <StarIcon halfStar={true} active={true} />
-                            : <StarIcon halfStar={false} active={true} />
-                        : <StarIcon halfStar={false} active={false} />}
-                    {props.rating > 20
-                        ? props.rating <= 30 
-                            ? <StarIcon halfStar={true} active={true} />
-                            : <StarIcon halfStar={false} active={true} />
-                        : <StarIcon halfStar={false} active={false} />}
-                    {props.rating > 40
-                        ? props.rating <= 50 
-                            ? <StarIcon halfStar={true} active={true} />
-                            : <StarIcon halfStar={false} active={true} />
-                        : <StarIcon halfStar={false} active={false} />}
-                    {props.rating > 60
-                        ? props.rating <= 70 
-                            ? <StarIcon halfStar={true} active={true} />
-                            : <StarIcon halfStar={false} active={true} />
-                        : <StarIcon halfStar={false} active={false} />}
-                    {props.rating > 80
-                        ? props.rating <= 90 
-                            ? <StarIcon halfStar={true} active={true} />
-                            : <StarIcon halfStar={false} active={true} />
-                        : <StarIcon halfStar={false} active={false} />}
-                </div>}
-        </>
+                <ReactStars
+                    className="stars"
+                    count={5}
+                    value={(props.rating / 100) * 5}
+                    onChange={() => {}}
+                    size={40}
+                />}
+        </div>
     );
 
 };

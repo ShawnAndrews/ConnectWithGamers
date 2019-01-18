@@ -4,10 +4,18 @@
 .home {
 
     .banner {
-        height: 200px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        margin: 20px 0;
+
+        > img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        > div {
+            color: @tertiary-color;
+            font-size: 2.1rem;
+        }
     }
 
     .highlighted-table {
@@ -350,7 +358,7 @@
                 top: 0;
                 left: 0;
                 width: calc(100% + 1px);
-                height: 100%; 
+                height: calc(100% + 1px);
                 background: linear-gradient(to top, rgba(black, 1) 0%, rgba(black, 0.0) 70%, rgba(black, 0) 0%);
             }
             

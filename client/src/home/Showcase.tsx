@@ -33,7 +33,8 @@ const Showcase: React.SFC<IShowcaseProps> = (props: IShowcaseProps) => {
         <>
             <div className="home">
                 <div className="banner">
-                    
+                    <img height="150px" src="https://i.imgur.com/MwJUdK9.gif" />
+                    <div className="text-uppercase text-center font-weight-bold">Games Library</div>
                 </div>
                 <DiscountedGameListContainer
                     discountedGames={props.discountedGames}
