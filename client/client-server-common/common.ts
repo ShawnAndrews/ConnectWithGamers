@@ -399,6 +399,13 @@ export interface RawNewsArticle {
     };
 }
 
+export interface GameRating {
+    igdb_id: number;
+    account_id: number;
+    rating: number;
+    date: number;
+}
+
 export interface NewsArticle {
     id: number;
     title: string;

@@ -10,16 +10,20 @@ import Title from './Title';
 import SteamInfo from './SteamInfo';
 import Cover from './Cover';
 import Background from './Background';
+import Snackbar from '@material-ui/core/Snackbar';
 
 interface IGameProps {
     isLoading: boolean;
     gameId: number;
     game: GameResponse;
     summaryExpanded: boolean;
+    gameRatedSnackbarOpen: boolean;
     handleSteamClick: (url: string) => void;
     handlePlatformClick: (index: number) => void;
     handleGenreClick: (index: number) => void;
     expandSummary: () => void;
+    onRateStarsClick: (rating: number) => void;
+    gameRatedSnackbarClose: () => void;
 }
 
 const Game: React.SFC<IGameProps> = (props: IGameProps) => {
@@ -138,6 +142,8 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     <Title
                         name={props.game.name}
                         rating={props.game.aggregated_rating}
+                        onRateStarsClick={props.onRateStarsClick}
+                        gameRatedSnackbarOpen={props.gameRatedSnackbarOpen}
                         containerStyle={getCoverInfoStyle()}
                         nameStyle={getCoverNameStyle()}
                     />
@@ -157,6 +163,15 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     </div>
                 </div>
             </div>
+            <Snackbar
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                open={props.gameRatedSnackbarOpen}
+                onClose={props.gameRatedSnackbarClose}
+                ContentProps={{
+                    'aria-describedby': 'message-id',
+                }}
+                message={<span id="message-id">Game rated!</span>}
+            />
         </Paper>
     );
 

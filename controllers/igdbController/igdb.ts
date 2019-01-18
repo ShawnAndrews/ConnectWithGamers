@@ -126,7 +126,7 @@ router.post(routes.getRoute("game"), (req: Request, res: Response) => {
         });
 });
 
-/* recent games */
+/* discounted games */
 router.post(routes.getRoute("discountedgames"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
     GenericCachedRoute<GameResponse[]>(discountedGamesKeyExists, getCachedDiscountedGames, cacheDiscountedGames)

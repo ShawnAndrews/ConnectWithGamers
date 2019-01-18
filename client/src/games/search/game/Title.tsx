@@ -5,6 +5,8 @@ import ReactStars from 'react-stars';
 interface ITitleProps {
     name: string;
     rating: number;
+    gameRatedSnackbarOpen: boolean;
+    onRateStarsClick: (rating: number) => void;
     containerStyle: Object;
     nameStyle: Object;
 }
@@ -15,14 +17,14 @@ const Title: React.SFC<ITitleProps> = (props: ITitleProps) => {
         <div className="px-2 pb-3" style={props.containerStyle}>
             {props.name && 
                 <Textfit className="title font-weight-bold" style={props.nameStyle} min={20} max={40}>{props.name}</Textfit>}
-            {props.rating && 
-                <ReactStars
-                    className="stars"
-                    count={5}
-                    value={(props.rating / 100) * 5}
-                    onChange={() => {}}
-                    size={40}
-                />}
+            <ReactStars
+                className="stars"
+                count={5}
+                value={props.rating ? (props.rating / 100) * 5 : 0}
+                onChange={props.onRateStarsClick}
+                size={40}
+                edit={!props.gameRatedSnackbarOpen}
+            />
         </div>
     );
 

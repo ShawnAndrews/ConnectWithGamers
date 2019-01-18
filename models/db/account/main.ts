@@ -3,7 +3,7 @@ import axios from "axios";
 import DatabaseBase from "../base/dbBase";
 import { genRandStr } from "../../../util/main";
 import { sendVerificationEmail } from "../../../util/nodemailer";
-import { GenericModelResponse, RecoveryEmailInfo, AccountsInfo, SteamFriend, TwitchUser, TwitchEmote, TwitchPair, AccountInfo } from "../../../client/client-server-common/common";
+import { GenericModelResponse, RecoveryEmailInfo, AccountsInfo, SteamFriend, TwitchUser, TwitchEmote, TwitchPair, AccountInfo, GameRating } from "../../../client/client-server-common/common";
 import config from "../../../config";
 
 export const SALT_RNDS = 10;
@@ -910,6 +910,60 @@ class AccountModel extends DatabaseBase {
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     return resolve();
+                })
+                .catch((error: string) => {
+                    return reject(`Database error. ${error}`);
+                });
+
+        });
+    }
+
+    /**
+     * Rate game.
+     */
+    rateGame(gameRating: GameRating): Promise<void> {
+
+        const columnNames: string[] = ["igdb_id", "account_id", "rating", "date"];
+        const columnValues: any[] = [gameRating.igdb_id, gameRating.account_id, gameRating.rating, gameRating.date];
+
+        return new Promise( (resolve, reject) => {
+
+            this.select(
+                "ratings",
+                ["igdb_id"],
+                `igdb_id=? AND account_id=?`,
+                [gameRating.igdb_id, gameRating.account_id])
+                .then((dbResponse: GenericModelResponse) => {
+                    if (dbResponse.data.length > 0) {
+
+                        // update rating
+                        this.update(
+                            "ratings",
+                            "rating=?",
+                            [gameRating.rating],
+                            "igdb_id=? AND account_id=?",
+                            [gameRating.igdb_id, gameRating.account_id])
+                            .then((dbResponse: GenericModelResponse) => {
+                                return resolve();
+                            })
+                            .catch((error: string) => {
+                                return reject(`Database error. ${error}`);
+                            });
+                    } else {
+
+                        // insert rating
+                        this.insert(
+                            "ratings",
+                            columnNames,
+                            columnValues,
+                            `?, ?, ?, FROM_UNIXTIME(?)`)
+                            .then((dbResponse: GenericModelResponse) => {
+                                return resolve();
+                            })
+                            .catch((error: string) => {
+                                return reject(`Database error. ${error}`);
+                            });
+                    }
                 })
                 .catch((error: string) => {
                     return reject(`Database error. ${error}`);

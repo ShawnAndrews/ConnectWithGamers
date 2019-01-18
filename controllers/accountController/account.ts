@@ -2,7 +2,7 @@ const express = require("express");
 const RateLimit = require("express-rate-limit");
 import { Request, Response, Router } from "express";
 const router: Router = express.Router();
-import { AUTH_TOKEN_NAME, validateCredentials, RecoveryEmailInfo, EmailRecoveryVerifyResponse, DatalessResponse, EmailVerifiedFlagResponse, AccountImageResponse, AccountInfo, AuthenticationInfo, TokenInfo, TwitchIdResponse, SteamIdResponse, SteamFriendsResponse, DiscordLinkResponse, TwitchFollowersResponse, AccountInfoResponse, AccountsInfo, SteamFriend, TwitchUser } from "../../client/client-server-common/common";
+import { AUTH_TOKEN_NAME, validateCredentials, RecoveryEmailInfo, EmailRecoveryVerifyResponse, DatalessResponse, EmailVerifiedFlagResponse, AccountImageResponse, AccountInfo, AuthenticationInfo, TokenInfo, TwitchIdResponse, SteamIdResponse, SteamFriendsResponse, DiscordLinkResponse, TwitchFollowersResponse, AccountInfoResponse, AccountsInfo, SteamFriend, TwitchUser, GameRating } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { accountModel } from "../../models/db/account/main";
 import { securityModel } from "../../models/db/security/main";
@@ -30,6 +30,7 @@ routes.addRoute("email/recovery", "/email/recovery");
 routes.addRoute("email/recovery/verify", "/email/recovery/verify");
 routes.addRoute("recover/password", "/recover/password");
 routes.addRoute("delete", "/delete");
+routes.addRoute("game/rate", "/game/rate");
 
 // limit account creation requests to 5acc/1hr per ip
 const createAccountLimiter = new RateLimit({
@@ -482,6 +483,34 @@ router.post(routes.getRoute("delete"), (req: Request, res: Response) => {
         .then((accountId: number) => {
             // delete account
             return accountModel.deleteAccountById(accountId);
+        })
+        .then(() => {
+            return res
+            .send(datalessResponse);
+        })
+        .catch((error: string) => {
+            datalessResponse.error = error;
+            return res
+            .send(datalessResponse);
+        });
+
+});
+
+router.post(routes.getRoute("game/rate"), (req: Request, res: Response) => {
+
+    const datalessResponse: DatalessResponse = { error: undefined };
+
+    // authorize
+    securityModel.authorize(req.headers.cookie)
+        .then((accountId: number) => {
+            const gameRating: GameRating = {
+                igdb_id: req.query.id,
+                account_id: accountId,
+                rating: Number.parseFloat(req.query.rating),
+                date: Date.now() / 1000
+            };
+
+            return accountModel.rateGame(gameRating);
         })
         .then(() => {
             return res
