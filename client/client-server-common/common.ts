@@ -109,6 +109,8 @@ enum RedisExpirationTime {
 
 export const steamAppUrl: string = `https://store.steampowered.com/app`;
 
+export const androidAppUrl: string = `https://play.google.com/store/apps/details?id=`;
+
 export interface Config {
     useStrictlyHttps: boolean;
     httpPort: number;
@@ -515,9 +517,6 @@ export interface GameResponse {
     name: string;
     aggregated_rating: number;
     total_rating_count: number;
-    price: string;
-    discount_percent: number;
-    steamid: number;
     cover: IGDBImage;
     summary: string;
     linkIcons: string[];
@@ -527,6 +526,22 @@ export interface GameResponse {
     first_release_date: number;
     screenshots: IGDBImage[];
     video: string;
+    external: GameExternalInfo;
+}
+
+export interface GameExternalInfo {
+    steam?: ExternalInfo;
+    gog?: ExternalInfo;
+    microsoft?: ExternalInfo;
+    apple?: ExternalInfo;
+    android?: ExternalInfo;
+}
+
+export interface ExternalInfo {
+    id: string;
+    url: string;
+    price: string;
+    discount_percent: number;
 }
 
 export interface MultiGameResponse {

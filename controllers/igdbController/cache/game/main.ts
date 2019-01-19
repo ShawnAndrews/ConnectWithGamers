@@ -72,7 +72,6 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
         })
         .then( (response: AxiosResponse) => {
             const RawGame: RawGame = response.data[0];
-
             convertRawGame([RawGame])
                 .then((gameResponses: GameResponse[]) => {
 
@@ -104,7 +103,6 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
     const gameId: number = RawGame.id;
 
     return new Promise((resolve: any, reject: any) => {
-
         gameKeyExists(gameId)
         .then((exists: boolean) => {
             convertRawGame([RawGame])
@@ -116,7 +114,6 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
                 return resolve(gameResponses[0]);
             })
             .catch((error: string) => {
-                console.log(`error converting raw #${RawGame.id}: ${error}`);
                 return reject(error);
             });
         })

@@ -14,7 +14,7 @@ const TripleSlide: React.SFC<ITripleSlideProps> = (props: ITripleSlideProps) => 
     const gameOne: GameResponse = props.games[0];
     const gameTwo: GameResponse = props.games[1];
     const gameThree: GameResponse = props.games[2];
-    const originalPrice: number = + (parseFloat(gameOne.price) / ((100 - gameOne.discount_percent) / 100)).toFixed(2);
+    const originalPrice: number = + (Number.parseFloat(gameOne.external.steam.price) / ((100 - gameOne.external.steam.discount_percent) / 100)).toFixed(2);
 
     return (
         <div className="triple-slide row position-relative w-100 h-100 px-3">
@@ -24,11 +24,11 @@ const TripleSlide: React.SFC<ITripleSlideProps> = (props: ITripleSlideProps) => 
                         <img src={gameOne.screenshots[0].url} />
                         <div className={`overlay ${props.hoveredGameId === gameOne.id && 'active'}`} />
                         <div className="name px-2 mb-2">{gameOne.name}</div>
-                        {gameOne.discount_percent &&
+                        {gameOne.external.steam.discount_percent &&
                             <div className="price-container mt-2">
-                                <div className="discount d-inline-block px-1">-{gameOne.discount_percent}%</div>
+                                <div className="discount d-inline-block px-1">-{gameOne.external.steam.discount_percent}%</div>
                                 <div className="original-price d-inline-block pl-1"><del>${originalPrice} USD</del></div>
-                                <div className="final-price d-inline-block px-1">${gameOne.price} USD</div>
+                                <div className="final-price d-inline-block px-1">${gameOne.external.steam.price} USD</div>
                             </div>}
                     </div>
                 </div>
@@ -37,15 +37,15 @@ const TripleSlide: React.SFC<ITripleSlideProps> = (props: ITripleSlideProps) => 
                         {gameTwo.cover && 
                             <img className="w-100 h-100" src={gameTwo.cover.url} />} 
                         <div className={`overlay ${props.hoveredGameId === gameTwo.id && 'active'}`} />
-                        {gameTwo.discount_percent && 
-                            <div className="discount-percent mt-1 px-1">-{gameTwo.discount_percent}%</div>}
+                        {gameTwo.external.steam.discount_percent && 
+                            <div className="discount-percent mt-1 px-1">-{gameTwo.external.steam.discount_percent}%</div>}
                     </div>
                     <div className="h-50 position-relative cursor-pointer pt-1" onClick={() => props.onRedirect(gameThree.id)} onMouseOver={() => props.onHoverGame(gameThree.id)} onMouseOut={() => props.onHoverOutGame()}>
                         {gameThree.cover && 
                             <img className="w-100 h-100" src={gameThree.cover.url} />} 
                         <div className={`overlay ${props.hoveredGameId === gameThree.id && 'active'}`} />
-                        {gameThree.discount_percent && 
-                            <div className="discount-percent mt-1 px-1">-{gameThree.discount_percent}%</div>}
+                        {gameThree.external.steam.discount_percent && 
+                            <div className="discount-percent mt-1 px-1">-{gameThree.external.steam.discount_percent}%</div>}
                     </div>
                 </div>
             </div>

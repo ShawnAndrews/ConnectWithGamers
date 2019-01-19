@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, steamAppUrl, IGDBGenre, IGDBImage } from '../../../../client-server-common/common';
+import { GameResponse, IGDBGenre, IGDBImage } from '../../../../client-server-common/common';
 import { Card, Button } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 import Crossfade from '../crossfade/CrossfadeContainer';
@@ -18,7 +18,11 @@ interface IFullsizeGameProps {
 }
 
 const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) => {
-    const originalPrice: number = + (parseFloat(props.game.price) / ((100 - props.game.discount_percent) / 100)).toFixed(2);
+    let originalPrice: number = undefined;
+
+    if (props.game.external.steam) {
+        originalPrice = + (parseFloat(props.game.external.steam.price) / ((100 - props.game.external.steam.discount_percent) / 100)).toFixed(2);
+    }
 
     return (
         <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
@@ -32,10 +36,10 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                     <div className="filter w-100 h-100" />
                     <img className="editor-banner" src="https://i.imgur.com/B57fSZj.png" />
                     <div className="editor-banner-text">Editor's Choice</div>
-                    {props.game.discount_percent && 
+                    {props.game.external.steam.discount_percent && 
                         <>
                             <img className="discount-banner" src="https://i.imgur.com/vkHYtW8.png" />
-                            <div className="discount-banner-text">{props.game.discount_percent}% off</div>
+                            <div className="discount-banner-text">{props.game.external.steam.discount_percent}% off</div>
                         </>}
                 </>}
             <div className={`highlighted-table-text ${props.isEditorsChoiceGame ? 'editors-choice' : ''}`}>
@@ -58,24 +62,24 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                         <div className='genres'>
                             {props.game.genres && props.game.genres.map((x: IGDBGenre) => x.name).join(', ')}
                         </div>
-                        {props.game.price && 
+                        {props.game.external.steam && 
                             <Button
                                 className="steam-btn" 
                                 variant="raised"
                                 onClick={props.goToSteamPage}
                             >
-                                Buy now for ${props.game.price} USD
+                                Buy now for ${props.game.external.steam.price} USD
                             </Button>}
                     </>}
             </div>
-            {!props.isEditorsChoiceGame && props.game.price &&
-                <div className={`price-container ${!props.game.discount_percent ? 'no-discount': ''} mt-1`}>
-                    {props.game.discount_percent && 
+            {!props.isEditorsChoiceGame && props.game.external.steam &&
+                <div className={`price-container ${!props.game.external.steam.discount_percent ? 'no-discount': ''} mt-1`}>
+                    {props.game.external.steam.discount_percent && 
                         <>
-                            <div className="discount d-inline-block px-1">-{props.game.discount_percent}%</div>
+                            <div className="discount d-inline-block px-1">-{props.game.external.steam.discount_percent}%</div>
                             <div className="original-price d-inline-block px-1"><del>${originalPrice} USD</del></div>
                         </>}
-                    <div className={`final-price d-inline-block ${props.game.discount_percent ? 'px-1' : 'px-3'}`}>{!isNaN(Number(props.game.price)) ? `$${props.game.price} USD` : props.game.price}</div>
+                    <div className={`final-price d-inline-block ${props.game.external.steam.discount_percent ? 'px-1' : 'px-3'}`}>{!isNaN(Number(props.game.external.steam.price)) ? `$${props.game.external.steam.price} USD` : props.game.external.steam.price}</div>
                 </div>}
         </Card>
     );

@@ -114,15 +114,15 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     {props.game.cover &&
                         <Cover
                             url={props.game.cover.url}
-                            discount_percent={props.game.discount_percent}
+                            discount_percent={props.game.external.steam.discount_percent}
                             style={getCoverImgStyle()}
                         />}
                     <div className="game-info my-2">
-                        {props.game.steamid && 
+                        {props.game.external.steam.url && 
                             <SteamInfo
-                                steam={`${steamAppUrl}/${props.game.steamid}`}
-                                price={props.game.price}
-                                discount_percent={props.game.discount_percent}
+                                steam={`${props.game.external.steam.url}`}
+                                price={props.game.external.steam.price}
+                                discount_percent={props.game.external.steam.discount_percent}
                                 handleSteamClick={props.handleSteamClick}
                             />}
                         {props.game.platforms && 
