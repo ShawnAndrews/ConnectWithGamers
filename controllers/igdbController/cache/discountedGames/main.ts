@@ -1,61 +1,62 @@
-import { GameResponse, redisCache, IGDBCacheEntry } from "../../../../client/client-server-common/common";
+import { GameResponse, ResultsEnum } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import { parseSteamIds, getGamesBySteamIds } from "../util";
 import { getCachedGame } from "../game/main";
-const redis = require("redis");
-const redisClient = redis.createClient();
+import { igdbModel } from "../../../../models/db/igdb/main";
 
 /**
- * Check if redis key exists.
+ * Check if games exists.
  */
 export function discountedGamesKeyExists(): Promise<boolean> {
-    const cacheEntry: IGDBCacheEntry = redisCache[5];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.exists(cacheEntry.key, (error: string, value: boolean) => {
-            if (error) {
-                return reject(error);
-            }
-            return resolve(value);
-        });
-    });
 
-}
-
-/**
- * Get redis-cached discounted games.
- */
-export function getCachedDiscountedGames(): Promise<GameResponse[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[5];
-
-    return new Promise((resolve: any, reject: any) => {
-        redisClient.get(cacheEntry.key, (error: string, stringifiedGameIds: string) => {
-            if (error) {
-                return reject(error);
-            }
-
-            const ids: number[] = JSON.parse(stringifiedGameIds);
-            const gamePromises: Promise<GameResponse>[] = ids.map((id: number) => getCachedGame(id));
-
-            Promise.all(gamePromises)
-            .then((gameResponses: GameResponse[]) => {
-                return resolve(gameResponses);
+        igdbModel.resultsExists(ResultsEnum.DiscountedResults)
+            .then((exists: boolean) => {
+                return resolve(exists);
             })
             .catch((error: string) => {
                 return reject(error);
             });
 
-        });
     });
 
 }
 
 /**
- * Cache discounted games.
+ * Get cached games.
+ */
+export function getCachedDiscountedGames(): Promise<GameResponse[]> {
+
+    return new Promise((resolve: any, reject: any) => {
+
+        igdbModel.getResults(ResultsEnum.DiscountedResults)
+            .then((gameIds: number[]) => {
+
+                const gamePromises: Promise<GameResponse>[] = gameIds.map((id: number) => getCachedGame(id));
+
+                Promise.all(gamePromises)
+                .then((gameResponses: GameResponse[]) => {
+                    return resolve(gameResponses);
+                })
+                .catch((error: string) => {
+                    return reject(error);
+                });
+
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
+
+    });
+
+}
+
+/**
+ * Cache games.
  */
 
 export function cacheDiscountedGames(): Promise<GameResponse[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[5];
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -66,6 +67,7 @@ export function cacheDiscountedGames(): Promise<GameResponse[]> {
             url: URL
         })
         .then((response: AxiosResponse) => {
+
             const steamWebpage: string = response.data;
             const steamIds: number[] = parseSteamIds(steamWebpage);
 
@@ -73,12 +75,14 @@ export function cacheDiscountedGames(): Promise<GameResponse[]> {
             .then((gameResponses: GameResponse[]) => {
                 const ids: number[] = gameResponses.map((x: GameResponse) => x.id);
 
-                redisClient.set(cacheEntry.key, JSON.stringify(ids));
-                if (cacheEntry.expiry !== -1) {
-                    redisClient.expire(cacheEntry.key, cacheEntry.expiry);
-                }
+                igdbModel.setResults(ids, ResultsEnum.DiscountedResults)
+                    .then(() => {
+                        return resolve(gameResponses);
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
 
-                return resolve(gameResponses);
             })
             .catch((error: string) => {
                 return reject(error);

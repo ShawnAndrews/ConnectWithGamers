@@ -32,7 +32,7 @@ export default class DatabaseBase {
     /**
      * SQL Insert wrapper.
      */
-    insert(tableName: string, columnNames: string[], columnValues: any[], preparedValues: string): Promise<GenericModelResponse> {
+    insert(tableName: string, columnNames: string[], columnValues: any[], preparedValues: string, debugOutput: boolean = true): Promise<GenericModelResponse> {
 
         return new Promise((resolve, reject) => {
             const response: GenericModelResponse = {error: undefined, data: undefined};
@@ -48,7 +48,9 @@ export default class DatabaseBase {
             // execute query
             this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
                 if (error) {
-                    console.log(`INSERT error: ${JSON.stringify(error)}`);
+                    if (debugOutput) {
+                        console.log(`INSERT error: ${JSON.stringify(error)}`);
+                    }
                     return reject(error);
                 }
                 response.data = results;

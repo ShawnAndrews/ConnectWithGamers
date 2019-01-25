@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, IGDBGenre, IGDBImage } from '../../../../client-server-common/common';
+import { GameResponse, IGDBGenre, IGDBImage, GenreEnums } from '../../../../client-server-common/common';
 import { Card, Button } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 import Crossfade from '../crossfade/CrossfadeContainer';
@@ -51,7 +51,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                         </Textfit>
                         {props.game.genres &&
                             <div className="genre">
-                                {props.game.genres[0].name}
+                                {GenreEnums[props.game.genres[0]]}
                             </div>}
                     </>
                     :
@@ -60,7 +60,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                             {props.game.name}
                         </Textfit>
                         <div className='genres'>
-                            {props.game.genres && props.game.genres.map((x: IGDBGenre) => x.name).join(', ')}
+                            {props.game.genres && props.game.genres.map((x: number) => GenreEnums[x]).join(', ')}
                         </div>
                         {props.game.external.steam && 
                             <Button

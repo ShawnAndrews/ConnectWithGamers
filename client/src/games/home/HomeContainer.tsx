@@ -37,8 +37,9 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
 
         IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.highlighted}`)
         .then((gamesResponse: MultiGameResponse) => {
-            const games: GameResponse[] = gamesResponse.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
-
+            const games: GameResponse[] = gamesResponse.data
+                .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
+                .filter((game: GameResponse) => game.screenshots);
             games.forEach((game: GameResponse, index: number) => {
                 game.screenshots.forEach((screenshot: IGDBImage) => {
                     if (this.state.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1) {
@@ -69,7 +70,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             });
         })
         .catch((error: string) => {
-            popupS.modal({ content: `<div>• Error loading homepage games.</div>` });
+            popupS.modal({ content: `<div>• Error loading homepage games. ${error}</div>` });
         });
 
     }

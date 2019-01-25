@@ -15,10 +15,17 @@ const QuadrupleSlide: React.SFC<IQuadrupleSlideProps> = (props: IQuadrupleSlideP
     const gameTwo: GameResponse = props.games[1];
     const gameThree: GameResponse = props.games[2];
     const gameFour: GameResponse = props.games[3];
-    const originalPriceOne: number = + (Number.parseFloat(gameOne.external.steam.price) / ((100 - gameOne.external.steam.discount_percent) / 100)).toFixed(2);
-    const originalPriceTwo: number = + (Number.parseFloat(gameTwo.external.steam.price) / ((100 - gameTwo.external.steam.discount_percent) / 100)).toFixed(2);
-    const originalPriceThree: number = + (Number.parseFloat(gameThree.external.steam.price) / ((100 - gameThree.external.steam.discount_percent) / 100)).toFixed(2);
-    const originalPriceQuadruple: number = + (Number.parseFloat(gameFour.external.steam.price) / ((100 - gameFour.external.steam.discount_percent) / 100)).toFixed(2);
+    let originalPriceOne: number = undefined;
+    let originalPriceTwo: number = undefined;
+    let originalPriceThree: number = undefined;
+    let originalPriceQuadruple: number = undefined;
+
+    if (gameOne.external.steam) {
+        originalPriceOne = + (Number.parseFloat(gameOne.external.steam.price) / ((100 - gameOne.external.steam.discount_percent) / 100)).toFixed(2);
+        originalPriceTwo = + (Number.parseFloat(gameTwo.external.steam.price) / ((100 - gameTwo.external.steam.discount_percent) / 100)).toFixed(2);
+        originalPriceThree = + (Number.parseFloat(gameThree.external.steam.price) / ((100 - gameThree.external.steam.discount_percent) / 100)).toFixed(2);
+        originalPriceQuadruple = + (Number.parseFloat(gameFour.external.steam.price) / ((100 - gameFour.external.steam.discount_percent) / 100)).toFixed(2);
+    }
 
     return (
         <div className="quadruple-slide position-relative w-100">
@@ -41,7 +48,7 @@ const QuadrupleSlide: React.SFC<IQuadrupleSlideProps> = (props: IQuadrupleSlideP
                         <img className="w-100" src={gameTwo.screenshots[0].url} />
                         <div className={`overlay ${props.hoveredGameId === gameTwo.id && 'active'}`} />
                         <div className="name px-2 mb-2">{gameTwo.name}</div>
-                        {gameTwo.external.steam.discount_percent &&
+                        {gameTwo.external.steam && gameTwo.external.steam.discount_percent &&
                             <div className="price-container mt-1 mr-1">
                                 <div className="discount d-inline-block px-1">-{gameTwo.external.steam.discount_percent}%</div>
                                 <div className="original-price d-inline-block px-1"><del>${originalPriceTwo} USD</del></div>
@@ -56,7 +63,7 @@ const QuadrupleSlide: React.SFC<IQuadrupleSlideProps> = (props: IQuadrupleSlideP
                         <img className="w-100" src={gameThree.screenshots[0].url} />
                         <div className={`overlay ${props.hoveredGameId === gameThree.id && 'active'}`} />
                         <div className="name px-2 mb-2">{gameThree.name}</div>
-                        {gameThree.external.steam.discount_percent &&
+                        {gameTwo.external.steam && gameThree.external.steam.discount_percent &&
                             <div className="price-container mt-1 mr-1">
                                 <div className="discount d-inline-block px-1">-{gameThree.external.steam.discount_percent}%</div>
                                 <div className="original-price d-inline-block px-1"><del>${originalPriceThree} USD</del></div>
@@ -69,7 +76,7 @@ const QuadrupleSlide: React.SFC<IQuadrupleSlideProps> = (props: IQuadrupleSlideP
                         <img className="w-100" src={gameFour.screenshots[0].url} />
                         <div className={`overlay ${props.hoveredGameId === gameFour.id && 'active'}`} />
                         <div className="name px-2 mb-2">{gameFour.name}</div>
-                        {gameFour.external.steam.discount_percent &&
+                        {gameTwo.external.steam && gameFour.external.steam.discount_percent &&
                             <div className="price-container mt-1 mr-1">
                                 <div className="discount d-inline-block px-1">-{gameFour.external.steam.discount_percent}%</div>
                                 <div className="original-price d-inline-block px-1"><del>${originalPriceQuadruple} USD</del></div>

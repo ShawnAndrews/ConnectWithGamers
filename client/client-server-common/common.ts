@@ -2,6 +2,10 @@ import config from "../../config";
 const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
+export enum SQLErrorCodes {
+    DUPLICATE_ROW = 1062
+}
+
 export const ExcludedGameIds: number[] = [76214, 20487, 44289, 8174, 90783, 74968, 103404, 15736, 112657, 113382, 68702, 41047, 112105, 96213, 106122, 90113, 111117, 9643, 59858, 59227, 25260, 2126, 24462, 109458, 89554, 113209, 109545, 113103, 96135, 74959, 29954, 87673, 103371];
 
 export function getIGDBImage(uid: string, size: IGDBImageSizeEnums): string {
@@ -47,7 +51,6 @@ const THREE_MONTH_AGO_UNIX_TIME_S: number = getTodayUnixTimestampInSeconds() - (
 
 export const GamesPresets = {
     highlighted: `?required=cover,screenshots&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&popularity=55&platforms=6&sort=popularity:desc`,
-
     ioscomingsoon: `?required=cover,screenshots&platforms=39&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
     androidcomingsoon: `?required=cover,screenshots&platforms=34&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
     upcoming: `?required=cover,screenshots&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
@@ -94,6 +97,73 @@ export enum IGDBImageSizeEnums {
     screenshot_big = "screenshot_big",
     "720p" = "720p",
     "1080p" = "1080p"
+}
+
+export enum IconEnums {
+    "fab fa-playstation" = 45,
+    "fab fa-android" = 34,
+    "fab fa-windows" = 6,
+    "fab fa-apple" = 14,
+    "fab fa-linux" = 3,
+    "fab fa-steam" = 92,
+    "fab fa-xbox" = 49,
+    "fab fa-nintendo-switch" = 130
+}
+
+export enum PlatformEnums {
+    Linux = 3,
+    Windows = 6,
+    Mac = 14,
+    "Playstation 4" = 48,
+    "Xbox One" = 49,
+    "Nintendo Switch" = 130,
+    "Oculus VR" = 162,
+    Browser = 82,
+    "Playstation 3" = 9,
+    Arcade = 52,
+    "Playstation Network" = 45,
+    "Nintendo 3DS" = 37,
+    SNES = 19,
+    GameCube = 21,
+    "Xbox 360" = 12,
+    Android = 34,
+    N64 = 4,
+    "Playstation 1" = 131,
+    "Virtual Boy" = 87,
+    "Steam OS" = 92,
+    "Playstation VR" = 165,
+    "Nintendo DS" = 20,
+    Wii = 5,
+    "Game Boy Color" = 22,
+    NES = 18,
+    "Playstation Vita" = 47,
+    "Wii U" = 41,
+    "Playstation 5" = 167,
+    "Steam VR" = 163,
+    "Playstation 2" = 8
+}
+
+export enum GenreEnums {
+    Shooter = 5,
+    Puzzle = 9,
+    Racing = 10,
+    RPG = 12,
+    Simulator = 13,
+    Strategy = 15,
+    Adventure = 31,
+    Fighting = 4,
+    "Point and click" = 2,
+    Tactical = 24,
+    Trivia = 26,
+    RTS = 11,
+    Platformer = 8,
+    Music = 7,
+    "Hack and slash" = 25,
+    Pinball = 30,
+    Arcade = 33,
+    Indie = 32,
+    "Turn-based Strategy" = 16,
+    Sports = 14
 }
 
 export enum Breakpoints {
@@ -169,19 +239,18 @@ export interface PlatformOption {
 }
 
 export const redisCache: IGDBCacheEntry[] = [
-    {key: "resultsgames", expiry: RedisExpirationTime.ONE_HOUR},
-    {key: "games", expiry: RedisExpirationTime.ONE_WEEK},
     {key: "genrelist", expiry: RedisExpirationTime.ONE_WEEK},
     {key: "chatusers", expiry: RedisExpirationTime.INF},
     {key: "news", expiry: RedisExpirationTime.ONE_HOUR},
     {key: "discountedgames", expiry: RedisExpirationTime.ONE_HOUR},
 ];
 
-export enum ResultsType {
-    PopularResults,
-    RecentResults,
-    UpcomingResults,
-    SearchResults
+export enum ResultsEnum {
+    DiscountedResults = 4,
+    PopularResults = 3,
+    RecentResults = 1,
+    UpcomingResults = 2,
+    SearchResults = 0
 }
 
 export interface UserLog {
@@ -457,11 +526,6 @@ export interface TwitchEmote {
     link: string;
 }
 
-export interface GenrePair {
-    id: number;
-    name: string;
-}
-
 /**
  * Response Models
  */
@@ -520,8 +584,8 @@ export interface GameResponse {
     cover: IGDBImage;
     summary: string;
     linkIcons: string[];
-    genres: IdNamePair[];
-    platforms: IdNamePair[];
+    genres: number[];
+    platforms: number[];
     release_dates: number[];
     first_release_date: number;
     screenshots: IGDBImage[];
@@ -538,7 +602,7 @@ export interface GameExternalInfo {
 }
 
 export interface ExternalInfo {
-    id: string;
+    uid: string;
     url: string;
     price: string;
     discount_percent: number;
@@ -584,16 +648,11 @@ export interface MultiNewsResponse {
     data?: NewsArticle[];
 }
 
-export interface GenreListResponse {
-    error: string;
-    data?: GenrePair[];
-}
-
-export interface SteamAPIGetPriceInfoResponse {
-    steamgameid: number;
+export interface PriceInfoResponse {
+    externalEnum: IGDBExternalCategoryEnum;
+    uid: string;
     price: string;
     discount_percent: number;
-    steam: string;
 }
 
 /**
@@ -689,3 +748,21 @@ export interface IGDBExternalGame {
     url: string;
     year: number;
 }
+
+/* Database tables */
+export const DbTableFieldsRatings: string[] = [`igdb_id`, `account_id`, `rating`, `date`];
+export const DbTableFieldsIGDBImage: string[] = [`igdb_image_id`, `alpha_channel`, `animated`, `url`, `width`, `height`];
+export const DbTableFieldsGames: string[] = [`igdb_id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`];
+export const DbTableFieldsIconsEnum: string[] = [`icon_id`, `icon`];
+export const DbTableFieldsIcons: string[] = [`icon_id`, `igdb_id`];
+export const DbTableFieldsReleaseDates: string[] = [`release_date_id`, `release_date`, `igdb_id`];
+export const DbTableFieldsCovers: string[] = [`igdb_image_id`, `igdb_id`];
+export const DbTableFieldsScreenshots: string[] = [`igdb_image_id`, `igdb_id`];
+export const DbTableFieldsGenreEnum: string[] = [`igdb_genre_enum_id`];
+export const DbTableFieldsGenres: string[] = [`igdb_genre_enum_id`, `igdb_id`];
+export const DbTableFieldsPlatformEnum: string[] = [`igdb_platform_enum_id`];
+export const DbTableFieldsPlatforms: string[] = [`igdb_platform_enum_id`, `igdb_id`];
+export const DbTableFieldsExternalEnum: string[] = [`igdb_external_enum_id`, `name`];
+export const DbTableFieldsPricing: string[] = [`igdb_external_enum_id`, `igdb_id`, `uid`, `price`, `discount_percent`, `url`, `expires`];
+export const DbTableFieldsResultsEnum: string[] = [`results_enum_id`];
+export const DbTableFieldsResults: string[] = [`results_id`, `results_enum_id`, `param`, `igdb_id`, `expires`];

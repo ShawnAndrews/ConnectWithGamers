@@ -2,7 +2,7 @@ const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { GameResponse, MultiGameResponse, ResultsType, GamesPresets } from '../../../../client-server-common/common';
+import { GameResponse, MultiGameResponse, ResultsEnum, GamesPresets } from '../../../../client-server-common/common';
 import Results from './Results';
 
 interface IResultsContainerProps extends RouteComponentProps<any> {
@@ -12,7 +12,7 @@ interface IResultsContainerProps extends RouteComponentProps<any> {
 interface IResultsContainerState {
     isLoading: boolean;
     searchQuery: string;
-    resultsType: ResultsType;
+    ResultsEnum: ResultsEnum;
     games: GameResponse[];
     retry: boolean;
 }
@@ -24,61 +24,61 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
         this.loadSearchGames = this.loadSearchGames.bind(this);
         this.loadGames = this.loadGames.bind(this);
         this.onRetryClick = this.onRetryClick.bind(this);
-        this.getResultsTypeByProps = this.getResultsTypeByProps.bind(this);
+        this.getResultsEnumByProps = this.getResultsEnumByProps.bind(this);
 
-        const resultsType: ResultsType = this.getResultsTypeByProps(props);
+        const resultsEnum: ResultsEnum = this.getResultsEnumByProps(props);
 
-        if (resultsType === ResultsType.SearchResults) {
+        if (resultsEnum === ResultsEnum.SearchResults) {
             this.loadSearchGames(props.location.search);
         } else {
-            this.loadGames(resultsType);
+            this.loadGames(resultsEnum);
         }
 
         this.state = {
             isLoading: true,
             searchQuery: props.location.search,
-            resultsType: resultsType,
+            ResultsEnum: resultsEnum,
             games: undefined,
             retry: false
         };
     }
 
     componentWillReceiveProps(newProps: IResultsContainerProps): void {
-        const newResultsType: ResultsType = this.getResultsTypeByProps(newProps);
+        const newResultsEnum: ResultsEnum = this.getResultsEnumByProps(newProps);
         const newSearchQuery: string = newProps.location.search;
 
-        if (this.state.resultsType !== newResultsType || this.state.searchQuery != newSearchQuery) {
-            if (newResultsType === ResultsType.SearchResults) {
+        if (this.state.ResultsEnum !== newResultsEnum || this.state.searchQuery != newSearchQuery) {
+            if (newResultsEnum === ResultsEnum.SearchResults) {
                 this.loadSearchGames(newSearchQuery);
             } else {
-                this.loadGames(newResultsType);
+                this.loadGames(newResultsEnum);
             }
 
             this.setState({
                 isLoading: true,
                 searchQuery: newSearchQuery,
-                resultsType: newResultsType
+                ResultsEnum: newResultsEnum
             });
         }
     }
 
-    getResultsTypeByProps(someProps: IResultsContainerProps): ResultsType {
+    getResultsEnumByProps(someProps: IResultsContainerProps): ResultsEnum {
         const typeRaw: string = someProps.match.params.type;
-        let resultsType: ResultsType;
+        let resultsEnum: ResultsEnum;
         
         if (typeRaw) {
             if (typeRaw === 'recent') {
-                resultsType = ResultsType.RecentResults;
+                resultsEnum = ResultsEnum.RecentResults;
             } else if (typeRaw === 'upcoming') {
-                resultsType = ResultsType.UpcomingResults;
+                resultsEnum = ResultsEnum.UpcomingResults;
             } else if (typeRaw === 'popular') {
-                resultsType = ResultsType.PopularResults;
+                resultsEnum = ResultsEnum.PopularResults;
             }
         } else {
-            resultsType = ResultsType.SearchResults;
+            resultsEnum = ResultsEnum.SearchResults;
         }
 
-        return resultsType;
+        return resultsEnum;
     }
 
     getLocalSortType(queryString: string): string {
@@ -140,7 +140,7 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
             
     }
 
-    loadGames(type: ResultsType): void {
+    loadGames(type: ResultsEnum): void {
 
         IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets[type]}`)
         .then( (response: MultiGameResponse) => {
@@ -170,7 +170,7 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
                 games={this.state.games}
                 retry={this.state.retry}
                 onRetryClick={this.onRetryClick}
-                resultsType={this.state.resultsType}
+                ResultsEnum={this.state.ResultsEnum}
             />
         );
     }

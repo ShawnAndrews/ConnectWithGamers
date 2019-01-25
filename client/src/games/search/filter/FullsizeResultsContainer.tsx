@@ -13,7 +13,7 @@ interface IFullsizeResultsContainerProps extends RouteComponentProps<any> {
 interface IFullsizeResultsContainerState {
     isLoading: boolean;
     loadingMsg: string;
-    resultsType: string;
+    ResultsEnum: string;
     games: GameResponse[];
     retry: boolean;
     editorsGamesIndicies: number[];
@@ -33,7 +33,7 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
         this.state = {
             isLoading: true,
             loadingMsg: "Loading games...",
-            resultsType: props.match.params.type,
+            ResultsEnum: props.match.params.type,
             games: undefined,
             retry: false,
             editorsGamesIndicies: [],
@@ -43,14 +43,14 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
     }
 
     componentWillReceiveProps(newProps: IFullsizeResultsContainerProps): void {
-        const newResultsType: string = newProps.match.params.type;
+        const newResultsEnum: string = newProps.match.params.type;
 
-        if (this.state.resultsType !== newResultsType) {
+        if (this.state.ResultsEnum !== newResultsEnum) {
             this.loadGames(newProps);
 
             this.setState({
                 isLoading: true,
-                resultsType: newResultsType
+                ResultsEnum: newResultsEnum
             });
         }
     }

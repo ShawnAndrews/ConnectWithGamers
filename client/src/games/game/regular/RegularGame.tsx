@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, steamAppUrl, IdNamePair } from '../../../../client-server-common/common';
+import { GameResponse, steamAppUrl, IdNamePair, GenreEnums } from '../../../../client-server-common/common';
 import { Paper } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 
@@ -19,7 +19,7 @@ const RegularGame: React.SFC<IRegularGameProps> = (props: IRegularGameProps) => 
                 </Textfit>
                 <div className="genres font-italic text-nowrap text-right px-2">
                     {props.game.genres && 
-                        props.game.genres.map((x: IdNamePair) => x.name).join(", ")}
+                        props.game.genres.map((x: number) => GenreEnums[x]).join(", ")}
                 </div>
                 <div className="icons color-secondary text-nowrap text-right px-2">
                     {props.game.linkIcons && 

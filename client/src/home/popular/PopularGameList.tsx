@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, GamesPresets } from '../../../../client/client-server-common/common';
+import { GameResponse, GamesPresets, GenreEnums } from '../../../../client/client-server-common/common';
 import { Card, CardMedia } from '@material-ui/core';
 
 interface IPopularGameListProps {
@@ -41,7 +41,7 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                                             <div className="row">
                                                 {x.genres &&
                                                     <div className="col-8 genre pr-0">
-                                                        {x.genres[0].name}
+                                                        {GenreEnums[x.genres[0]]}
                                                     </div>}
                                                 {x.aggregated_rating &&
                                                     <div className={`col-${x.genres ? 4 : 12} rating pl-0`}>

@@ -1,4 +1,4 @@
-import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, SteamAPIGetPriceInfoResponse, GameFields, buildIGDBRequestBody, getIGDBImage, IGDBImageSizeEnums, GameExternalInfo, steamAppUrl, androidAppUrl } from "../../../client/client-server-common/common";
+import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, PriceInfoResponse, GameFields, buildIGDBRequestBody, getIGDBImage, IGDBImageSizeEnums, GameExternalInfo, steamAppUrl, androidAppUrl, IconEnums, GenreEnums, IGDBGenre, PlatformEnums } from "../../../client/client-server-common/common";
 import { ArrayClean, steamAPIGetPriceInfo } from "../../../util/main";
 import config from "../../../config";
 import axios, { AxiosResponse } from "axios";
@@ -85,10 +85,10 @@ export function parseSteamIds(webpage: string): number[] {
 
 export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
 
-    const steamPricePromise = (rawResponse: RawGame[]): Promise<SteamAPIGetPriceInfoResponse[]> => {
+    const steamPricePromise = (rawResponse: RawGame[]): Promise<PriceInfoResponse[]> => {
 
         return new Promise((resolve: any, reject: any) => {
-            const pricesResponse: SteamAPIGetPriceInfoResponse[] = [];
+            const pricesResponse: PriceInfoResponse[] = [];
             const steamids: number[] = rawResponse
                 .filter((x: RawGame) => {
                     let hasSteamLink: boolean = false;
@@ -115,13 +115,13 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 });
 
             steamAPIGetPriceInfo(steamids)
-            .then( (steamAPIGetPriceInfoResponse: SteamAPIGetPriceInfoResponse[]) => {
+            .then( (PriceInfoResponse: PriceInfoResponse[]) => {
                 rawResponse.forEach((x: RawGame) => {
-                    const priceResponse: SteamAPIGetPriceInfoResponse = {
-                        steamgameid: undefined,
+                    const priceResponse: PriceInfoResponse = {
+                        externalEnum: undefined,
+                        uid: undefined,
                         price: undefined,
                         discount_percent: undefined,
-                        steam: undefined
                     };
 
                     if (x.external_games) {
@@ -132,12 +132,12 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                             }
                         });
 
-                        const foundIndex: number = steamAPIGetPriceInfoResponse.findIndex((priceInfo: SteamAPIGetPriceInfoResponse) => { return priceInfo.steamgameid === steamId; });
+                        const foundIndex: number = PriceInfoResponse.findIndex((priceInfo: PriceInfoResponse) => { return parseInt(priceInfo.uid) === steamId; });
                         if (foundIndex !== -1) {
-                            priceResponse.steamgameid = steamId;
-                            priceResponse.price = steamAPIGetPriceInfoResponse[foundIndex].price;
-                            priceResponse.discount_percent = steamAPIGetPriceInfoResponse[foundIndex].discount_percent;
-                            priceResponse.steam = steamAPIGetPriceInfoResponse[foundIndex].steam;
+                            priceResponse.externalEnum = IGDBExternalCategoryEnum.steam;
+                            priceResponse.uid = steamId.toString();
+                            priceResponse.price = PriceInfoResponse[foundIndex].price;
+                            priceResponse.discount_percent = PriceInfoResponse[foundIndex].discount_percent;
                         }
                     }
 
@@ -166,8 +166,8 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             let cover: IGDBImage = undefined;
             let summary: string = undefined;
             let linkIcons: string[] = undefined;
-            let genres: IdNamePair[] = undefined;
-            let platforms: IdNamePair[] = undefined;
+            let genres: number[] = undefined;
+            let platforms: number[] = undefined;
             let first_release_date: number = undefined;
             let release_dates: number[] = undefined;
             let screenshots: IGDBImage[] = undefined;
@@ -196,54 +196,63 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             }
 
             // cover
-            if (RawGame.cover && isNaN(Number(RawGame.cover))) {
+            if (RawGame.cover && isNaN(Number(RawGame.cover)) && RawGame.cover.image_id) {
+                if (typeof RawGame.cover === "number") {
+                    return undefined;
+                }
                 RawGame.cover.url = getIGDBImage(RawGame.cover.image_id, IGDBImageSizeEnums.cover_big);
+                RawGame.cover.alpha_channel =  RawGame.cover.alpha_channel || false;
+                RawGame.cover.animated =  RawGame.cover.animated || false;
+                cover = RawGame.cover && RawGame.cover.image_id ? RawGame.cover : undefined;
             }
-            cover = RawGame.cover;
 
             // summary
             summary = RawGame.summary;
 
             // link icons
             linkIcons = RawGame.platforms && RawGame.platforms.map((platform: IGDBPlatform) => {
-                if (platform.id === 48 || platform.id === 45) {
+                if (platform.id === IconEnums["fab fa-playstation"]) {
                     return "fab fa-playstation";
-                } else if (platform.id === 34) {
+                } else if (platform.id === IconEnums["fab fa-android"]) {
                     return "fab fa-android";
-                } else if (platform.id === 6) {
+                } else if (platform.id === IconEnums["fab fa-windows"]) {
                     return "fab fa-windows";
-                } else if (platform.id === 14) {
+                } else if (platform.id === IconEnums["fab fa-apple"]) {
                     return "fab fa-apple";
-                } else if (platform.id === 3) {
+                } else if (platform.id === IconEnums["fab fa-linux"]) {
                     return "fab fa-linux";
-                } else if (platform.id === 92) {
+                } else if (platform.id === IconEnums["fab fa-steam"]) {
                     return "fab fa-steam";
-                } else if (platform.id === 49) {
+                } else if (platform.id === IconEnums["fab fa-xbox"]) {
                     return "fab fa-xbox";
-                } else if (platform.id === 130) {
+                } else if (platform.id === IconEnums["fab fa-nintendo-switch"]) {
                     return "fab fa-nintendo-switch";
                 }
             });
             linkIcons = RawGame.platforms && ArrayClean(linkIcons, undefined);
 
             // genres
-            genres = RawGame.genres && RawGame.genres.map((genre: IGDBPlatform) => { return { id: genre.id, name: genre.name }; });
+            genres = RawGame.genres && RawGame.genres.filter((genre: IGDBGenre) => Object.keys(GenreEnums).indexOf(genre.id.toString()) !== -1).map((genre: IGDBGenre) => { return genre.id; });
 
             // platforms
-            platforms = RawGame.platforms && RawGame.platforms.map((platform: IGDBPlatform) => { return { id: platform.id, name: platform.name }; });
+            platforms = RawGame.platforms && RawGame.platforms.filter((platform: IGDBPlatform) => Object.keys(PlatformEnums).indexOf(platform.id.toString()) !== -1).map((platform: IGDBPlatform) => { return platform.id; });
 
             // first release date
-            first_release_date = RawGame.first_release_date;
+            first_release_date = RawGame.first_release_date && Number(RawGame.first_release_date);
 
             // release dates
             release_dates = RawGame.release_dates && RawGame.platforms && RawGame.platforms.map((platform: IGDBPlatform) => {
                 const platformId: number = platform.id;
                 const foundSteamIndex: number = RawGame.release_dates.findIndex((releaseDate: IGDBReleaseDate) => { return releaseDate.platform === platformId; });
-                return foundSteamIndex !== -1 ? RawGame.release_dates[foundSteamIndex].date : undefined;
+                const releaseDate: number = foundSteamIndex !== -1 ? RawGame.release_dates[foundSteamIndex].date : undefined;
+                return releaseDate || 0;
             });
 
             // screenshots
-            screenshots = RawGame.screenshots && RawGame.screenshots.map((x: IGDBImage) => {
+            screenshots = RawGame.screenshots && isNaN(Number(RawGame.screenshots[0])) && RawGame.screenshots.map((x: IGDBImage) => {
+                if (typeof x === "number") {
+                    return undefined;
+                }
                 x.url = getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big);
                 return x;
             });
@@ -264,7 +273,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                         const uid: string = x.uid;
 
                         external.steam = {
-                            id: uid,
+                            uid: uid,
                             price: undefined,
                             discount_percent: undefined,
                             url: `${steamAppUrl}/${uid}`
@@ -272,7 +281,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                     } else if (x.category === IGDBExternalCategoryEnum.microsoft) {
 
                         external.microsoft = {
-                            id: x.uid,
+                            uid: x.uid,
                             price: undefined,
                             discount_percent: undefined,
                             url: x.url
@@ -280,7 +289,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                     } else if (x.category === IGDBExternalCategoryEnum.gog) {
 
                         external.gog = {
-                            id: x.uid,
+                            uid: x.uid,
                             price: undefined,
                             discount_percent: undefined,
                             url: x.url
@@ -294,14 +303,14 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                         }
 
                         external.apple = {
-                            id: x.uid,
+                            uid: x.uid,
                             price: undefined,
                             discount_percent: undefined,
                             url: url
                         };
                     } else if (x.category === IGDBExternalCategoryEnum.android) {
                         external.android = {
-                            id: x.uid,
+                            uid: x.uid,
                             price: undefined,
                             discount_percent: undefined,
                             url: `${androidAppUrl}${x.uid}`
@@ -332,7 +341,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
 
         // prices
         steamPricePromise(RawGames)
-        .then((prices: SteamAPIGetPriceInfoResponse[]) => {
+        .then((prices: PriceInfoResponse[]) => {
             gameResponses.forEach((x: GameResponse, index: number) => {
                 if (x.external.steam) {
                     x.external.steam.price = prices[index].price;

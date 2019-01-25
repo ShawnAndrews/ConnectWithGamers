@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse } from '../../../client-server-common/common';
+import { GameResponse, GenreEnums } from '../../../client-server-common/common';
 import { Card } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 
@@ -26,12 +26,16 @@ const HighlightedGameList: React.SFC<IHighlightedGameListProps> = (props: IHighl
                 {props.games && props.games
                     .map((game: GameResponse, index: number) => {
                         const isFeatureGame: boolean = featuredGames.findIndex((x: number) => x === index) !== -1;
-                        const originalPrice: number = + (Number.parseFloat(game.external.steam.price) / ((100 - game.external.steam.discount_percent) / 100)).toFixed(2);
+                        let originalPrice: number = undefined;
+
+                        if (game.external.steam) {
+                            originalPrice = + (Number.parseFloat(game.external.steam.price) / ((100 - game.external.steam.discount_percent) / 100)).toFixed(2);
+                        }
 
                         return (
                             <Card className={`game ${isFeatureGame ? 'feature' : ''} primary-shadow position-relative bg-transparent h-100`} onClick={() => { props.onClickGame(game.id); }} onMouseOver={() => props.onHoverGame(index)} onMouseOut={() => props.onHoverOutGame()}>
                                 <div className={`${props.randColors[index] ? 'cover-overlay-green' : 'cover-overlay-yellow'} ${props.hoveredGameId === index && 'active'} w-100`}/>
-                                {game.external.steam.discount_percent && <div className="highlighted-table-discount mt-1 px-1">-{game.external.steam.discount_percent}%</div>}
+                                {game.external.steam && game.external.steam.discount_percent && <div className="highlighted-table-discount mt-1 px-1">-{game.external.steam.discount_percent}%</div>}
                                 <div className='text-overlay'/>
                                 <div className="highlighted-table-text">
                                     <Textfit className="name" min={11} max={15}>
@@ -39,7 +43,7 @@ const HighlightedGameList: React.SFC<IHighlightedGameListProps> = (props: IHighl
                                     </Textfit>
                                     {game.genres &&
                                         <div className="genre w-100">
-                                            {game.genres[0].name}
+                                            {GenreEnums[game.genres[0]]}
                                         </div>}
                                 </div>
                                 {game.external.steam &&

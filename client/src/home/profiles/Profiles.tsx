@@ -8,7 +8,7 @@ interface IProfilesProps {
 const Profiles: React.SFC<IProfilesProps> = (props: IProfilesProps) => {
 
     return (
-        <div className="col-md-3 col-lg-3 pr-md-0 pr-lg-3 pl-lg-0">
+        <div className="col-md-12 col-lg-3 pr-md-0 pr-lg-3 pl-md-0">
             <div className="profiles-table">
                 <div className="profiles-header mb-3 pt-2" onClick={() => { props.goToRedirectCallback(`/games/gaming`); }}>
                     <a className="mr-2">Gaming Profiles</a>

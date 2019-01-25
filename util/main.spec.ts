@@ -3,7 +3,7 @@ const chaiAsPromised = require("chai-as-promised");
 chai.use(chaiAsPromised);
 const expect: Chai.ExpectStatic = chai.expect;
 import { formatDate, addMonths, steamAPIGetPriceInfo, ArrayClean, genRandStr, steamAPIGetReviews } from "./main";
-import { SteamAPIGetPriceInfoResponse, SteamAPIGetReviewsResponse } from "../client/client-server-common/common";
+import { PriceInfoResponse, SteamAPIGetReviewsResponse } from "../client/client-server-common/common";
 
 describe("Date manipulation", function() {
   const currentDate: Date = new Date();
@@ -40,7 +40,7 @@ describe("Steam API calls", function() {
 
   it("gets game prices", function() {
     const steamGameIds: number[] = [311210, 292730];
-    const steamPricePromise: Promise<SteamAPIGetPriceInfoResponse[]> = steamAPIGetPriceInfo(steamGameIds);
+    const steamPricePromise: Promise<PriceInfoResponse[]> = steamAPIGetPriceInfo(steamGameIds);
 
     return expect(steamPricePromise).to.eventually.have.length(2);
   });

@@ -1,25 +1,25 @@
 import config from "../../../../config";
 import {
-    GameResponse, GameFields, RawGame, redisCache, IGDBCacheEntry, buildIGDBRequestBody } from "../../../../client/client-server-common/common";
+    GameResponse, GameFields, RawGame, buildIGDBRequestBody } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import { convertRawGame } from "../util";
-const redis = require("redis");
-const redisClient = redis.createClient();
+import { igdbModel } from "../../../../models/db/igdb/main";
 
 /**
  * Check if redis key exists.
  */
 export function gameKeyExists(gameId: number): Promise<boolean> {
-    const cacheEntry: IGDBCacheEntry = redisCache[1];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.hexists(cacheEntry.key, gameId, (error: string, value: boolean) => {
-            if (error) {
-                return reject(error);
-            }
 
-            return resolve(value);
-        });
+        igdbModel.gameExists(gameId)
+            .then((exists: boolean) => {
+                return resolve(exists);
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
+
     });
 
 }
@@ -28,18 +28,15 @@ export function gameKeyExists(gameId: number): Promise<boolean> {
  * Get redis-cached games.
  */
 export function getCachedGame(gameId: number): Promise<GameResponse> {
-    const cacheEntry: IGDBCacheEntry = redisCache[1];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.hget(cacheEntry.key, gameId, (error: string, stringifiedGame: string) => {
-            if (error) {
+        igdbModel.getGame(gameId)
+            .then((game: GameResponse) => {
+                return resolve(game);
+            })
+            .catch((error: string) => {
                 return reject(error);
-            }
-
-            const gameResponse: GameResponse = JSON.parse(stringifiedGame);
-
-            return resolve(gameResponse);
-        });
+            });
     });
 
 }
@@ -48,7 +45,6 @@ export function getCachedGame(gameId: number): Promise<GameResponse> {
  * Cache game.
  */
 export function cacheGame(gameId: number): Promise<GameResponse> {
-    const cacheEntry: IGDBCacheEntry = redisCache[1];
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -74,13 +70,16 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
             const RawGame: RawGame = response.data[0];
             convertRawGame([RawGame])
                 .then((gameResponses: GameResponse[]) => {
+                    const game: GameResponse = gameResponses[0];
 
-                    redisClient.hset(cacheEntry.key, gameId, JSON.stringify(gameResponses[0]));
-                    if (cacheEntry.expiry !== -1) {
-                        redisClient.expire(cacheEntry.key, cacheEntry.expiry);
-                    }
+                    igdbModel.setGame(game)
+                        .then(() => {
+                            return resolve(game);
+                        })
+                        .catch((error: string) => {
+                            return reject(error);
+                        });
 
-                    return resolve(gameResponses[0]);
                 })
                 .catch((error: string) => {
                     return reject(error);
@@ -99,23 +98,42 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
  * Cache preloaded game.
  */
 export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
-    const cacheEntry: IGDBCacheEntry = redisCache[1];
     const gameId: number = RawGame.id;
 
     return new Promise((resolve: any, reject: any) => {
         gameKeyExists(gameId)
         .then((exists: boolean) => {
-            convertRawGame([RawGame])
-            .then((gameResponses: GameResponse[]) => {
-                redisClient.hset(cacheEntry.key, gameId, JSON.stringify(gameResponses[0]));
-                if (cacheEntry.expiry !== -1) {
-                    redisClient.expire(cacheEntry.key, cacheEntry.expiry);
-                }
-                return resolve(gameResponses[0]);
-            })
-            .catch((error: string) => {
-                return reject(error);
-            });
+
+            if (exists) {
+
+                igdbModel.getGame(gameId)
+                    .then((game: GameResponse) => {
+                        return resolve(game);
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+
+            } else {
+
+                convertRawGame([RawGame])
+                    .then((gameResponses: GameResponse[]) => {
+                        const game: GameResponse = gameResponses[0];
+
+                        igdbModel.setGame(game)
+                            .then(() => {
+                                return resolve(game);
+                            })
+                            .catch((error: string) => {
+                                return reject(error);
+                            });
+
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+
+            }
         })
         .catch((error: string) => {
             return reject(error);

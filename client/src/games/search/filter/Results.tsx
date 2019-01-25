@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, ResultsType } from '../../../../client-server-common/common';
+import { GameResponse, ResultsEnum } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
 import RegularGameContainer from '../../game/regular/RegularGameContainer';
 import TopnavContainer from './topnav/TopnavContainer';
@@ -10,7 +10,7 @@ interface IResultsProps {
     games: GameResponse[];
     retry: boolean;
     onRetryClick: () => void;
-    resultsType: ResultsType;
+    ResultsEnum: ResultsEnum;
 }
 
 const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {

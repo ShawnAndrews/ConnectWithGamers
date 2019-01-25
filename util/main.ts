@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import config from "./../config";
-import { SteamAPIGetPriceInfoResponse } from "../client/client-server-common/common";
+import { PriceInfoResponse, IGDBExternalCategoryEnum } from "../client/client-server-common/common";
 
 /**
  * Convert Date->YYYY-MM-DD.
@@ -211,21 +211,21 @@ function getSteamFreePrice(webpage: string): string {
 /**
  * Returns Steam price info from Steam id.
  */
-export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGetPriceInfoResponse[]> {
+export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<PriceInfoResponse[]> {
 
-    const createPricePromise = (steamgameid: number): Promise<SteamAPIGetPriceInfoResponse> => {
+    const createPricePromise = (steamgameid: number): Promise<PriceInfoResponse> => {
 
         return new Promise((resolve: any, reject: any) => {
-            const steamPriceInfo: SteamAPIGetPriceInfoResponse = {
-                steamgameid: steamgameid,
+            const steamPriceInfo: PriceInfoResponse = {
+                externalEnum: IGDBExternalCategoryEnum.steam,
+                uid: steamgameid.toString(),
                 price: undefined,
                 discount_percent: undefined,
-                steam: `${config.steam.dbURL}/${steamgameid}/?cc=us`
             };
 
             axios({
                 method: "get",
-                url: steamPriceInfo.steam,
+                url: `${config.steam.dbURL}/${steamgameid}/?cc=us`,
             })
             .then((response: AxiosResponse) => {
                 const webpage: string = response.data;
@@ -248,15 +248,15 @@ export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<SteamAPIGe
     };
 
     return new Promise((resolve: any, reject: any) => {
-        const pricePromises: Promise<SteamAPIGetPriceInfoResponse>[] = [];
+        const pricePromises: Promise<PriceInfoResponse>[] = [];
 
         steamgameids.forEach((steamgameid: number) => {
             pricePromises.push(createPricePromise(steamgameid));
         });
 
         Promise.all(pricePromises)
-        .then((vals: SteamAPIGetPriceInfoResponse[]) => {
-            const steamPrices: SteamAPIGetPriceInfoResponse[] = vals.filter((x: SteamAPIGetPriceInfoResponse) => { return x.price !== undefined; });
+        .then((vals: PriceInfoResponse[]) => {
+            const steamPrices: PriceInfoResponse[] = vals.filter((x: PriceInfoResponse) => { return x.price !== undefined; });
             return resolve(steamPrices);
         })
         .catch((error: string) => {
