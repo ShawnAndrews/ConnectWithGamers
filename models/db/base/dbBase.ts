@@ -85,7 +85,7 @@ export default class DatabaseBase {
                 }
 
                 // execute query
-                this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
+                const finalQuery: any = this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
                     if (error) {
                         console.log(`SELECT error: ${JSON.stringify(error)}`);
                         return reject(error);

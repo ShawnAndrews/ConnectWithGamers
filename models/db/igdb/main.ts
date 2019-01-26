@@ -897,7 +897,7 @@ class IGDBModel extends DatabaseBase {
             this.select(
                 "results",
                 DbTableFieldsResults,
-                `${DbTableFieldsResults[1]}=? AND ${DbTableFieldsResults[2]}=?`,
+                `${DbTableFieldsResults[1]}=? AND ${DbTableFieldsResults[2]}${!param ? " IS " : "="}?`,
                 [resultsEnum, param])
                 .then((dbResponse: GenericModelResponse) => {
 
@@ -927,7 +927,7 @@ class IGDBModel extends DatabaseBase {
             this.select(
                 "results",
                 DbTableFieldsResults,
-                `${DbTableFieldsResults[1]}=? AND ${DbTableFieldsResults[2]}=?`,
+                `${DbTableFieldsResults[1]}=? AND ${DbTableFieldsResults[2]}${!param ? " IS " : "="}?`,
                 [resultsEnum, param])
                 .then((dbResponse: GenericModelResponse) => {
 
@@ -960,7 +960,7 @@ class IGDBModel extends DatabaseBase {
             this.select(
                 "results",
                 DbTableFieldsResults,
-                `${DbTableFieldsResults[1]}=? AND ${DbTableFieldsResults[2]}=?`,
+                `${DbTableFieldsResults[1]}=? AND ${DbTableFieldsResults[2]}${!param ? " IS " : "="}?`,
                 [resultsEnum, param])
                 .then((dbResponse: GenericModelResponse) => {
 
@@ -968,6 +968,7 @@ class IGDBModel extends DatabaseBase {
                         return resolve();
                     } else {
 
+                        console.log(`Results #${gameIds.length}`);
                         gameIds.forEach((gameId: number) => {
                             const columnValues: any[] = [resultsEnum, param, gameId, datePlus7Days];
 

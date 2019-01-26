@@ -10,7 +10,6 @@ import { igdbModel } from "../../../../models/db/igdb/main";
 export function discountedGamesKeyExists(): Promise<boolean> {
 
     return new Promise((resolve: any, reject: any) => {
-
         igdbModel.resultsExists(ResultsEnum.DiscountedResults)
             .then((exists: boolean) => {
                 return resolve(exists);
@@ -29,7 +28,6 @@ export function discountedGamesKeyExists(): Promise<boolean> {
 export function getCachedDiscountedGames(): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
-
         igdbModel.getResults(ResultsEnum.DiscountedResults)
             .then((gameIds: number[]) => {
 
