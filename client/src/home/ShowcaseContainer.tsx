@@ -70,12 +70,12 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
                 if (vals[2]) {
                     const response: MultiGameResponse = vals[2];
                     response.data = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
-                    recentGames = response.data;
+                    recentGames = response.data.sort((x: GameResponse, y: GameResponse) => y.first_release_date - x.first_release_date);
                 }
                 if (vals[3]) {
                     const response: MultiGameResponse = vals[3];
                     response.data = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
-                    upcomingGames = response.data;
+                    upcomingGames = response.data.sort((x: GameResponse, y: GameResponse) => x.first_release_date - y.first_release_date);
                 }
                 if (vals[4]) {
                     const response: MultiGameResponse = vals[4];
