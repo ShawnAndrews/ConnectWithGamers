@@ -219,7 +219,6 @@
                 text-transform: uppercase;
                 transform: rotate(-43deg);
                 opacity: 0.76;
-                color: white;
             }
 
             .discount-banner {
@@ -238,7 +237,6 @@
                 text-transform: uppercase;
                 transform: rotate(-43deg);
                 opacity: .76;
-                color: white;
             }
 
             * {
@@ -318,6 +316,13 @@
 
         * {
             outline: 0;
+        }
+
+        .filter-logo {
+            
+            > div {
+                font-size: 1.3rem;
+            }
         }
 
         .title {
@@ -406,6 +411,10 @@
 
         &.active {
             width: calc(100% - @games-filter-width);
+
+            @media @sm {
+                display: none!important;
+            }
         }
     }
 }

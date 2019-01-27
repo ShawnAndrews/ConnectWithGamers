@@ -20,7 +20,7 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
     return (
         <div className="col-md-12 col-lg-9 px-md-0 pl-lg-3">
             <div className="popular-table">
-                <div className="popular-table-header mb-3 pt-2" onClick={() => { props.goToRedirectCallback(`/games/search/filter/${GamesPresets.popular}`); }}>
+                <div className="popular-table-header mb-3 pt-2" onClick={() => { props.goToRedirectCallback(`/search/filter/${GamesPresets.popular}`); }}>
                     <a className="popular-table-header-link mr-2">Most Popular</a>
                     <i className="fas fa-chevron-right"/>
                 </div>

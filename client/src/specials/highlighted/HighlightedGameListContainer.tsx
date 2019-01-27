@@ -33,7 +33,7 @@ class HighlightedGameListContainer extends React.Component<IHighlightedGameListC
     }
 
     onClickGame(id: number): void {
-        this.props.history.push(`/games/search/game/${id}`);
+        this.props.history.push(`/search/game/${id}`);
     }
 
     onHoverGame(index: number): void {

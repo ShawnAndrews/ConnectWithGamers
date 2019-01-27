@@ -82,12 +82,12 @@ class TwitchListContainer extends React.Component<ITwitchListContainerProps, ITw
                 })
                 .catch( (error: string) => {
                     popupS.modal({ content: `Server is busy. Please try again later.` });
-                    this.props.history.push(`/games/gaming`);
+                    this.props.history.push(`/gaming`);
                 });
             })
             .catch( (error: string) => {
                 popupS.modal({ content: `Server is busy. Please try again later.` });
-                this.props.history.push(`/games/gaming`);
+                this.props.history.push(`/gaming`);
             });
     }
 

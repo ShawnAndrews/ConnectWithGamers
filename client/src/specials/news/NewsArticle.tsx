@@ -10,7 +10,7 @@ interface INewsArticleProps {
 const NewsArticle: React.SFC<INewsArticleProps> = (props: INewsArticleProps) => {
 
     return (
-        <div className="news-article col-6 col-sm-4 col-lg-3 mb-3 px-md-1 px-lg-3" onClick={() => { const win = window.open(props.article.url, '_blank'); win.focus(); }}>
+        <div className="news-article col-12 col-sm-6 col-lg-4 col-xl-3 mb-3 px-md-1 px-lg-3" onClick={() => { const win = window.open(props.article.url, '_blank'); win.focus(); }}>
             <Card className="news-container cursor-pointer primary-shadow color-secondary">
                 <div className="hover-tertiary-solid">
                     <div className="title p-2">{props.article.title}</div>

@@ -89,7 +89,7 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
     updateNavSelection(path: string): void {
         if (path === NAV_PAGE.HOME) {
             this.setState({ index: 0 });
-        } else if (path.startsWith(NAV_PAGE.GAMES)) {
+        } else if (path.startsWith(NAV_PAGE.SPECIALS)) {
             this.setState({ index: 1 });
         } else if (path.startsWith(NAV_PAGE.CHATROOM)) {
             this.setState({ index: 2 });
@@ -106,7 +106,7 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
 
     onSubmitSearch(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault();
-        this.props.history.push(`/games/search/filter/?query=${this.state.searchQuery}`);
+        this.props.history.push(`/search/filter/?query=${this.state.searchQuery}`);
     }
 
     onSearchQueryChanged(e: React.ChangeEvent<HTMLInputElement>): void {

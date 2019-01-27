@@ -6,7 +6,7 @@ import { convertRawGame } from "../util";
 import { igdbModel } from "../../../../models/db/igdb/main";
 
 /**
- * Check if redis key exists.
+ * Check if game key exists.
  */
 export function gameKeyExists(gameId: number): Promise<boolean> {
 
@@ -25,7 +25,7 @@ export function gameKeyExists(gameId: number): Promise<boolean> {
 }
 
 /**
- * Get redis-cached games.
+ * Get cached game.
  */
 export function getCachedGame(gameId: number): Promise<GameResponse> {
 

@@ -8,7 +8,7 @@ interface IHamburgerProps {
 const Hamburger: React.SFC<IHamburgerProps> = (props: IHamburgerProps) => {
 
     return (
-        <div className="hamburger mt-4 ml-4" onClick={() => props.onHamburgerClick()}>
+        <div className="hamburger mt-2 ml-2" onClick={() => props.onHamburgerClick()}>
             <div className={`hamburger-container ${props.filterExpanded ? 'active' : ''}`}>
             <div className="hamburger__bar"/>
             </div>

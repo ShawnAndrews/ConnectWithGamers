@@ -31,9 +31,9 @@ const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
                 </li>
                 <li className="nav-item mx-md-2">
                     <div className="d-table h-100">
-                        <a className={`btn nav-link btn-flat-bot-rad d-table-cell align-middle h-100 ${ props.index === 1 ? 'active' : ''}`} data-toggle="pill" role="tab" onClick={() => { props.onTabClick("/games"); }}>
-                            <i className="fas fa-gamepad mr-2"/>
-                            Games
+                        <a className={`btn nav-link btn-flat-bot-rad d-table-cell align-middle h-100 ${ props.index === 1 ? 'active' : ''}`} data-toggle="pill" role="tab" onClick={() => { props.onTabClick("/specials"); }}>
+                            <i className="fas fa-bars mr-2"/>
+                            Specials
                         </a>
                     </div>
                 </li>

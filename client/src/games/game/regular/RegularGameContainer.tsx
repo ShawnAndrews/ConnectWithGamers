@@ -17,7 +17,7 @@ class RegularGameContainer extends React.Component<IRegularGameContainerProps, I
     }
 
     goToGame(): void {
-        this.props.history.push(`/games/search/game/${this.props.game.id}`);
+        this.props.history.push(`/search/game/${this.props.game.id}`);
     }
 
     render() {

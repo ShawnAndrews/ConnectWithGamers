@@ -73,11 +73,11 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
     }
 
     handlePlatformClick(index: number): void {
-        this.props.history.push(`/games/search/filter/?platforms=${this.state.game.platforms[index]}`);
+        this.props.history.push(`/search/filter/?platforms=${this.state.game.platforms[index]}`);
     }
     
     handleGenreClick(index: number): void {
-        this.props.history.push(`/games/search/filter/?genres=${this.state.game.genres[index]}`);
+        this.props.history.push(`/search/filter/?genres=${this.state.game.genres[index]}`);
     }
 
     expandSummary(): void {

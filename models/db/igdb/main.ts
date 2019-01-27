@@ -968,7 +968,6 @@ class IGDBModel extends DatabaseBase {
                         return resolve();
                     } else {
 
-                        console.log(`Results #${gameIds.length}`);
                         gameIds.forEach((gameId: number) => {
                             const columnValues: any[] = [resultsEnum, param, gameId, datePlus7Days];
 

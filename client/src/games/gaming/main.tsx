@@ -15,10 +15,10 @@ const Menu: React.SFC<any> = () => {
             <TopnavContainer/>
             <div className="container">
                 <Switch>
-                    <Route exact={true} path="/games/gaming" component={HomePageContainer}/>
-                    <Route exact={true} path="/games/gaming/twitch" component={TwitchListContainer}/>
-                    <Route exact={true} path="/games/gaming/steam" component={SteamListContainer}/>
-                    <Route exact={true} path="/games/gaming/discord" component={DiscordPageContainer}/>
+                    <Route exact={true} path="/gaming" component={HomePageContainer}/>
+                    <Route exact={true} path="/gaming/twitch" component={TwitchListContainer}/>
+                    <Route exact={true} path="/gaming/steam" component={SteamListContainer}/>
+                    <Route exact={true} path="/gaming/discord" component={DiscordPageContainer}/>
                     <Route component={NotFoundPageContainer}/>
                 </Switch>
             </div>

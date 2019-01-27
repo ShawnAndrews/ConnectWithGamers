@@ -34,13 +34,15 @@ class DiscountedGameListContainer extends React.Component<IDiscountedGameListCon
             centerPadding: '60px',
             slidesToShow: 3,
             dots: true,
+            arrows: false,
             responsive: [
               {
-                breakpoint: 992,
+                breakpoint: 1300,
                 settings: {
                   centerMode: true,
                   centerPadding: '40px',
-                  slidesToShow: 1
+                  slidesToShow: 1,
+                  arrows: false,
                 }
               }
             ]
@@ -48,7 +50,7 @@ class DiscountedGameListContainer extends React.Component<IDiscountedGameListCon
     }
 
     onRedirect(id: number): void {
-        this.props.history.push(`/games/search/game/${id}`);
+        this.props.history.push(`/search/game/${id}`);
     }
 
     onHoverGame(gameId: number): void {

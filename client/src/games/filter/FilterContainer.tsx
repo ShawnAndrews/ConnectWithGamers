@@ -204,7 +204,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
     }
 
     onRefreshClick(): void {
-        let queryString: string = `/games/search/filter/?`;
+        let queryString: string = `/search/filter/?`;
         const filters: string[] = [];
         const required: string[] = [];
 
@@ -302,7 +302,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
 
     onSearchKeypress(event: React.KeyboardEvent<Element>): void {
         if (event.key === `Enter`) {
-            this.props.history.push(`/games/search/filter/?query=${this.state.searchTerm}`);
+            this.props.history.push(`/search/filter/?query=${this.state.searchTerm}`);
         }
     }
 
@@ -319,7 +319,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         });
 
         if (checked) {
-            this.props.history.push(`/games/search/popular`);
+            this.props.history.push(`/search/popular`);
         }
     }
 
@@ -336,7 +336,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         });
 
         if (checked) {
-            this.props.history.push(`/games/search/recent`);
+            this.props.history.push(`/search/recent`);
         }
     }
 
@@ -353,7 +353,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         });
 
         if (checked) {
-            this.props.history.push(`/games/search/upcoming`);
+            this.props.history.push(`/search/upcoming`);
         }
     }
 
@@ -370,7 +370,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         });
 
         if (checked) {
-            this.props.history.push(`/games/search/ios-coming-soon`);
+            this.props.history.push(`/search/ios-coming-soon`);
         }
     }
 
@@ -387,7 +387,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         });
 
         if (checked) {
-            this.props.history.push(`/games/search/android-coming-soon`);
+            this.props.history.push(`/search/android-coming-soon`);
         }
     }
 
@@ -402,7 +402,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         });
 
         if (checked) {
-            this.props.history.push(`/games/news`);
+            this.props.history.push(`/news`);
         }
     }
 

@@ -3,9 +3,9 @@ import { GameResponse, GamesPresets } from '../../../../client/client-server-com
 import { CardMedia } from '@material-ui/core';
 import { formatDate } from '../../util/main';
 
-interface IRecentGameListProps {
+interface IUpcomingGameListProps {
     listScrollRef: React.RefObject<HTMLDivElement>;
-    recentGames: GameResponse[];
+    upcomingGames: GameResponse[];
     onClickGame: (id: number) => void;
     goToRedirectCallback: (URL: string) => void;
     onScrollLeft: () => void;
@@ -16,18 +16,18 @@ interface IRecentGameListProps {
     mouseUp: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListProps) => {
+const UpcomingGameList: React.SFC<IUpcomingGameListProps> = (props: IUpcomingGameListProps) => {
 
     return (
-        <div className="recently-released-table w-100 mb-5 p-0">
-            <div className="recently-released-table-header position-relative mb-3" onClick={() => { props.goToRedirectCallback(`/games/search/recent`); }}>
-                <a className="mr-2">Recently Released</a>
+        <div className="upcoming-table w-100 mb-5 p-0">
+            <div className="upcoming-table-header position-relative mb-3" onClick={() => { props.goToRedirectCallback(`/search/upcoming`); }}>
+                <a className="mr-2">Upcoming</a>
                 <i className="fas fa-chevron-right"/>
             </div>
 
             <div className="table-horizontal position-relative">
                 <div className="scroll-horizontal" ref={props.listScrollRef} onMouseLeave={props.mouseLeave} onMouseMove={props.mouseMove} onMouseDown={props.mouseDown} onMouseUp={props.mouseUp}>
-                    {props.recentGames
+                    {props.upcomingGames
                         .map((x: GameResponse) => {
                             return (
                                 <div key={x.id} className="table-container cursor-pointer align-top primary-shadow d-inline-block mx-2" onClick={() => { props.onClickGame(x.id); }}>
@@ -39,7 +39,7 @@ const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListP
                                             {x.linkIcons && 
                                                 x.linkIcons.map((platformIcon: string, index: number) => { return <i key={index} className={`${platformIcon} icon mr-1`}/>; })}
                                         </div>
-                                        <span className="date pr-3 pl-1">{formatDate(x.first_release_date, true)}</span>
+                                        <span className="date pr-3 pl-1">{formatDate(x.first_release_date, false)}</span>
                                     </CardMedia>
                                 </div>
                             );
@@ -54,8 +54,8 @@ const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListP
             </div>
 
         </div>
-    );   
+    );       
 
 };
 
-export default RecentGameList;
+export default UpcomingGameList;

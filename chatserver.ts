@@ -348,7 +348,7 @@ export function getAllUserInfo(dbUsers: AccountsInfo): Promise<AccountInfo[]> {
  * Get redis-cached users in chatroom.
  */
 export function getCachedChatUsers(): Promise<UserLog[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[1];
+    const cacheEntry: IGDBCacheEntry = redisCache[0];
 
     return new Promise((resolve: any, reject: any) => {
         redisClient.get(cacheEntry.key, (error: string, stringifiedChatUsers: string) => {
@@ -368,7 +368,7 @@ export function getCachedChatUsers(): Promise<UserLog[]> {
  * Cache users in chatroom.
  */
 export function cacheChatUsers(userLog: UserLog[]): Promise<void> {
-    const cacheEntry: IGDBCacheEntry = redisCache[1];
+    const cacheEntry: IGDBCacheEntry = redisCache[0];
 
     return new Promise((resolve: any, reject: any) => {
 

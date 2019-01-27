@@ -44,7 +44,7 @@ class UpcomingGameListContainer extends React.Component<IUpcomingGameListContain
 
     onClickGame(id: number): void {
         if (!this.state.mouseMoved) {
-            this.props.history.push(`/games/search/game/${id}`);
+            this.props.history.push(`/search/game/${id}`);
         }
     }
 

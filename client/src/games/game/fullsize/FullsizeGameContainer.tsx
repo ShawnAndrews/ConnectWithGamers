@@ -64,7 +64,7 @@ class FullsizeGameContainer extends React.Component<IFullsizeGameContainerProps,
     }
 
     goToGame(): void {
-        this.props.history.push(`/games/search/game/${this.props.game.id}`);
+        this.props.history.push(`/search/game/${this.props.game.id}`);
     }
 
     goToSteamPage(): void {

@@ -1,50 +1,49 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GameResponse } from '../../../../client/client-server-common/common';
-import RecentGameList from './RecentGameList';
+import PopularGameList from './PopularGameList';
 
 enum ScrollDirection {
     'LEFT',
     'RIGHT'
 }
 
-interface IRecentGameListContainerProps extends RouteComponentProps<any> {
-    recentGames: GameResponse[];
+interface IPopularGameListContainerProps extends RouteComponentProps<any> {
+    popularGames: GameResponse[];
 }
 
-interface IRecentGameListContainerState {
+interface IPopularGameListContainerState {
+    popularGames: GameResponse[];
     listScrollRef: React.RefObject<HTMLDivElement>;
-    recentGames: GameResponse[];
     clicked: boolean;
     clickedX: number;
     mouseMoved: boolean;
 }
 
-class RecentGameListContainer extends React.Component<IRecentGameListContainerProps, IRecentGameListContainerState> {
+class PopularGameListContainer extends React.Component<IPopularGameListContainerProps, IPopularGameListContainerState> {
 
-    constructor(props: IRecentGameListContainerProps) {
-        super(props);
-        this.onClickGame = this.onClickGame.bind(this);
-        this.onScrollLeft = this.onScrollLeft.bind(this);
-        this.onScrollRight = this.onScrollRight.bind(this);
-        this.mouseLeave = this.mouseLeave.bind(this);
-        this.mouseMove = this.mouseMove.bind(this);
-        this.mouseDown = this.mouseDown.bind(this);
-        this.mouseUp = this.mouseUp.bind(this);
-
+    constructor(props: IPopularGameListContainerProps) {
         const listScrollRef: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
-        this.state = { 
+        super(props);
+        this.state = {
+            popularGames: props.popularGames,
             listScrollRef: listScrollRef,
-            recentGames: props.recentGames,
             clicked: false,
             clickedX: undefined,
             mouseMoved: false
         };
+        this.onScrollLeft = this.onScrollLeft.bind(this);
+        this.onScrollRight = this.onScrollRight.bind(this);
+        this.onClickGame = this.onClickGame.bind(this);
+        this.mouseLeave = this.mouseLeave.bind(this);
+        this.mouseMove = this.mouseMove.bind(this);
+        this.mouseDown = this.mouseDown.bind(this);
+        this.mouseUp = this.mouseUp.bind(this);
     }
 
     onClickGame(id: number): void {
         if (!this.state.mouseMoved) {
-            this.props.history.push(`/games/search/game/${id}`);
+            this.props.history.push(`/search/game/${id}`);
         }
     }
 
@@ -64,13 +63,13 @@ class RecentGameListContainer extends React.Component<IRecentGameListContainerPr
     }
 
     onScrollLeft(): void {
-        const element: Element = document.querySelector('.recently-released-table .scroll-horizontal');
+        const element: Element = document.querySelector('.popular-table .scroll-horizontal');
         const scrollDistance: number = 105;
         this.smoothScroll(element, ScrollDirection.LEFT, 25, scrollDistance, 5);
     }
 
     onScrollRight(): void {
-        const element: Element = document.querySelector('.recently-released-table .scroll-horizontal');
+        const element: Element = document.querySelector('.popular-table .scroll-horizontal');
         const scrollDistance: number = 105;
         this.smoothScroll(element, ScrollDirection.RIGHT, 25, scrollDistance, 5);
     }
@@ -81,7 +80,7 @@ class RecentGameListContainer extends React.Component<IRecentGameListContainerPr
 
     mouseMove(event: React.MouseEvent<HTMLDivElement>): void {
         if (this.state.clicked) {
-            const element: Element = document.querySelector('.recently-released-table .scroll-horizontal');
+            const element: Element = document.querySelector('.popular-table .scroll-horizontal');
             element.scrollLeft = element.scrollLeft + (this.state.clickedX - event.pageX);
             this.setState({ mouseMoved: true, clickedX: event.pageX });
         }
@@ -97,13 +96,13 @@ class RecentGameListContainer extends React.Component<IRecentGameListContainerPr
 
     render() {
         return (
-            <RecentGameList
-                listScrollRef={this.state.listScrollRef}
-                recentGames={this.state.recentGames}
+            <PopularGameList
+                popularGames={this.state.popularGames}
                 onClickGame={this.onClickGame}
-                goToRedirectCallback={this.props.history.push}
+                listScrollRef={this.state.listScrollRef}
                 onScrollLeft={this.onScrollLeft}
                 onScrollRight={this.onScrollRight}
+                goToRedirectCallback={this.props.history.push}
                 mouseLeave={this.mouseLeave}
                 mouseMove={this.mouseMove}
                 mouseDown={this.mouseDown}
@@ -114,4 +113,4 @@ class RecentGameListContainer extends React.Component<IRecentGameListContainerPr
 
 }
 
-export default withRouter(RecentGameListContainer);
+export default withRouter(PopularGameListContainer);

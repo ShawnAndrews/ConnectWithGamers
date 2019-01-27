@@ -3,21 +3,6 @@
 
 .home {
 
-    .banner {
-        margin: 20px 0;
-
-        > img {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        > div {
-            color: @tertiary-color;
-            font-size: 2.1rem;
-        }
-    }
-
     .highlighted-table {
 
         .highlighted-header {
@@ -43,11 +28,11 @@
             height: calc(100% - 30px);
 
             @media @lg {
-                grid-template-columns: auto auto auto;
+                grid-template-columns: auto auto;
             }
 
-            @media @sm {
-                grid-template-columns: auto auto;
+            @media @md {
+                grid-template-columns: auto;
             }
 
             .game {
@@ -55,6 +40,11 @@
                 &.feature {
                     grid-row: span 2;
                     grid-column: span 2;
+
+                    @media @md {
+                        grid-row: span 1;
+                        grid-column: span 1;
+                    }
                 }
     
                 .cover-overlay-yellow {

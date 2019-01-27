@@ -239,10 +239,8 @@ export interface PlatformOption {
 }
 
 export const redisCache: IGDBCacheEntry[] = [
-    {key: "genrelist", expiry: RedisExpirationTime.ONE_WEEK},
     {key: "chatusers", expiry: RedisExpirationTime.INF},
     {key: "news", expiry: RedisExpirationTime.ONE_HOUR},
-    {key: "discountedgames", expiry: RedisExpirationTime.ONE_HOUR},
 ];
 
 export enum ResultsEnum {

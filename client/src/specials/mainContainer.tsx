@@ -2,14 +2,14 @@ const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import Showcase from './Showcase';
+import Main from './main';
 import { GameResponse, MultiGameResponse, NewsArticle, MultiNewsResponse, GamesPresets, ExcludedGameIds } from '../../client-server-common/common';
 
-interface IShowcaseContainerProps extends RouteComponentProps<any> {
+interface IMainContainerProps extends RouteComponentProps<any> {
     
 }
 
-interface IShowcaseContainerState {
+interface IMainContainerState {
     isLoading: boolean;
     highlightedGames: GameResponse[];
     popularGames: GameResponse[];
@@ -19,9 +19,9 @@ interface IShowcaseContainerState {
     news: NewsArticle[];
 }
 
-class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowcaseContainerState> {
+class MainContainer extends React.Component<IMainContainerProps, IMainContainerState> {
 
-    constructor(props: IShowcaseContainerProps) {
+    constructor(props: IMainContainerProps) {
         super(props);
         this.goToRedirect = this.goToRedirect.bind(this);
 
@@ -37,16 +37,16 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
     }
 
     componentDidMount(): void {
-        const showcasePromises: Promise<any>[] = [];
+        const promises: Promise<any>[] = [];
 
-        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.highlighted}`));
-        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.popular}`));
-        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.recentlyReleased}`));
-        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.upcoming}`));
-        showcasePromises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/discounted`));
-        showcasePromises.push(IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`));
+        promises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.highlighted}`));
+        promises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.popular}`));
+        promises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.recentlyReleased}`));
+        promises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.upcoming}`));
+        promises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/discounted`));
+        promises.push(IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`));
 
-        Promise.all(showcasePromises)
+        Promise.all(promises)
             .then((vals: any) => {
                 let highlightedGames: GameResponse[] = undefined;
                 let popularGames: GameResponse[] = undefined;
@@ -109,7 +109,7 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
 
     render() {
         return (
-            <Showcase
+            <Main
                 isLoading={this.state.isLoading}
                 goToRedirect={this.goToRedirect}
                 highlightedGames={this.state.highlightedGames}
@@ -124,4 +124,4 @@ class ShowcaseContainer extends React.Component<IShowcaseContainerProps, IShowca
 
 }
 
-export default withRouter(ShowcaseContainer);
+export default withRouter(MainContainer);

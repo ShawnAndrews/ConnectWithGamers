@@ -6,7 +6,7 @@ import { cachePreloadedGame, getCachedGame } from "../game/main";
 import { igdbModel } from "../../../../models/db/igdb/main";
 
 /**
- * Check if redis key exists.
+ * Check if results key exists.
  */
 export function resultsGamesKeyExists(queryString: string): Promise<boolean> {
 
@@ -25,7 +25,7 @@ export function resultsGamesKeyExists(queryString: string): Promise<boolean> {
 }
 
 /**
- * Get redis-cached games.
+ * Get cached results.
  */
 export function getCachedResultsGames(queryString: string): Promise<GameResponse[]> {
 
@@ -52,7 +52,7 @@ export function getCachedResultsGames(queryString: string): Promise<GameResponse
 }
 
 /**
- * Cache results game.
+ * Cache results.
  */
 export function cacheResultsGames(queryString: string): Promise<GameResponse[]> {
     const queryStringObj: any = JSON.parse(queryString);
