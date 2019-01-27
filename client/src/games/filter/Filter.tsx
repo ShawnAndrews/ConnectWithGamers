@@ -57,7 +57,7 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
             {props.filterExpanded &&
                 <div className="mb-5">
                     <div className="filter-logo bg-primary pb-2">
-                        <img className="d-block m-auto" height="150px" src="https://i.imgur.com/MwJUdK9.gif"/>
+                        <img className="d-block m-auto" height="100px" src="https://i.imgur.com/MwJUdK9.gif"/>
                         <div className="text-uppercase color-tertiary text-center font-weight-bold">
                             Games Library
                         </div>

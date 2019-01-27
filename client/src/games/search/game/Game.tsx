@@ -24,6 +24,7 @@ interface IGameProps {
     expandSummary: () => void;
     onRateStarsClick: (rating: number) => void;
     gameRatedSnackbarClose: () => void;
+    mediaCarouselElement: any; 
 }
 
 const Game: React.SFC<IGameProps> = (props: IGameProps) => {
@@ -159,6 +160,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                         <Media
                             video={props.game.video}
                             screenshots={props.game.screenshots}
+                            mediaCarouselElement={props.mediaCarouselElement}
                         />
                     </div>
                 </div>

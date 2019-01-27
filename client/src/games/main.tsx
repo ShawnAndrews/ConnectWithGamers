@@ -23,7 +23,7 @@ const Main: React.SFC<IMainProps> = (props: IMainProps) => {
                 <FilterContainer
                     filterExpanded={props.filterExpanded}
                 />
-                <div className={`content d-inline-block overflow-hidden vh-min-100 p-4 ${props.filterExpanded ? 'active' : ''}`}>
+                <div className={`content d-inline-block overflow-hidden vh-min-100 p-4 pb-5 ${props.filterExpanded ? 'active' : ''}`}>
                     <Switch>
                         <Route path="/specials" component={MainContainer} />
                         <Route path="/search" component={SearchRouter} />

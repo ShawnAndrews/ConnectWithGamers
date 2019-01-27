@@ -1,4 +1,5 @@
 const popupS = require('popups');
+import jQuery = require('jquery');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
@@ -15,6 +16,7 @@ interface IGameContainerState {
     genre_ids: number[];
     gameid: number;
     gameRatedSnackbarOpen: boolean;
+    mediaCarouselElement: any;
 }
 
 class GameContainer extends React.PureComponent<IGameContainerProps, IGameContainerState> {
@@ -27,7 +29,8 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
             summaryExpanded: undefined,
             genre_ids: undefined,
             gameid: undefined,
-            gameRatedSnackbarOpen: false
+            gameRatedSnackbarOpen: false,
+            mediaCarouselElement: undefined
         };
         this.loadGame = this.loadGame.bind(this);
         this.handleSteamClick = this.handleSteamClick.bind(this);
@@ -123,6 +126,7 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
                 expandSummary={this.expandSummary}
                 onRateStarsClick={this.onRateStarsClick}
                 gameRatedSnackbarClose={this.gameRatedSnackbarClose}
+                mediaCarouselElement={this.state.mediaCarouselElement}
             />
         );
     }
