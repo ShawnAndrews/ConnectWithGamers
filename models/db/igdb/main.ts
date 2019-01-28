@@ -1,5 +1,5 @@
 import DatabaseBase from "./../base/dbBase";
-import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableFieldsGames, DbTableFieldsCovers, DbTableFieldsIGDBImage, DbTableFieldsScreenshots, GameExternalInfo, DbTableFieldsPricing, ExternalInfo, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableFieldsIcons, IconEnums, DbTableFieldsReleaseDates, DbTableFieldsPlatforms, IdNamePair, DbTableFieldsGenres, DbTableFieldsResults, ResultsEnum } from "../../../client/client-server-common/common";
+import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableFieldsGames, DbTableFieldsCovers, DbTableFieldsIGDBImage, DbTableFieldsScreenshots, GameExternalInfo, DbTableFieldsPricing, ExternalInfo, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableFieldsIcons, IconEnums, DbTableFieldsReleaseDates, DbTableFieldsPlatforms, IdNamePair, DbTableFieldsGenres, DbTableFieldsResults, ResultsEnum, SimilarGame, DbTableFieldsSimilarGames } from "../../../client/client-server-common/common";
 import { steamAPIGetPriceInfo } from "../../../util/main";
 import { MysqlError } from "mysql";
 
@@ -67,6 +67,9 @@ class IGDBModel extends DatabaseBase {
             if (game.genres) {
                 gamePromises.push(this.setGameGenres(game.id, game.genres));
             }
+            if (game.similar_games) {
+                gamePromises.push(this.setGameSimilarGames(game.id, game.similar_games));
+            }
             gamePromises.push(this.insert("games", DbTableFieldsGames, gamesColumnValues, DbTableFieldsGames.map(() => "?").join(", "), false));
 
             Promise.all(gamePromises)
@@ -91,7 +94,7 @@ class IGDBModel extends DatabaseBase {
     getGame(gameId: number): Promise <GameResponse> {
 
         return new Promise((resolve, reject) => {
-            const gamePromises: Promise<any>[] = [this.getGameCover(gameId), this.getGameScreenshots(gameId), this.getGamePricing(gameId), this.getGameIcons(gameId), this.getGameReleaseDates(gameId), this.getGamePlatforms(gameId), this.getGameGenres(gameId)];
+            const gamePromises: Promise<any>[] = [this.getGameCover(gameId), this.getGameScreenshots(gameId), this.getGamePricing(gameId), this.getGameIcons(gameId), this.getGameReleaseDates(gameId), this.getGamePlatforms(gameId), this.getGameGenres(gameId), this.getGameSimilarGames(gameId)];
             let cover: IGDBImage = undefined;
             let screenshots: IGDBImage[] = undefined;
             let pricing: GameExternalInfo = undefined;
@@ -99,6 +102,7 @@ class IGDBModel extends DatabaseBase {
             let releaseDates: number[] = undefined;
             let platforms: number[] = undefined;
             let genres: number[] = undefined;
+            let similar_games: SimilarGame[] = undefined;
 
             Promise.all(gamePromises)
                 .then((vals: any) => {
@@ -109,6 +113,7 @@ class IGDBModel extends DatabaseBase {
                     releaseDates = vals[4];
                     platforms = vals[5];
                     genres = vals[6];
+                    similar_games = vals[7];
 
                     // get game
                     this.select(
@@ -132,7 +137,8 @@ class IGDBModel extends DatabaseBase {
                                     screenshots: screenshots,
                                     genres: genres,
                                     platforms: platforms,
-                                    external: pricing
+                                    external: pricing,
+                                    similar_games: similar_games
                                 };
                                 return resolve(game);
                             } else {
@@ -870,6 +876,87 @@ class IGDBModel extends DatabaseBase {
                                 DbTableFieldsGenres,
                                 columnValues,
                                 DbTableFieldsGenres.map(() => "?").join(", "),
+                                false)
+                                .catch((err: MysqlError) => {
+                                    if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
+                                        return reject(err);
+                                    }
+                                });
+                        });
+
+                        return resolve();
+                    }
+                })
+                .catch((err: string) => {
+                    return reject(err);
+                });
+
+        });
+
+    }
+
+    /**
+     * Get similar games in database if exist.
+     */
+    getGameSimilarGames(gameId: number): Promise <SimilarGame[]> {
+
+        return new Promise((resolve, reject) => {
+
+            // check if similar games exists
+            this.select(
+                "similar_games",
+                DbTableFieldsSimilarGames,
+                `igdb_id=?`,
+                [gameId])
+                .then((dbResponse: GenericModelResponse) => {
+
+                    if (dbResponse.data.length > 0) {
+                        const similarGames: SimilarGame[] = dbResponse.data.map((rawSimilarGame: any) => {
+                            const similarGame: SimilarGame = {id: rawSimilarGame.similar_igdb_id, name: rawSimilarGame.similar_name, cover_uid: rawSimilarGame.similar_cover_uid};
+                            return similarGame;
+                        });
+
+                        return resolve(similarGames);
+                    } else {
+                        return resolve(undefined);
+                    }
+                })
+                .catch((err: string) => {
+                    return reject(err);
+                });
+
+        });
+
+    }
+
+    /**
+     * Set similar games in database if does not exist.
+     */
+    setGameSimilarGames(gameId: number, similarGames: SimilarGame[]): Promise <void> {
+
+        return new Promise((resolve, reject) => {
+
+            // check if similar games exists
+            this.select(
+                "similar_games",
+                DbTableFieldsSimilarGames,
+                `igdb_id=?`,
+                [gameId])
+                .then((dbResponse: GenericModelResponse) => {
+
+                    if (dbResponse.data.length > 0) {
+                        return resolve();
+                    } else {
+
+                        similarGames.forEach((similarGame: SimilarGame) => {
+                            const columnValues: any[] = [gameId, similarGame.id, similarGame.name, similarGame.cover_uid];
+
+                            // insert similar game
+                            this.insert(
+                                "similar_games",
+                                DbTableFieldsSimilarGames,
+                                columnValues,
+                                DbTableFieldsSimilarGames.map(() => "?").join(", "),
                                 false)
                                 .catch((err: MysqlError) => {
                                     if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {

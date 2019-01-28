@@ -1,4 +1,4 @@
-import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, PriceInfoResponse, GameFields, buildIGDBRequestBody, getIGDBImage, IGDBImageSizeEnums, GameExternalInfo, steamAppUrl, androidAppUrl, IconEnums, GenreEnums, IGDBGenre, PlatformEnums } from "../../../client/client-server-common/common";
+import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, PriceInfoResponse, GameFields, buildIGDBRequestBody, getIGDBImage, IGDBImageSizeEnums, GameExternalInfo, steamAppUrl, androidAppUrl, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, SimilarGame } from "../../../client/client-server-common/common";
 import { ArrayClean, steamAPIGetPriceInfo } from "../../../util/main";
 import config from "../../../config";
 import axios, { AxiosResponse } from "axios";
@@ -173,6 +173,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             let screenshots: IGDBImage[] = undefined;
             let video: string = undefined;
             const external: GameExternalInfo = {};
+            const similar_games: SimilarGame[] = [];
 
             // id
             id = RawGame.id;
@@ -205,6 +206,13 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 RawGame.cover.animated =  RawGame.cover.animated || false;
                 cover = RawGame.cover && RawGame.cover.image_id ? RawGame.cover : undefined;
             }
+
+            // similar games
+            RawGame.similar_games.forEach((rawSimilarGame: RawGame) => {
+                const similarGameCoverUid: string = rawSimilarGame.cover && isNaN(Number(rawSimilarGame.cover)) && rawSimilarGame.cover.image_id;
+                const similarGame: SimilarGame = {id: rawSimilarGame.id, name: rawSimilarGame.name, cover_uid: similarGameCoverUid};
+                similar_games.push(similarGame);
+            });
 
             // summary
             summary = RawGame.summary;
@@ -333,7 +341,8 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 first_release_date: first_release_date,
                 screenshots: screenshots,
                 video: video,
-                external: external
+                external: external,
+                similar_games: similar_games
             };
 
             gameResponses.push(gameResponse);

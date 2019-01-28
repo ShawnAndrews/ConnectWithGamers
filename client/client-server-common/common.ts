@@ -443,9 +443,10 @@ export interface RawGame {
     screenshots: IGDBImage[];
     videos: IGDBVideo[];
     external_games: IGDBExternalGame[];
+    similar_games: RawGame[];
 }
 
-export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`];
+export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`, `similar_games.*`, `similar_games.cover.image_id`];
 
 export interface Genre {
     name: string;
@@ -589,6 +590,13 @@ export interface GameResponse {
     screenshots: IGDBImage[];
     video: string;
     external: GameExternalInfo;
+    similar_games: SimilarGame[];
+}
+
+export interface SimilarGame {
+    id: number;
+    name: string;
+    cover_uid: string;
 }
 
 export interface GameExternalInfo {
@@ -764,3 +772,4 @@ export const DbTableFieldsExternalEnum: string[] = [`igdb_external_enum_id`, `na
 export const DbTableFieldsPricing: string[] = [`igdb_external_enum_id`, `igdb_id`, `uid`, `price`, `discount_percent`, `url`, `expires`];
 export const DbTableFieldsResultsEnum: string[] = [`results_enum_id`];
 export const DbTableFieldsResults: string[] = [`results_id`, `results_enum_id`, `param`, `igdb_id`, `expires`];
+export const DbTableFieldsSimilarGames: string[] = [`igdb_id`, `similar_igdb_id`, `similar_name`, `similar_cover_uid`];
