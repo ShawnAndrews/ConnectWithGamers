@@ -1,5 +1,3 @@
-import jQuery = require('jquery');
-import 'slick-carousel';
 import * as React from 'react';
 import { GameResponse } from '../../../client-server-common/common';
 import DiscountedGameList from './DiscountedGameList';
@@ -11,6 +9,8 @@ interface IDiscountedGameListContainerProps extends RouteComponentProps<any> {
 
 interface IDiscountedGameListContainerState {
     hoveredGameId: number;
+    mouseDragged: boolean;
+    mouseClicked: boolean;
 }
 
 class DiscountedGameListContainer extends React.Component<IDiscountedGameListContainerProps, IDiscountedGameListContainerState> {
@@ -20,37 +20,24 @@ class DiscountedGameListContainer extends React.Component<IDiscountedGameListCon
         this.onRedirect = this.onRedirect.bind(this);
         this.onHoverGame = this.onHoverGame.bind(this);
         this.onHoverOutGame = this.onHoverOutGame.bind(this);
+        this.onMouseMove = this.onMouseMove.bind(this);
+        this.onMouseDown = this.onMouseDown.bind(this);
+        this.onMouseUp = this.onMouseUp.bind(this);
 
         this.state = {
-            hoveredGameId: -1
+            hoveredGameId: -1,
+            mouseDragged: false,
+            mouseClicked: false
         };
     }
 
-    componentDidMount(): void {
-        jQuery('.discount-carousel').slick({
-            autoplay: true,
-            autoplaySpeed: 6000,
-            centerMode: true,
-            centerPadding: '60px',
-            slidesToShow: 3,
-            dots: true,
-            arrows: false,
-            responsive: [
-              {
-                breakpoint: 1300,
-                settings: {
-                  centerMode: true,
-                  centerPadding: '40px',
-                  slidesToShow: 1,
-                  arrows: false,
-                }
-              }
-            ]
-          });
-    }
-
     onRedirect(id: number): void {
-        this.props.history.push(`/search/game/${id}`);
+        if (!this.state.mouseDragged) {
+            this.props.history.push(`/search/game/${id}`);
+            this.setState({
+                mouseDragged: false
+            });
+        }
     }
 
     onHoverGame(gameId: number): void {
@@ -65,6 +52,30 @@ class DiscountedGameListContainer extends React.Component<IDiscountedGameListCon
         });
     }
 
+    onMouseMove(event: React.MouseEvent<HTMLDivElement>): void {
+        if (this.state.mouseClicked) {
+            this.setState({
+                mouseDragged: true
+            });
+        }
+    };
+
+    onMouseDown(event: React.MouseEvent<HTMLDivElement>): void {
+        this.setState({
+            mouseClicked: true
+        });
+    };
+
+    onMouseUp(event: React.MouseEvent<HTMLDivElement>): void {
+        this.setState({
+            mouseClicked: false
+        });
+        setTimeout(() => 
+            this.setState({
+                mouseDragged: false
+            }), 50);
+    };
+
     render() {
         return (
             <DiscountedGameList
@@ -73,6 +84,9 @@ class DiscountedGameListContainer extends React.Component<IDiscountedGameListCon
                 onHoverGame={this.onHoverGame}
                 onHoverOutGame={this.onHoverOutGame}
                 hoveredGameId={this.state.hoveredGameId}
+                onMouseDown={this.onMouseDown}
+                onMouseUp={this.onMouseUp}
+                onMouseMove={this.onMouseMove}
             />
         );
     }

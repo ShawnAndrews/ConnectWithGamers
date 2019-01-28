@@ -7,6 +7,9 @@ interface IQuadrupleSlideProps {
     onHoverGame: (gameId: number) => void;
     onHoverOutGame: () => void;
     hoveredGameId: number;
+    onMouseMove: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onMouseUp: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const QuadrupleSlide: React.SFC<IQuadrupleSlideProps> = (props: IQuadrupleSlideProps) => {
@@ -28,7 +31,7 @@ const QuadrupleSlide: React.SFC<IQuadrupleSlideProps> = (props: IQuadrupleSlideP
     }
 
     return (
-        <div className="quadruple-slide position-relative w-100">
+        <div className="quadruple-slide position-relative w-100" onMouseDown={props.onMouseDown} onMouseMove={props.onMouseMove} onMouseUp={props.onMouseUp}>
             <div className="row h-50 w-100 p-0">
                 <div className="col-6 p-0">
                     <div className="img-container h-100 mb-1 mr-1 position-relative cursor-pointer" onClick={() => props.onRedirect(gameOne.id)} onMouseOver={() => props.onHoverGame(gameOne.id)} onMouseOut={() => props.onHoverOutGame()}>

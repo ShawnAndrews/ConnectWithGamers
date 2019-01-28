@@ -125,3 +125,37 @@ button:focus {
 .w-85 {
     width: 85%!important;
 }
+
+/**
+    SLICK LIBRARY OVERRIDE CODE
+*/
+.slick-dots li button:before
+{
+    font-family: 'slick';
+    font-size: 30px;
+    line-height: 20px;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 20px;
+    height: 20px;
+
+    content: '▬';
+    text-align: center;
+
+    opacity: .25;
+    color: @tertiary-color;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.slick-dots li.slick-active button:before
+{
+    opacity: .75;
+    color: @tertiary-color;
+}
+.slick-dots li {
+    margin: 0 10px!important;
+}

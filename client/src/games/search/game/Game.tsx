@@ -74,7 +74,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
     const getCoverInfoStyle = (): Object => {
 
         return {
-            background: `linear-gradient(to right, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.5) 5%, rgba(0,0,0,0.5) 76%,rgba(0,0,0,0.0) 100%)`,
+            background: `linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 76%,rgba(0,0,0,0.0) 100%)`,
         };
     }
 

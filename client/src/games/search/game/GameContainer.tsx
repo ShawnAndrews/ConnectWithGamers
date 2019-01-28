@@ -1,5 +1,4 @@
 const popupS = require('popups');
-import jQuery = require('jquery');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';

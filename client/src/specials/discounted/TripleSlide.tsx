@@ -7,6 +7,9 @@ interface ITripleSlideProps {
     onHoverGame: (gameId: number) => void;
     onHoverOutGame: () => void;
     hoveredGameId: number;
+    onMouseMove: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onMouseUp: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const TripleSlide: React.SFC<ITripleSlideProps> = (props: ITripleSlideProps) => {
@@ -21,7 +24,7 @@ const TripleSlide: React.SFC<ITripleSlideProps> = (props: ITripleSlideProps) => 
     }
 
     return (
-        <div className="triple-slide row position-relative w-100 h-100 px-3">
+        <div className="triple-slide row position-relative w-100 h-100 px-3" onMouseDown={props.onMouseDown} onMouseMove={props.onMouseMove} onMouseUp={props.onMouseUp}>
             <div className="row">
                 <div className="col-10 pl-0">
                     <div className="img-container position-relative cursor-pointer" onClick={() => props.onRedirect(gameOne.id)} onMouseOver={() => props.onHoverGame(gameOne.id)} onMouseOut={() => props.onHoverOutGame()}>

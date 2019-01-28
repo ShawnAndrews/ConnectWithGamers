@@ -7,6 +7,9 @@ interface ISingleSlideProps {
     onHoverGame: (gameId: number) => void;
     onHoverOutGame: () => void;
     hoveredGameId: number;
+    onMouseMove: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onMouseUp: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const SingleSlide: React.SFC<ISingleSlideProps> = (props: ISingleSlideProps) => {
@@ -19,7 +22,7 @@ const SingleSlide: React.SFC<ISingleSlideProps> = (props: ISingleSlideProps) => 
     }
 
     return (
-        <div className="single-slide position-relative">
+        <div className="single-slide position-relative" onMouseDown={props.onMouseDown} onMouseMove={props.onMouseMove} onMouseUp={props.onMouseUp}>
             <div className="img-container position-relative" onClick={() => props.onRedirect(game.id)} onMouseOver={() => props.onHoverGame(game.id)} onMouseOut={() => props.onHoverOutGame()}>
                 <img src={game.screenshots[0].url} />
                 <div className={`overlay ${props.hoveredGameId === game.id && 'active'}`} />
