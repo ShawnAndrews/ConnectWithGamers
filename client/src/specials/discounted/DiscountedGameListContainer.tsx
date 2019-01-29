@@ -34,9 +34,6 @@ class DiscountedGameListContainer extends React.Component<IDiscountedGameListCon
     onRedirect(id: number): void {
         if (!this.state.mouseDragged) {
             this.props.history.push(`/search/game/${id}`);
-            this.setState({
-                mouseDragged: false
-            });
         }
     }
 

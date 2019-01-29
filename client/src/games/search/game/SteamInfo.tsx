@@ -16,11 +16,14 @@ const SteamInfo: React.SFC<ISteamInfoProps> = (props: ISteamInfoProps) => {
         <div className="price-container w-100">
             {props.steam && 
                 <Button
-                    className="steam-btn d-inline-block h-100" 
+                    className="steam-btn d-inline-block py-0 h-100" 
                     variant="raised"
                     onClick={() => { props.handleSteamClick(props.steam); }}
                 >
-                    Buy now
+                    <div className="d-table">
+                        <i className="fab fa-steam mr-2 d-table-cell align-middle"/>
+                        <div className="d-table-cell align-middle pl-2">Steam</div>
+                    </div>
                 </Button>}
             {props.price && 
                 <div className="price d-inline-block color-secondary h-100">

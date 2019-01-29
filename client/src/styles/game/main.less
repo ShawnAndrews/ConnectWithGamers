@@ -2,6 +2,7 @@
 @game-details-screenshot-height: 400px;
 @game-details-price-height: 32px;
 @game-details-media-height: 400px;
+@similar-games-carousel-height: 140px;
 
 .game-details {
 
@@ -15,7 +16,7 @@
             content: "";
             width: 100%;
             height: @game-details-screenshot-height;
-            background: linear-gradient(to bottom, rgba(0,0,0,0) 50%,rgb(23, 26, 33) 100%);
+            background: linear-gradient(to top, #171a21 10%, transparent 150%);
         }
     }
 
@@ -44,8 +45,12 @@
                 min-height: unset!important;
                 background-color: #4c6b22!important;
                 color: white!important;
-                font-size: 0.7rem;
+                font-size: 0.75rem;
                 margin-bottom: 4px;
+
+                i {
+                    font-size: 1.1rem;
+                }
             }
 
             .price {
@@ -150,6 +155,39 @@
             }
         }
 
+    }
+
+    .similar-games-carousel-container {
+     
+        .similar-games-carousel-header {
+            color: @tertiary-color;
+            font-size: 1.15rem;
+    
+            &::before {
+                position: absolute;
+                bottom: -3px;
+                left: 0;
+                content: "";
+                height: 2px;
+                width: 53px;
+                background-color: rgba(31, 216, 77, 0.6);
+            }
+        }
+
+        .similar-games-carousel {
+        
+            .similar-game {
+    
+                > img {
+                    height: @similar-games-carousel-height;
+                }
+            }
+
+            .slick-prev:before, .slick-next:before {
+                font-size: 25px!important;
+                color: @tertiary-color!important;
+            }
+        }
     }
 
 }

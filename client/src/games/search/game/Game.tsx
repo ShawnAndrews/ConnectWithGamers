@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Spinner from '../../../spinner/main';
-import { GameResponse, steamAppUrl } from '../../../../../client/client-server-common/common';
+import { GameResponse } from '../../../../../client/client-server-common/common';
 import Summary from './Summary';
 import Platforms from './Platforms';
 import Genres from './Genres';
@@ -11,6 +11,7 @@ import SteamInfo from './SteamInfo';
 import Cover from './Cover';
 import Background from './Background';
 import Snackbar from '@material-ui/core/Snackbar';
+import SimilarGames from './SimilarGames';
 
 interface IGameProps {
     isLoading: boolean;
@@ -24,7 +25,11 @@ interface IGameProps {
     expandSummary: () => void;
     onRateStarsClick: (rating: number) => void;
     gameRatedSnackbarClose: () => void;
-    mediaCarouselElement: any; 
+    mediaCarouselElement: any;
+    goToGame: (id: number) => void;
+    onSimilarGamesMouseMove: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onSimilarGamesMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onSimilarGamesMouseUp: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const Game: React.SFC<IGameProps> = (props: IGameProps) => {
@@ -68,13 +73,6 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
 
         return {
             width: `calc(100% - ${newWidth}px)`
-        };
-    }
-
-    const getCoverInfoStyle = (): Object => {
-
-        return {
-            background: `linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 76%,rgba(0,0,0,0.0) 100%)`,
         };
     }
 
@@ -145,7 +143,6 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                         rating={props.game.aggregated_rating}
                         onRateStarsClick={props.onRateStarsClick}
                         gameRatedSnackbarOpen={props.gameRatedSnackbarOpen}
-                        containerStyle={getCoverInfoStyle()}
                         nameStyle={getCoverNameStyle()}
                     />
                     <div style={getCoverContentStyle()}>
@@ -164,6 +161,13 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                         />
                     </div>
                 </div>
+                <SimilarGames
+                    similarGames={props.game.similar_games}
+                    goToGame={props.goToGame}
+                    onSimilarGamesMouseDown={props.onSimilarGamesMouseDown}
+                    onSimilarGamesMouseUp={props.onSimilarGamesMouseUp}
+                    onSimilarGamesMouseMove={props.onSimilarGamesMouseMove}
+                />
             </div>
             <Snackbar
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

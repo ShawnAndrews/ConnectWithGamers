@@ -16,6 +16,8 @@ interface IGameContainerState {
     gameid: number;
     gameRatedSnackbarOpen: boolean;
     mediaCarouselElement: any;
+    mouseDragged: boolean;
+    mouseClicked: boolean;
 }
 
 class GameContainer extends React.PureComponent<IGameContainerProps, IGameContainerState> {
@@ -29,7 +31,9 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
             genre_ids: undefined,
             gameid: undefined,
             gameRatedSnackbarOpen: false,
-            mediaCarouselElement: undefined
+            mediaCarouselElement: undefined,
+            mouseDragged: false,
+            mouseClicked: false
         };
         this.loadGame = this.loadGame.bind(this);
         this.handleSteamClick = this.handleSteamClick.bind(this);
@@ -38,6 +42,10 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
         this.expandSummary = this.expandSummary.bind(this);
         this.onRateStarsClick = this.onRateStarsClick.bind(this);
         this.gameRatedSnackbarClose = this.gameRatedSnackbarClose.bind(this);
+        this.goToGame = this.goToGame.bind(this);
+        this.onSimilarGamesMouseMove = this.onSimilarGamesMouseMove.bind(this);
+        this.onSimilarGamesMouseDown = this.onSimilarGamesMouseDown.bind(this);
+        this.onSimilarGamesMouseUp = this.onSimilarGamesMouseUp.bind(this);
     }
 
     componentWillMount(): void {
@@ -111,6 +119,36 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
         });
     }
 
+    goToGame(id: number): void {
+        if (!this.state.mouseDragged) {
+            this.props.history.push(`/search/game/${id}`);
+        }
+    }
+
+    onSimilarGamesMouseMove(event: React.MouseEvent<HTMLDivElement>): void {
+        if (this.state.mouseClicked) {
+            this.setState({
+                mouseDragged: true
+            });
+        }
+    };
+
+    onSimilarGamesMouseDown(event: React.MouseEvent<HTMLDivElement>): void {
+        this.setState({
+            mouseClicked: true
+        });
+    };
+
+    onSimilarGamesMouseUp(event: React.MouseEvent<HTMLDivElement>): void {
+        this.setState({
+            mouseClicked: false
+        });
+        setTimeout(() => 
+            this.setState({
+                mouseDragged: false
+            }), 50);
+    };
+
     render() {
         return (
             <Game
@@ -126,6 +164,10 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
                 onRateStarsClick={this.onRateStarsClick}
                 gameRatedSnackbarClose={this.gameRatedSnackbarClose}
                 mediaCarouselElement={this.state.mediaCarouselElement}
+                goToGame={this.goToGame}
+                onSimilarGamesMouseDown={this.onSimilarGamesMouseDown}
+                onSimilarGamesMouseUp={this.onSimilarGamesMouseUp}
+                onSimilarGamesMouseMove={this.onSimilarGamesMouseMove}
             />
         );
     }

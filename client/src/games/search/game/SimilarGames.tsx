@@ -1,0 +1,51 @@
+import * as React from 'react';
+import { SimilarGame, getIGDBImage, IGDBImageSizeEnums } from '../../../../client-server-common/common';
+import Slider from "react-slick";
+
+interface ISimilarGamesProps {
+    similarGames: SimilarGame[];
+    goToGame: (id: number) => void;
+    onSimilarGamesMouseMove: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onSimilarGamesMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onSimilarGamesMouseUp: (event: React.MouseEvent<HTMLDivElement>) => void;
+}
+
+const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) => {
+
+    const settings = {
+        className: "similar-games-carousel variable-width",
+        infinite: true,
+        dots: false,
+        swipeToSlide: true,
+        variableWidth: true
+    };
+    
+    return (
+        <div className="similar-games-carousel-container my-5">
+            <div className="similar-games-carousel-header position-relative mb-2">
+                <a className="mr-2">Similar Games</a>
+                <i className="fas fa-chevron-right"/>
+            </div>
+            <Slider {...settings}>
+                {props.similarGames.map((similarGame: SimilarGame) => {
+                    
+                    return (
+                        <div className="similar-game px-2">
+                            <img 
+                                className="cursor-pointer"
+                                src={getIGDBImage(similarGame.cover_uid, IGDBImageSizeEnums.cover_big)}
+                                onClick={() => props.goToGame(similarGame.id)}
+                                onMouseDown={props.onSimilarGamesMouseDown}
+                                onMouseMove={props.onSimilarGamesMouseMove}
+                                onMouseUp={props.onSimilarGamesMouseUp}
+                            />
+                        </div>
+                    );
+                })}
+            </Slider>
+        </div>
+    );
+
+};
+
+export default SimilarGames;

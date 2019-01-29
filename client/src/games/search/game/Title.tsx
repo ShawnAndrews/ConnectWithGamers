@@ -7,14 +7,13 @@ interface ITitleProps {
     rating: number;
     gameRatedSnackbarOpen: boolean;
     onRateStarsClick: (rating: number) => void;
-    containerStyle: Object;
     nameStyle: Object;
 }
 
 const Title: React.SFC<ITitleProps> = (props: ITitleProps) => {
 
     return (
-        <div className="px-2 pb-3" style={props.containerStyle}>
+        <div className="px-2 pb-3">
             {props.name && 
                 <Textfit className="title font-weight-bold" style={props.nameStyle} min={20} max={40}>{props.name}</Textfit>}
             <ReactStars
