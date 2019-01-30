@@ -1,0 +1,35 @@
+CREATE TABLE connectwithgamers.pricing_enum (
+    pricing_enum_id int NOT NULL AUTO_INCREMENT,
+    name varchar(50) NOT NULL,
+    PRIMARY KEY (pricing_enum_id)
+);
+
+INSERT INTO connectwithgamers.pricing_enum VALUES ("Free");
+
+INSERT INTO connectwithgamers.pricing_enum VALUES ("Free with Xbox Game Pass");
+
+INSERT INTO connectwithgamers.pricing_enum VALUES ("Discounted with Xbox Game Pass");
+
+INSERT INTO connectwithgamers.pricing_enum VALUES ("Discounted with Xbox Live Gold");
+
+INSERT INTO connectwithgamers.pricing_enum VALUES ("Main game");
+
+INSERT INTO connectwithgamers.pricing_enum VALUES ("DLC/Bundles");
+
+INSERT INTO connectwithgamers.pricing_enum VALUES ("Coming Soon");
+
+INSERT INTO connectwithgamers.pricing_enum VALUES ("Preorder");
+
+INSERT INTO connectwithgamers.pricing_enum VALUES ("In-App Purchase");
+
+CREATE TABLE connectwithgamers.pricing VALUES (
+    pricing_id int NOT NULL AUTO_INCREMENT,
+    igdb_external_enum_id int NOT NULL,
+    igdb_pricing_enum_id int NOT NULL
+    igdb_id int NOT NULL,
+    PRIMARY KEY (pricing_id),
+    FORIEGN KEY (igdb_id) REFERENCES games(igdb_id),
+    FORIEGN KEY (igdb_external_enum_id) REFERENCES igdb_external_enum(igdb_external_enum_id),
+    FORIEGN KEY (igdb_pricing_enum_id) REFERENCES pricing_enum(igdb_pricing_enum_id),
+    UNIQUE KEY(igdb_external_enum_id,igdb_pricing_id,igdb_id)
+);
