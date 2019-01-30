@@ -24,6 +24,9 @@ startChatServer();
 function startChatServer(): void {
     const chatHandler: SocketIO.Server = socketIO.listen(chatServer);
 
+    // allow CORS
+    chatServer.set(`origins`, `*:*`);
+    
     // listen to chatroom port
     chatServer.listen(config.chatPort);
 
