@@ -21,8 +21,8 @@ const SteamInfo: React.SFC<ISteamInfoProps> = (props: ISteamInfoProps) => {
                     onClick={() => { props.handleSteamClick(props.steam); }}
                 >
                     <div className="d-table">
-                        <i className="fab fa-steam mr-2 d-table-cell align-middle"/>
-                        <div className="d-table-cell align-middle pl-2">Steam</div>
+                        <i className="fab fa-steam mr-2 d-table-cell"/>
+                        <div className="name d-table-cell pl-2">Steam</div>
                     </div>
                 </Button>}
             {props.price && 

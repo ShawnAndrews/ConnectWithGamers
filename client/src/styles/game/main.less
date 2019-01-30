@@ -50,6 +50,14 @@
 
                 i {
                     font-size: 1.1rem;
+
+                    svg {
+                        vertical-align: middle;
+                    }
+                }
+
+                .name {
+                    vertical-align: inherit;
                 }
             }
 
@@ -175,7 +183,10 @@
         }
 
         .similar-games-carousel {
-        
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
             .similar-game {
     
                 > img {
@@ -183,9 +194,28 @@
                 }
             }
 
-            .slick-prev:before, .slick-next:before {
-                font-size: 25px!important;
-                color: @tertiary-color!important;
+            .prev {
+                padding-right: 5px;
+            }
+
+            .next {
+                padding-left: 5px;
+            }
+
+            .slick-list {
+                width: calc(100% - 50px);
+                display: inline-block!important;
+
+                &:after {
+                    background: linear-gradient(to right, #171a21 10px, transparent 50px, transparent calc(100% - 50px), #171a21 calc(100% - 10px));
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    height: 100%;
+                    width: 100%;
+                    pointer-events: none;
+                    content: " ";
+                }
             }
         }
     }

@@ -173,7 +173,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             let screenshots: IGDBImage[] = undefined;
             let video: string = undefined;
             const external: GameExternalInfo = {};
-            const similar_games: SimilarGame[] = [];
+            let similar_games: SimilarGame[] = undefined;
 
             // id
             id = RawGame.id;
@@ -208,11 +208,14 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             }
 
             // similar games
-            RawGame.similar_games.forEach((rawSimilarGame: RawGame) => {
-                const similarGameCoverUid: string = rawSimilarGame.cover && isNaN(Number(rawSimilarGame.cover)) && rawSimilarGame.cover.image_id;
-                const similarGame: SimilarGame = {id: rawSimilarGame.id, name: rawSimilarGame.name, cover_uid: similarGameCoverUid};
-                similar_games.push(similarGame);
-            });
+            if (RawGame.similar_games) {
+                similar_games = [];
+                RawGame.similar_games.forEach((rawSimilarGame: RawGame) => {
+                    const similarGameCoverUid: string = rawSimilarGame.cover && isNaN(Number(rawSimilarGame.cover)) && rawSimilarGame.cover.image_id;
+                    const similarGame: SimilarGame = {id: rawSimilarGame.id, name: rawSimilarGame.name, cover_uid: similarGameCoverUid};
+                    similar_games.push(similarGame);
+                });
+            }
 
             // summary
             summary = RawGame.summary;

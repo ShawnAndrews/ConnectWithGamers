@@ -226,9 +226,9 @@ export function steamAPIGetPriceInfo(steamgameids: number[]): Promise<PriceInfoR
             axios({
                 method: "get",
                 url: `${config.steam.dbURL}/${steamgameid}/?cc=us`,
-                headers:{
+                headers: {
                     Cookie: "birthtime=28801;"
-                } 
+                }
             })
             .then((response: AxiosResponse) => {
                 const webpage: string = response.data;

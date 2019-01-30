@@ -12,15 +12,48 @@ interface ISimilarGamesProps {
 
 const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) => {
 
+    if (!props.similarGames) {
+        return null;
+    }
+
+    function NextArrow(props) {
+        const { className, style, onClick } = props;
+        return (
+            <div
+                className="next d-inline-block align-top cursor-pointer"
+                style={...style}
+                onClick={onClick}
+            >
+                <i className="fas fa-2x fa-chevron-right color-tertiary"/>
+            </div>
+        );
+    }
+    
+    function PrevArrow(props) {
+        const { className, style, onClick } = props;
+        return (
+            <div
+                className="prev d-inline-block align-top cursor-pointer"
+                style={...style}
+                onClick={onClick}
+            >
+                <i className="fas fa-2x fa-chevron-left color-tertiary"/>
+            </div>
+        );
+    }
+
     const settings = {
-        className: "similar-games-carousel variable-width",
+        className: "similar-games-carousel variable-width pt-2",
         infinite: true,
         dots: false,
         swipeToSlide: true,
-        variableWidth: true
+        variableWidth: true,
+        nextArrow: <NextArrow />,
+        prevArrow: <PrevArrow />
     };
     
     return (
+
         <div className="similar-games-carousel-container my-5">
             <div className="similar-games-carousel-header position-relative mb-2">
                 <a className="mr-2">Similar Games</a>
