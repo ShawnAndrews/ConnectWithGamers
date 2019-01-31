@@ -54,7 +54,7 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
                             <Spinner className="text-center mt-5" loadingMsg="Loading chat..." />
                         </div>}
                     {!props.messagesLoading && props.chatLog.length === 0 && 
-                        <h3 className="text-center mt-5 color-secondary">No comments<i className="far fa-comments ml-3"/></h3>}
+                        <h3 className="text-center mt-5 color-tertiary">No comments<i className="far fa-comments ml-3"/></h3>}
                     {!props.messagesLoading &&
                         <List className="pr-2">
                             {props.chatLog

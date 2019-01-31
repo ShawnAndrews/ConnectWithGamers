@@ -26,7 +26,7 @@ function startChatServer(): void {
 
     // allow CORS
     chatServer.set(`origins`, `*:*`);
-    
+
     // listen to chatroom port
     chatServer.listen(config.chatPort);
 

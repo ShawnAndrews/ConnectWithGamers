@@ -46,7 +46,7 @@ const Rightnav: React.SFC<IRightnavProps> = (props: IRightnavProps) => {
         <Paper className={`chatroom-users ${props.expanded ? 'expanded' : ''} d-inline-block align-top y-scrollable h-100 py-2 br-0`}>
             {props.users.length === 0 && 
                 <div className="empty-container d-table h-100 w-100">
-                    <div className="empty d-table-cell align-middle text-center">
+                    <div className="empty d-table-cell align-middle text-center color-tertiary">
                         <i className="fas fa-users"/>
                         <div className="text">No users online</div>
                     </div>

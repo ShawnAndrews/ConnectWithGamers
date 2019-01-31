@@ -25,7 +25,7 @@ const Topnav: React.SFC<ITopnavProps> = (props: ITopnavProps) => {
                     <i className="fas fa-bars"/>
                 </IconButton>
             </div>
-            <Typography className="title nav text-center d-table" noWrap={true}>
+            <Typography className="title nav text-center d-table color-tertiary" noWrap={true}>
                 <Textfit className="font-weight-bold d-table-cell align-middle" min={10} max={22}>{props.title}</Textfit>
             </Typography>
             <Menu
