@@ -85,9 +85,30 @@ export default class DatabaseBase {
                 }
 
                 // execute query
-                const finalQuery: any = this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
+                this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
                     if (error) {
                         console.log(`SELECT error: ${JSON.stringify(error)}`);
+                        return reject(error);
+                    }
+                    response.data = results;
+                    return resolve(response);
+                });
+
+            });
+
+    }
+
+    /**
+     * SQL custom query wrapper.
+     */
+    custom(query: string, preparedVars: any[]): Promise<GenericModelResponse> {
+        return new Promise( (resolve, reject) => {
+                const response: GenericModelResponse = {error: undefined, data: undefined};
+
+                // execute query
+                this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
+                    if (error) {
+                        console.log(`CUSTOM error: ${JSON.stringify(error)}`);
                         return reject(error);
                     }
                     response.data = results;

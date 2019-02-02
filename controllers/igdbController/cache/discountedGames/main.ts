@@ -53,7 +53,6 @@ export function getCachedDiscountedGames(): Promise<GameResponse[]> {
 /**
  * Cache games.
  */
-
 export function cacheDiscountedGames(): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
@@ -65,7 +64,6 @@ export function cacheDiscountedGames(): Promise<GameResponse[]> {
             url: URL
         })
         .then((response: AxiosResponse) => {
-
             const steamWebpage: string = response.data;
             const steamIds: number[] = parseSteamIds(steamWebpage);
 

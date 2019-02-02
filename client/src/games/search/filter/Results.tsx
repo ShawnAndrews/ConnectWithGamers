@@ -10,7 +10,6 @@ interface IResultsProps {
     games: GameResponse[];
     retry: boolean;
     onRetryClick: () => void;
-    ResultsEnum: ResultsEnum;
 }
 
 const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {

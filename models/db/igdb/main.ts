@@ -1,7 +1,8 @@
 import DatabaseBase from "./../base/dbBase";
-import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableFieldsGames, DbTableFieldsCovers, DbTableFieldsIGDBImage, DbTableFieldsScreenshots, GameExternalInfo, DbTableFieldsPricing, ExternalInfo, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableFieldsIcons, IconEnums, DbTableFieldsReleaseDates, DbTableFieldsPlatforms, IdNamePair, DbTableFieldsGenres, DbTableFieldsResults, ResultsEnum, SimilarGame, DbTableFieldsSimilarGames } from "../../../client/client-server-common/common";
+import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, GameExternalInfo, DbTablePricingsFields, ExternalInfo, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableResultsFields, ResultsEnum, SimilarGame, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields } from "../../../client/client-server-common/common";
 import { steamAPIGetPriceInfo } from "../../../util/main";
 import { MysqlError } from "mysql";
+import config from "../../../config";
 
 
 class IGDBModel extends DatabaseBase {
@@ -16,9 +17,9 @@ class IGDBModel extends DatabaseBase {
     gameExists(igdbId: number): Promise<boolean> {
         return new Promise((resolve, reject) => {
             this.select(
-                "games",
-                DbTableFieldsGames,
-                `igdb_id=?`,
+                DbTables.igdb_games,
+                DbTableIGDBGamesFields,
+                `${DbTableIGDBGamesFields[1]}=?`,
                 [igdbId])
                 .then((dbResponse: GenericModelResponse) => {
 
@@ -43,38 +44,54 @@ class IGDBModel extends DatabaseBase {
     setGame(game: GameResponse): Promise<void> {
 
         return new Promise((resolve, reject) => {
-            const gamePromises: Promise<any>[] = [];
             const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, game.summary, game.first_release_date, game.video];
 
-            if (game.cover) {
-                gamePromises.push(this.setGameCover(game.id, game.cover));
-            }
-            if (game.screenshots) {
-                gamePromises.push(this.setGameScreenshots(game.id, game.screenshots));
-            }
-            if (game.external) {
-                gamePromises.push(this.setGamePricing(game.id, game.external));
-            }
-            if (game.linkIcons) {
-                gamePromises.push(this.setGameIcons(game.id, game.linkIcons));
-            }
-            if (game.release_dates) {
-                gamePromises.push(this.setGameReleaseDates(game.id, game.release_dates));
-            }
-            if (game.platforms) {
-                gamePromises.push(this.setGamePlatforms(game.id, game.platforms));
-            }
-            if (game.genres) {
-                gamePromises.push(this.setGameGenres(game.id, game.genres));
-            }
-            if (game.similar_games) {
-                gamePromises.push(this.setGameSimilarGames(game.id, game.similar_games));
-            }
-            gamePromises.push(this.insert("games", DbTableFieldsGames, gamesColumnValues, DbTableFieldsGames.map(() => "?").join(", "), false));
+            this.insert(
+                DbTables.igdb_games,
+                DbTableIGDBGamesFields.slice(1),
+                gamesColumnValues,
+                DbTableIGDBGamesFields.slice(1).map(() => "?").join(", "),
+                false)
+                .then((dbResponse: GenericModelResponse) => {
+                    const inserted_igdb_games_sys_key_id: number = dbResponse.data.insertId;
+                    const gamePromises: Promise<any>[] = [];
 
-            Promise.all(gamePromises)
-                .then(() => {
-                    return resolve();
+                    if (game.cover) {
+                        gamePromises.push(this.setGameCover(inserted_igdb_games_sys_key_id, game.cover));
+                    }
+                    if (game.screenshots) {
+                        gamePromises.push(this.setGameScreenshots(inserted_igdb_games_sys_key_id, game.screenshots));
+                    }
+                    if (game.external) {
+                        gamePromises.push(this.setGamePricing(inserted_igdb_games_sys_key_id, game.external));
+                    }
+                    if (game.linkIcons) {
+                        gamePromises.push(this.setGameIcons(inserted_igdb_games_sys_key_id, game.linkIcons));
+                    }
+                    if (game.release_dates) {
+                        gamePromises.push(this.setGameReleaseDates(inserted_igdb_games_sys_key_id, game.release_dates));
+                    }
+                    if (game.platforms) {
+                        gamePromises.push(this.setGamePlatforms(inserted_igdb_games_sys_key_id, game.platforms));
+                    }
+                    if (game.genres) {
+                        gamePromises.push(this.setGameGenres(inserted_igdb_games_sys_key_id, game.genres));
+                    }
+                    if (game.similar_games) {
+                        gamePromises.push(this.setGameSimilarGames(inserted_igdb_games_sys_key_id, game.similar_games));
+                    }
+
+                    Promise.all(gamePromises)
+                        .then(() => {
+                            return resolve();
+                        })
+                        .catch((err: MysqlError) => {
+                            if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
+                                return reject(err);
+                            } else {
+                                return resolve();
+                            }
+                        });
                 })
                 .catch((err: MysqlError) => {
                     if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
@@ -117,14 +134,14 @@ class IGDBModel extends DatabaseBase {
 
                     // get game
                     this.select(
-                        "games",
-                        DbTableFieldsGames,
-                        `igdb_id=?`,
+                        DbTables.igdb_games,
+                        DbTableIGDBGamesFields,
+                        `${DbTableIGDBGamesFields[1]}=?`,
                         [gameId])
                         .then((dbResponse: GenericModelResponse) => {
                             if (dbResponse.data.length > 0) {
                                 const game: GameResponse = {
-                                    id: dbResponse.data[0].igdb_id,
+                                    id: dbResponse.data[0].id,
                                     name: dbResponse.data[0].name,
                                     aggregated_rating: dbResponse.data[0].aggregated_rating,
                                     total_rating_count: dbResponse.data[0].total_rating_count,
@@ -142,7 +159,7 @@ class IGDBModel extends DatabaseBase {
                                 };
                                 return resolve(game);
                             } else {
-                                return reject(`Game not found in database.`);
+                                return reject(`Game not found in database with id #${gameId}`);
                             }
                         })
                         .catch((err: string) => {
@@ -161,39 +178,40 @@ class IGDBModel extends DatabaseBase {
     /**
      * Set game cover in database if does not exist.
      */
-    setGameCover(gameId: number, cover: IGDBImage): Promise <void> {
+    setGameCover(inserted_igdb_games_sys_key_id: number, cover: IGDBImage): Promise <void> {
 
         return new Promise((resolve, reject) => {
 
             // check if cover exists
-            this.select(
-                "covers",
-                DbTableFieldsCovers,
-                `igdb_id=?`,
-                [gameId])
+            this.custom(
+                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.covers} cv
+                JOIN ${DbTables.igdb_games} ig ON cv.${DbTableCoversFields[2]} = ig.${DbTableIGDBGamesFields[0]}
+                WHERE ig.${DbTableIGDBGamesFields[0]}=?`,
+                [inserted_igdb_games_sys_key_id])
                 .then((dbResponse: GenericModelResponse) => {
 
-                    if (dbResponse.data.length > 0) {
+                    if (dbResponse.data[0][`COUNT(*)`] !== 0) {
                         return resolve();
                     } else {
                         const imageColumnValues: any[] = [cover.image_id, cover.alpha_channel || 0, cover.animated || 0, cover.url, cover.width, cover.height];
 
                         // insert image
                         this.insert(
-                            "igdb_image",
-                            DbTableFieldsIGDBImage,
+                            DbTables.igdb_images,
+                            DbTableIGDBImagesFields.slice(1),
                             imageColumnValues,
-                            DbTableFieldsIGDBImage.map(() => "?").join(", "),
+                            DbTableIGDBImagesFields.slice(1).map(() => "?").join(", "),
                             false)
-                            .then(() => {
-                                const coverImageColumnValues: any[] = [cover.image_id, gameId];
+                            .then((dbResponse: GenericModelResponse) => {
+                                const inserted_igdb_images_sys_key_id: number = dbResponse.data.insertId;
+                                const coverImageColumnValues: any[] = [inserted_igdb_images_sys_key_id, inserted_igdb_games_sys_key_id];
 
                                 // insert cover
                                 this.insert(
-                                    "covers",
-                                    DbTableFieldsCovers,
+                                    DbTables.covers,
+                                    DbTableCoversFields.slice(1),
                                     coverImageColumnValues,
-                                    DbTableFieldsCovers.map(() => "?").join(", "),
+                                    DbTableCoversFields.slice(1).map(() => "?").join(", "),
                                     false)
                                     .then(() => {
                                         return resolve();
@@ -232,42 +250,25 @@ class IGDBModel extends DatabaseBase {
         return new Promise((resolve, reject) => {
 
             // check if cover exists
-            this.select(
-                "covers",
-                DbTableFieldsCovers,
-                `igdb_id=?`,
+            this.custom(
+                `SELECT ii.* FROM ${config.mysql.database}.${DbTables.covers} co
+                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = co.${DbTableCoversFields[2]}
+                JOIN ${DbTables.igdb_images} ii ON ii.${DbTableIGDBImagesFields[0]} = co.${DbTableCoversFields[1]}
+                WHERE ig.id=?`,
                 [gameId])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data.length > 0) {
-                        const IGDBImageId: number = dbResponse.data[0].igdb_image_id;
-
-                        this.select(
-                            "igdb_image",
-                            DbTableFieldsIGDBImage,
-                            `igdb_image_id=?`,
-                            [IGDBImageId])
-                            .then((dbResponse: GenericModelResponse) => {
-
-                                if (dbResponse.data.length > 0) {
-                                    const cover: IGDBImage = {
-                                        id: dbResponse.data[0].igdb_image_id,
-                                        alpha_channel: Boolean(dbResponse.data[0].alpha_channel[0]),
-                                        animated: Boolean(dbResponse.data[0].animated[0]),
-                                        url: dbResponse.data[0].url,
-                                        image_id: dbResponse.data[0].image_id,
-                                        width: dbResponse.data[0].width,
-                                        height: dbResponse.data[0].height,
-                                    };
-                                    return resolve(cover);
-                                } else {
-                                    return resolve(undefined);
-                                }
-                            })
-                            .catch((err: string) => {
-                                return reject(err);
-                            });
-
+                        const cover: IGDBImage = {
+                            id: dbResponse.data[0].igdb_images_sys_key_id,
+                            alpha_channel: Boolean(dbResponse.data[0].alpha_channel[0]),
+                            animated: Boolean(dbResponse.data[0].animated[0]),
+                            url: dbResponse.data[0].url,
+                            image_id: dbResponse.data[0].id,
+                            width: dbResponse.data[0].width,
+                            height: dbResponse.data[0].height,
+                        };
+                        return resolve(cover);
                     } else {
                         return resolve(undefined);
                     }
@@ -283,19 +284,19 @@ class IGDBModel extends DatabaseBase {
     /**
      * Set game screenshots in database if does not exist.
      */
-    setGameScreenshots(gameId: number, screenshots: IGDBImage[]): Promise <void> {
+    setGameScreenshots(inserted_igdb_games_sys_key_id: number, screenshots: IGDBImage[]): Promise <void> {
 
         return new Promise((resolve, reject) => {
 
             // check if screenshots exists
-            this.select(
-                "screenshots",
-                DbTableFieldsScreenshots,
-                `igdb_id=?`,
-                [gameId])
+            this.custom(
+                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.screenshots} ss
+                JOIN ${DbTables.igdb_games} ig ON ss.${DbTableScreenshotsFields[2]} = ig.${DbTableIGDBGamesFields[0]}
+                WHERE ig.${DbTableIGDBGamesFields[0]}=?`,
+                [inserted_igdb_games_sys_key_id])
                 .then((dbResponse: GenericModelResponse) => {
 
-                    if (dbResponse.data.length > 0) {
+                    if (dbResponse.data[0][`COUNT(*)`] !== 0) {
                         return resolve();
                     } else {
                         screenshots
@@ -305,20 +306,21 @@ class IGDBModel extends DatabaseBase {
 
                             // insert image
                             this.insert(
-                                "igdb_image",
-                                DbTableFieldsIGDBImage,
+                                DbTables.igdb_images,
+                                DbTableIGDBImagesFields.slice(1),
                                 imageColumnValues,
-                                DbTableFieldsIGDBImage.map(() => "?").join(", "),
+                                DbTableIGDBImagesFields.slice(1).map(() => "?").join(", "),
                                 false)
-                                .then(() => {
-                                    const screenshotImageColumnValues: any[] = [screenshot.image_id, gameId];
+                                .then((dbResponse: GenericModelResponse) => {
+                                    const inserted_igdb_images_sys_key_id: number = dbResponse.data.insertId;
+                                    const screenshotImageColumnValues: any[] = [inserted_igdb_images_sys_key_id, inserted_igdb_games_sys_key_id];
 
                                     // insert screenshot
                                     this.insert(
-                                        "screenshots",
-                                        DbTableFieldsScreenshots,
+                                        DbTables.screenshots,
+                                        DbTableScreenshotsFields.slice(1),
                                         screenshotImageColumnValues,
-                                        DbTableFieldsScreenshots.map(() => "?").join(", "),
+                                        DbTableScreenshotsFields.slice(1).map(() => "?").join(", "),
                                         false)
                                         .catch((err: MysqlError) => {
                                             if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
@@ -354,55 +356,30 @@ class IGDBModel extends DatabaseBase {
         return new Promise((resolve, reject) => {
 
             // check if screenshots exists
-            this.select(
-                "screenshots",
-                DbTableFieldsScreenshots,
-                `igdb_id=?`,
+            this.custom(
+                `SELECT ii.* FROM ${config.mysql.database}.${DbTables.screenshots} ss
+                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = ss.${DbTableScreenshotsFields[2]}
+                JOIN ${DbTables.igdb_images} ii ON ii.${DbTableIGDBImagesFields[0]} = ss.${DbTableScreenshotsFields[1]}
+                WHERE ig.id=?`,
                 [gameId])
                 .then((dbResponse: GenericModelResponse) => {
+                    const screenshots: IGDBImage[] = [];
 
-                    if (dbResponse.data.length > 0) {
-                        const screenshotsPromises: Promise<GenericModelResponse>[] = [];
+                    dbResponse.data.forEach((x: any) => {
 
-                        dbResponse.data.forEach((x: any) => {
-                            const IGDBImageId: number = x.igdb_image_id;
+                        const screenshot: IGDBImage = {
+                            id: x.igdb_images_sys_key_id,
+                            alpha_channel: x.alpha_channel[0],
+                            animated: x.animated[0],
+                            url: x.url,
+                            image_id: x.id,
+                            width: x.width,
+                            height: x.height,
+                        };
+                        screenshots.push(screenshot);
+                    });
 
-                            screenshotsPromises.push(
-                                this.select(
-                                    "igdb_image",
-                                    DbTableFieldsIGDBImage,
-                                    `igdb_image_id=?`,
-                                    [IGDBImageId])
-                            );
-                        });
-
-                        Promise.all(screenshotsPromises)
-                            .then((vals: GenericModelResponse[]) => {
-                                const screenshots: IGDBImage[] = [];
-
-                                vals.forEach((x: GenericModelResponse) => {
-                                    const screenshot: IGDBImage = {
-                                        id: undefined,
-                                        alpha_channel: x.data[0].alpha_channel,
-                                        animated: x.data[0].animated,
-                                        url: x.data[0].url,
-                                        image_id: x.data[0].igdb_image_id,
-                                        width: x.data[0].width,
-                                        height: x.data[0].height,
-                                    };
-
-                                    screenshots.push(screenshot);
-                                });
-
-                                return resolve(screenshots);
-                            })
-                            .catch((error: string) => {
-                                return reject(error);
-                            });
-
-                    } else {
-                        return resolve(undefined);
-                    }
+                    return resolve(screenshots);
                 })
                 .catch((err: string) => {
                     return reject(err);
@@ -412,54 +389,62 @@ class IGDBModel extends DatabaseBase {
 
     }
 
+    gamePricingExists(gameId: number): Promise <boolean> {
+
+        return new Promise((resolve, reject) => {
+
+        });
+    }
+
     /**
      * Set game pricing in database if does not exist.
      */
-    setGamePricing(gameId: number, external: GameExternalInfo): Promise <void> {
-        const today: Date = new Date();
+    setGamePricing(inserted_igdb_games_sys_key_id: number, external: GameExternalInfo): Promise <void> {
         const datePlus7Days: Date = new Date();
         datePlus7Days.setDate(datePlus7Days.getDate() + 7);
 
         return new Promise((resolve, reject) => {
 
             // check if pricing exists
-            this.select(
-                "pricings",
-                DbTableFieldsPricing,
-                `igdb_id=?`,
-                [gameId])
+            this.custom(
+                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.pricings} pc
+                JOIN ${DbTables.igdb_games} ig ON pc.${DbTablePricingsFields[3]} = ig.${DbTableIGDBGamesFields[0]}
+                WHERE ig.${DbTableIGDBGamesFields[0]}=?`,
+                [inserted_igdb_games_sys_key_id])
                 .then((dbResponse: GenericModelResponse) => {
-                    const priceInfo: any[][] = [];
 
-                    if (external.steam) {
-                        priceInfo.push([IGDBExternalCategoryEnum.steam, gameId, external.steam.uid, external.steam.price, external.steam.discount_percent, external.steam.url, datePlus7Days]);
-                    }
+                    if (dbResponse.data[0][`COUNT(*)`] !== 0) {
+                        return resolve();
+                    } else {
+                        const priceInfo: any[][] = [];
 
-                    if (external.gog) {
-                        priceInfo.push([IGDBExternalCategoryEnum.gog, gameId, external.gog.uid, external.gog.price, external.gog.discount_percent, external.gog.url, datePlus7Days]);
-                    }
+                        if (external.steam) {
+                            priceInfo.push([IGDBExternalCategoryEnum.steam, external.steam.pricings_enum, inserted_igdb_games_sys_key_id, external.steam.id, external.steam.price, external.steam.discount_percent, external.steam.url, datePlus7Days]);
+                        }
 
-                    if (external.microsoft) {
-                        priceInfo.push([IGDBExternalCategoryEnum.microsoft, gameId, external.microsoft.uid, external.microsoft.price, external.microsoft.discount_percent, external.microsoft.url, datePlus7Days]);
-                    }
+                        if (external.gog) {
+                            priceInfo.push([IGDBExternalCategoryEnum.gog, external.gog.pricings_enum, inserted_igdb_games_sys_key_id, external.gog.id, external.gog.price, external.gog.discount_percent, external.gog.url, datePlus7Days]);
+                        }
 
-                    if (external.apple) {
-                        priceInfo.push([IGDBExternalCategoryEnum.apple, gameId, external.apple.uid, external.apple.price, external.apple.discount_percent, external.apple.url, datePlus7Days]);
-                    }
+                        if (external.microsoft) {
+                            priceInfo.push([IGDBExternalCategoryEnum.microsoft, external.microsoft.pricings_enum, inserted_igdb_games_sys_key_id, external.microsoft.id, external.microsoft.price, external.microsoft.discount_percent, external.microsoft.url, datePlus7Days]);
+                        }
 
-                    if (external.android) {
-                        priceInfo.push([IGDBExternalCategoryEnum.android, gameId, external.android.uid, external.android.price, external.android.discount_percent, external.android.url, datePlus7Days]);
-                    }
+                        if (external.apple) {
+                            priceInfo.push([IGDBExternalCategoryEnum.apple, external.apple.pricings_enum, inserted_igdb_games_sys_key_id, external.apple.id, external.apple.price, external.apple.discount_percent, external.apple.url, datePlus7Days]);
+                        }
 
-                    if (dbResponse.data.length === 0) {
+                        if (external.android) {
+                            priceInfo.push([IGDBExternalCategoryEnum.android, external.android.pricings_enum, inserted_igdb_games_sys_key_id, external.android.id, external.android.price, external.android.discount_percent, external.android.url, datePlus7Days]);
+                        }
 
                         priceInfo.forEach((columnValues: any[]) => {
 
                             this.insert(
-                                "pricings",
-                                DbTableFieldsPricing,
+                                DbTables.pricings,
+                                DbTablePricingsFields.slice(1),
                                 columnValues,
-                                DbTableFieldsPricing.map(() => "?").join(", "),
+                                DbTablePricingsFields.slice(1).map(() => "?").join(", "),
                                 false)
                                 .catch((err: MysqlError) => {
                                     if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
@@ -469,9 +454,9 @@ class IGDBModel extends DatabaseBase {
 
                         });
 
+                        return resolve();
                     }
 
-                    return resolve();
                 })
                 .catch((err: string) => {
                     return reject(err);
@@ -492,73 +477,70 @@ class IGDBModel extends DatabaseBase {
         return new Promise((resolve, reject) => {
 
             // check if pricing exists
-            this.select(
-                "pricings",
-                DbTableFieldsPricing,
-                `igdb_id=?`,
+            this.custom(
+                `SELECT pc.${DbTablePricingsFields[4]}, pc.${DbTablePricingsFields[2]}, pc.${DbTablePricingsFields[7]}, pc.${DbTablePricingsFields[5]}, pc.${DbTablePricingsFields[6]}, ee.${DbTableIGDBExternalEnumFields[1]} as "external_enum_id" FROM ${config.mysql.database}.${DbTables.pricings} pc
+                JOIN ${DbTables.igdb_external_enum} ee ON ee.${DbTableIGDBExternalEnumFields[0]} = pc.${DbTablePricingsFields[1]}
+                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = pc.${DbTablePricingsFields[3]}
+                WHERE ig.id=?`,
                 [gameId])
                 .then((dbResponse: GenericModelResponse) => {
+                    const expiredPricePromises: Promise<PriceInfoResponse[]>[] = [];
                     const gameExternalInfo: GameExternalInfo = {};
 
-                    if (dbResponse.data.length > 0) {
-                        const expiredPricePromises: Promise<PriceInfoResponse[]>[] = [];
+                    dbResponse.data.forEach((x: any) => {
+                        const externalInfo: ExternalInfo = {
+                            id: x.id,
+                            pricings_enum: x.pricings_enum_sys_key_id,
+                            url: x.url,
+                            price: x.price,
+                            discount_percent: x.discount_percent
+                        };
 
-                        dbResponse.data.forEach((x: any) => {
-                            const externalInfo: ExternalInfo = {
-                                uid: x.uid,
-                                url: x.url,
-                                price: x.price,
-                                discount_percent: x.discount_percent
-                            };
+                        if (x.external_enum_id === IGDBExternalCategoryEnum.steam) {
+                            gameExternalInfo.steam = externalInfo;
+                        } else if (x.external_enum_id === IGDBExternalCategoryEnum.gog) {
+                            gameExternalInfo.gog = externalInfo;
+                        } else if (x.external_enum_id === IGDBExternalCategoryEnum.microsoft) {
+                            gameExternalInfo.microsoft = externalInfo;
+                        } else if (x.external_enum_id === IGDBExternalCategoryEnum.apple) {
+                            gameExternalInfo.apple = externalInfo;
+                        } else if (x.external_enum_id === IGDBExternalCategoryEnum.android) {
+                            gameExternalInfo.android = externalInfo;
+                        }
 
-                            if (x.igdb_external_enum_id === IGDBExternalCategoryEnum.steam) {
-                                gameExternalInfo.steam = externalInfo;
-                            } else if (x.igdb_external_enum_id === IGDBExternalCategoryEnum.gog) {
-                                gameExternalInfo.gog = externalInfo;
-                            } else if (x.igdb_external_enum_id === IGDBExternalCategoryEnum.microsoft) {
-                                gameExternalInfo.microsoft = externalInfo;
-                            } else if (x.igdb_external_enum_id === IGDBExternalCategoryEnum.apple) {
-                                gameExternalInfo.apple = externalInfo;
-                            } else if (x.igdb_external_enum_id === IGDBExternalCategoryEnum.android) {
-                                gameExternalInfo.android = externalInfo;
-                            }
+                        if (x.expires <= today) {
+                            expiredPricePromises.push(steamAPIGetPriceInfo([parseInt(gameExternalInfo.steam.id)]));
+                        }
 
-                            if (x.expires <= today) {
-                                expiredPricePromises.push(steamAPIGetPriceInfo([parseInt(gameExternalInfo.steam.uid)]));
-                            }
+                    });
 
-                        });
+                    Promise.all(expiredPricePromises)
+                        .then((vals: PriceInfoResponse[][]) => {
 
-                        Promise.all(expiredPricePromises)
-                            .then((vals: PriceInfoResponse[][]) => {
+                            vals.forEach((priceInfo: PriceInfoResponse[]) => {
 
-                                vals.forEach((priceInfo: PriceInfoResponse[]) => {
-
-                                    this.update(
-                                        "pricings",
-                                        "price=?, discount_percent=?, expires=?",
-                                        [priceInfo[0].price, priceInfo[0].discount_percent, datePlus7Days],
-                                        "igdb_external_enum_id=? AND igdb_id=?",
-                                        [priceInfo[0].externalEnum, gameId])
-                                        .then((dbResponse: GenericModelResponse) => {
-                                            if (dbResponse.data.affectedRows !== 1) {
-                                                return reject(`Database error.`);
-                                            }
-                                        })
-                                        .catch((error: string) => {
+                                this.update(
+                                    DbTables.pricings,
+                                    `${DbTablePricingsFields[4]}=?, ${DbTablePricingsFields[5]}=?, ${DbTablePricingsFields[7]}=?`,
+                                    [priceInfo[0].price, priceInfo[0].discount_percent, datePlus7Days],
+                                    `${DbTablePricingsFields[1]}=? AND ${DbTablePricingsFields[3]}=?`,
+                                    [priceInfo[0].externalEnum, gameId])
+                                    .then((dbResponse: GenericModelResponse) => {
+                                        if (dbResponse.data.affectedRows !== 1) {
                                             return reject(`Database error.`);
-                                        });
+                                        }
+                                    })
+                                    .catch((error: string) => {
+                                        return reject(`Database error.`);
+                                    });
 
-                                });
-
-                            })
-                            .catch((error: string) => {
-                                return reject(error);
                             });
 
-                    }
-
-                    return resolve(gameExternalInfo);
+                            return resolve(gameExternalInfo);
+                        })
+                        .catch((error: string) => {
+                            return reject(error);
+                        });
 
                 })
                 .catch((err: string) => {
@@ -572,25 +554,24 @@ class IGDBModel extends DatabaseBase {
     /**
      * Set game icons in database if does not exist.
      */
-    setGameIcons(gameId: number, icons: string[]): Promise <void> {
+    setGameIcons(inserted_igdb_games_sys_key_id: number, icons: string[]): Promise <void> {
 
         return new Promise((resolve, reject) => {
 
             // check if icons exists
-            this.select(
-                "icons",
-                DbTableFieldsIcons,
-                `igdb_id=?`,
-                [gameId])
+            this.custom(
+                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.icons} ic
+                JOIN ${DbTables.igdb_games} ig ON ic.${DbTableIconsFields[2]} = ig.${DbTableIGDBGamesFields[0]}
+                WHERE ig.${DbTableIGDBGamesFields[0]}=?`,
+                [inserted_igdb_games_sys_key_id])
                 .then((dbResponse: GenericModelResponse) => {
 
-                    if (dbResponse.data.length > 0) {
+                    if (dbResponse.data[0][`COUNT(*)`] !== 0) {
                         return resolve();
                     } else {
 
                         icons.forEach((icon: string) => {
                             let iconId: number = undefined;
-                            let imageColumnValues: number[] = undefined;
 
                             for (const iconEnum in IconEnums) {
                                 if (iconEnum === icon) {
@@ -598,20 +579,32 @@ class IGDBModel extends DatabaseBase {
                                 }
                             }
 
-                            imageColumnValues = [iconId, gameId];
+                            this.select(
+                                DbTables.icons_enum,
+                                DbTableIconsEnumFields,
+                                `${DbTableIconsEnumFields[1]}=?`,
+                                [iconId])
+                                .then((dbResponse: GenericModelResponse) => {
+                                    const icons_enum_sys_key_id: number = dbResponse.data[0].icons_enum_sys_key_id;
+                                    const imageColumnValues: number[] = [icons_enum_sys_key_id, inserted_igdb_games_sys_key_id];
 
-                            // insert icon
-                            this.insert(
-                                "icons",
-                                DbTableFieldsIcons,
-                                imageColumnValues,
-                                DbTableFieldsIcons.map(() => "?").join(", "),
-                                false)
-                                .catch((err: MysqlError) => {
-                                    if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
-                                        return reject(err);
-                                    }
+                                    // insert icon
+                                    this.insert(
+                                        DbTables.icons,
+                                        DbTableIconsFields.slice(1),
+                                        imageColumnValues,
+                                        DbTableIconsFields.slice(1).map(() => "?").join(", "),
+                                        false)
+                                        .catch((err: MysqlError) => {
+                                            if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
+                                                return reject(err);
+                                            }
+                                        });
+                                })
+                                .catch((err: string) => {
+                                    return reject(err);
                                 });
+
                         });
 
                         return resolve();
@@ -633,21 +626,16 @@ class IGDBModel extends DatabaseBase {
         return new Promise((resolve, reject) => {
 
             // check if icons exists
-            this.select(
-                "icons",
-                DbTableFieldsIcons,
-                `igdb_id=?`,
+            this.custom(
+                `SELECT ie.${DbTableIconsEnumFields[2]} FROM ${config.mysql.database}.${DbTables.icons} ic
+                JOIN ${DbTables.icons_enum} ie ON ie.${DbTableIconsEnumFields[0]} = ic.${DbTableIconsFields[1]}
+                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = ic.${DbTableIconsFields[2]}
+                WHERE ig.id=?`,
                 [gameId])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data.length > 0) {
-                        const icons: string[] = dbResponse.data.map((iconInfo: any) => {
-                            for (const icon in IconEnums) {
-                                if (parseInt(icon) === iconInfo.icon_id) {
-                                    return IconEnums[icon];
-                                }
-                            }
-                        });
+                        const icons: string[] = dbResponse.data.map((icon: any) => icon.name);
 
                         return resolve(icons);
                     } else {
@@ -670,15 +658,15 @@ class IGDBModel extends DatabaseBase {
         return new Promise((resolve, reject) => {
 
             // check if icons exists
-            this.select(
-                "release_dates",
-                DbTableFieldsReleaseDates,
-                `igdb_id=?`,
+            this.custom(
+                `SELECT rd.${DbTableReleaseDatesFields[1]} FROM ${config.mysql.database}.${DbTables.release_dates} rd
+                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = rd.${DbTableReleaseDatesFields[2]}
+                WHERE ig.id=?`,
                 [gameId])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data.length > 0) {
-                        const releaseDates: number[] = dbResponse.data.map((releaseDate: any) => releaseDate.release_date);
+                        const releaseDates: number[] = dbResponse.data.map((releaseDate: any) => releaseDate.release_date_ts);
 
                         return resolve(releaseDates);
                     } else {
@@ -696,30 +684,30 @@ class IGDBModel extends DatabaseBase {
     /**
      * Set game release dates in database if does not exist.
      */
-    setGameReleaseDates(gameId: number, releaseDates: number[]): Promise <void> {
+    setGameReleaseDates(inserted_igdb_games_sys_key_id: number, releaseDates: number[]): Promise <void> {
 
         return new Promise((resolve, reject) => {
 
             // check if release date exists
-            this.select(
-                "release_dates",
-                DbTableFieldsReleaseDates,
-                `igdb_id=?`,
-                [gameId])
+            this.custom(
+                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.release_dates} rd
+                JOIN ${DbTables.igdb_games} ig ON rd.${DbTableReleaseDatesFields[2]} = ig.${DbTableIGDBGamesFields[0]}
+                WHERE ig.${DbTableIGDBGamesFields[0]}=?`,
+                [inserted_igdb_games_sys_key_id])
                 .then((dbResponse: GenericModelResponse) => {
 
-                    if (dbResponse.data.length > 0) {
+                    if (dbResponse.data[0][`COUNT(*)`] !== 0) {
                         return resolve();
                     } else {
                         releaseDates.forEach((releaseDate: number) => {
-                            const columnValues: any[] = [releaseDate, gameId];
+                            const columnValues: any[] = [releaseDate, inserted_igdb_games_sys_key_id];
 
                             // insert release date
                             this.insert(
-                                "release_dates",
-                                DbTableFieldsReleaseDates.slice(1),
+                                DbTables.release_dates,
+                                DbTableReleaseDatesFields.slice(1),
                                 columnValues,
-                                DbTableFieldsReleaseDates.slice(1).map(() => "?").join(", "),
+                                DbTableReleaseDatesFields.slice(1).map(() => "?").join(", "),
                                 false)
                                 .catch((err: MysqlError) => {
                                     if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
@@ -747,15 +735,16 @@ class IGDBModel extends DatabaseBase {
         return new Promise((resolve, reject) => {
 
             // check if platforms exists
-            this.select(
-                "platforms",
-                DbTableFieldsPlatforms,
-                `igdb_id=?`,
+            this.custom(
+                `SELECT pe.id FROM ${config.mysql.database}.${DbTables.platforms} pl
+                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = pl.${DbTablePlatformsFields[2]}
+                JOIN ${DbTables.igdb_platform_enum} pe ON pl.${DbTablePlatformsFields[1]} = pe.${DbTableIGDBPlatformEnumFields[0]}
+                WHERE ig.id=?`,
                 [gameId])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data.length > 0) {
-                        const platforms: number[] = dbResponse.data.map((platform: any) => platform.igdb_platform_enum_id);
+                        const platforms: number[] = dbResponse.data.map((platform: any) => platform.id);
 
                         return resolve(platforms);
                     } else {
@@ -773,37 +762,51 @@ class IGDBModel extends DatabaseBase {
     /**
      * Set game platforms in database if does not exist.
      */
-    setGamePlatforms(gameId: number, platforms: number[]): Promise <void> {
+    setGamePlatforms(inserted_igdb_games_sys_key_id: number, platforms: number[]): Promise <void> {
 
         return new Promise((resolve, reject) => {
 
             // check if platforms exists
-            this.select(
-                "platforms",
-                DbTableFieldsPlatforms,
-                `igdb_id=?`,
-                [gameId])
+            this.custom(
+                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.platforms} pl
+                JOIN ${DbTables.igdb_games} ig ON pl.${DbTablePlatformsFields[2]} = ig.${DbTableIGDBGamesFields[0]}
+                WHERE ig.${DbTableIGDBGamesFields[0]}=?`,
+                [inserted_igdb_games_sys_key_id])
                 .then((dbResponse: GenericModelResponse) => {
 
-                    if (dbResponse.data.length > 0) {
+                    if (dbResponse.data[0][`COUNT(*)`] !== 0) {
                         return resolve();
                     } else {
 
                         platforms.forEach((platformId: number) => {
-                            const columnValues: any[] = [platformId, gameId];
 
-                            // insert platform
-                            this.insert(
-                                "platforms",
-                                DbTableFieldsPlatforms,
-                                columnValues,
-                                DbTableFieldsPlatforms.map(() => "?").join(", "),
-                                false)
-                                .catch((err: MysqlError) => {
-                                    if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
-                                        return reject(err);
-                                    }
+                            this.select(
+                                DbTables.igdb_platform_enum,
+                                DbTableIGDBPlatformEnumFields,
+                                `${DbTableIGDBPlatformEnumFields[1]}=?`,
+                                [platformId])
+                                .then((dbResponse: GenericModelResponse) => {
+                                    const igdb_platform_enum_sys_key_id: number = dbResponse.data[0].igdb_platform_enum_sys_key_id;
+                                    const columnValues: any[] = [igdb_platform_enum_sys_key_id, inserted_igdb_games_sys_key_id];
+
+                                    // insert platform
+                                    this.insert(
+                                        DbTables.platforms,
+                                        DbTablePlatformsFields.slice(1),
+                                        columnValues,
+                                        DbTablePlatformsFields.slice(1).map(() => "?").join(", "),
+                                        false)
+                                        .catch((err: MysqlError) => {
+                                            if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
+                                                return reject(err);
+                                            }
+                                        });
+
+                                })
+                                .catch((err: string) => {
+                                    return reject(err);
                                 });
+
                         });
 
                         return resolve();
@@ -825,15 +828,16 @@ class IGDBModel extends DatabaseBase {
         return new Promise((resolve, reject) => {
 
             // check if genres exists
-            this.select(
-                "genres",
-                DbTableFieldsGenres,
-                `igdb_id=?`,
+            this.custom(
+                `SELECT ge.id FROM ${config.mysql.database}.${DbTables.genres} gr
+                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = gr.${DbTableGenresFields[2]}
+                JOIN ${DbTables.igdb_genre_enum} ge ON gr.${DbTableGenresFields[1]} = ge.${DbTableIGDBGenreEnumFields[0]}
+                WHERE ig.id=?`,
                 [gameId])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data.length > 0) {
-                        const genres: number[] = dbResponse.data.map((genre: any) => genre.igdb_genre_enum_id);
+                        const genres: number[] = dbResponse.data.map((genre: any) => genre.id);
 
                         return resolve(genres);
                     } else {
@@ -851,36 +855,49 @@ class IGDBModel extends DatabaseBase {
     /**
      * Set game genres in database if does not exist.
      */
-    setGameGenres(gameId: number, genres: number[]): Promise <void> {
+    setGameGenres(inserted_igdb_games_sys_key_id: number, genres: number[]): Promise <void> {
 
         return new Promise((resolve, reject) => {
 
             // check if genres exists
-            this.select(
-                "genres",
-                DbTableFieldsGenres,
-                `igdb_id=?`,
-                [gameId])
+            this.custom(
+                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.genres} gr
+                JOIN ${DbTables.igdb_games} ig ON gr.${DbTableGenresFields[2]} = ig.${DbTableIGDBGamesFields[0]}
+                WHERE ig.${DbTableIGDBGamesFields[0]}=?`,
+                [inserted_igdb_games_sys_key_id])
                 .then((dbResponse: GenericModelResponse) => {
 
-                    if (dbResponse.data.length > 0) {
+                    if (dbResponse.data[0][`COUNT(*)`] !== 0) {
                         return resolve();
                     } else {
 
                         genres.forEach((genreId: number) => {
-                            const columnValues: any[] = [genreId, gameId];
 
-                            // insert genre
-                            this.insert(
-                                "genres",
-                                DbTableFieldsGenres,
-                                columnValues,
-                                DbTableFieldsGenres.map(() => "?").join(", "),
-                                false)
-                                .catch((err: MysqlError) => {
-                                    if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
-                                        return reject(err);
-                                    }
+                            this.select(
+                                DbTables.igdb_genre_enum,
+                                DbTableIGDBGenreEnumFields,
+                                `${DbTableIGDBGenreEnumFields[1]}=?`,
+                                [genreId])
+                                .then((dbResponse: GenericModelResponse) => {
+                                    const igdb_genre_enum_sys_key_id: number = dbResponse.data[0].igdb_genre_enum_sys_key_id;
+                                    const columnValues: any[] = [igdb_genre_enum_sys_key_id, inserted_igdb_games_sys_key_id];
+
+                                    // insert genre
+                                    this.insert(
+                                        DbTables.genres,
+                                        DbTableGenresFields.slice(1),
+                                        columnValues,
+                                        DbTableGenresFields.slice(1).map(() => "?").join(", "),
+                                        false)
+                                        .catch((err: MysqlError) => {
+                                            if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
+                                                return reject(err);
+                                            }
+                                        });
+
+                                })
+                                .catch((err: string) => {
+                                    return reject(err);
                                 });
                         });
 
@@ -903,16 +920,16 @@ class IGDBModel extends DatabaseBase {
         return new Promise((resolve, reject) => {
 
             // check if similar games exists
-            this.select(
-                "similar_games",
-                DbTableFieldsSimilarGames,
-                `igdb_id=?`,
+            this.custom(
+                `SELECT ig.${DbTableIGDBGamesFields[1]}, sg.${DbTableSimilarGamesFields[3]}, sg.${DbTableSimilarGamesFields[4]} FROM ${config.mysql.database}.${DbTables.similar_games} sg
+                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = sg.${DbTableSimilarGamesFields[2]}
+                WHERE sg.${DbTableSimilarGamesFields[1]}=(SELECT ig.${DbTableIGDBGamesFields[0]} FROM ${DbTables.igdb_games} ig WHERE ig.${DbTableIGDBGamesFields[1]}=?)`,
                 [gameId])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data.length > 0) {
                         const similarGames: SimilarGame[] = dbResponse.data.map((rawSimilarGame: any) => {
-                            const similarGame: SimilarGame = {id: rawSimilarGame.similar_igdb_id, name: rawSimilarGame.similar_name, cover_uid: rawSimilarGame.similar_cover_uid};
+                            const similarGame: SimilarGame = {id: rawSimilarGame.id, name: rawSimilarGame.similar_name, cover_id: rawSimilarGame.similar_cover_id};
                             return similarGame;
                         });
 
@@ -932,31 +949,29 @@ class IGDBModel extends DatabaseBase {
     /**
      * Set similar games in database if does not exist.
      */
-    setGameSimilarGames(gameId: number, similarGames: SimilarGame[]): Promise <void> {
+    setGameSimilarGames(inserted_igdb_games_sys_key_id: number, similarGames: SimilarGame[]): Promise <void> {
 
         return new Promise((resolve, reject) => {
 
             // check if similar games exists
-            this.select(
-                "similar_games",
-                DbTableFieldsSimilarGames,
-                `igdb_id=?`,
-                [gameId])
+            this.custom(
+                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.similar_games} sg
+                JOIN ${DbTables.igdb_games} ig ON sg.${DbTableSimilarGamesFields[2]} = ig.${DbTableIGDBGamesFields[0]}
+                WHERE ig.${DbTableIGDBGamesFields[0]}=?`,
+                [inserted_igdb_games_sys_key_id])
                 .then((dbResponse: GenericModelResponse) => {
-
-                    if (dbResponse.data.length > 0) {
+                    if (dbResponse.data[0][`COUNT(*)`] !== 0) {
                         return resolve();
                     } else {
-
                         similarGames.forEach((similarGame: SimilarGame) => {
-                            const columnValues: any[] = [gameId, similarGame.id, similarGame.name, similarGame.cover_uid];
+                            const columnValues: any[] = [inserted_igdb_games_sys_key_id, similarGame.id, similarGame.name, similarGame.cover_id];
 
                             // insert similar game
                             this.insert(
-                                "similar_games",
-                                DbTableFieldsSimilarGames,
+                                DbTables.similar_games,
+                                DbTableSimilarGamesFields.slice(1),
                                 columnValues,
-                                DbTableFieldsSimilarGames.map(() => "?").join(", "),
+                                DbTableSimilarGamesFields.slice(1).map(() => "?").join(", "),
                                 false)
                                 .catch((err: MysqlError) => {
                                     if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
@@ -964,7 +979,6 @@ class IGDBModel extends DatabaseBase {
                                     }
                                 });
                         });
-
                         return resolve();
                     }
                 })
@@ -980,15 +994,16 @@ class IGDBModel extends DatabaseBase {
      * Check if results already exists.
      */
     resultsExists(resultsEnum: ResultsEnum, param?: string): Promise<boolean> {
+
         return new Promise((resolve, reject) => {
-            this.select(
-                "results",
-                DbTableFieldsResults,
-                `${DbTableFieldsResults[1]}=? AND ${DbTableFieldsResults[2]}${!param ? " IS " : "="}?`,
+            this.custom(
+                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.results} rs
+                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = rs.${DbTableResultsFields[2]}
+                WHERE rs.${DbTableResultsFields[1]}=? AND rs.${DbTableResultsFields[3]}${!param ? " IS " : "="}?`,
                 [resultsEnum, param])
                 .then((dbResponse: GenericModelResponse) => {
 
-                    if (dbResponse.data.length > 0) {
+                    if (dbResponse.data[0][`COUNT(*)`] !== 0) {
                         return resolve(true);
                     } else {
                         return resolve(false);
@@ -1010,17 +1025,16 @@ class IGDBModel extends DatabaseBase {
 
         return new Promise((resolve, reject) => {
 
-            // check if results exists
-            this.select(
-                "results",
-                DbTableFieldsResults,
-                `${DbTableFieldsResults[1]}=? AND ${DbTableFieldsResults[2]}${!param ? " IS " : "="}?`,
+            // getting results
+            this.custom(
+                `SELECT ig.${DbTableIGDBGamesFields[1]} FROM ${config.mysql.database}.${DbTables.results} rs
+                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = rs.${DbTableResultsFields[2]}
+                WHERE rs.${DbTableResultsFields[1]}=? AND rs.${DbTableResultsFields[3]}${!param ? " IS " : "="}?`,
                 [resultsEnum, param])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data.length > 0) {
-                        const gameIds: number[] = dbResponse.data.map((result: any) => result.igdb_id);
-
+                        const gameIds: number[] = dbResponse.data.map((result: any) => result.id);
                         return resolve(gameIds);
                     } else {
                         return resolve(undefined);
@@ -1043,41 +1057,22 @@ class IGDBModel extends DatabaseBase {
 
         return new Promise((resolve, reject) => {
 
-            // check if results exists
-            this.select(
-                "results",
-                DbTableFieldsResults,
-                `${DbTableFieldsResults[1]}=? AND ${DbTableFieldsResults[2]}${!param ? " IS " : "="}?`,
-                [resultsEnum, param])
-                .then((dbResponse: GenericModelResponse) => {
+            // cacheing results
+            gameIds.forEach((gameId: number) => {
+                const columnValues: any[] = [resultsEnum, gameId, param, datePlus7Days];
 
-                    if (dbResponse.data.length > 0) {
-                        return resolve();
-                    } else {
+                // insert result
+                this.custom(
+                    `INSERT INTO ${DbTables.results} (${DbTableResultsFields.slice(1)}) VALUES (?, (SELECT ig.${DbTableIGDBGamesFields[0]} FROM ${DbTables.igdb_games} ig WHERE ig.${DbTableIGDBGamesFields[1]}=?), ?, ?)`,
+                    columnValues)
+                    .catch((err: MysqlError) => {
+                        if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
+                            return reject(err);
+                        }
+                    });
+            });
 
-                        gameIds.forEach((gameId: number) => {
-                            const columnValues: any[] = [resultsEnum, param, gameId, datePlus7Days];
-
-                            // insert result
-                            this.insert(
-                                "results",
-                                DbTableFieldsResults.slice(1),
-                                columnValues,
-                                DbTableFieldsResults.slice(1).map(() => "?").join(", "),
-                                false)
-                                .catch((err: MysqlError) => {
-                                    if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
-                                        return reject(err);
-                                    }
-                                });
-                        });
-
-                        return resolve();
-                    }
-                })
-                .catch((err: string) => {
-                    return reject(err);
-                });
+            return resolve();
 
         });
 

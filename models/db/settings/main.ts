@@ -4,7 +4,7 @@ import DatabaseBase from "../base/dbBase";
 import { EMAIL_VERIFICATION_LEN, SALT_RNDS, ACCOUNT_RECOVERYID_LEN } from "../account/main";
 import {
     validateUsername, validateEmail, validateURL, validatePassword,
-    GenericModelResponse, AccountInfo } from "../../../client/client-server-common/common";
+    GenericModelResponse, AccountInfo, DbTables, DbTableAccountsFields } from "../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 const bcrypt = require("bcryptjs");
 const imgur = require("imgur");
@@ -25,9 +25,9 @@ class SettingsModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "accounts",
-                ["username", "email", "discord", "steam", "twitch", "image", "emailVerification"],
-                `accountid=?`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     const username = dbResponse.data[0].username;
@@ -36,7 +36,7 @@ class SettingsModel extends DatabaseBase {
                     const steam = dbResponse.data[0].steam || "";
                     const twitch = dbResponse.data[0].twitch || "";
                     const image = dbResponse.data[0].image;
-                    const emailVerified = dbResponse.data[0].emailVerification === null;
+                    const emailVerified = dbResponse.data[0].email_verification_code === null;
                     const accountInfo: AccountInfo = {
                         username: username,
                         email: email,
@@ -62,12 +62,12 @@ class SettingsModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "accounts",
-                ["recoveryid"],
-                `username=?`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[1]}=?`,
                 [username])
                 .then((dbResponse: GenericModelResponse) => {
-                    const recoveryid: string = dbResponse.data[0].recoveryid;
+                    const recoveryid: string = dbResponse.data[0].recovery_verification_code;
                     return resolve(recoveryid);
                 })
                 .catch((error: string) => {
@@ -86,10 +86,10 @@ class SettingsModel extends DatabaseBase {
                 .then((response: any) => {
                     const link: string = response.data.link;
                     this.update(
-                        "accounts",
-                        "image=?",
+                        DbTables.accounts,
+                        `${DbTableAccountsFields[9]}=?`,
                         [link],
-                        "accountid=?",
+                        `${DbTableAccountsFields[0]}=?`,
                         [accountid])
                         .then((dbResponse: GenericModelResponse) => {
                             if (dbResponse.data.affectedRows == 1) {
@@ -115,10 +115,10 @@ class SettingsModel extends DatabaseBase {
     deleteAccountImage(accountid: number): Promise<void> {
         return new Promise( (resolve, reject) => {
             this.update(
-                "accounts",
-                "image=?",
+                DbTables.accounts,
+                `${DbTableAccountsFields[9]}=?`,
                 [undefined],
-                "accountid=?",
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {
@@ -146,10 +146,10 @@ class SettingsModel extends DatabaseBase {
             }
 
             this.update(
-                "accounts",
-                "username=?",
+                DbTables.accounts,
+                `${DbTableAccountsFields[1]}=?`,
                 [newUsername],
-                "accountid=?",
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {
@@ -180,10 +180,10 @@ class SettingsModel extends DatabaseBase {
             }
 
             this.update(
-                "accounts",
-                "email=?,emailVerification=?",
+                DbTables.accounts,
+                `${DbTableAccountsFields[2]}=?,${DbTableAccountsFields[10]}=?`,
                 [newEmail, emailVerification],
-                "accountid=?",
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {
@@ -215,10 +215,10 @@ class SettingsModel extends DatabaseBase {
             const hash = bcrypt.hashSync(newPassword, salt);
 
             this.update(
-                "accounts",
-                "passwordHash=?,salt=?",
+                DbTables.accounts,
+                `${DbTableAccountsFields[3]}=?,${DbTableAccountsFields[4]}=?`,
                 [hash, salt],
-                "accountid=?",
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {
@@ -249,10 +249,10 @@ class SettingsModel extends DatabaseBase {
             }
 
             this.update(
-                "accounts",
-                "discord=?",
+                DbTables.accounts,
+                `${DbTableAccountsFields[6]}=?`,
                 [newDiscord === "" ? undefined : newDiscord],
-                "accountid=?",
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {
@@ -276,10 +276,10 @@ class SettingsModel extends DatabaseBase {
         const updatePromise = (): Promise<null> => {
             return new Promise( (resolve, reject) => {
                 this.update(
-                    "accounts",
-                    "twitch=?",
+                    DbTables.accounts,
+                    `${DbTableAccountsFields[8]}=?`,
                     [newTwitch === "" ? undefined : newTwitch],
-                    "accountid=?",
+                    `${DbTableAccountsFields[0]}=?`,
                     [accountid])
                     .then((dbResponse: GenericModelResponse) => {
                         if (dbResponse.data.affectedRows == 1) {
@@ -342,10 +342,10 @@ class SettingsModel extends DatabaseBase {
         const updatePromise = (): Promise<null> => {
             return new Promise( (resolve, reject) => {
                 this.update(
-                    "accounts",
-                    "steam=?",
+                    DbTables.accounts,
+                    `${DbTableAccountsFields[7]}=?`,
                     [newSteam === "" ? undefined : newSteam],
-                    "accountid=?",
+                    `${DbTableAccountsFields[0]}=?`,
                     [accountid])
                     .then((dbResponse: GenericModelResponse) => {
                         if (dbResponse.data.affectedRows == 1) {
@@ -407,13 +407,13 @@ class SettingsModel extends DatabaseBase {
             }
 
             this.select(
-                "accounts",
-                ["accountid"],
-                "recoveryid=?",
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[11]}=?`,
                 [uid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
-                        const accountid: number = dbResponse.data[0].accountid;
+                        const accountid: number = dbResponse.data[0].accounts_sys_key_id;
                         this.changeAccountPassword(accountid, newPassword)
                         .then(() => {
                             return resolve(accountid);
@@ -437,10 +437,10 @@ class SettingsModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.update(
-                "accounts",
-                "recoveryid=?",
+                DbTables.accounts,
+                `${DbTableAccountsFields[11]}=?`,
                 [genRandStr(ACCOUNT_RECOVERYID_LEN)],
-                "accountid=?",
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.affectedRows == 1) {

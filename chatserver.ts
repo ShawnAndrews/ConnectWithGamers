@@ -22,10 +22,7 @@ const chatServer = config.useStrictlyHttps ? https.Server(secureServer) : http.S
 startChatServer();
 
 function startChatServer(): void {
-    const chatHandler: SocketIO.Server = socketIO.listen(chatServer);
-
-    // allow CORS
-    chatServer.set(`origins`, `*:*`);
+    const chatHandler: SocketIO.Server = socketIO.listen(chatServer, {origins: `*:*`});
 
     // listen to chatroom port
     chatServer.listen(config.chatPort);

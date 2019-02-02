@@ -35,16 +35,16 @@ const EmotesCreate: React.SFC<IEmotesCreateProps> = (props: IEmotesCreateProps) 
     return (
         <div className={`emotes-view px-3 h-100`}>
             <Paper className="create-container p-2 mt-3" elevation={3}>
-                <h4 className="text-center font-weight-bold color-primary my-3">Create emote</h4>
+                <h4 className="text-center font-weight-bold color-tertiary my-3">Create emote</h4>
 
                 {props.emoteCompletionScreen && 
                     <div className="completion-container">
-                        <i className="far fa-check-circle fa-5x d-block text-center color-primary"/>
-                        <p className="text-center my-3">Successfully created emote!</p>
-                        <Button variant="raised" className="bg-primary-solid w-100 mt-3" color="primary" onClick={props.onClickCreateBack}>
+                        <i className="far fa-check-circle fa-5x d-block text-center color-tertiary"/>
+                        <p className="text-center color-tertiary my-3">Successfully created emote!</p>
+                        <Button variant="raised" className="bg-primary-solid bg-tertiary color-primary w-100 mt-3" color="primary" onClick={props.onClickCreateBack}>
                             Back
                         </Button>
-                        <Button variant="raised" className="bg-primary-solid w-100 mt-2" color="primary" onClick={props.onClickCreateGoToEmotes}>
+                        <Button variant="raised" className="bg-primary-solid bg-tertiary color-primary w-100 mt-2" color="primary" onClick={props.onClickCreateGoToEmotes}>
                             Go to emotes
                         </Button>
                     </div>}
@@ -58,7 +58,7 @@ const EmotesCreate: React.SFC<IEmotesCreateProps> = (props: IEmotesCreateProps) 
                     
                 {!props.emoteCompletionScreen && !props.isLoadingCreate &&
                     <>
-                        <div className="image-container">
+                        <div className="image-container color-tertiary">
                             {props.uploadedImage
                                 ? <Avatar className="image" src={props.uploadedImage}/>
                                 : <Avatar className="image"/>}
@@ -68,20 +68,19 @@ const EmotesCreate: React.SFC<IEmotesCreateProps> = (props: IEmotesCreateProps) 
                                 </div>}
                             <input className="image-hidden-input" type="file" onChange={props.handleImageChange} />
                         </div>
-                        <div className="preview-text text-center mt-3">
+                        <div className="preview-text text-center color-tertiary mt-3">
                             Preview
                         </div>
-                        <FormControl fullWidth={true} className="px-4 my-4">
+                        <FormControl fullWidth={true} className="emote-input color-tertiary px-4 my-4">
                             <InputLabel className="ml-4" htmlFor="adornment-emote-name">Emote name</InputLabel>
                             <Input
                                 id="adornment-emote-name"
-                                className="emote-input"
                                 value={props.emoteSuffix}
                                 onChange={props.handleEmoteNameChange}
                                 startAdornment={<InputAdornment position="start" className="mr-0">{props.emotePrefix}</InputAdornment>}
                             />
                         </FormControl>
-                        <Button variant="raised" className="create-btn w-100" color="primary" onClick={props.onClickCreateEmote}>
+                        <Button variant="raised" className="create-btn bg-tertiary color-primary w-100" color="primary" onClick={props.onClickCreateEmote}>
                             Create Emote
                         </Button>
                     </>}

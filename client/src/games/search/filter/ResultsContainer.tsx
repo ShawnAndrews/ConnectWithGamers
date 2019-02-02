@@ -12,7 +12,6 @@ interface IResultsContainerProps extends RouteComponentProps<any> {
 interface IResultsContainerState {
     isLoading: boolean;
     searchQuery: string;
-    ResultsEnum: ResultsEnum;
     games: GameResponse[];
     retry: boolean;
 }
@@ -22,63 +21,28 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
     constructor(props: IResultsContainerProps) {
         super(props);
         this.loadSearchGames = this.loadSearchGames.bind(this);
-        this.loadGames = this.loadGames.bind(this);
         this.onRetryClick = this.onRetryClick.bind(this);
-        this.getResultsEnumByProps = this.getResultsEnumByProps.bind(this);
 
-        const resultsEnum: ResultsEnum = this.getResultsEnumByProps(props);
-
-        if (resultsEnum === ResultsEnum.SearchResults) {
-            this.loadSearchGames(props.location.search);
-        } else {
-            this.loadGames(resultsEnum);
-        }
+        this.loadSearchGames(props.location.search);
 
         this.state = {
             isLoading: true,
             searchQuery: props.location.search,
-            ResultsEnum: resultsEnum,
             games: undefined,
             retry: false
         };
     }
 
     componentWillReceiveProps(newProps: IResultsContainerProps): void {
-        const newResultsEnum: ResultsEnum = this.getResultsEnumByProps(newProps);
         const newSearchQuery: string = newProps.location.search;
 
-        if (this.state.ResultsEnum !== newResultsEnum || this.state.searchQuery != newSearchQuery) {
-            if (newResultsEnum === ResultsEnum.SearchResults) {
-                this.loadSearchGames(newSearchQuery);
-            } else {
-                this.loadGames(newResultsEnum);
-            }
+        if ( this.state.searchQuery != newSearchQuery) {
 
             this.setState({
                 isLoading: true,
-                searchQuery: newSearchQuery,
-                ResultsEnum: newResultsEnum
+                searchQuery: newSearchQuery
             });
         }
-    }
-
-    getResultsEnumByProps(someProps: IResultsContainerProps): ResultsEnum {
-        const typeRaw: string = someProps.match.params.type;
-        let resultsEnum: ResultsEnum;
-        
-        if (typeRaw) {
-            if (typeRaw === 'recent') {
-                resultsEnum = ResultsEnum.RecentResults;
-            } else if (typeRaw === 'upcoming') {
-                resultsEnum = ResultsEnum.UpcomingResults;
-            } else if (typeRaw === 'popular') {
-                resultsEnum = ResultsEnum.PopularResults;
-            }
-        } else {
-            resultsEnum = ResultsEnum.SearchResults;
-        }
-
-        return resultsEnum;
     }
 
     getLocalSortType(queryString: string): string {
@@ -140,23 +104,6 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
             
     }
 
-    loadGames(type: ResultsEnum): void {
-
-        IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets[type]}`)
-        .then( (response: MultiGameResponse) => {
-            const games: GameResponse[] = response.data;
-            this.setState({ isLoading: false, games: games });
-        })
-        .catch( (error: string) => {
-            let retry: boolean = error === "Retry";
-            if (!retry) {
-                popupS.modal({ content: `<div>• ${error}</div>` });
-            }
-            this.setState({ isLoading: false, retry: retry});
-        });
-
-    }
-
     onRetryClick(): void {
         this.setState({ isLoading: true, retry: false }, () => {
             this.loadSearchGames(this.props.location.search);
@@ -170,7 +117,6 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
                 games={this.state.games}
                 retry={this.state.retry}
                 onRetryClick={this.onRetryClick}
-                ResultsEnum={this.state.ResultsEnum}
             />
         );
     }

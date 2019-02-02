@@ -21,7 +21,7 @@ const SignupForm: React.SFC<ISignupFormProps> = (props: ISignupFormProps) => {
     if (props.isLoading) {
         return (
             <div className="account-center">
-                <Spinner loadingMsg="Creating account..." />
+                <Spinner className="text-center mt-5" loadingMsg="Creating account..." />
             </div>
         );
     }

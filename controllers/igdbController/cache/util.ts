@@ -1,4 +1,4 @@
-import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, PriceInfoResponse, GameFields, buildIGDBRequestBody, getIGDBImage, IGDBImageSizeEnums, GameExternalInfo, steamAppUrl, androidAppUrl, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, SimilarGame } from "../../../client/client-server-common/common";
+import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, PriceInfoResponse, GameFields, buildIGDBRequestBody, getIGDBImage, IGDBImageSizeEnums, GameExternalInfo, steamAppUrl, androidAppUrl, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, SimilarGame, PricingsEnum } from "../../../client/client-server-common/common";
 import { ArrayClean, steamAPIGetPriceInfo } from "../../../util/main";
 import config from "../../../config";
 import axios, { AxiosResponse } from "axios";
@@ -211,8 +211,8 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             if (RawGame.similar_games) {
                 similar_games = [];
                 RawGame.similar_games.forEach((rawSimilarGame: RawGame) => {
-                    const similarGameCoverUid: string = rawSimilarGame.cover && isNaN(Number(rawSimilarGame.cover)) && rawSimilarGame.cover.image_id;
-                    const similarGame: SimilarGame = {id: rawSimilarGame.id, name: rawSimilarGame.name, cover_uid: similarGameCoverUid};
+                    const similarGameCoverId: string = rawSimilarGame.cover && isNaN(Number(rawSimilarGame.cover)) && rawSimilarGame.cover.image_id;
+                    const similarGame: SimilarGame = {id: rawSimilarGame.id, name: rawSimilarGame.name, cover_id: similarGameCoverId};
                     similar_games.push(similarGame);
                 });
             }
@@ -281,18 +281,20 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 RawGame.external_games.forEach((x: IGDBExternalGame) => {
 
                     if (x.category === IGDBExternalCategoryEnum.steam) {
-                        const uid: string = x.uid;
+                        const uidStr: string = x.uid;
 
                         external.steam = {
-                            uid: uid,
+                            id: uidStr,
+                            pricings_enum: PricingsEnum.main_game,
                             price: undefined,
                             discount_percent: undefined,
-                            url: `${steamAppUrl}/${uid}`
+                            url: `${steamAppUrl}/${uidStr}`
                         };
                     } else if (x.category === IGDBExternalCategoryEnum.microsoft) {
 
                         external.microsoft = {
-                            uid: x.uid,
+                            id: x.uid,
+                            pricings_enum: PricingsEnum.main_game,
                             price: undefined,
                             discount_percent: undefined,
                             url: x.url
@@ -300,7 +302,8 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                     } else if (x.category === IGDBExternalCategoryEnum.gog) {
 
                         external.gog = {
-                            uid: x.uid,
+                            id: x.uid,
+                            pricings_enum: PricingsEnum.main_game,
                             price: undefined,
                             discount_percent: undefined,
                             url: x.url
@@ -314,14 +317,16 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                         }
 
                         external.apple = {
-                            uid: x.uid,
+                            id: x.uid,
+                            pricings_enum: PricingsEnum.main_game,
                             price: undefined,
                             discount_percent: undefined,
                             url: url
                         };
                     } else if (x.category === IGDBExternalCategoryEnum.android) {
                         external.android = {
-                            uid: x.uid,
+                            id: x.uid,
+                            pricings_enum: PricingsEnum.main_game,
                             price: undefined,
                             discount_percent: undefined,
                             url: `${androidAppUrl}${x.uid}`

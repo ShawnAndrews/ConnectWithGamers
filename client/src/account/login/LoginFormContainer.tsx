@@ -77,7 +77,7 @@ class LoginFormContainer extends React.Component<Props, ILoginFormContainerState
         AccountService.httpLogin(this.state.username, this.state.password, this.state.rememberme)
             .then( () => {
                 this.props.setLoggedIn(true);
-                this.props.history.push('/');
+                this.props.history.push('/account');
             })
             .catch( (error: string) => {
                 this.setState({ email: '', rememberme: false, isLoading: false });

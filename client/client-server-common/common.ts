@@ -244,11 +244,8 @@ export const redisCache: IGDBCacheEntry[] = [
 ];
 
 export enum ResultsEnum {
-    DiscountedResults = 4,
-    PopularResults = 3,
-    RecentResults = 1,
-    UpcomingResults = 2,
-    SearchResults = 0
+    SearchResults = 1,
+    DiscountedResults = 2
 }
 
 export interface UserLog {
@@ -596,7 +593,7 @@ export interface GameResponse {
 export interface SimilarGame {
     id: number;
     name: string;
-    cover_uid: string;
+    cover_id: string;
 }
 
 export interface GameExternalInfo {
@@ -608,7 +605,8 @@ export interface GameExternalInfo {
 }
 
 export interface ExternalInfo {
-    uid: string;
+    id: string;
+    pricings_enum: PricingsEnum;
     url: string;
     price: string;
     discount_percent: number;
@@ -755,21 +753,68 @@ export interface IGDBExternalGame {
     year: number;
 }
 
+export enum PricingsEnum {
+    free = 1,
+    free_with_xbox_game_pass = 2,
+    discounted_with_xbox_game_pass = 3,
+    discounted_with_xbox_live_gold = 4,
+    main_game = 5,
+    dlc_or_bundles = 6,
+    coming_soon = 7,
+    preorder = 8,
+    in_app_purchase = 9,
+}
+
 /* Database tables */
-export const DbTableFieldsRatings: string[] = [`igdb_id`, `account_id`, `rating`, `date`];
-export const DbTableFieldsIGDBImage: string[] = [`igdb_image_id`, `alpha_channel`, `animated`, `url`, `width`, `height`];
-export const DbTableFieldsGames: string[] = [`igdb_id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`];
-export const DbTableFieldsIconsEnum: string[] = [`icon_id`, `icon`];
-export const DbTableFieldsIcons: string[] = [`icon_id`, `igdb_id`];
-export const DbTableFieldsReleaseDates: string[] = [`release_date_id`, `release_date`, `igdb_id`];
-export const DbTableFieldsCovers: string[] = [`igdb_image_id`, `igdb_id`];
-export const DbTableFieldsScreenshots: string[] = [`igdb_image_id`, `igdb_id`];
-export const DbTableFieldsGenreEnum: string[] = [`igdb_genre_enum_id`];
-export const DbTableFieldsGenres: string[] = [`igdb_genre_enum_id`, `igdb_id`];
-export const DbTableFieldsPlatformEnum: string[] = [`igdb_platform_enum_id`];
-export const DbTableFieldsPlatforms: string[] = [`igdb_platform_enum_id`, `igdb_id`];
-export const DbTableFieldsExternalEnum: string[] = [`igdb_external_enum_id`, `name`];
-export const DbTableFieldsPricing: string[] = [`igdb_external_enum_id`, `igdb_id`, `uid`, `price`, `discount_percent`, `url`, `expires`];
-export const DbTableFieldsResultsEnum: string[] = [`results_enum_id`];
-export const DbTableFieldsResults: string[] = [`results_id`, `results_enum_id`, `param`, `igdb_id`, `expires`];
-export const DbTableFieldsSimilarGames: string[] = [`igdb_id`, `similar_igdb_id`, `similar_name`, `similar_cover_uid`];
+export enum DbTables {
+    accounts = "accounts",
+    accounts_role_enum = "accounts_role_enum",
+    accounts_roles = "accounts_roles",
+    chat_emotes = "chat_emotes",
+    chatroom_messages = "chatroom_messages",
+    covers = "covers",
+    genres = "genres",
+    icons = "icons",
+    icons_enum = "icons_enum",
+    igdb_external_enum = "igdb_external_enum",
+    igdb_games = "igdb_games",
+    igdb_genre_enum = "igdb_genre_enum",
+    igdb_images = "igdb_images",
+    igdb_platform_enum = "igdb_platform_enum",
+    migrations = "migrations",
+    platforms = "platforms",
+    pricings = "pricings",
+    pricings_enum = "pricings_enum",
+    ratings = "ratings",
+    release_dates = "release_dates",
+    results = "results",
+    results_enum = "results_enum",
+    screenshots = "screenshots",
+    similar_games = "similar_games",
+    tokens = "tokens",
+}
+
+export const DbTableAccountsFields: string[] = [`accounts_sys_key_id`, `username`, `email`, `password_hash`, `salt`, `log_dt`, `discord`, `steam`, `twitch`, `image`, `email_verification_code`, `recovery_verification_code`];
+export const DbTableAccountsRolesFields: string[] = [`accounts_roles_sys_key_id`, `accounts_role_enum_sys_key_id`, `accounts_sys_key_id`];
+export const DbTableChatEmotesFields: string[] = [`chat_emotes_sys_key_id`, `prefix`, `suffix`, `url`, `log_dt`];
+export const DbTableChatroomMessagesFields: string[] = [`chatroom_messages_sys_key_id`, `username`, `text`, `image`, `attachment`, `chatroom_id`, `log_dt`];
+export const DbTableCoversFields: string[] = [`covers_sys_key_id`, `igdb_images_sys_key_id`, `igdb_games_sys_key_id`];
+export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `igdb_genre_enum_sys_key_id`, `igdb_games_sys_key_id`];
+export const DbTableIconsFields: string[] = [`icons_sys_key_id`, `icons_enum_sys_key_id`, `igdb_games_sys_key_id`];
+export const DbTableIconsEnumFields: string[] = [`icons_enum_sys_key_id`, `id`, `name`];
+export const DbTableIGDBExternalEnumFields: string[] = [`igdb_external_enum_sys_key_id`, `id`, `name`];
+export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`];
+export const DbTableIGDBGenreEnumFields: string[] = [`igdb_genre_enum_sys_key_id`, `id`, `name`];
+export const DbTableIGDBImagesFields: string[] = [`igdb_images_sys_key_id`, `id`, `alpha_channel`, `animated`, `url`, `width`, `height`];
+export const DbTableIGDBPlatformEnumFields: string[] = [`igdb_platform_enum_sys_key_id`, `id`, `name`];
+export const DbTableMigrationsFields: string[] = [`migration_sys_key_id`, `name`, `run_dt`];
+export const DbTablePlatformsFields: string[] = [`platforms_sys_key_id`, `igdb_platform_enum_sys_key_id`, `igdb_games_sys_key_id`];
+export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `igdb_external_enum_sys_key_id`, `pricings_enum_sys_key_id`, `igdb_games_sys_key_id`, `id`, `price`, `discount_percent`, `url`, `expires_dt`];
+export const DbTablePricingsEnumFields: string[] = [`pricings_enum_sys_key_id`, `name`];
+export const DbTableRatingsFields: string[] = [`ratings_sys_key_id`, `igdb_games_sys_key_id`, `accounts_sys_key_id`, `rating`, `log_dt`];
+export const DbTableReleaseDatesFields: string[] = [`release_dates_sys_key_id`, `release_date_ts`, `igdb_games_sys_key_id`];
+export const DbTableResultsFields: string[] = [`results_sys_key_id`, `results_enum_sys_key_id`, `igdb_games_sys_key_id`, `param`, `expires_dt`];
+export const DbTableResultsEnumFields: string[] = [`results_enum_sys_key_id`, `name`];
+export const DbTableScreenshotsFields: string[] = [`screenshots_sys_key_id`, `igdb_images_sys_key_id`, `igdb_games_sys_key_id`];
+export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `igdb_games_sys_key_id`, `similar_igdb_games_sys_key_id`, `similar_name`, `similar_cover_id`];
+export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];

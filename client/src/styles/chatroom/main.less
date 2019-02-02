@@ -17,7 +17,7 @@
         i {
             width: 50px;
             font-size: 1.4rem;
-            opacity: 0.5;
+            color: @tertiary-color;
 
             &.active{
                 opacity: 1;
@@ -174,10 +174,21 @@
         .emotes-view {
 
             > div {
-                background-color: rgba(white,.8);
+                background-color: rgba(white,.05);
             }
             
             .create-container {
+
+                .emote-input {
+                    
+                    * {
+                        color: @tertiary-color!important;
+                    }
+
+                    > div::before, div::after {
+                        border-bottom: 1px solid @tertiary-color!important;
+                    }
+                }
 
                 .image-container {
                     position: relative;
@@ -189,7 +200,7 @@
                     
                     .image {
                         position: absolute!important;
-                        background-color: rgba(white,0.1)!important;
+                        background-color: @tertiary-color!important;
                         border-radius: 0!important;
                         box-shadow: none!important;
                     }
@@ -301,7 +312,7 @@
                 .userlist {
     
                     .user {
-                        background-color: rgba(white,0.1);
+                        background-color: rgba(white,0.05);
                         color: rgba(white,0.6);
     
                         .user-text { 
@@ -315,7 +326,7 @@
                             flex: none!important;
 
                             &.default {
-                                background-color: rgba(white,0.8);
+                                background-color: @tertiary-color;
                             }
                         }
     
@@ -375,7 +386,7 @@
                     }
 
                     &.default {
-                        background-color: rgba(white,0.8);
+                        background-color: @tertiary-color;
                     }
 
                     @media @md {

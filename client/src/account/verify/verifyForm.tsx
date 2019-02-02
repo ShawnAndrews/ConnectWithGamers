@@ -20,20 +20,20 @@ const VerifyForm: React.SFC<IVerifyFormProps> = (props: IVerifyFormProps) => {
     }
 
     return (
-        <Paper className="settings bg-secondary-color p-4 mx-auto mt-5 position-relative" elevation={24}>
+        <div className="settings p-4 mx-auto mt-5 position-relative">
             {props.verificationSuccessful
-                ? <div className="text-center color-primary">Successfully verified email!</div>
-                : <div className="text-center color-primary">Failed to verify email. <br/> Please ensure the verification code in the URL is correct.</div>}
+                ? <div className="text-center color-tertiary">Successfully verified email!</div>
+                : <div className="text-center color-tertiary">Failed to verify email. <br/> Please ensure the verification code in the URL is correct.</div>}
             <Button 
                 variant="raised" 
-                className="color-secondary bg-primary-solid hover-primary-solid mt-4"
+                className="color-primary bg-tertiary mt-4"
                 color="primary" 
                 onClick={props.onVerifyEmailClick}
                 fullWidth={true}
             >
                 {props.verificationSuccessful ? "Back To Account" : "Home"} 
             </Button>
-        </Paper>
+        </div>
     );
 
 };

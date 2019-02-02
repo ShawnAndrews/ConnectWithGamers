@@ -58,11 +58,11 @@ const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
                                     </div>
                                     <div className="user-links text-right col-0 col-md-4 col-lg-3 pr-0">
                                         {x.steam && 
-                                            <a href={`https://steamcommunity.com/id/${x.steam}`} className="link mx-1"><i className="fab fa-steam-square fa-2x" /></a>}
+                                            <a href={`https://steamcommunity.com/id/${x.steam}`} className="link mx-1"><i className="fab fa-steam-square fa-2x color-tertiary" /></a>}
                                         {x.discord && 
-                                            <a href={x.discord} className="link mx-2"><i className="fab fa-discord fa-2x" /></a>}
+                                            <a href={x.discord} className="link mx-2"><i className="fab fa-discord fa-2x color-tertiary" /></a>}
                                         {x.twitch && 
-                                            <a href={`https://www.twitch.tv/${x.twitch}`} className="link mx-2"><i className="fab fa-twitch fa-2x" /></a>}
+                                            <a href={`https://www.twitch.tv/${x.twitch}`} className="link mx-2"><i className="fab fa-twitch fa-2x color-tertiary" /></a>}
                                     </div>
                                 </Paper>
                             );

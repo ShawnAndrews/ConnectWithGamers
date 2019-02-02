@@ -51,7 +51,7 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
         nextArrow: <NextArrow />,
         prevArrow: <PrevArrow />
     };
-    
+    console.log(`sim games len: ${props.similarGames.length}`);
     return (
 
         <div className="similar-games-carousel-container my-5">
@@ -60,21 +60,18 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
                 <i className="fas fa-chevron-right"/>
             </div>
             <Slider {...settings}>
-                {props.similarGames.map((similarGame: SimilarGame) => {
-                    
-                    return (
-                        <div className="similar-game px-2">
+                {props.similarGames.map((similarGame: SimilarGame) => (
+                        <div key={similarGame.id} className="similar-game px-2">
                             <img 
                                 className="cursor-pointer"
-                                src={getIGDBImage(similarGame.cover_uid, IGDBImageSizeEnums.cover_big)}
+                                src={getIGDBImage(similarGame.cover_id, IGDBImageSizeEnums.cover_big)}
                                 onClick={() => props.goToGame(similarGame.id)}
                                 onMouseDown={props.onSimilarGamesMouseDown}
                                 onMouseMove={props.onSimilarGamesMouseMove}
                                 onMouseUp={props.onSimilarGamesMouseUp}
                             />
                         </div>
-                    );
-                })}
+                    ))}
             </Slider>
         </div>
     );

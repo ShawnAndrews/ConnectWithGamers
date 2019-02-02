@@ -36,7 +36,7 @@
         }
         
         .login-btn, .create-btn {
-            background-color: rgba(@tertiary-color, 0.7);
+            background-color: @tertiary-color;
             color: @primary-color;
             font-weight: bold;
             font-size: 1.2rem;
@@ -63,9 +63,10 @@
     }
 
     .settings {
+        background-color: transparent;
         
         .logout-btn {
-            background-color: rgba(@tertiary-color, 0.7);
+            background-color: @tertiary-color;
             font-weight: bold;
         }
 
@@ -110,8 +111,9 @@
 
         .email {
 
-            .resend-btn {
+            .resend-btn, .resend-btn:hover {
                 top: 25px;
+                background-color: @tertiary-color!important;
             }
         }
 

@@ -29,8 +29,8 @@ const EmotesView: React.SFC<IEmotesViewProps> = (props: IEmotesViewProps) => {
                     uniquePrefixes.map((uniquePrefix: string) => {
                         return (
                             <Paper key={uniquePrefix} className="user-container my-3 p-2 w-100" elevation={2}>
-                                <Typography className="emotes-container-title" component="h3">
-                                    Emotes by <strong>{uniquePrefix}</strong>
+                                <Typography className="emotes-container-title color-tertiary" component="h3">
+                                    Emotes by <strong className="color-tertiary">{uniquePrefix}</strong>
                                 </Typography>
                                 <div className="emotes-container row p-2 m-0">
                                     {props.emotes
@@ -39,7 +39,7 @@ const EmotesView: React.SFC<IEmotesViewProps> = (props: IEmotesViewProps) => {
                                     })
                                     .map((emote: ChatroomEmote) => {
                                         return (
-                                            <div className="emote m-2" key={`${emote.prefix}${emote.suffix}`}>
+                                            <div className="emote color-tertiary m-2" key={`${emote.prefix}${emote.suffix}`}>
                                                 <img src={emote.link} width="28px" height="28px"/>
                                                 <div>{`${emote.prefix}${emote.suffix}`}</div>
                                             </div>

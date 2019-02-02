@@ -151,7 +151,7 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
     logout(): void {
         AccountService.logout();
         this.props.setLoggedIn(false);
-        this.props.history.push(`/`);
+        this.props.history.push(`/account`);
     }
 
     resend(): void {

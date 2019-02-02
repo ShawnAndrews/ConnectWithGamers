@@ -3,7 +3,7 @@ import axios from "axios";
 import DatabaseBase from "../base/dbBase";
 import { genRandStr } from "../../../util/main";
 import { sendVerificationEmail } from "../../../util/nodemailer";
-import { GenericModelResponse, RecoveryEmailInfo, AccountsInfo, SteamFriend, TwitchUser, TwitchEmote, TwitchPair, AccountInfo, GameRating } from "../../../client/client-server-common/common";
+import { GenericModelResponse, RecoveryEmailInfo, AccountsInfo, SteamFriend, TwitchUser, TwitchEmote, TwitchPair, AccountInfo, GameRating, DbTableAccountsFields, DbTables, DbTableRatingsFields } from "../../../client/client-server-common/common";
 import config from "../../../config";
 
 export const SALT_RNDS = 10;
@@ -24,31 +24,15 @@ class AccountModel extends DatabaseBase {
         const salt = bcrypt.genSaltSync(SALT_RNDS);
         const hash = bcrypt.hashSync(password, salt);
         const emailVerification = genRandStr(EMAIL_VERIFICATION_LEN);
-        const columnNames: string[] = ["username", "email", "passwordHash", "salt", "createdOn", "emailVerification", "recoveryid"];
-        const columnValues: any[] = [username, email, hash, salt, Date.now() / 1000, emailVerification, genRandStr(ACCOUNT_RECOVERYID_LEN)];
-
-        if (defaultTwitch) {
-            columnNames.push("twitch");
-            columnValues.push(defaultTwitch);
-        }
-
-        if (defaultSteam) {
-            columnNames.push("steam");
-            columnValues.push(defaultSteam);
-        }
-
-        if (defaultDiscord) {
-            columnNames.push("discord");
-            columnValues.push(defaultDiscord);
-        }
+        const columnValues: any[] = [username, email, hash, salt, Date.now() / 1000, defaultDiscord || undefined, defaultSteam || undefined, defaultTwitch || undefined, undefined, emailVerification, genRandStr(ACCOUNT_RECOVERYID_LEN)];
 
         return new Promise( (resolve, reject) => {
 
             this.insert(
-                "accounts",
-                columnNames,
+                DbTables.accounts,
+                DbTableAccountsFields.slice(1),
                 columnValues,
-                `?, ?, ?, ?, FROM_UNIXTIME(?), ?, ?${defaultTwitch ? ", ?" : ""}${defaultSteam ? ", ?" : ""}${defaultDiscord ? ", ?" : ""}`)
+                `?, ?, ?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?`)
                 .then((response: GenericModelResponse) => {
                     sendVerificationEmail(email, `http://www.connectwithgamers.com/account/verify/${emailVerification}`)
                     .then(() => {
@@ -77,12 +61,12 @@ class AccountModel extends DatabaseBase {
             const response: GenericModelResponse = {error: undefined, data: undefined};
 
             this.select(
-                "accounts",
-                ["accountid"],
-                `username=?`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[1]}=?`,
                 [username])
                 .then((dbResponse: GenericModelResponse) => {
-                    const accountid: number = dbResponse.data[0].accountid;
+                    const accountid: number = dbResponse.data[0].accounts_sys_key_id;
                     response.data = { accountid: accountid };
                     return resolve(response);
                 })
@@ -104,9 +88,9 @@ class AccountModel extends DatabaseBase {
             const response: GenericModelResponse = {error: undefined, data: undefined};
 
             this.select(
-                "accounts",
-                ["username"],
-                `accountid=?`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     const username = dbResponse.data[0].username;
@@ -128,9 +112,9 @@ class AccountModel extends DatabaseBase {
 
         return new Promise( (resolve, reject) => {
             this.select(
-                "accounts",
-                ["image"],
-                `accountid=?`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     return resolve(dbResponse.data[0].image);
@@ -148,12 +132,12 @@ class AccountModel extends DatabaseBase {
 
         return new Promise( (resolve, reject) => {
             this.select(
-                "accounts",
-                ["email", "recoveryid"],
-                `username=?`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[1]}=?`,
                 [username])
                 .then((dbResponse: GenericModelResponse) => {
-                    const RecoveryEmailInfo: RecoveryEmailInfo = { email: dbResponse.data[0].email, uid: dbResponse.data[0].recoveryid };
+                    const RecoveryEmailInfo: RecoveryEmailInfo = { email: dbResponse.data[0].email, uid: dbResponse.data[0].recovery_verification_code };
                     return resolve(RecoveryEmailInfo);
                 })
                 .catch((error: string) => {
@@ -169,9 +153,9 @@ class AccountModel extends DatabaseBase {
 
         return new Promise( (resolve, reject) => {
             this.select(
-                "accounts",
-                ["accountid"],
-                `recoveryid=?`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[11]}=?`,
                 [uid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
@@ -193,16 +177,16 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "accounts",
-                ["accountid", "username", "discord", "steam", "twitch", "image"],
-                `username LIKE ${usernameFilter ? `?` : `'%'`}`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[1]} LIKE ${usernameFilter ? `?` : `'%'`}`,
                 [`%${usernameFilter}%`])
                 .then((dbResponse: GenericModelResponse) => {
                     const accounts: AccountInfo[] = [];
                     if (dbResponse.data.length > 0) {
                         dbResponse.data.forEach((element: any) => {
                             const account: AccountInfo = {
-                                accountid: element.accountid,
+                                accountid: element.accounts_sys_key_id,
                                 username: element.username,
                                 discord: element.discord,
                                 steam: element.steam,
@@ -232,9 +216,9 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "accounts",
-                ["accountid", "username", "discord", "steam", "twitch", "image"],
-                `accountid IN (${accountIds.join(",")})`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[0]} IN (${accountIds.map(() => "?").join(",")})`,
                 accountIds)
                 .then((dbResponse: GenericModelResponse) => {
                     const accounts: AccountInfo[] = [];
@@ -242,7 +226,7 @@ class AccountModel extends DatabaseBase {
                     if (dbResponse.data.length > 0) {
                         dbResponse.data.forEach((element: any) => {
                             const account: AccountInfo = {
-                                accountid: element.accountid,
+                                accountid: element.accounts_sys_key_id,
                                 username: element.username,
                                 discord: element.discord,
                                 steam: element.steam,
@@ -272,14 +256,14 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "accounts",
-                ["accountid", "username", "discord", "steam", "twitch", "image"],
-                "accountid=?",
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
                         const account: AccountInfo = {
-                            accountid: dbResponse.data[0].accountid,
+                            accountid: dbResponse.data[0].accounts_sys_key_id,
                             username: dbResponse.data[0].username,
                             discord: dbResponse.data[0].discord,
                             steam: dbResponse.data[0].steam,
@@ -308,9 +292,9 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "accounts",
-                ["twitch"],
-                "accountid=?",
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0 && dbResponse.data[0].twitch !== null) {
@@ -610,9 +594,9 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "accounts",
-                ["steam"],
-                `accountid=?`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0 && dbResponse.data[0].steam !== null) {
@@ -803,9 +787,9 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "accounts",
-                ["discord"],
-                `accountid=?`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0 && dbResponse.data[0].discord !== null) {
@@ -816,7 +800,6 @@ class AccountModel extends DatabaseBase {
                     }
                 })
                 .catch((err: string) => {
-                    console.log(`Database error: ${err}`);
                     return reject(`Database error`);
                 });
 
@@ -831,12 +814,12 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "accounts",
-                ["email", "emailVerification"],
-                "accountid=?",
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
-                    const dbEmailVerification: string = dbResponse.data[0].emailVerification;
+                    const dbEmailVerification: string = dbResponse.data[0].email_verification_code;
                     const dbEmail: string = dbResponse.data[0].email;
                     sendVerificationEmail(dbEmail, `www.connectwithgamers.com/account/verify/${dbEmailVerification}`)
                     .then(() => {
@@ -862,22 +845,22 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "accounts",
-                ["emailVerification"],
-                "accountid=?",
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
-                    const dbEmailVerification: string = dbResponse.data[0].emailVerification;
+                    const dbEmailVerification: string = dbResponse.data[0].email_verification_code;
 
                     if (dbEmailVerification !== verificationCode) {
                         return resolve(false);
                     }
 
                     return this.update(
-                        "accounts",
-                        "emailVerification=?",
+                        DbTables.accounts,
+                        `${DbTableAccountsFields[10]}=?`,
                         [undefined],
-                        "accountid=?",
+                        `${DbTableAccountsFields[0]}=?`,
                         [accountid])
                         .then((dbResponse: GenericModelResponse) => {
                             if (dbResponse.data.affectedRows == 1) {
@@ -905,8 +888,8 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.delete(
-                "accounts",
-                ["accountid=?"],
+                DbTables.accounts,
+                [`${DbTableAccountsFields[0]}=?`],
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     return resolve();
@@ -923,25 +906,24 @@ class AccountModel extends DatabaseBase {
      */
     rateGame(gameRating: GameRating): Promise<void> {
 
-        const columnNames: string[] = ["igdb_id", "account_id", "rating", "date"];
         const columnValues: any[] = [gameRating.igdb_id, gameRating.account_id, gameRating.rating, gameRating.date];
 
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "ratings",
-                ["igdb_id"],
-                `igdb_id=? AND account_id=?`,
+                DbTables.ratings,
+                DbTableRatingsFields,
+                `${DbTableRatingsFields[1]}=? AND ${DbTableRatingsFields[2]}=?`,
                 [gameRating.igdb_id, gameRating.account_id])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
 
                         // update rating
                         this.update(
-                            "ratings",
-                            "rating=?",
+                            DbTables.ratings,
+                            `${DbTableRatingsFields[3]}=?`,
                             [gameRating.rating],
-                            "igdb_id=? AND account_id=?",
+                            `${DbTableRatingsFields[1]}=? AND ${DbTableRatingsFields[2]}=?`,
                             [gameRating.igdb_id, gameRating.account_id])
                             .then((dbResponse: GenericModelResponse) => {
                                 return resolve();
@@ -953,8 +935,8 @@ class AccountModel extends DatabaseBase {
 
                         // insert rating
                         this.insert(
-                            "ratings",
-                            columnNames,
+                            DbTables.ratings,
+                            DbTableRatingsFields.slice(1),
                             columnValues,
                             `?, ?, ?, FROM_UNIXTIME(?)`)
                             .then((dbResponse: GenericModelResponse) => {

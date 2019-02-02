@@ -5,7 +5,10 @@ import { genRandStr } from "../../../util/main";
 import {
     AUTH_TOKEN_NAME,
     GenericModelResponse, AuthenticationInfo,
-    TokenInfo } from "../../../client/client-server-common/common";
+    TokenInfo,
+    DbTables,
+    DbTableAccountsFields,
+    DbTableTokensFields } from "../../../client/client-server-common/common";
 
 class SecurityModel extends DatabaseBase {
 
@@ -19,14 +22,14 @@ class SecurityModel extends DatabaseBase {
     authenticate(username: string, password: string, remember: boolean): Promise<AuthenticationInfo> {
         return new Promise((resolve, reject) => {
             this.select(
-                "accounts",
-                ["accountid", "passwordHash"],
-                `username=?`,
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[1]}=?`,
                 [username])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
-                        const dbPasswordHash: string = dbResponse.data[0].passwordHash;
-                        const dbAccountId: number = dbResponse.data[0].accountid;
+                        const dbPasswordHash: string = dbResponse.data[0].password_hash;
+                        const dbAccountId: number = dbResponse.data[0].accounts_sys_key_id;
                         if (bcrypt.compareSync(password, dbPasswordHash)) {
                             const response: AuthenticationInfo = { accountid: dbAccountId, username: username, remember: remember };
                             return resolve(response);
@@ -67,13 +70,13 @@ class SecurityModel extends DatabaseBase {
 
             const authToken: string = authCookieMatch[1];
             this.select(
-                "tokens",
-                ["accountid"],
-                `${AUTH_TOKEN_NAME}=?`,
+                DbTables.tokens,
+                DbTableTokensFields,
+                `${DbTableTokensFields[2]}=?`,
                 [authToken])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
-                        const accountid: number = Number(dbResponse.data[0].accountid);
+                        const accountid: number = Number(dbResponse.data[0].accounts_sys_key_id);
                         return resolve(accountid);
                     } else {
                         return reject(`Valid auth token not found in database.`);
@@ -99,16 +102,16 @@ class SecurityModel extends DatabaseBase {
                 const response: GenericModelResponse = {error: undefined, data: undefined};
 
                 this.select(
-                    "accounts",
-                    ["accountid", "salt"],
-                    `username=?`,
+                    DbTables.accounts,
+                    DbTableAccountsFields,
+                    `${DbTableAccountsFields[1]}=?`,
                     [username])
                     .then((dbResponse: GenericModelResponse) => {
                         if (dbResponse.error) {
                             return reject(response);
                         } else {
                             if (dbResponse.data.length > 0) {
-                                const accountid = Number(dbResponse.data[0].accountid);
+                                const accountid = Number(dbResponse.data[0].accounts_sys_key_id);
                                 const salt = dbResponse.data[0].salt;
                                 response.data = { accountid: accountid, salt: salt };
                                 return resolve(response);
@@ -134,8 +137,8 @@ class SecurityModel extends DatabaseBase {
                 const authTokenExpiration: number = remember ? Date.now() + config.token_remember_expiration : Date.now() + config.token_expiration;
 
                 this.insert(
-                    "tokens",
-                    ["accountid", "authToken", "createdOn", "expiresOn"],
+                    DbTables.tokens,
+                    DbTableTokensFields.slice(1),
                     [dbAccountid, authToken, Date.now() / 1000, authTokenExpiration / 1000],
                     "?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?)")
                     .then((dbResponse: GenericModelResponse) => {

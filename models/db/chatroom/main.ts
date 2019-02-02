@@ -1,7 +1,7 @@
 import config from "../../../config";
 import DatabaseBase from "./../base/dbBase";
 import {
-    GenericModelResponse, ChatHistoryResponse, ChatroomEmote } from "../../../client/client-server-common/common";
+    GenericModelResponse, ChatHistoryResponse, ChatroomEmote, DbTableChatroomMessagesFields, DbTables, DbTableChatEmotesFields } from "../../../client/client-server-common/common";
 const imgur = require("imgur");
 
 imgur.setClientId(config.imgur.clientId);
@@ -21,10 +21,10 @@ class ChatroomModel extends DatabaseBase {
             const response: GenericModelResponse = {error: undefined, data: undefined};
 
             this.insert(
-                "chatroom",
-                ["username", "date", "text", "image", "attachment", "chatroomid"],
-                [username, date / 1000, text, image, attachment, chatroomid],
-                "?, FROM_UNIXTIME(?), ?, ?, ?, ?")
+                DbTables.chatroom_messages,
+                DbTableChatroomMessagesFields.slice(1),
+                [username, text, image, attachment, chatroomid, date / 1000],
+                "?, ?, ?, ?, ?, FROM_UNIXTIME(?)")
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.error) {
                         return reject(dbResponse.error);
@@ -47,8 +47,8 @@ class ChatroomModel extends DatabaseBase {
             const response: GenericModelResponse = {error: undefined, data: undefined};
 
             this.delete(
-                "chatroom",
-                ["id=?"],
+                DbTables.chatroom_messages,
+                [`${DbTableChatroomMessagesFields[0]}=?`],
                 [messageid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.error) {
@@ -70,9 +70,9 @@ class ChatroomModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                "chatroom",
-                ["username", "date", "text", "image", "attachment"],
-                "chatroomid=?",
+                DbTables.chatroom_messages,
+                DbTableChatroomMessagesFields,
+                `${DbTableChatroomMessagesFields[5]}=?`,
                 [chatroomid],
                 config.chatHistoryCount)
                 .then((dbResponse: GenericModelResponse) => {
@@ -80,7 +80,7 @@ class ChatroomModel extends DatabaseBase {
 
                     dbResponse.data.forEach((chat: any) => {
                         chatHistoryResponse.name.push(chat.username);
-                        chatHistoryResponse.date.push(`${new Date(chat.date).toLocaleDateString()} ${new Date(chat.date).toLocaleTimeString()}`);
+                        chatHistoryResponse.date.push(`${new Date(chat.log_dt).toLocaleDateString()} ${new Date(chat.log_dt).toLocaleTimeString()}`);
                         chatHistoryResponse.text.push(chat.text);
                         chatHistoryResponse.image.push(chat.image);
                         chatHistoryResponse.attachment.push(chat.attachment);
@@ -102,8 +102,9 @@ class ChatroomModel extends DatabaseBase {
 
         return new Promise( (resolve, reject) => {
 
-            this.insert("chatemotes",
-                ["prefix", "suffix", "emoteurl", "createdOn"],
+            this.insert(
+                DbTables.chat_emotes,
+                DbTableChatEmotesFields.slice(1),
                 [emotePrefix, emoteSuffix, emoteURL, Date.now() / 1000],
                 "?, ?, ?, FROM_UNIXTIME(?)")
                 .then((dbResponse: GenericModelResponse) => {
@@ -111,7 +112,6 @@ class ChatroomModel extends DatabaseBase {
                     return resolve(insertid);
                 })
                 .catch((err: string) => {
-                    console.log(`Error inserting chat emote into database: ${err}`);
                     return reject("Emote name taken.");
                 });
 
@@ -123,14 +123,14 @@ class ChatroomModel extends DatabaseBase {
      */
     deleteChatEmote(emotePrefix: string, emoteSuffix: string): Promise<GenericModelResponse> {
         return new Promise( (resolve, reject) => {
-            this.delete("chatemotes",
-                ["prefix=?", "suffix=?"],
+            this.delete(
+                DbTables.chat_emotes,
+                [`${DbTableChatEmotesFields[1]}=?`, `${DbTableChatEmotesFields[2]}=?`],
                 [emotePrefix, emoteSuffix])
                 .then((dbResponse: GenericModelResponse) => {
                     return resolve(dbResponse);
                 })
                 .catch((err: string) => {
-                    console.log(`Error deleting chat emote from database: ${err}`);
                     return reject("Emote does not exist for deletion.");
                 });
         });
@@ -158,13 +158,13 @@ class ChatroomModel extends DatabaseBase {
     getEmotes(): Promise <ChatroomEmote[]> {
         return new Promise( (resolve, reject) => {
             this.select(
-                "chatemotes",
-                ["prefix", "suffix", "emoteurl"])
+                DbTables.chat_emotes,
+                DbTableChatEmotesFields)
                 .then((dbResponse: GenericModelResponse) => {
                     const chatroomEmotes: ChatroomEmote[] = [];
 
                     dbResponse.data.forEach((rawEmote: any) => {
-                        const chatroomEmote: ChatroomEmote = { link: rawEmote.emoteurl, prefix: rawEmote.prefix, suffix: rawEmote.suffix };
+                        const chatroomEmote: ChatroomEmote = { link: rawEmote.url, prefix: rawEmote.prefix, suffix: rawEmote.suffix };
                         chatroomEmotes.push(chatroomEmote);
                     });
 
