@@ -281,7 +281,7 @@ export interface ChatroomInfo {
 }
 
 export const CHATROOMS: ChatroomInfo[] = [
-    { name: "Home", abbrevName: "", imagePath: "https://i.imgur.com/QH0Iqwo.png", redirect: "/chat" },
+    { name: "Home", abbrevName: "", imagePath: "https://i.imgur.com/pJbJnyh.png", redirect: "/chat" },
     { name: "Hearthstone", abbrevName: "hearthstone", imagePath: "https://i.imgur.com/myONDFo.png", redirect: "/chat/hearthstone" },
     { name: "League Of Legends", abbrevName: "lol", imagePath: "https://i.imgur.com/AuOsUek.png", redirect: "/chat/lol" },
     { name: "Overwatch", abbrevName: "overwatch", imagePath: "https://i.imgur.com/3Bz1ihC.png", redirect: "/chat/overwatch" },

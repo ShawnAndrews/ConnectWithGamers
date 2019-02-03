@@ -40,7 +40,7 @@ app.use(cookieParser());
 /* log ip and date of access */
 app.use((req: Request, res: Response, next: NextFunction) => {
     if (req.url === `/bundle.css`) {
-        console.log(`Request (${req.connection.remoteAddress.replace(/^.*:/, ``)}): ${req.url}`);
+        console.log(`Request (${req.connection.remoteAddress.replace(/^.*:/, ``)}): ${req.url} at ${new Date().toLocaleTimeString()}`);
         logIP(req.connection.remoteAddress);
     }
     next();

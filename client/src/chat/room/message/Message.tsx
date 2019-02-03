@@ -56,7 +56,7 @@ class Message extends React.PureComponent<IMessageProps, null> {
             <ListItem className="message px-5" button={true}>
                 {this.props.chat.image
                     ? <Avatar src={this.props.chat.image}/>
-                    : <Avatar className="avatar color-primary">{this.props.chat.name.slice(0, 2).toUpperCase()}</Avatar>}
+                    : <Avatar className="avatar color-primary bg-tertiary">{this.props.chat.name.slice(0, 2).toUpperCase()}</Avatar>}
                 <ListItemText>
                     <div><span className="name font-weight-bold">{`${this.props.chat.name}   `}</span><span className="time">{new Date(this.props.chat.date).toLocaleTimeString()}</span></div>
                     <p className="text">{this.decodeEmotesAndLinks(this.props.chat.text)}</p>

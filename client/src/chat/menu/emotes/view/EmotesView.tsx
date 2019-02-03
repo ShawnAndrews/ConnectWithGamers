@@ -24,7 +24,7 @@ const EmotesView: React.SFC<IEmotesViewProps> = (props: IEmotesViewProps) => {
 
     return (
         <div className="py-3 h-100">
-            <div className={`emotes-view y-scrollable custom-scrollbar px-3 h-100`}>
+            <div className={`emotes-view y-scrollable custom-scrollbar px-3 mx-2 h-100`}>
                 {uniquePrefixes.length !== 0 && 
                     uniquePrefixes.map((uniquePrefix: string) => {
                         return (

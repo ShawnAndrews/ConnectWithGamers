@@ -30,7 +30,7 @@ const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
     };
 
     return (
-        <div className="chatroom-userlist py-3 h-100">
+        <div className="chatroom-userlist py-3 mx-2 h-100">
             {props.userlist.length === 0 
                 ?
                 <div className="noresults d-table w-100 h-100">
