@@ -19,9 +19,9 @@ const NewsArticle: React.SFC<INewsArticleProps> = (props: INewsArticleProps) => 
                         <div className="date col-4 pl-0 pr-4 mb-1">{formatDate(props.article.created_at, true)}</div>
                     </div>
                 </div>
-                <div className="news-media">
+                <div className="news-media text-center">
                     {props.article.image &&
-                        <img className={`w-100 ${props.article.image ? '' : 'translucent'}`} src={props.article.image} onError={onImgError} />}
+                        <img className={`${props.article.image ? '' : 'translucent'}`} src={props.article.image} onError={onImgError} />}
                 </div>
             </Card>
         </div>
