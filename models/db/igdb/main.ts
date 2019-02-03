@@ -389,13 +389,6 @@ class IGDBModel extends DatabaseBase {
 
     }
 
-    gamePricingExists(gameId: number): Promise <boolean> {
-
-        return new Promise((resolve, reject) => {
-
-        });
-    }
-
     /**
      * Set game pricing in database if does not exist.
      */

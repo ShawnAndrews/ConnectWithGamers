@@ -24,16 +24,16 @@ const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
                 <li className="nav-item mx-md-2">
                     <div className="d-table h-100">
                         <a className={`btn nav-link btn-flat-bot-rad d-table-cell align-middle h-100 ${ props.index === 0 ? 'active' : ''}`} data-toggle="pill" role="tab" onClick={() => { props.onTabClick("/"); }}>
-                            <i className="fas fa-home mr-2"/>
-                            Home
+                            <i className="fas fa-store mr-2"/>
+                            Store
                         </a>
                     </div>
                 </li>
                 <li className="nav-item mx-md-2">
                     <div className="d-table h-100">
-                        <a className={`btn nav-link btn-flat-bot-rad d-table-cell align-middle h-100 ${ props.index === 1 ? 'active' : ''}`} data-toggle="pill" role="tab" onClick={() => { props.onTabClick("/specials"); }}>
+                        <a className={`btn nav-link btn-flat-bot-rad d-table-cell align-middle h-100 ${ props.index === 1 ? 'active' : ''}`} data-toggle="pill" role="tab" onClick={() => { props.onTabClick("/library"); }}>
                             <i className="fas fa-bars mr-2"/>
-                            Specials
+                            Library
                         </a>
                     </div>
                 </li>

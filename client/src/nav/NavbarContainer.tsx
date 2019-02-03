@@ -89,7 +89,7 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
     updateNavSelection(path: string): void {
         if (path === NAV_PAGE.HOME) {
             this.setState({ index: 0 });
-        } else if (path.startsWith(NAV_PAGE.SPECIALS)) {
+        } else if (path.startsWith(NAV_PAGE.LIBRARY)) {
             this.setState({ index: 1 });
         } else if (path.startsWith(NAV_PAGE.CHATROOM)) {
             this.setState({ index: 2 });

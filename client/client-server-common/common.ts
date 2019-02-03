@@ -58,6 +58,14 @@ export const GamesPresets = {
     popular: `?required=cover,screenshots&popularity=15&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&sort=popularity:desc`,
 };
 
+export enum SidenavEnums {
+    home,
+    search,
+    discounted,
+    news,
+    cog,
+}
+
 export enum IGDBGenreEnums {
     action = 14,
     adventure = 31,

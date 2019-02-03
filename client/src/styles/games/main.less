@@ -1,7 +1,9 @@
 @games-searchbar-icon-size: 32px;
-@games-filter-width: 300px;
+@games-sidebar-width: 50px;
 @games-hamburger-width: 30px;
 @games-filter-color: @tertiary-color;
+@games-sidebar-content-width: 300px;
+@games-sidebar-color: #111215;
 
 .games {
  
@@ -306,23 +308,12 @@
 
     .filter {
         width: 0;
-        background: linear-gradient(to right, rgba(white,0.03) 0%,rgba(white,0.03) 100%);
         color: rgba(white, 0.4);
         font-size: 0.8rem;
-
-        &.active {
-            width: @games-filter-width;
-        }
+        width: @games-sidebar-content-width;
 
         * {
             outline: 0;
-        }
-
-        .filter-logo {
-            
-            > div {
-                font-size: 1.3rem;
-            }
         }
 
         .title {
@@ -404,11 +395,79 @@
         }
     }
 
+    .sidenav-content {
+        position: fixed;
+        bottom: 0px;
+        left: @games-sidebar-width;
+        width: @games-sidebar-content-width;
+        height: calc(100vh - @navbar-height);
+        background-color: #232323;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .sidenav {
+        position: fixed;
+        bottom: 0px;
+        width: @games-sidebar-width;
+        height: calc(100vh - @navbar-height);
+        background-color: @games-sidebar-color;
+
+        .home {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            font-size: 22px;
+        }
+
+        .search {
+            position: absolute;
+            top: 50px;
+            left: 0px;
+            font-size: 22px;
+        }
+
+        .discounted {
+            position: absolute;
+            top: 100px;
+            left: 0px;
+            font-size: 20px;
+        }
+
+        .news {
+            position: absolute;
+            top: 150px;
+            left: 0px;
+            font-size: 20px;
+        }
+
+        .cog {
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+            font-size: 22px;
+        }
+
+        i {
+            padding: 2px 14px;
+            margin-top: 13px;
+
+            &.active {
+                background-color: #232323;
+            }
+        }
+    }
+
     .content {
-        width: 100%;
+        position: absolute;
+        right: 0px;
+        top: @navbar-height;
+        width: calc(100% - @games-sidebar-width);
+        overflow-y: scroll!important;
+        min-height: calc(100vh - 57px);
 
         &.active {
-            width: calc(100% - @games-filter-width);
+            width: calc(100% - @games-sidebar-width - @games-sidebar-content-width);
 
             @media @sm {
                 display: none!important;

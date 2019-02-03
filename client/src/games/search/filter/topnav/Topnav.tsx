@@ -10,7 +10,7 @@ const Topnav: React.SFC<ITopnavProps> = (props: ITopnavProps) => {
     
     return (
         <div className="topnav p-2 mx-auto my-4">
-            <div className="text-center">
+            <div className="text-center color-tertiary">
                 {props.title}
             </div>
         </div>

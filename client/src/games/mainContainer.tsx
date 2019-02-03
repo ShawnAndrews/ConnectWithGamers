@@ -1,35 +1,45 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Main from './main';
-import { Breakpoints } from '../../client-server-common/common';
+import { SidenavEnums } from '../../client-server-common/common';
 
 interface IMainContainerProps extends RouteComponentProps<any> { }
+
 interface IMainContainerState {
-    filterExpanded: boolean;
+    sidebarActiveEnum: SidenavEnums;
 }
 
 class MainContainer extends React.Component<IMainContainerProps, IMainContainerState> {
 
     constructor(props: IMainContainerProps) {
         super(props);
-        this.onHamburgerClick = this.onHamburgerClick.bind(this);
+        this.onSidenavItemClick = this.onSidenavItemClick.bind(this);
 
         this.state = {
-            filterExpanded: window.innerWidth >= Breakpoints.md
+            sidebarActiveEnum: undefined
         };
     }
 
-    onHamburgerClick(): void {
+    onSidenavItemClick(itemEnum: SidenavEnums): void {
+        const clickedCurrentlyActiveEnum: boolean = itemEnum === this.state.sidebarActiveEnum;
+
+        if (itemEnum === SidenavEnums.home) {
+            this.props.history.push(`/`);
+        } else if (itemEnum === SidenavEnums.news) {
+            this.props.history.push(`/news`);
+        }
+
         this.setState({
-            filterExpanded: !this.state.filterExpanded
+            sidebarActiveEnum: (itemEnum === SidenavEnums.home || itemEnum === SidenavEnums.news) ? undefined : !clickedCurrentlyActiveEnum ? itemEnum : undefined
         });
+        
     }
 
     render() {
         return (
             <Main
-                onHamburgerClick={this.onHamburgerClick}
-                filterExpanded={this.state.filterExpanded}
+                onSidenavItemClick={this.onSidenavItemClick}
+                sidebarActiveEnum={this.state.sidebarActiveEnum}
             />
         );
     }

@@ -10,7 +10,7 @@ import RecoveryContainer from '../recovery/RecoveryFormContainer';
 
 export enum NAV_PAGE {
     HOME = '/',
-    SPECIALS = '/specials',
+    LIBRARY = '/library',
     ACCOUNT = '/account',
     CHATROOM = '/chat'
 }

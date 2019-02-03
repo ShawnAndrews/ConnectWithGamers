@@ -1,18 +1,16 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import NewsPageContainer from '../specials/news/page/NewsPageContainer';
+import NewsPageContainer from './showcase/news/page/NewsPageContainer';
 import HomeContainer from './home/HomeContainer';
 import SearchRouter from './search/main';
 import NotFoundPageContainer from './../notfound/NotFoundPageContainer';
 import GamingSwitch from './gaming/main';
-import FilterContainer from './filter/FilterContainer';
-import HamburgerContainer from './filter/hamburger/HamburgerContainer';
-import Footer from '../footer/footer';
-import MainContainer from '../specials/mainContainer';
+import SidenavContainer from './sidenav/SidenavContainer';
+import { SidenavEnums } from '../../client-server-common/common';
 
 interface IMainProps {
-    onHamburgerClick: () => void;
-    filterExpanded: boolean;
+    onSidenavItemClick: (itemEnum: SidenavEnums) => void;
+    sidebarActiveEnum: SidenavEnums;
 }
 
 const Main: React.SFC<IMainProps> = (props: IMainProps) => {
@@ -20,25 +18,19 @@ const Main: React.SFC<IMainProps> = (props: IMainProps) => {
     return (
         <>
             <div className="games position-relative">
-                <FilterContainer
-                    filterExpanded={props.filterExpanded}
+                <SidenavContainer
+                    onSidenavItemClick={props.onSidenavItemClick}
+                    sidebarActiveEnum={props.sidebarActiveEnum}
                 />
-                <div className={`content d-inline-block overflow-hidden vh-min-100 p-4 pb-5 ${props.filterExpanded ? 'active' : ''}`}>
+                <div className={`content d-inline-block overflow-hidden custom-scrollbar-slim px-4 pt-4 pb-0 mr-2 my-2 h-100 ${props.sidebarActiveEnum !== undefined ? 'active' : ''}`}>
                     <Switch>
-                        <Route path="/specials" component={MainContainer} />
                         <Route path="/search" component={SearchRouter} />
                         <Route path="/news" component={NewsPageContainer} />
-                        <Route path="/gaming" component={GamingSwitch} />
                         <Route path="/" component={HomeContainer} />
                         <Route component={NotFoundPageContainer}/>
                     </Switch>
                 </div>
-                <HamburgerContainer
-                    onHamburgerClick={props.onHamburgerClick}
-                    filterExpanded={props.filterExpanded}
-                />
             </div>
-            <Footer/>
         </>
     );
 
