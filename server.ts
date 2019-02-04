@@ -3,9 +3,8 @@ import { router as chatroomController } from "./controllers/chatroomController/c
 import igdbController from "./controllers/igdbController/igdb";
 import config from "./config";
 import logIP from "./controllers/logger/main";
-import { sendContactEmail } from "./util/nodemailer";
 import { Request, Response, Express, NextFunction } from "express";
-const MobileDetect = require("mobile-detect");
+import StartServiceWorkers from "./service-workers/main";
 const blocked = require("blocked");
 const express = require("express");
 const app: Express = express();
@@ -62,6 +61,10 @@ app.get("/favicon.ico", (req: Request, res: Response) => {res.sendFile(path.join
 app.get("/robots.txt", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/robots.txt")); });
 app.get("/riot.txt", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/riot.txt")); });
 
+/* cache */
+console.log(`before: ${__dirname} || after: ${path.join(__dirname, "/../cache")}`);
+app.use("/cache", express.static(path.join(__dirname, "/../cache")));
+
 /* client */
 app.get("/bundle.js", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.js")); });
 app.get("/bundle.css", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/dist/bundle.css")); });
@@ -72,3 +75,6 @@ app.listen(config.httpPort);
 if (config.useStrictlyHttps) {
     secureServer.listen(config.httpsPort);
 }
+
+/* start service workers */
+StartServiceWorkers();

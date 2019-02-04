@@ -1,9 +1,9 @@
 import DatabaseBase from "./../base/dbBase";
-import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, GameExternalInfo, DbTablePricingsFields, ExternalInfo, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableResultsFields, ResultsEnum, SimilarGame, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields } from "../../../client/client-server-common/common";
+import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, GameExternalInfo, DbTablePricingsFields, ExternalInfo, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableResultsFields, ResultsEnum, SimilarGame, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, ServiceWorkerEnums } from "../../../client/client-server-common/common";
 import { steamAPIGetPriceInfo } from "../../../util/main";
 import { MysqlError } from "mysql";
 import config from "../../../config";
-
+import { addTaskToWorker } from "../../../service-workers/main";
 
 class IGDBModel extends DatabaseBase {
 
@@ -44,7 +44,7 @@ class IGDBModel extends DatabaseBase {
     setGame(game: GameResponse): Promise<void> {
 
         return new Promise((resolve, reject) => {
-            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, game.summary, game.first_release_date, game.video];
+            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, game.summary, game.first_release_date, game.video, game.video_cached];
 
             this.insert(
                 DbTables.igdb_games,
@@ -83,7 +83,8 @@ class IGDBModel extends DatabaseBase {
 
                     Promise.all(gamePromises)
                         .then(() => {
-                            return resolve();
+                            resolve();
+                            addTaskToWorker(game.id, ServiceWorkerEnums.video_previews);
                         })
                         .catch((err: MysqlError) => {
                             if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
@@ -155,7 +156,8 @@ class IGDBModel extends DatabaseBase {
                                     genres: genres,
                                     platforms: platforms,
                                     external: pricing,
-                                    similar_games: similar_games
+                                    similar_games: similar_games,
+                                    video_cached: dbResponse.data[0].video_cached
                                 };
                                 return resolve(game);
                             } else {
@@ -1066,6 +1068,36 @@ class IGDBModel extends DatabaseBase {
             });
 
             return resolve();
+
+        });
+
+    }
+
+    /**
+     * Update video cached flag.
+     */
+    updateVideoCached(gameId: number, videoCached: boolean): Promise <void> {
+
+        return new Promise((resolve, reject) => {
+
+            // update video cached
+            this.update(
+                DbTables.igdb_games,
+                `${DbTableIGDBGamesFields[8]}=?`,
+                [videoCached],
+                `${DbTableIGDBGamesFields[1]}=?`,
+                [gameId])
+                .then((dbResponse: GenericModelResponse) => {
+                    console.log(`update resp: ${JSON.stringify(dbResponse.data)}`);
+                    if (dbResponse.data.affectedRows === 1) {
+                        return resolve();
+                    } else {
+                        return reject(`Database error.`);
+                    }
+                })
+                .catch((error: string) => {
+                    return reject(`Database error.`);
+                });
 
         });
 

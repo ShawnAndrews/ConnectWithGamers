@@ -104,9 +104,11 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
 
     return (
         <Paper className="game-details bg-primary-solid overflow-hidden position-relative p-0 br-0" elevation={24}>
-            {props.game.screenshots &&
+            {(props.game.screenshots || props.game.video_cached) &&
                 <Background
+                    gameId={props.gameId}
                     screenshots={props.game.screenshots}
+                    video_cached={props.game.video_cached}
                 />}
             <div className="position-relative mx-5" style={getCoverContainerStyle()}>
                 <div className="d-inline-block" style={getCoverGameInfoStyle()}>

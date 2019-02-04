@@ -6,8 +6,12 @@
 
 .game-details {
 
-    .background-screenshot-container {
+    .background-container {
         height: @game-details-screenshot-height;
+
+        .video-preview {
+            object-fit: fill;
+        }
 
         .filter {
             position: absolute;
@@ -16,7 +20,7 @@
             content: "";
             width: 100%;
             height: @game-details-screenshot-height;
-            background: linear-gradient(to top, #171a21 10%, transparent 150%);
+            background: linear-gradient(to top, #171a21 10%, transparent 40%);
         }
     }
 

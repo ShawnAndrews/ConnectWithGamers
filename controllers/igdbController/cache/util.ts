@@ -350,7 +350,8 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 screenshots: screenshots,
                 video: video,
                 external: external,
-                similar_games: similar_games
+                similar_games: similar_games,
+                video_cached: false
             };
 
             gameResponses.push(gameResponse);
