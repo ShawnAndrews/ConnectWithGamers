@@ -1,5 +1,5 @@
-- Splice video 20s via ytdl.getInfo()
-- Get Similar Games back by Splitting main query
-- Make sidenav.home expanded + auto expand on initial load
-- Debug broken sidenav+other elements on mobile(?) (100vh problem)
-- test worker.online() for better queue processing
+MONDAY (2.25 hrs)
+- (1 hr) Splice video 20s via ytdl.getInfo()
+- (30 mins) Make sidenav.home expanded + auto expand on initial load
+- (30 mins) Debug broken sidenav+other elements on mobile(?), 100vh problem
+- (15 mins) Test worker.online() for better queue processing
