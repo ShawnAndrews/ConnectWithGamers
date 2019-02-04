@@ -1,3 +1,4 @@
 - Splice video 20s via ytdl.getInfo()
 - Get Similar Games back by Splitting main query
-- Debug broken sidenav on mobile(?)
+- Make sidenav.home expanded + auto expand on initial load
+- Debug broken sidenav+other elements on mobile(?) (100vh problem)
