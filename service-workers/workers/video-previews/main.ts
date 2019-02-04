@@ -16,19 +16,23 @@ export function processVideoPreview(gameId: number) {
         igdbModel.getGame(gameId)
             .then((game: GameResponse) => {
 
+                const runNextTask = (): void => {
+                    igdbModel.updateVideoCached(gameId, true)
+                        .then(() => {
+                            parentPort.postMessage(message);
+                        })
+                        .catch((err: string) => {
+                            console.log(`Failure updating video_preview! ${err}`);
+                        });
+                }:
+            
                 if (game.video && !game.video_cached) {
                     const writable: Writable = fs.createWriteStream(`cache/video-previews/${gameId}.mp4`);
                     const readable: Writable = ytdl(game.video, { filter: (format: any) => format.container === "mp4" }).pipe(writable);
 
                     readable.on(`close`, () => {
                         console.log(`Worker finished #${gameId}!`);
-                        igdbModel.updateVideoCached(gameId, true)
-                            .then(() => {
-                                parentPort.postMessage(message);
-                            })
-                            .catch((err: string) => {
-                                console.log(`update failure! ${err}`);
-                            });
+                        runNextTask();
                     });
 
                     readable.on(`error`, (err: any) => {
@@ -36,13 +40,7 @@ export function processVideoPreview(gameId: number) {
                     });
 
                 } else {
-                    igdbModel.updateVideoCached(gameId, true)
-                        .then(() => {
-                            parentPort.postMessage(message);
-                        })
-                        .catch((err: string) => {
-                            console.log(`update failure! ${err}`);
-                        });
+                    runNextTask();
                 }
 
             })
@@ -50,13 +48,7 @@ export function processVideoPreview(gameId: number) {
                 console.log(`Failed to get video preview for game id #${gameId}: ${err}`);
             });
     } catch (err) {
-        igdbModel.updateVideoCached(gameId, true)
-            .then(() => {
-                parentPort.postMessage(message);
-            })
-            .catch((err: string) => {
-                console.log(`update failure! ${err}`);
-            });
+        runNextTask();
     }
 
 }
