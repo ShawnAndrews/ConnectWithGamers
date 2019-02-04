@@ -21,5 +21,9 @@ npm-debug.log.*
 coverage
 coverage.lcov
 
+# Cache
+cache/video-previews/*
+cache/images/*
+
 # Readme
 README.md
