@@ -1,0 +1,3 @@
+- Splice video 20s via ytdl.getInfo()
+- Get Similar Games back by Splitting main query
+- Debug broken sidenav on mobile(?)
