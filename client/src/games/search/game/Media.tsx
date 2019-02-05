@@ -18,7 +18,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
     if (youtubeId) {
         mediaPreviews.push(`https://img.youtube.com/vi/${youtubeId}/default.jpg`);
     }
-    props.screenshots.map((x: IGDBImage) => mediaPreviews.push(x.url));
+    props.screenshots.filter((x: any) => isNaN(x)).map((x: IGDBImage) => mediaPreviews.push(x.url));
     const settings = {
         customPaging: (i: number): any => {
             return (
@@ -38,7 +38,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
         autoplay: true,
         autoplaySpeed: 4000
     };
-    const screenshots: string[] = props.screenshots.map((x: IGDBImage) => x.url);
+    const screenshots: string[] = props.screenshots.filter((x: any) => isNaN(x)).map((x: IGDBImage) => x.url);
     const deviceWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
     let slideshowImages: JSX.Element[] = [];
     
