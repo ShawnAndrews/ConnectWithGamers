@@ -59,7 +59,7 @@
 - Store: View discounted, upcoming and recently released video games across PC, consoles and handhelds.
 - Pricing: Compare up-to-date prices and discounts between popular marketplaces such as Steam, GoG, Microsoft, IOS and Android.
 - Library: Import games from Steam and manually add games from other platforms.
-- Play games: Play any game on your computer without the need for multiple clients like BattleNet, Steam or Uplay.
+- Play games: Play any game on your computer without the need for launching multiple clients like BattleNet, Steam or Uplay.
 - Reviews and 5-star ratings - Read reviews and rate the games you like or dislike.
 - Global Chatroom - Talk with fellow gamers about exciting new releases with all your favorite emojis and custom emotes!
 - Linked gaming profiles - Link your gaming profiles such as Twitch, Discord and Steam so people can add you.
