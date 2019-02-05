@@ -1,9 +1,17 @@
 TODO:
 - (X) Splice video 20s via ytdl.getInfo()
-- (30 mins) Make sidenav.home expanded + auto expand on initial load
 - (X) Debug broken sidenav+other elements on mobile(?), 100vh problem
 - (X) Test worker.online() for better queue processing
-- (10 mins) mobile - tap and hold left/right still horizontally scrolling
-- (15 mins) Bug fix - if file after upload === 0 bytes, delete it and dont update video_preview flag
-
-- Remove Imgur dependency (used in chatroom)
+- (1 days) Update sidenav
+    - (30 mins) Make sidenav.home expanded + auto expand on initial load
+    - (1 days) Add sidenav.home options (ie: )
+- (15 mins) mobile - tap and hold left/right still horizontally scrolling
+- (30 mins) Bug fix - if file after upload === 0 bytes, delete it and dont update video_preview flag + test
+- (1 hr) Remove Imgur dependency (used in chatroom)
+- (15 mins) Remove Migrations dependency
+- (3 hr) Remove Redis dependency (chatusers + news)
+- (3 days) Add Pricing Server Worker GoG + Microsoft + Apple + Android pricing
+- (1 days) Learn and add SQL Job to delete expired prices + results + anything else
+- (1.5 days) Add Image Cacheing service (Covers/Thumbs/Screenshots)
+- (8 hrs) Chatroom roles functionality: Add images for chatroom roles and functionality (mod=delete messages), add .deleted flag to chatroom_messages.
+- (2 weeks?) Library
