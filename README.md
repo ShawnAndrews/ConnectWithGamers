@@ -49,7 +49,6 @@
 - [Updates](#updates)
 - [Config](#config)
 - [Dependencies](#dependencies)
-- [Migrations](#migrations)
 - [Testing](#testing)
 - [Installation](#installation)
 - [Run](#run)
@@ -202,18 +201,6 @@ Apart from the included NPM packages, there are additional components and API's 
 - MySQL Server: This is required to save Accounts, Authenticaiton Tokens, Chat Emotes, Chatroom messages, and Games.
 - IGDB: You are required to have an IGDB account with a valid v3 API key present in the config file to perform API queries.
 - SMTP: For account recovery and email verification you must set valid SMTP account credentials via the config property "smtp".
-
-## Migrations
-Setting up the database requires the following steps:
-
-- Start your MySQL server.
-- Ensure the database account and connection information located in database.json and config.ts matches eachother.
-- Run the following commands in the root directory to create the database and necessary tables.
-
-```
-db-migrate db:create connectwithgamers
-db-migrate up --config database.json -e prod
-```
 
 ## Testing
 Back-end unit testing on the NodeJS server uses Mocha, Nyc, Istanbul and is available through the following script:
