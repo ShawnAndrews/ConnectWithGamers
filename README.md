@@ -57,22 +57,19 @@
 - [License](#license)
 
 ## Features
-- Search games: Find related games by searching its name, like Zelda.
-- View recently released games: Look at which games have been released the past month.
-- View upcoming games: Discover new and exciting games soon to be released and on which platform.
-- View popular games by platform: Filter games by the most popular PC, console, and handheld platform.
-- Up-to-date Steam price: Keep notified with new discounts to get the best possible price.
-- 84,000 Games - One of the largest collection of games is at your fingertips.
-- 5-star reviews - Pick the best game for you based on actual user reviews.
-- Global Chatroom - Talk with fellow gamers about exciting new releases with all your favorite emojis and custom emotes.
-- Linked gaming platforms - Link your gaming profiles such as Twitch, Discord and Steam so people know where to find you.
+- Store: View discounted, upcoming and recently released video games across PC, consoles and handhelds.
+- Pricing: Compare up-to-date prices and discounts between popular marketplaces such as Steam, GoG, Microsoft, IOS and Android.
+- Library: Import games from Steam and manually add games from other platforms.
+- Run games: Start playing any game on your computer in a single click without the need for multiple clients like BattleNet, Steam or Uplay.
+- Reviews and 5-star ratings - Read reviews and rate the games you like or dislike.
+- Global Chatroom - Talk with fellow gamers about exciting new releases with all your favorite emojis and custom emotes!
+- Linked gaming profiles - Link your gaming profiles such as Twitch, Discord and Steam so people can add you.
+- 192,000 Games - The largest collection of video games to explore provided by IGDB.
+- Search games: Find games across all platforms by searching their name, like Zelda.
 
 <br/>
 
 <p align="center">
-  <img src="https://cdn.discordapp.com/attachments/507670507433361473/530260639835357221/hh.png" />
-  <br>
-  <br>
   <br>
   <img src="https://cdn.discordapp.com/attachments/507670507433361473/530260603567341570/h.png" />
 </p>
@@ -179,6 +176,8 @@
 >
 > - Added fully-responsive across all devices
 > - Redesigned UI
+>
+> v2.0 (Coming Soon)
 </details>
 
 ## Config
@@ -200,12 +199,9 @@ SSL information: If you plan to use SSL set "useStrictlyHttps:true" and "https: 
 
 ## Dependencies
 Apart from the included NPM packages, there are additional components and API's required to run this program without error.
-- Redis: This is required to save API calls to IGDB in memory.
-- MySQL Server: This is required to save Accounts, Authenticaiton Tokens, Chat Emotes, and Chatroom Messages.
-- IGDB: You are required to have an IGDB account with a valid API key present in the config file to perform API queries.
-- Imgur: You are required to have a valid Imgur API key.
-- Steam: No API key is required for the current application's requests.
-- SMTP: For account email verification you must set valid SMTP account credentials via the config property "smtp".
+- MySQL Server: This is required to save Accounts, Authenticaiton Tokens, Chat Emotes, Chatroom messages, and Games.
+- IGDB: You are required to have an IGDB account with a valid v3 API key present in the config file to perform API queries.
+- SMTP: For account recovery and email verification you must set valid SMTP account credentials via the config property "smtp".
 
 ## Migrations
 Setting up the database requires the following steps:
@@ -230,8 +226,7 @@ In addition to the text summary, an html coverage report will be generated in /c
 
 ## Installation
 How do i run this website on my own?
-- Ensure your MySQL server is running and you have a copy of the database using the [Migrations](#migrations) guide.
-- Ensure your Redis server is running.
+- Ensure your MySQL server is running and ask the admin (Shawn Andrews) for a copy of the latest database schema.
 - Ensure your HTTP, HTTPS(if enabled) and Chat server ports are forwarded.
 - You may now access the website via ``localhost``.
 
@@ -283,10 +278,10 @@ This website was designed to encourage fellow gamers to meet by talking in chat,
 Of course! You can check them out on my portfolio website at [saportfolio.ca](http://www.saportfolio.ca)
 
 ### Where can i get a copy of the database?
-Use my [Migrations](#migrations) guide located above.
+Ask the admin (Shawn Andrews) for a copy of the latest database schema.
 
 ### How was this project developed?
-Using React, Bootstrap, Redis, Redux, NodeJS, Mocha, MySQL, and SocketIO.
+Using React, Bootstrap, Redux, NodeJS, Mocha, MySQL, and SocketIO.
 
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)
