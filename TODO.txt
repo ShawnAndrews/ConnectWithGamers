@@ -1,5 +1,6 @@
-MONDAY (2.25 hrs)
-- (1 hr) Splice video 20s via ytdl.getInfo()
+TODO (2.25 hrs)
+- (X) Splice video 20s via ytdl.getInfo()
 - (30 mins) Make sidenav.home expanded + auto expand on initial load
-- (30 mins) Debug broken sidenav+other elements on mobile(?), 100vh problem
-- (15 mins) Test worker.online() for better queue processing
+- (X) Debug broken sidenav+other elements on mobile(?), 100vh problem
+- (X) Test worker.online() for better queue processing
+- (10 mins) mobile - tap and hold left/right still horizontally scrolling
