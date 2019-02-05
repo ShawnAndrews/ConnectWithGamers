@@ -5,3 +5,5 @@ TODO:
 - (X) Test worker.online() for better queue processing
 - (10 mins) mobile - tap and hold left/right still horizontally scrolling
 - (15 mins) Bug fix - if file after upload === 0 bytes, delete it and dont update video_preview flag
+
+- Remove Imgur dependency (used in chatroom)
