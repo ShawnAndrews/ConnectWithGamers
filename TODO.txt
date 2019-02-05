@@ -4,4 +4,4 @@ TODO:
 - (X) Debug broken sidenav+other elements on mobile(?), 100vh problem
 - (X) Test worker.online() for better queue processing
 - (10 mins) mobile - tap and hold left/right still horizontally scrolling
-- (15 mins) Bug fix - if file after upload === 0 bytes, delete it
+- (15 mins) Bug fix - if file after upload === 0 bytes, delete it and dont update video_preview flag
