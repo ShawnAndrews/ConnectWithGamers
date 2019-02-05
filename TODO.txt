@@ -26,3 +26,7 @@ TODO:
 Test broken games fixed?: 
     - https://connectwithgamers.com/search/game/95892
     - https://connectwithgamers.com/search/game/112296
+
+Test broken games video_preview?? (0-bytes?):
+    - https://connectwithgamers.com/search/game/79994
+    - https://connectwithgamers.com/search/game/103303
