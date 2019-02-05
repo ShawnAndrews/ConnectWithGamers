@@ -21,3 +21,8 @@ TODO:
     - Single-player
     - Multi-player (IGDB "Multiplayer Mode")
     - Achievements (Steam-tier: Regular, xBox: Regular, Playstation: Bronze/Silver/Gold/Platinum) (for each platform: Top 10 acheivements with tooltip of name per tier
+
+
+Test broken games fixed?: 
+    - https://connectwithgamers.com/search/game/95892
+    - https://connectwithgamers.com/search/game/112296
