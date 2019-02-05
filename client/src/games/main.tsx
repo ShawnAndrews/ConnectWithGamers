@@ -16,22 +16,20 @@ interface IMainProps {
 const Main: React.SFC<IMainProps> = (props: IMainProps) => {
 
     return (
-        <>
-            <div className="games position-relative">
-                <SidenavContainer
-                    onSidenavItemClick={props.onSidenavItemClick}
-                    sidebarActiveEnum={props.sidebarActiveEnum}
-                />
-                <div className={`content d-inline-block overflow-hidden custom-scrollbar-slim px-4 pt-4 pb-0 mr-2 my-2 h-100 ${props.sidebarActiveEnum !== undefined ? 'active' : ''}`}>
-                    <Switch>
-                        <Route path="/search" component={SearchRouter} />
-                        <Route path="/news" component={NewsPageContainer} />
-                        <Route path="/" component={HomeContainer} />
-                        <Route component={NotFoundPageContainer}/>
-                    </Switch>
-                </div>
+        <div className="games position-relative">
+            <SidenavContainer
+                onSidenavItemClick={props.onSidenavItemClick}
+                sidebarActiveEnum={props.sidebarActiveEnum}
+            />
+            <div className={`content d-inline-block custom-scrollbar-slim px-4 pt-4 pb-0 mr-2 my-2 ${props.sidebarActiveEnum !== undefined ? 'active' : ''}`}>
+                <Switch>
+                    <Route path="/search" component={SearchRouter} />
+                    <Route path="/news" component={NewsPageContainer} />
+                    <Route path="/" component={HomeContainer} />
+                    <Route component={NotFoundPageContainer}/>
+                </Switch>
             </div>
-        </>
+        </div>
     );
 
 };

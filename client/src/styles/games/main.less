@@ -6,7 +6,8 @@
 @games-sidebar-color: #111215;
 
 .games {
- 
+    height: -webkit-fill-available;
+
     .fullsize-results {
         display: grid;
         grid-gap: 10px;
@@ -400,7 +401,7 @@
         bottom: 0px;
         left: @games-sidebar-width;
         width: @games-sidebar-content-width;
-        height: calc(100vh - @navbar-height);
+        height: calc(100% - @navbar-height);
         background-color: #232323;
         overflow-y: auto;
         overflow-x: hidden;
@@ -410,7 +411,7 @@
         position: fixed;
         bottom: 0px;
         width: @games-sidebar-width;
-        height: calc(100vh - @navbar-height);
+        height: calc(100% - @navbar-height);
         background-color: @games-sidebar-color;
 
         .home {
@@ -463,8 +464,8 @@
         right: 0px;
         top: @navbar-height;
         width: calc(100% - @games-sidebar-width);
+        height: -webkit-fill-available;
         overflow-y: scroll!important;
-        min-height: calc(100vh - 57px);
 
         &.active {
             width: calc(100% - @games-sidebar-width - @games-sidebar-content-width);

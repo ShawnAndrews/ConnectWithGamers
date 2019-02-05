@@ -22,8 +22,8 @@ coverage
 coverage.lcov
 
 # Cache
-cache/video-previews/*
-cache/images/*
+cache/video-previews/**/*
+cache/images/**/*
 
 # Readme
 README.md

@@ -109,7 +109,7 @@ class IGDBModel extends DatabaseBase {
     /**
      * Get game from database.
      */
-    getGame(gameId: number): Promise <GameResponse> {
+    getGame(gameId: number, skipVideoPreview: boolean = false): Promise <GameResponse> {
 
         return new Promise((resolve, reject) => {
             const gamePromises: Promise<any>[] = [this.getGameCover(gameId), this.getGameScreenshots(gameId), this.getGamePricing(gameId), this.getGameIcons(gameId), this.getGameReleaseDates(gameId), this.getGamePlatforms(gameId), this.getGameGenres(gameId), this.getGameSimilarGames(gameId)];
@@ -159,6 +159,9 @@ class IGDBModel extends DatabaseBase {
                                     similar_games: similar_games,
                                     video_cached: dbResponse.data[0].video_cached
                                 };
+                                if (!skipVideoPreview) {
+                                    addTaskToWorker(game.id, ServiceWorkerEnums.video_previews);
+                                }
                                 return resolve(game);
                             } else {
                                 return reject(`Game not found in database with id #${gameId}`);
@@ -1088,7 +1091,6 @@ class IGDBModel extends DatabaseBase {
                 `${DbTableIGDBGamesFields[1]}=?`,
                 [gameId])
                 .then((dbResponse: GenericModelResponse) => {
-                    console.log(`update resp: ${JSON.stringify(dbResponse.data)}`);
                     if (dbResponse.data.affectedRows === 1) {
                         return resolve();
                     } else {

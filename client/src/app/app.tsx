@@ -47,7 +47,7 @@ class App extends React.Component<IAppProps, IAppState> {
                     ));
 
         return (
-            <div className="vh-min-100">
+            <>
                 <NavbarContainer/>
                 <Switch>
                     {AuthorizedRoutesRedirect}
@@ -57,7 +57,7 @@ class App extends React.Component<IAppProps, IAppState> {
                     <Route path="/" component={GamesContainer}/>
                     <Route component={NotFoundPageContainer}/>
                 </Switch>
-            </div>
+            </>
         );
 
     }

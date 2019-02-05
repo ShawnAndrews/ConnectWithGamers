@@ -62,7 +62,6 @@ app.get("/robots.txt", (req: Request, res: Response) => {res.sendFile(path.join(
 app.get("/riot.txt", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/riot.txt")); });
 
 /* cache */
-console.log(`before: ${__dirname} || after: ${path.join(__dirname, "/../cache")}`);
 app.use("/cache", express.static(path.join(__dirname, "/../cache")));
 
 /* client */
