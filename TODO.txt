@@ -16,4 +16,7 @@ TODO:
 - (8 hrs) Chatroom roles functionality: Add images for chatroom roles and functionality (mod=delete messages), add .deleted flag to chatroom_messages.
 - (2 weeks?) Library
 
-- (?) Add Game Achievements + Multiplayer Mode info in game screen (with top-10 achievements tooltip of name) (below platforms/genres)
+- (?) New component below platforms/genres
+    - Single-player
+    - Multi-player (IGDB "Multiplayer Mode")
+    - Achievements (Steam-tier: Regular, xBox: Regular, Playstation: Bronze/Silver/Gold/Platinum) (for each platform: Top 10 acheivements with tooltip of name per tier
