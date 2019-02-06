@@ -5,7 +5,7 @@ TODO:
 - (X) mobile - tap and hold left/right still horizontally scrolling
 - (X) Bug fix - if file after upload === 0 bytes, delete it and dont update video_preview flag + test
 - (1 days) Update sidenav
-    - (30 mins) Make sidenav.home expanded + auto expand on initial load
+    - (X) Make sidenav.home expanded + auto expand on initial load
     - (1 days) Add sidenav.home options (ie: )
 - (1 hr) Remove Imgur dependency (used in chatroom)
 - (15 mins) Remove Migrations dependency
@@ -21,3 +21,6 @@ TODO:
     - Single-player
     - Multi-player (IGDB "Multiplayer Mode")
     - Achievements (Steam-tier: Regular, xBox: Regular, Playstation: Bronze/Silver/Gold/Platinum) (for each platform: Top 10 acheivements with tooltip of name per tier
+    
+    
+global snackbar call(via redux)
