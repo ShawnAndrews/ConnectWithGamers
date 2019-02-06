@@ -27,19 +27,10 @@ export function processVideoPreview(gameId: number) {
                             const videoLenMs: number = videoInfo.player_response.streamingData.formats.length > 0 && videoInfo.player_response.streamingData.formats[0].approxDurationMs;
 
                             if (videoLenMs) {
-                                let captureStartTimeMs: number;
-                                let writable: Writable;
-                                let readable: any;
                                 const outputPath: string = `cache/video-previews/${gameId}.mp4`;
-
-                                if (videoLenMs < MAX_VIDEO_CAPTURE_LEN_MS + 3000) {
-                                    captureStartTimeMs = 0;
-                                } else {
-                                    captureStartTimeMs = videoLenMs - MAX_VIDEO_CAPTURE_LEN_MS;
-                                }
-
-                                writable = fs.createWriteStream(outputPath);
-                                readable = ytdl(game.video, { filter: (format: any) => format.container === "mp4", begin: captureStartTimeMs }).pipe(writable);
+                                const captureStartTimeMs: number = videoLenMs < MAX_VIDEO_CAPTURE_LEN_MS + 3000 ? 0 : videoLenMs - MAX_VIDEO_CAPTURE_LEN_MS;
+                                const writable: Writable = fs.createWriteStream(outputPath);
+                                const readable: any = ytdl(game.video, { filter: (format: any) => format.container === "mp4", begin: captureStartTimeMs }).pipe(writable);
 
                                 readable.on(`close`, () => {
                                     if (getFilesizeInBytes(outputPath) === 0) {
