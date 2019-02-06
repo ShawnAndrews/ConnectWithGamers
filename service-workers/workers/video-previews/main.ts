@@ -30,6 +30,7 @@ export function processVideoPreview(gameId: number) {
                                 let captureStartTimeMs: number;
                                 let writable: Writable;
                                 let readable: any;
+                                const outputPath: string = `cache/video-previews/${gameId}.mp4`;
 
                                 if (videoLenMs < MAX_VIDEO_CAPTURE_LEN_MS + 3000) {
                                     captureStartTimeMs = 0;
@@ -37,18 +38,23 @@ export function processVideoPreview(gameId: number) {
                                     captureStartTimeMs = videoLenMs - MAX_VIDEO_CAPTURE_LEN_MS;
                                 }
 
-                                writable = fs.createWriteStream(`cache/video-previews/${gameId}.mp4`);
+                                writable = fs.createWriteStream(outputPath);
                                 readable = ytdl(game.video, { filter: (format: any) => format.container === "mp4", begin: captureStartTimeMs }).pipe(writable);
 
                                 readable.on(`close`, () => {
-                                    igdbModel.updateVideoCached(gameId, true)
-                                        .then(() => {
-                                            sendNotRunningMessage();
-                                        })
-                                        .catch((err: string) => {
-                                            console.log(`Failure updating video_preview! ${err}`);
-                                            sendNotRunningMessage();
-                                        });
+                                    if (getFilesizeInBytes(outputPath) === 0) {
+                                        fs.unlink(outputPath);
+                                        sendNotRunningMessage();
+                                    } else {
+                                        igdbModel.updateVideoCached(gameId, true)
+                                            .then(() => {
+                                                sendNotRunningMessage();
+                                            })
+                                            .catch((err: string) => {
+                                                console.log(`Failure updating video_preview! ${err}`);
+                                                sendNotRunningMessage();
+                                            });
+                                    }
                                 });
 
                             } else {
@@ -74,4 +80,10 @@ export function processVideoPreview(gameId: number) {
         sendNotRunningMessage();
     }
 
+}
+
+function getFilesizeInBytes(path: string): number {
+    const stats = fs.statSync(path);
+    const fileSizeInBytes: number = stats.size;
+    return fileSizeInBytes;
 }
