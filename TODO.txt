@@ -2,11 +2,11 @@ TODO:
 - (X) Splice video 20s via ytdl.getInfo()
 - (X) Debug broken sidenav+other elements on mobile(?), 100vh problem
 - (X) Test worker.online() for better queue processing
+- (X) mobile - tap and hold left/right still horizontally scrolling
+- (X) Bug fix - if file after upload === 0 bytes, delete it and dont update video_preview flag + test
 - (1 days) Update sidenav
     - (30 mins) Make sidenav.home expanded + auto expand on initial load
     - (1 days) Add sidenav.home options (ie: )
-- (15 mins) mobile - tap and hold left/right still horizontally scrolling
-- (30 mins) Bug fix - if file after upload === 0 bytes, delete it and dont update video_preview flag + test
 - (1 hr) Remove Imgur dependency (used in chatroom)
 - (15 mins) Remove Migrations dependency
 - (3 hr) Remove Redis dependency (chatusers + news)
@@ -21,12 +21,3 @@ TODO:
     - Single-player
     - Multi-player (IGDB "Multiplayer Mode")
     - Achievements (Steam-tier: Regular, xBox: Regular, Playstation: Bronze/Silver/Gold/Platinum) (for each platform: Top 10 acheivements with tooltip of name per tier
-
-
-Test broken games fixed?: 
-    - https://connectwithgamers.com/search/game/95892
-    - https://connectwithgamers.com/search/game/112296
-
-Test broken games video_preview?? (0-bytes?):
-    - https://connectwithgamers.com/search/game/79994
-    - https://connectwithgamers.com/search/game/103303
