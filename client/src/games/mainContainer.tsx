@@ -16,21 +16,19 @@ class MainContainer extends React.Component<IMainContainerProps, IMainContainerS
         this.onSidenavItemClick = this.onSidenavItemClick.bind(this);
 
         this.state = {
-            sidebarActiveEnum: undefined
+            sidebarActiveEnum: SidenavEnums.home
         };
     }
 
     onSidenavItemClick(itemEnum: SidenavEnums): void {
         const clickedCurrentlyActiveEnum: boolean = itemEnum === this.state.sidebarActiveEnum;
 
-        if (itemEnum === SidenavEnums.home) {
-            this.props.history.push(`/`);
-        } else if (itemEnum === SidenavEnums.news) {
+        if (itemEnum === SidenavEnums.news) {
             this.props.history.push(`/news`);
         }
 
         this.setState({
-            sidebarActiveEnum: (itemEnum === SidenavEnums.home || itemEnum === SidenavEnums.news) ? undefined : !clickedCurrentlyActiveEnum ? itemEnum : undefined
+            sidebarActiveEnum: itemEnum === SidenavEnums.news ? undefined : !clickedCurrentlyActiveEnum ? itemEnum : undefined
         });
         
     }

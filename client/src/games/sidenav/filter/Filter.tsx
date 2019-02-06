@@ -7,12 +7,6 @@ import { IdNamePair } from '../../../../client-server-common/common';
 import { SortingOptionEnum } from './FilterContainer';
 
 interface IFilterProps {
-    browsePopularSelected: boolean;
-    browseRecentSelected: boolean;
-    browseUpcomingSelected: boolean;
-    browseIOSSoonSelected: boolean;
-    browseAndroidSoonSelected: boolean;
-    browseNewsSelected: boolean;
     popularity: number;
     onPopularityChange: (value: number) => void;
     releaseDateStart: Date;
@@ -37,16 +31,9 @@ interface IFilterProps {
     onTrailerClick: (checked: boolean) => void;
     onSearchKeypress: (event: React.KeyboardEvent<Element>) => void;
     onSearchQueryChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onPopularClick: (checked: boolean) => void;
-    onRecentClick: (checked: boolean) => void;
-    onUpcomingClick: (checked: boolean) => void;
-    onIOSSoonClick: (checked: boolean) => void;
-    onAndroidSoonClick: (checked: boolean) => void;
-    onNewsClick: (checked: boolean) => void;
     cover: boolean;
     screenshots: boolean;
     trailer: boolean;
-    disableNonBrowse: boolean;
 }
 
 const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
@@ -59,56 +46,11 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                         Search
                     </div>
                     <div className="options">
-                        <div className={`searchbar w-100 has-search mb-2 mx-auto ${props.disableNonBrowse ? 'disabled' : ''}`}>
+                        <div className={`searchbar w-100 has-search mb-2 mx-auto`}>
                             <span className="fa fa-search form-control-feedback"/>
-                            <input type="text" className="form-control" placeholder="Game title" disabled={props.disableNonBrowse} onChange={props.onSearchQueryChanged} onKeyPress={props.onSearchKeypress} />
+                            <input type="text" className="form-control" placeholder="Game title" onChange={props.onSearchQueryChanged} onKeyPress={props.onSearchKeypress} />
                         </div>
-                        <div className="browse px-3 my-3">
-                            <div className="mb-2">Browse</div>
-                            <FormControlLabel
-                                className="filter-checkbox"
-                                control={
-                                    <Checkbox className="check" checked={props.browsePopularSelected} value={props.browsePopularSelected} onChange={(event: any, checked: boolean) => props.onPopularClick(checked)} />
-                                }
-                                label="Most Popular"
-                            />
-                            <FormControlLabel
-                                className="filter-checkbox"
-                                control={
-                                    <Checkbox className="check" checked={props.browseRecentSelected} value={props.browseRecentSelected} onChange={(event: any, checked: boolean) => props.onRecentClick(checked)} />
-                                }
-                                label="Recently Released"
-                            />
-                            <FormControlLabel
-                                className="filter-checkbox"
-                                control={
-                                    <Checkbox className="check" checked={props.browseUpcomingSelected} value={props.browseUpcomingSelected} onChange={(event: any, checked: boolean) => props.onUpcomingClick(checked)} />
-                                }
-                                label="Upcoming"
-                            />
-                            <FormControlLabel
-                                className="filter-checkbox"
-                                control={
-                                    <Checkbox className="check" checked={props.browseIOSSoonSelected} value={props.browseIOSSoonSelected} onChange={(event: any, checked: boolean) => props.onIOSSoonClick(checked)} />
-                                }
-                                label="IOS Apps Coming Soon"
-                            />
-                            <FormControlLabel
-                                className="filter-checkbox"
-                                control={
-                                    <Checkbox className="check" checked={props.browseAndroidSoonSelected} value={props.browseAndroidSoonSelected} onChange={(event: any, checked: boolean) => props.onAndroidSoonClick(checked)} />
-                                }
-                                label="Android Apps Coming Soon"
-                            />
-                            <FormControlLabel
-                                className="filter-checkbox"
-                                control={
-                                    <Checkbox className="check" checked={props.browseNewsSelected} value={props.browseNewsSelected} onChange={(event: any, checked: boolean) => props.onNewsClick(checked)} />
-                                }
-                                label="News"
-                            />
-                        </div>
-                        <div className={`popularity px-3 mb-5 ${props.disableNonBrowse ? 'disabled' : ''}`}>
+                        <div className={`popularity px-3 mt-4 mb-5`}>
                             Popularity — {props.popularity}%+
                             <Slider
                                 className="slider mt-3"
@@ -117,10 +59,9 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                 min={0}
                                 max={100}
                                 step={1}
-                                disabled={props.disableNonBrowse}
                             />
                         </div>
-                        <div className={`release-date px-3 my-3 ${props.disableNonBrowse ? 'disabled' : ''}`}>
+                        <div className={`release-date px-3 my-3`}>
                             <div>Release Date</div>
                             <div className="mt-2">
                                 <div className="date-picker cursor-pointer d-inline-block">
@@ -128,7 +69,6 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                         selected={props.releaseDateStart}
                                         onChange={props.onReleaseDateStartChange}
                                         placeholderText="Start date"
-                                        disabled={props.disableNonBrowse}
                                     />
                                 </div>
                                 <div className="divider text-center d-inline-block">—</div>
@@ -137,12 +77,11 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                         selected={props.releaseDateEnd}
                                         onChange={props.onReleaseDateEndChange}
                                         placeholderText="End date"
-                                        disabled={props.disableNonBrowse}
                                     />
                                 </div>
                             </div>
                         </div>
-                        <div className={`genres px-3 my-3 ${props.disableNonBrowse ? 'disabled' : ''}`}>
+                        <div className={`genres px-3 my-3`}>
                             <div>Genres</div>
                             <FormControl className="filter-multi-select w-100">
                                 <Select
@@ -157,7 +96,6 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                             ))}
                                         </div>
                                     )}
-                                    disabled={props.disableNonBrowse}
                                 >
                                     {props.genreOptions.map((x: IdNamePair) => (
                                         <MenuItem key={x.id} value={x.name}>
@@ -167,7 +105,7 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                 </Select>
                             </FormControl>
                         </div>
-                        <div className={`platforms px-3 my-3 ${props.disableNonBrowse ? 'disabled' : ''}`}>
+                        <div className={`platforms px-3 my-3`}>
                             <div>Platforms</div>
                             <FormControl className="filter-multi-select w-100">
                                 <Select
@@ -182,7 +120,6 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                             ))}
                                         </div>
                                     )}
-                                    disabled={props.disableNonBrowse}
                                 >
                                     {props.platformOptions.map((x: IdNamePair) => (
                                         <MenuItem key={x.id} value={x.name}>
@@ -192,7 +129,7 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                 </Select>
                             </FormControl>
                         </div>
-                        <div className={`category px-3 my-3 ${props.disableNonBrowse ? 'disabled' : ''}`}>
+                        <div className={`category px-3 my-3`}>
                             <div>Category</div>
                             <FormControl className="filter-multi-select w-100">
                                 <Select
@@ -207,7 +144,6 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                             ))}
                                         </div>
                                     )}
-                                    disabled={props.disableNonBrowse}
                                 >
                                     {props.categoryOptions.map((x: IdNamePair) => (
                                         <MenuItem key={x.id} value={x.name}>
@@ -217,7 +153,7 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                 </Select>
                             </FormControl>
                         </div>
-                        <div className={`required px-3 my-3 ${props.disableNonBrowse ? 'disabled' : ''}`}>
+                        <div className={`required px-3 my-3`}>
                             <div className="mb-2">Required</div>
                             <FormControlLabel
                                 className="filter-checkbox"
@@ -225,7 +161,6 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                     <Checkbox className="check" checked={props.cover} value={props.cover} onChange={(event: any, checked: boolean) => props.onCoverClick(checked)} />
                                 }
                                 label="Cover"
-                                disabled={props.disableNonBrowse}
                             />
                             <FormControlLabel
                                 className="filter-checkbox"
@@ -233,7 +168,6 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                     <Checkbox className="check" checked={props.screenshots} value={props.screenshots} onChange={(event: any, checked: boolean) => props.onScreenshotsClick(checked)} />
                                 }
                                 label="Screenshots"
-                                disabled={props.disableNonBrowse}
                             />
                             <FormControlLabel
                                 className="filter-checkbox"
@@ -241,10 +175,9 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                     <Checkbox className="check" checked={props.trailer} value={props.trailer} onChange={(event: any, checked: boolean) => props.onTrailerClick(checked)} />
                                 }
                                 label="Trailer"
-                                disabled={props.disableNonBrowse}
                             />
                         </div>
-                        <div className={`sorting px-3 ${props.disableNonBrowse ? 'disabled' : ''}`}>
+                        <div className={`sorting px-3 `}>
                             <div className="mb-2">Sorting</div>
                             <FormControl>
                                 <Select
@@ -252,7 +185,6 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                     value={props.sortingSelection}
                                     onChange={props.onSortingSelectionChange}
                                     name="w-100"
-                                    disabled={props.disableNonBrowse}
                                 >
                                     {props.sortingOptions && 
                                         props.sortingOptions.map((x: IdNamePair) => 
@@ -260,10 +192,9 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                 </Select>
                             </FormControl>
                         </div>
-                        {!props.disableNonBrowse && 
-                            <div className="refresh color-primary cursor-pointer text-center text-uppercase font-weight-bold mt-4" onClick={props.onRefreshClick}>
-                                Refresh
-                            </div>}
+                        <div className="refresh color-primary cursor-pointer text-center text-uppercase font-weight-bold mt-4" onClick={props.onRefreshClick}>
+                            Refresh
+                        </div>
                     </div>
                 </div>
             </div>

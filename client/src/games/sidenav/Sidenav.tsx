@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Paper } from '@material-ui/core';
 import { SidenavEnums } from '../../../client-server-common/common';
 import FilterContainer from './filter/FilterContainer';
+import HomeContainer from './home/HomeContainer';
 
 interface IMainProps {
     onSidenavItemClick: (itemEnum: SidenavEnums) => void;
@@ -20,7 +21,8 @@ const Main: React.SFC<IMainProps> = (props: IMainProps) => {
                 <i className={`cog fas fa-cog cursor-pointer color-tertiary ${props.sidebarActiveEnum === SidenavEnums.cog ? 'active': ''}`} onClick={() => props.onSidenavItemClick(SidenavEnums.cog)}/>
             </Paper>
             {props.sidebarActiveEnum !== undefined &&
-                 <div className={`sidenav-content align-top d-inline-block custom-scrollbar-slim`}>
+                 <div className={`sidenav-content align-top d-inline-block custom-scrollbar-slim py-2`}>
+                    {props.sidebarActiveEnum === SidenavEnums.home && <HomeContainer/>}
                     {props.sidebarActiveEnum === SidenavEnums.search && <FilterContainer/>}
                  </div>}
         </>

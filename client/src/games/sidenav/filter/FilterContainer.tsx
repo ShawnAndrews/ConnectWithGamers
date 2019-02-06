@@ -18,12 +18,6 @@ interface IFilterContainerProps extends RouteComponentProps<any> {
 
 interface IFilterContainerState {
     searchTerm: string;
-    browsePopularSelected: boolean;
-    browseRecentSelected: boolean;
-    browseUpcomingSelected: boolean;
-    browseIOSSoonSelected: boolean;
-    browseAndroidSoonSelected: boolean;
-    browseNewsSelected: boolean;
     popularity: number;
     releaseDateStart: Date;
     releaseDateEnd: Date;
@@ -58,12 +52,6 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         this.onTrailerClick = this.onTrailerClick.bind(this);
         this.onSearchQueryChanged = this.onSearchQueryChanged.bind(this);
         this.onSearchKeypress = this.onSearchKeypress.bind(this);
-        this.onPopularClick = this.onPopularClick.bind(this);
-        this.onRecentClick = this.onRecentClick.bind(this);
-        this.onUpcomingClick = this.onUpcomingClick.bind(this);
-        this.onIOSSoonClick = this.onIOSSoonClick.bind(this);
-        this.onAndroidSoonClick = this.onAndroidSoonClick.bind(this);
-        this.onNewsClick = this.onNewsClick.bind(this);
 
         const sortingOptions: IdNamePair[] = [
             { id: SortingOptionEnum.PopularityAsc, name: 'Popularity ↑' },
@@ -104,12 +92,6 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
 
         this.state = {
             searchTerm: '',
-            browsePopularSelected: false,
-            browseRecentSelected: false,
-            browseUpcomingSelected: false,
-            browseIOSSoonSelected: false,
-            browseAndroidSoonSelected: false,
-            browseNewsSelected: false,
             popularity: 0,
             releaseDateStart: undefined,
             releaseDateEnd: undefined,
@@ -306,115 +288,9 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         }
     }
 
-    onPopularClick(checked: boolean): void {
-
-        this.setState({
-            browsePopularSelected: checked,
-            browseRecentSelected: false,
-            browseUpcomingSelected: false,
-            browseIOSSoonSelected: false,
-            browseAndroidSoonSelected: false,
-            browseNewsSelected: false,
-            disableNonBrowse: checked
-        });
-
-        if (checked) {
-            this.props.history.push(`/search/popular`);
-        }
-    }
-
-    onRecentClick(checked: boolean): void {
-
-        this.setState({
-            browsePopularSelected: false,
-            browseRecentSelected: checked,
-            browseUpcomingSelected: false,
-            browseIOSSoonSelected: false,
-            browseAndroidSoonSelected: false,
-            browseNewsSelected: false,
-            disableNonBrowse: checked
-        });
-
-        if (checked) {
-            this.props.history.push(`/search/recent`);
-        }
-    }
-
-    onUpcomingClick(checked: boolean): void {
-
-        this.setState({
-            browsePopularSelected: false,
-            browseRecentSelected: false,
-            browseUpcomingSelected: checked,
-            browseIOSSoonSelected: false,
-            browseAndroidSoonSelected: false,
-            browseNewsSelected: false,
-            disableNonBrowse: checked
-        });
-
-        if (checked) {
-            this.props.history.push(`/search/upcoming`);
-        }
-    }
-
-    onIOSSoonClick(checked: boolean): void {
-
-        this.setState({
-            browsePopularSelected: false,
-            browseRecentSelected: false,
-            browseUpcomingSelected: false,
-            browseIOSSoonSelected: checked,
-            browseAndroidSoonSelected: false,
-            browseNewsSelected: false,
-            disableNonBrowse: checked
-        });
-
-        if (checked) {
-            this.props.history.push(`/search/ios-coming-soon`);
-        }
-    }
-
-    onAndroidSoonClick(checked: boolean): void {
-
-        this.setState({
-            browsePopularSelected: false,
-            browseRecentSelected: false,
-            browseUpcomingSelected: false,
-            browseIOSSoonSelected: false,
-            browseAndroidSoonSelected: checked,
-            browseNewsSelected: false,
-            disableNonBrowse: checked
-        });
-
-        if (checked) {
-            this.props.history.push(`/search/android-coming-soon`);
-        }
-    }
-
-    onNewsClick(checked: boolean): void {
-
-        this.setState({
-            browsePopularSelected: false,
-            browseRecentSelected: false,
-            browseUpcomingSelected: false,
-            browseNewsSelected: checked,
-            disableNonBrowse: checked
-        });
-
-        if (checked) {
-            this.props.history.push(`/news`);
-        }
-    }
-
     render() {
         return (
             <Filter
-                browsePopularSelected={this.state.browsePopularSelected}
-                browseRecentSelected={this.state.browseRecentSelected}
-                browseUpcomingSelected={this.state.browseUpcomingSelected}
-                browseIOSSoonSelected={this.state.browseIOSSoonSelected}
-                browseAndroidSoonSelected={this.state.browseAndroidSoonSelected}
-                browseNewsSelected={this.state.browseNewsSelected}
                 popularity={this.state.popularity}
                 onPopularityChange={this.onPopularityChange}
                 releaseDateStart={this.state.releaseDateStart}
@@ -439,16 +315,9 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
                 onTrailerClick={this.onTrailerClick}
                 onSearchKeypress={this.onSearchKeypress}
                 onSearchQueryChanged={this.onSearchQueryChanged}
-                onPopularClick={this.onPopularClick}
-                onRecentClick={this.onRecentClick}
-                onUpcomingClick={this.onUpcomingClick}
-                onIOSSoonClick={this.onIOSSoonClick}
-                onAndroidSoonClick={this.onAndroidSoonClick}
-                onNewsClick={this.onNewsClick}
                 cover={this.state.cover}
                 screenshots={this.state.screenshots}
                 trailer={this.state.trailer}
-                disableNonBrowse={this.state.disableNonBrowse}
             />
         );
     }
