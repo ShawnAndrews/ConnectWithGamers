@@ -22,6 +22,7 @@ TODO:
     - Multi-player (IGDB "Multiplayer Mode")
     - Achievements (Steam-tier: Regular, xBox: Regular, Playstation: Bronze/Silver/Gold/Platinum) (for each platform: Top 10 acheivements with tooltip of name per tier
     
-    
+
+convert sidenav.home checkboxes to arrows?
 global snackbar call(via redux)
 coming soon/preorder banners
