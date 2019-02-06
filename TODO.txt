@@ -22,7 +22,7 @@ TODO:
     - Single-player
     - Multi-player (via IGDB "Multiplayer Mode" endpoint)
     - Achievements(?) (Steam-tier: Regular, xBox: Regular, Playstation: Bronze/Silver/Gold/Platinum) (for each platform: Top 10 acheivements in a tooltip containing info like name + points awarded
-    
+- Video_preview not working on game at https://connectwithgamers.com/search/ios-coming-soon
 
 (2 hr) global snackbar call(via redux)
 (pending artist) coming soon/preorder banners
