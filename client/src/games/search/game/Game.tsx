@@ -41,7 +41,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
             </div>
         );
     }
-
+    
     const horizontalImage: boolean = props.game.cover && (props.game.cover.width > props.game.cover.height);
     const maxWidth: number = horizontalImage ? 300 : 250;
     const aspectRatio: number = props.game.cover && (maxWidth / props.game.cover.width);
@@ -101,10 +101,10 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
             width: `${newWidth}px`
         };
     }
-
+    
     return (
         <Paper className="game-details bg-primary-solid overflow-hidden position-relative p-0 br-0" elevation={24}>
-            {(props.game.screenshots || props.game.video_cached) &&
+            {(props.game.screenshots.length > 0 || props.game.video_cached) &&
                 <Background
                     gameId={props.gameId}
                     screenshots={props.game.screenshots}

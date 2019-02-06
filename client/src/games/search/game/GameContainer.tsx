@@ -69,7 +69,7 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
     loadGame(id: number): void {
         IGDBService.httpGenericGetData<SingleGameResponse>(`/igdb/game/${id}`)
             .then( (response: SingleGameResponse) => {
-                const game: GameResponse = response.data; 
+                const game: GameResponse = response.data;
                 this.setState({ isLoading: false, game: game, gameid: id });
             })
             .catch( (error: string) => {
