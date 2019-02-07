@@ -814,7 +814,7 @@ export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `igdb_genre_e
 export const DbTableIconsFields: string[] = [`icons_sys_key_id`, `icons_enum_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTableIconsEnumFields: string[] = [`icons_enum_sys_key_id`, `id`, `name`];
 export const DbTableIGDBExternalEnumFields: string[] = [`igdb_external_enum_sys_key_id`, `id`, `name`];
-export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`, `video_cached`];
+export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`, `video_cached`, `image_cached`];
 export const DbTableIGDBGenreEnumFields: string[] = [`igdb_genre_enum_sys_key_id`, `id`, `name`];
 export const DbTableIGDBImagesFields: string[] = [`igdb_images_sys_key_id`, `id`, `alpha_channel`, `animated`, `url`, `width`, `height`];
 export const DbTableIGDBPlatformEnumFields: string[] = [`igdb_platform_enum_sys_key_id`, `id`, `name`];
@@ -834,6 +834,6 @@ export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys
 
 export enum ServiceWorkerEnums {
     video_previews,
-    image_caching,
+    image_cacheing,
     pricing_update
 }
