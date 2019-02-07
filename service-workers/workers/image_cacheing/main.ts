@@ -33,7 +33,7 @@ export function processImageCacheing(gameId: number) {
               
               downloadAndSaveImage(inputPath, outputPath)
               .then(() => {
-                igdbModel.updateGameImageCached(gameId, true);
+                igdbModel.updateImageCached(gameId, true);
               })
               .then(() => {
                 sendNotRunningMessage();
@@ -58,72 +58,6 @@ export function processImageCacheing(gameId: number) {
 
     } catch (err) {
       sendNotRunningMessage();
-    }
-
-
-
-
-
-    const outputPath: string = `cache/image-cacheing/${gameId}.mp4`;
-    const message = (running: boolean): ServiceWorkerMessage => ( { serviceWorkerEnum: ServiceWorkerEnums.video_previews, running: running } );
-
-    const sendNotRunningMessage = (): void => parentPort.postMessage(message(false));
-    const sendRunningMessage = (): void => parentPort.postMessage(message(true));
-
-    try {
-        sendRunningMessage();
-
-        igdbModel.getGame(gameId, true)
-            .then((game: GameResponse) => {
-                const failedUploadCached: boolean = fs.existsSync(outputPath) && getFilesizeInBytes(outputPath) === 0;
-
-                if (failedUploadCached) {
-                    console.log(`found 0 byte video for game id #${gameId} and deleted.`);
-                    fs.unlink(outputPath);
-                }
-
-                if (game.video && (!game.video_cached || failedUploadCached)) {
-                    ytdl.getInfo(game.video)
-                        .then((videoInfo: any) => {
-                            const videoLenMs: number = videoInfo.player_response.streamingData.formats.length > 0 && videoInfo.player_response.streamingData.formats[0].approxDurationMs;
-
-                            if (videoLenMs) {
-                                const captureStartTimeMs: number = videoLenMs < MAX_VIDEO_CAPTURE_LEN_MS + 3000 ? 0 : videoLenMs - MAX_VIDEO_CAPTURE_LEN_MS;
-                                const writable: Writable = fs.createWriteStream(outputPath);
-                                const readable: any = ytdl(game.video, { filter: (format: any) => format.container === "mp4", begin: captureStartTimeMs }).pipe(writable);
-
-                                readable.on(`close`, () => {
-                                    igdbModel.updateVideoCached(gameId, true)
-                                        .then(() => {
-                                            sendNotRunningMessage();
-                                        })
-                                        .catch((err: string) => {
-                                            console.log(`Failure updating video_preview! ${err}`);
-                                            sendNotRunningMessage();
-                                        });
-                                });
-
-                            } else {
-                                console.log(`Failure getting video length! ${videoLenMs}`);
-                                sendNotRunningMessage();
-                            }
-                        })
-                        .catch((err: string) => {
-                            console.log(`Failure getting video_preview meta data! ${err}`);
-                            sendNotRunningMessage();
-                        });
-
-                } else {
-                    sendNotRunningMessage();
-                }
-
-            })
-            .catch((err: string) => {
-                console.log(`Failed to get video preview for game id #${gameId}: ${err}`);
-                sendNotRunningMessage();
-            });
-    } catch (e) {
-        sendNotRunningMessage();
     }
 
 }
