@@ -26,3 +26,50 @@ TODO:
 
 (2 hr) global snackbar call(via redux)
 (pending artist) coming soon/preorder banners
+
+
+{
+        "id": 103210,
+        "multiplayer_modes": [
+            {
+                "id": 9058,
+                "campaigncoop": false,
+                "dropin": false,
+                "game": 103210,
+                "lancoop": false,
+                "offlinecoop": false,
+                "onlinecoop": true,
+                "onlinecoopmax": 2,
+                "onlinemax": 2,
+                "platform": 6,
+                "splitscreen": false
+            },
+            {
+                "id": 9059,
+                "campaigncoop": false,
+                "dropin": false,
+                "game": 103210,
+                "lancoop": false,
+                "offlinecoop": false,
+                "onlinecoop": true,
+                "onlinecoopmax": 2,
+                "onlinemax": 2,
+                "platform": 48,
+                "splitscreen": false
+            },
+            {
+                "id": 9060,
+                "campaigncoop": false,
+                "dropin": false,
+                "game": 103210,
+                "lancoop": false,
+                "offlinecoop": false,
+                "onlinecoop": true,
+                "onlinecoopmax": 2,
+                "onlinemax": 2,
+                "platform": 49,
+                "splitscreen": false
+            }
+        ],
+        "name": "HITMAN 2"
+    },
