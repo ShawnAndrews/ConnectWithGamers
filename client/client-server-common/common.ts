@@ -12,6 +12,8 @@ export function getIGDBImage(uid: string, size: IGDBImageSizeEnums): string {
     return `https://images.igdb.com/igdb/image/upload/t_${size}/${uid}.jpg`;
 }
 
+export const IGDBImageUploadPath: string = `https://images.igdb.com/igdb/image/upload/`;
+
 export function buildIGDBRequestBody(filters: string[], fields: string, limit: number, sort?: string, search?: string): string {
     let body: string = "";
 
