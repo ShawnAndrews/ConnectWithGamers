@@ -28,7 +28,7 @@ export default function StartServiceWorkers(): void {
             const newWorker = new Worker(__filename, { workerData: ServiceWorkerEnum });
             newWorker.on("message", (message: ServiceWorkerMessage) => handleMessageFromWorker(message));
             newWorker.on("online", () => console.log(`Service worker (#${ServiceWorkerEnum}) started!`));
-            newWorker.on("error", (err: any) => console.log(`Service worker (#${ServiceWorkerEnum}) crashed: ${JSON.stringify(err)}`));
+            newWorker.on("error", () => restartWorker(Number(ServiceWorkerEnum)));
             serviceWorkerRef.set(Number(ServiceWorkerEnum), newWorker);
             serviceWorkerQueue.set(Number(ServiceWorkerEnum), []);
             serviceWorkerRunning.set(Number(ServiceWorkerEnum), false);
@@ -52,6 +52,12 @@ export default function StartServiceWorkers(): void {
 
 export function addTaskToWorker(data: any, serviceWorkerEnum: ServiceWorkerEnums): void {
     serviceWorkerQueue.get(serviceWorkerEnum).push(data);
+}
+
+function restartWorker(serviceWorkerEnum: ServiceWorkerEnums): void {
+    console.log(`Restarting worker #${serviceWorkerEnum}...`);
+    const newWorker = new Worker(__filename, { workerData: serviceWorkerEnum });
+    serviceWorkerRef.set(Number(serviceWorkerEnum), newWorker);
 }
 
 function handleMessageFromWorker(message: ServiceWorkerMessage): void {

@@ -9,7 +9,7 @@ import { ServiceWorkerMessage } from "../../main";
 const MAX_VIDEO_CAPTURE_LEN_MS: number = 30000;
 
 export function processVideoPreview(gameId: number) {
-
+    const outputPath: string = `cache/video-previews/${gameId}.mp4`;
     const message = (running: boolean): ServiceWorkerMessage => ( { serviceWorkerEnum: ServiceWorkerEnums.video_previews, running: running } );
 
     const sendNotRunningMessage = (): void => parentPort.postMessage(message(false));
@@ -20,32 +20,32 @@ export function processVideoPreview(gameId: number) {
 
         igdbModel.getGame(gameId, true)
             .then((game: GameResponse) => {
+                const failedUploadCached: boolean = fs.existsSync(outputPath) && getFilesizeInBytes(outputPath) === 0;
 
-                if (game.video && !game.video_cached) {
+                if (failedUploadCached) {
+                    console.log(`found 0 byte video for game id #${gameId} and deleted.`);
+                    fs.unlink(outputPath);
+                }
+
+                if (game.video && (!game.video_cached || failedUploadCached)) {
                     ytdl.getInfo(game.video)
                         .then((videoInfo: any) => {
                             const videoLenMs: number = videoInfo.player_response.streamingData.formats.length > 0 && videoInfo.player_response.streamingData.formats[0].approxDurationMs;
 
                             if (videoLenMs) {
-                                const outputPath: string = `cache/video-previews/${gameId}.mp4`;
                                 const captureStartTimeMs: number = videoLenMs < MAX_VIDEO_CAPTURE_LEN_MS + 3000 ? 0 : videoLenMs - MAX_VIDEO_CAPTURE_LEN_MS;
                                 const writable: Writable = fs.createWriteStream(outputPath);
                                 const readable: any = ytdl(game.video, { filter: (format: any) => format.container === "mp4", begin: captureStartTimeMs }).pipe(writable);
 
                                 readable.on(`close`, () => {
-                                    if (getFilesizeInBytes(outputPath) === 0) {
-                                        fs.unlink(outputPath);
-                                        sendNotRunningMessage();
-                                    } else {
-                                        igdbModel.updateVideoCached(gameId, true)
-                                            .then(() => {
-                                                sendNotRunningMessage();
-                                            })
-                                            .catch((err: string) => {
-                                                console.log(`Failure updating video_preview! ${err}`);
-                                                sendNotRunningMessage();
-                                            });
-                                    }
+                                    igdbModel.updateVideoCached(gameId, true)
+                                        .then(() => {
+                                            sendNotRunningMessage();
+                                        })
+                                        .catch((err: string) => {
+                                            console.log(`Failure updating video_preview! ${err}`);
+                                            sendNotRunningMessage();
+                                        });
                                 });
 
                             } else {
