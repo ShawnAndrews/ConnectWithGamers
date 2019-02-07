@@ -6,6 +6,7 @@ TODO:
 - (X) Bug fix - if file after upload === 0 bytes, delete it and dont update video_preview flag + test
 - (30 mins) Rating a game broken
 - (1 hr) Random search query requests are stalling the 1st attempt, succeed subsequent attempts though
+- image cacheing remove game.url as default url and always build manually the imagesize in url
 
 - (1 days) Update sidenav
     - (X) Make sidenav.home expanded + auto expand on initial load
