@@ -1,6 +1,7 @@
 const { Worker, isMainThread, parentPort, workerData } = require("worker_threads");
 import { ServiceWorkerEnums } from "../client/client-server-common/common";
 import { processVideoPreview } from "./workers/video-previews/main";
+import { processImageCacheing } from "./workers/image-cacheing/main";
 
 const REFRESH_TIME_MS: number = 500;
 const MAX_ITERATIONS: number = 2;
@@ -17,6 +18,10 @@ if (!isMainThread) {
 
     if (Number(workerData) === ServiceWorkerEnums.video_previews) {
         parentPort.on("message", (gameId: number) => processVideoPreview(gameId) );
+    }
+    
+    if (Number(workerData) === ServiceWorkerEnums.image_cacheing) {
+        parentPort.on("message", (gameId: number) => processImageCacheing(gameId) );
     }
 
 }
