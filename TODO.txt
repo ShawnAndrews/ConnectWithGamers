@@ -7,6 +7,7 @@ TODO:
 - (30 mins) Rating a game broken
 - (1 hr) Random search query requests are stalling the 1st attempt, succeed subsequent attempts though
 - image cacheing remove game.url as default url and always build manually the imagesize in url
+- (15 mins) Need a Not Found page for invalid gameId in URL
 
 - (1 days) Update sidenav
     - (X) Make sidenav.home expanded + auto expand on initial load
