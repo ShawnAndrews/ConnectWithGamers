@@ -736,7 +736,6 @@ export interface IGDBReleaseDate {
 }
 
 export interface IGDBImage {
-    id: number;
     alpha_channel: boolean;
     animated: boolean;
     image_id: string;
@@ -745,7 +744,6 @@ export interface IGDBImage {
 }
 
 export interface IGDBVideo {
-    id: number;
     name: string;
     video_id: string;
 }

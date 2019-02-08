@@ -270,7 +270,6 @@ class IGDBModel extends DatabaseBase {
 
                     if (dbResponse.data.length > 0) {
                         const cover: IGDBImage = {
-                            id: dbResponse.data[0].igdb_images_sys_key_id,
                             alpha_channel: Boolean(dbResponse.data[0].alpha_channel[0]),
                             animated: Boolean(dbResponse.data[0].animated[0]),
                             image_id: dbResponse.data[0].id,
@@ -377,7 +376,6 @@ class IGDBModel extends DatabaseBase {
                     dbResponse.data.forEach((x: any) => {
 
                         const screenshot: IGDBImage = {
-                            id: x.igdb_images_sys_key_id,
                             alpha_channel: x.alpha_channel[0],
                             animated: x.animated[0],
                             image_id: x.id,
