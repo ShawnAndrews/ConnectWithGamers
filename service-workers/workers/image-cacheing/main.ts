@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { parentPort } = require("worker_threads");
 import { igdbModel } from "../../../models/db/igdb/main";
-import { GameResponse, ServiceWorkerEnums, IGDBImageSizeEnums, IGDBImageUploadPath } from "../../../client/client-server-common/common";
+import { GameResponse, ServiceWorkerEnums, IGDBImageSizeEnums, IGDBImageUploadPath, IGDBImage } from "../../../client/client-server-common/common";
 import { ServiceWorkerMessage } from "../../main";
 import Axios, { AxiosResponse } from "axios";
 
@@ -29,12 +29,15 @@ export function processImageCacheing(gameId: number) {
 
                 if (!game.image_cached) {
                     const downloadPromises: Promise<void>[] = [];
+                    const downloadUids: string[] = game.screenshots.map((x: IGDBImage) => x.image_id).concat(game.cover.image_id);
 
                     cachedImageSizes.forEach((imageSize: string) => {
-                        const outputPath: string = `cache/image-cacheing/${imageSize}/${game.cover.image_id}.jpg`;
-                        const inputPath: string = `${IGDBImageUploadPath}/t_${imageSize}/${game.cover.image_id}.jpg`;
+                        downloadUids.forEach((uid: string) => {
+                            const outputPath: string = `cache/image-cacheing/${imageSize}/${uid}.jpg`;
+                            const inputPath: string = `${IGDBImageUploadPath}/t_${imageSize}/${uid}.jpg`;
 
-                        downloadPromises.push(downloadAndSaveImage(inputPath, outputPath));
+                            downloadPromises.push(downloadAndSaveImage(inputPath, outputPath));
+                        });
                     });
 
                     Promise.all(downloadPromises)
@@ -74,7 +77,7 @@ export function processImageCacheing(gameId: number) {
 
 function downloadAndSaveImage(inputPath: string, outputPath: string): Promise<void> {
     const writer = fs.createWriteStream(outputPath);
-    console.log(`path: ${inputPath}`);
+
     return new Promise((resolve, reject) => {
         Axios(inputPath, {
             method: "GET",
