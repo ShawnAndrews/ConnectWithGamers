@@ -18,6 +18,8 @@ interface IFullsizeGameProps {
 }
 
 const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) => {
+    const isNoPrice: boolean = props.game.external.steam && isNan(props.game.external.steam.price);
+    const isFree: boolean = props.game.external.steam && props.game.external.steam.price === `Free`;
     let originalPrice: number = undefined;
 
     if (props.game.external.steam) {
@@ -27,7 +29,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
     return (
         <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
             <div className="screenshot w-100 h-100">
-                <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_cached ? getCachedIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
+                <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
             </div>
             <div className='overlay'/>
             <div className='text-overlay'/>
@@ -72,14 +74,16 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                             </Button>}
                     </>}
             </div>
+            {!props.isEditorsChoiceGame && isNoPrice &&
+                <img class={`status-banner ${isFree ? 'short' : ''}`} src="https://i.imgur.com/QpvQV2Q.png"/>}
             {!props.isEditorsChoiceGame && props.game.external.steam &&
-                <div className={`price-container ${!props.game.external.steam.discount_percent ? 'no-discount': ''} mt-1`}>
+                <div className={`price-container ${isNoPrice ? `no-price` : (!props.game.external.steam.discount_percent ? 'no-discount': '')} mt-1`}>
                     {props.game.external.steam.discount_percent && 
                         <>
                             <div className="discount d-inline-block px-1">-{props.game.external.steam.discount_percent}%</div>
                             <div className="original-price d-inline-block px-1"><del>${originalPrice} USD</del></div>
                         </>}
-                    <div className={`final-price d-inline-block ${props.game.external.steam.discount_percent ? 'px-1' : 'px-3'}`}>{!isNaN(Number(props.game.external.steam.price)) ? `$${props.game.external.steam.price} USD` : props.game.external.steam.price}</div>
+                    <div className={`text d-inline-block ${props.game.external.steam.discount_percent ? 'px-1' : 'px-3'}`}>{!isNaN(Number(props.game.external.steam.price)) ? `$${props.game.external.steam.price} USD` : props.game.external.steam.price}</div>
                 </div>}
         </Card>
     );

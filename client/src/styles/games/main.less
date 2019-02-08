@@ -10,7 +10,7 @@
 
     .fullsize-results {
         display: grid;
-        grid-gap: 10px;
+        grid-gap: 17px;
         grid-template-columns: auto auto auto auto auto;
         grid-auto-rows: minmax(125px, 17vh);
     
@@ -25,6 +25,7 @@
         [class*="game"] {
             background-color: rgba(white,0.03);
             border-radius: 5px;
+            overflow: visible;
 
             &.feature {
                 grid-row: span 3;
@@ -186,12 +187,27 @@
                     font-size: 8px;
                 }
 
+                &.no-price {
+                    width: auto;
+                    height: auto;
+                    background: none;
+
+                    .text {
+                        position: relative;
+                        opacity: 0.85;
+                        font-size: 11px;
+                        color: rgba(0,0,0,0.6);
+                        font-weight: 800;   
+                        text-transform: uppercase;
+                    }
+                }
+
                 &.no-discount {
                     width: auto;
                     height: auto;
                     background: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0) 100%);
 
-                    .final-price {
+                    .text {
                         position: relative;
                         opacity: 0.85;
                         font-size: 11px;
@@ -206,6 +222,18 @@
                 background-color: rgba(black,0.5);
             }
 
+            .status-banner {
+                position: absolute;
+                top: 6px;
+                right: -14px;
+                width: 125px;
+                height: 27px;
+                
+                &.short {
+                    width: 65px;   
+                }
+            }
+            
             .editor-banner {
                 position: absolute;
                 top: -14px;
