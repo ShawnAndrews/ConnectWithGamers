@@ -22,7 +22,6 @@ export function processImageCacheing(gameId: number) {
 
     try {
         sendRunningMessage();
-        console.log(`Processing...`);
 
         igdbModel.getGame(gameId, true, true)
             .then((game: GameResponse) => {
