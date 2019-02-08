@@ -4,7 +4,10 @@ TODO:
 - (X) Test worker.online() for better queue processing
 - (X) mobile - tap and hold left/right still horizontally scrolling
 - (X) Bug fix - if file after upload === 0 bytes, delete it and dont update video_preview flag + test
+- (30 mins) Rating a game broken
 - (1 hr) Random search query requests are stalling the 1st attempt, succeed subsequent attempts though
+- image cacheing remove game.url as default url and always build manually the imagesize in url
+
 - (1 days) Update sidenav
     - (X) Make sidenav.home expanded + auto expand on initial load
     - (1 days) Add sidenav.home options (ie: ) (reminder: convert sidenav.home checkboxes to arrows)
@@ -26,3 +29,50 @@ TODO:
 
 (2 hr) global snackbar call(via redux)
 (pending artist) coming soon/preorder banners
+
+
+{
+        "id": 103210,
+        "multiplayer_modes": [
+            {
+                "id": 9058,
+                "campaigncoop": false,
+                "dropin": false,
+                "game": 103210,
+                "lancoop": false,
+                "offlinecoop": false,
+                "onlinecoop": true,
+                "onlinecoopmax": 2,
+                "onlinemax": 2,
+                "platform": 6,
+                "splitscreen": false
+            },
+            {
+                "id": 9059,
+                "campaigncoop": false,
+                "dropin": false,
+                "game": 103210,
+                "lancoop": false,
+                "offlinecoop": false,
+                "onlinecoop": true,
+                "onlinecoopmax": 2,
+                "onlinemax": 2,
+                "platform": 48,
+                "splitscreen": false
+            },
+            {
+                "id": 9060,
+                "campaigncoop": false,
+                "dropin": false,
+                "game": 103210,
+                "lancoop": false,
+                "offlinecoop": false,
+                "onlinecoop": true,
+                "onlinecoopmax": 2,
+                "onlinemax": 2,
+                "platform": 49,
+                "splitscreen": false
+            }
+        ],
+        "name": "HITMAN 2"
+    },

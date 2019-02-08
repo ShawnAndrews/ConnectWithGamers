@@ -6,15 +6,14 @@ import { GameResponse, ServiceWorkerEnums } from "../../../client/client-server-
 import { Writable } from "stream";
 import { ServiceWorkerMessage } from "../../main";
 
+const message = (running: boolean): ServiceWorkerMessage => ( { serviceWorkerEnum: ServiceWorkerEnums.video_previews, running: running } );
+const sendNotRunningMessage = (): void => parentPort.postMessage(message(false));
+const sendRunningMessage = (): void => parentPort.postMessage(message(true));
 const MAX_VIDEO_CAPTURE_LEN_MS: number = 30000;
 
 export function processVideoPreview(gameId: number) {
     console.log(`Processing #${gameId}...`);
     const outputPath: string = `cache/video-previews/${gameId}.mp4`;
-    const message = (running: boolean): ServiceWorkerMessage => ( { serviceWorkerEnum: ServiceWorkerEnums.video_previews, running: running } );
-
-    const sendNotRunningMessage = (): void => parentPort.postMessage(message(false));
-    const sendRunningMessage = (): void => parentPort.postMessage(message(true));
 
     try {
         sendRunningMessage();

@@ -1098,7 +1098,36 @@ class IGDBModel extends DatabaseBase {
                     }
                 })
                 .catch((error: string) => {
-                    return reject(`Database error.`);
+                    return reject(`Database error. Error: ${error}`);
+                });
+
+        });
+
+    }
+    
+    /**
+     * Update image cached flag.
+     */
+    updateImageCached(gameId: number, imageCached: boolean): Promise <void> {
+
+        return new Promise((resolve, reject) => {
+
+            // update image cached
+            this.update(
+                DbTables.igdb_games,
+                `${DbTableIGDBGamesFields[9]}=?`,
+                [imageCached],
+                `${DbTableIGDBGamesFields[1]}=?`,
+                [gameId])
+                .then((dbResponse: GenericModelResponse) => {
+                    if (dbResponse.data.affectedRows === 1) {
+                        return resolve();
+                    } else {
+                        return reject(`Database error.`);
+                    }
+                })
+                .catch((error: string) => {
+                    return reject(`Database error. Error: ${error}`);
                 });
 
         });
