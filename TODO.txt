@@ -15,6 +15,7 @@ TODO:
 - (1 hr) Remove Imgur dependency (used in chatroom)
 - (15 mins) Remove Migrations dependency
 - (3 hr) Remove Redis dependency (chatusers + news)
+- (15 mins) Remove old Steam/Discord/Twitch code
 - (1 hr) Exapnd similar_game info to include name/rating/etc
 - (3 days) Add Pricing Service Worker GoG + Microsoft + Apple + Android pricing
 - (1 days) Learn and add SQL Job to delete expired prices + results + anything else
