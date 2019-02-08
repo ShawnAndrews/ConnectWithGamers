@@ -12,13 +12,12 @@ const sendRunningMessage = (): void => parentPort.postMessage(message(true));
 const MAX_VIDEO_CAPTURE_LEN_MS: number = 30000;
 
 export function processVideoPreview(gameId: number) {
-    console.log(`Processing #${gameId}...`);
     const outputPath: string = `cache/video-previews/${gameId}.mp4`;
 
     try {
         sendRunningMessage();
 
-        igdbModel.getGame(gameId, true)
+        igdbModel.getGame(gameId, true, true)
             .then((game: GameResponse) => {
                 const failedUploadCached: boolean = fs.existsSync(outputPath) && getFilesizeInBytes(outputPath) === 0;
 

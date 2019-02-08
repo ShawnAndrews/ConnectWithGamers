@@ -44,7 +44,7 @@ class IGDBModel extends DatabaseBase {
     setGame(game: GameResponse): Promise<void> {
 
         return new Promise((resolve, reject) => {
-            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, game.summary, game.first_release_date, game.video, game.video_cached];
+            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, game.summary, game.first_release_date, game.video, game.video_cached, game.image_cached];
 
             this.insert(
                 DbTables.igdb_games,
@@ -85,6 +85,7 @@ class IGDBModel extends DatabaseBase {
                         .then(() => {
                             resolve();
                             addTaskToWorker(game.id, ServiceWorkerEnums.video_previews);
+                            addTaskToWorker(game.id, ServiceWorkerEnums.image_cacheing);
                         })
                         .catch((err: MysqlError) => {
                             if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
@@ -109,7 +110,7 @@ class IGDBModel extends DatabaseBase {
     /**
      * Get game from database.
      */
-    getGame(gameId: number, skipVideoPreview: boolean = false): Promise <GameResponse> {
+    getGame(gameId: number, skipVideoPreview: boolean = false, skipImageCacheing: boolean = false): Promise <GameResponse> {
 
         return new Promise((resolve, reject) => {
             const gamePromises: Promise<any>[] = [this.getGameCover(gameId), this.getGameScreenshots(gameId), this.getGamePricing(gameId), this.getGameIcons(gameId), this.getGameReleaseDates(gameId), this.getGamePlatforms(gameId), this.getGameGenres(gameId), this.getGameSimilarGames(gameId)];
@@ -157,10 +158,14 @@ class IGDBModel extends DatabaseBase {
                                     platforms: platforms,
                                     external: pricing,
                                     similar_games: similar_games,
-                                    video_cached: dbResponse.data[0].video_cached
+                                    video_cached: dbResponse.data[0].video_cached,
+                                    image_cached: dbResponse.data[0].image_cached,
                                 };
                                 if (!skipVideoPreview) {
                                     addTaskToWorker(game.id, ServiceWorkerEnums.video_previews);
+                                }
+                                if (!skipImageCacheing) {
+                                    addTaskToWorker(game.id, ServiceWorkerEnums.image_cacheing);
                                 }
                                 return resolve(game);
                             } else {
@@ -1104,7 +1109,7 @@ class IGDBModel extends DatabaseBase {
         });
 
     }
-    
+
     /**
      * Update image cached flag.
      */

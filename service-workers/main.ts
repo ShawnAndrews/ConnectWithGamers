@@ -20,7 +20,7 @@ if (!isMainThread) {
     if (Number(workerData) === ServiceWorkerEnums.video_previews) {
         parentPort.on("message", (gameId: number) => processVideoPreview(gameId) );
     }
-    
+
     if (Number(workerData) === ServiceWorkerEnums.image_cacheing) {
         parentPort.on("message", (gameId: number) => processImageCacheing(gameId) );
     }
@@ -38,7 +38,7 @@ export default function StartServiceWorkers(): void {
             serviceWorkerRef.set(Number(ServiceWorkerEnum), newWorker);
             serviceWorkerQueue.set(Number(ServiceWorkerEnum), []);
             serviceWorkerRunning.set(Number(ServiceWorkerEnum), false);
-            if (ServiceWorkerEnums.image_cacheing === Number(ServiceWorkerEnum)) {
+            if (ServiceWorkerEnums.pricing_update === Number(ServiceWorkerEnum)) {
                 serviceWorkerMultiTaskEnabled.set(Number(ServiceWorkerEnum), false);
             } else {
                 serviceWorkerMultiTaskEnabled.set(Number(ServiceWorkerEnum), true);
@@ -50,8 +50,8 @@ export default function StartServiceWorkers(): void {
         for (const ServiceWorkerEnum in ServiceWorkerEnums) {
             if (!isNaN(Number(ServiceWorkerEnum))) {
                 const workerMultiTaskEnabled: boolean = serviceWorkerMultiTaskEnabled.get(Number(ServiceWorkerEnum));
-                
-                if (workerQueueEnabled) {
+
+                if (workerMultiTaskEnabled) {
                     const workerRunning: boolean = serviceWorkerRunning.get(Number(ServiceWorkerEnum));
                     const workerQueueEmpty: boolean = serviceWorkerQueue.get(Number(ServiceWorkerEnum)).length === 0;
 
@@ -68,8 +68,8 @@ export default function StartServiceWorkers(): void {
 }
 
 export function addTaskToWorker(data: any, serviceWorkerEnum: ServiceWorkerEnums): void {
-    const workerMultiTaskEnabled: boolean = serviceWorkerMultiTaskEnabled.get(Number(ServiceWorkerEnum));
-    
+    const workerMultiTaskEnabled: boolean = serviceWorkerMultiTaskEnabled.get(serviceWorkerEnum);
+
     if (workerMultiTaskEnabled) {
         serviceWorkerQueue.get(serviceWorkerEnum).push(data);
     } else {
@@ -87,8 +87,8 @@ function restartWorker(serviceWorkerEnum: ServiceWorkerEnums): void {
 function handleMessageFromWorker(message: ServiceWorkerMessage): void {
     const oldStateRunning: boolean = serviceWorkerRunning.get(message.serviceWorkerEnum);
     const newStateRunning: boolean = message.running;
-    const workerMultiTaskEnabled: boolean = serviceWorkerMultiTaskEnabled.get(Number(ServiceWorkerEnum));
-    
+    const workerMultiTaskEnabled: boolean = serviceWorkerMultiTaskEnabled.get(message.serviceWorkerEnum);
+
     if (oldStateRunning && !newStateRunning && workerMultiTaskEnabled) {
         attemptRunNewTaskOnWorker(message.serviceWorkerEnum);
     }

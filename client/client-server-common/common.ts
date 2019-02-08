@@ -599,6 +599,7 @@ export interface GameResponse {
     video_cached: boolean;
     external: GameExternalInfo;
     similar_games: SimilarGame[];
+    image_cached: boolean;
 }
 
 export interface SimilarGame {
