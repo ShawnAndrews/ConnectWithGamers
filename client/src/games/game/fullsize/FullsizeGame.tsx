@@ -18,7 +18,8 @@ interface IFullsizeGameProps {
 }
 
 const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) => {
-    const isNoPrice: boolean = props.game.external.steam && props.game.external.steam.price;
+    const isNoPrice: boolean = props.game.external.steam && isNan(props.game.external.steam.price);
+    const isFree: boolean = props.game.external.steam && props.game.external.steam.price === `Free`;
     let originalPrice: number = undefined;
 
     if (props.game.external.steam) {
@@ -74,7 +75,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                     </>}
             </div>
             {!props.isEditorsChoiceGame && isNoPrice &&
-                <img class="status-banner" src="https://i.imgur.com/QpvQV2Q.png"/>}
+                <img class={`status-banner ${isFree ? 'short' : ''}`} src="https://i.imgur.com/QpvQV2Q.png"/>}
             {!props.isEditorsChoiceGame && props.game.external.steam &&
                 <div className={`price-container ${isNoPrice ? `no-price` : (!props.game.external.steam.discount_percent ? 'no-discount': '')} mt-1`}>
                     {props.game.external.steam.discount_percent && 
