@@ -6,7 +6,7 @@ export enum SQLErrorCodes {
     DUPLICATE_ROW = 1062
 }
 
-export const ExcludedGameIds: number[] = [76214, 20487, 44289, 8174, 90783, 74968, 103404, 15736, 112657, 113382, 68702, 41047, 112105, 96213, 106122, 90113, 111117, 9643, 59858, 59227, 25260, 2126, 24462, 109458, 89554, 113209, 109545, 113103, 96135, 74959, 29954, 87673, 103371];
+export const ExcludedGameIds: number[] = [40477, 76214, 20487, 44289, 8174, 90783, 74968, 103404, 15736, 112657, 113382, 68702, 41047, 112105, 96213, 106122, 90113, 111117, 9643, 59858, 59227, 25260, 2126, 24462, 109458, 89554, 113209, 109545, 113103, 96135, 74959, 29954, 87673, 103371];
 
 export function getIGDBImage(uid: string, size: IGDBImageSizeEnums): string {
     return `https://images.igdb.com/igdb/image/upload/t_${size}/${uid}.jpg`;

@@ -9,6 +9,7 @@ import { ServiceWorkerMessage } from "../../main";
 const MAX_VIDEO_CAPTURE_LEN_MS: number = 30000;
 
 export function processVideoPreview(gameId: number) {
+    console.log(`Processing #${gameId}...`);
     const outputPath: string = `cache/video-previews/${gameId}.mp4`;
     const message = (running: boolean): ServiceWorkerMessage => ( { serviceWorkerEnum: ServiceWorkerEnums.video_previews, running: running } );
 
@@ -23,7 +24,6 @@ export function processVideoPreview(gameId: number) {
                 const failedUploadCached: boolean = fs.existsSync(outputPath) && getFilesizeInBytes(outputPath) === 0;
 
                 if (failedUploadCached) {
-                    console.log(`found 0 byte video for game id #${gameId} and deleted.`);
                     fs.unlink(outputPath);
                 }
 

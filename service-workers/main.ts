@@ -58,6 +58,7 @@ function restartWorker(serviceWorkerEnum: ServiceWorkerEnums): void {
     console.log(`Restarting worker #${serviceWorkerEnum}...`);
     const newWorker = new Worker(__filename, { workerData: serviceWorkerEnum });
     serviceWorkerRef.set(Number(serviceWorkerEnum), newWorker);
+    serviceWorkerRunning.set(Number(serviceWorkerEnum), false);
 }
 
 function handleMessageFromWorker(message: ServiceWorkerMessage): void {
