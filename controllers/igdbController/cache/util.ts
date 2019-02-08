@@ -201,7 +201,6 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 if (typeof RawGame.cover === "number") {
                     return undefined;
                 }
-                RawGame.cover.url = getIGDBImage(RawGame.cover.image_id, IGDBImageSizeEnums.cover_big);
                 RawGame.cover.alpha_channel =  RawGame.cover.alpha_channel || false;
                 RawGame.cover.animated =  RawGame.cover.animated || false;
                 cover = RawGame.cover && RawGame.cover.image_id ? RawGame.cover : undefined;
@@ -264,7 +263,6 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 if (typeof x === "number") {
                     return undefined;
                 }
-                x.url = getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big);
                 return x;
             });
 

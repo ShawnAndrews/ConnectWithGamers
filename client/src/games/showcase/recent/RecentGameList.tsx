@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse } from '../../../../../client/client-server-common/common';
+import { GameResponse, IGDBImageSizeEnums, getIGDBImage, getCachedIGDBImage } from '../../../../../client/client-server-common/common';
 import { CardMedia } from '@material-ui/core';
 import { formatDate } from '../../../util/main';
 
@@ -32,7 +32,7 @@ const RecentGameList: React.SFC<IRecentGameListProps> = (props: IRecentGameListP
                             return (
                                 <div key={x.id} className="table-container cursor-pointer align-top primary-shadow d-inline-block mx-2" onClick={() => { props.onClickGame(x.id); }}>
                                     <CardMedia className="position-relative h-100">
-                                        <img className="h-100" src={x.cover ? x.cover.url : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
+                                        <img className="h-100" src={x.cover ? (x.image_cached ? getCachedIGDBImage(x.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(x.cover.image_id, IGDBImageSizeEnums.cover_big)) : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                                         <div className="overlay" />
                                         <span className="name-overlay">{x.name}</span>
                                         <div className="icons">

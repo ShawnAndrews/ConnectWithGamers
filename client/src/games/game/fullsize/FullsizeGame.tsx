@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, IGDBGenre, IGDBImage, GenreEnums } from '../../../../client-server-common/common';
+import { GameResponse, IGDBGenre, IGDBImage, GenreEnums, IGDBImageSizeEnums, getIGDBImage, getCachedIGDBImage } from '../../../../client-server-common/common';
 import { Card, Button } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 import Crossfade from '../crossfade/CrossfadeContainer';
@@ -27,7 +27,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
     return (
         <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
             <div className="screenshot w-100 h-100">
-                <Crossfade src={props.game.screenshots.map((x: IGDBImage) => x.url)} index={props.hoveredScreenshotIndex} />
+                <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_cached ? getCachedIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
             </div>
             <div className='overlay'/>
             <div className='text-overlay'/>

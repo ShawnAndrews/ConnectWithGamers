@@ -203,7 +203,7 @@ class IGDBModel extends DatabaseBase {
                     if (dbResponse.data[0][`COUNT(*)`] !== 0) {
                         return resolve();
                     } else {
-                        const imageColumnValues: any[] = [cover.image_id, cover.alpha_channel || 0, cover.animated || 0, cover.url, cover.width, cover.height];
+                        const imageColumnValues: any[] = [cover.image_id, cover.alpha_channel || 0, cover.animated || 0, cover.width, cover.height];
 
                         // insert image
                         this.insert(
@@ -273,7 +273,6 @@ class IGDBModel extends DatabaseBase {
                             id: dbResponse.data[0].igdb_images_sys_key_id,
                             alpha_channel: Boolean(dbResponse.data[0].alpha_channel[0]),
                             animated: Boolean(dbResponse.data[0].animated[0]),
-                            url: dbResponse.data[0].url,
                             image_id: dbResponse.data[0].id,
                             width: dbResponse.data[0].width,
                             height: dbResponse.data[0].height,
@@ -312,7 +311,7 @@ class IGDBModel extends DatabaseBase {
                         screenshots
                             .filter((screenshot: IGDBImage) => screenshot.image_id)
                             .forEach((screenshot: IGDBImage) => {
-                            const imageColumnValues: any[] = [screenshot.image_id, screenshot.alpha_channel || 0, screenshot.animated || 0, screenshot.url, screenshot.width, screenshot.height];
+                            const imageColumnValues: any[] = [screenshot.image_id, screenshot.alpha_channel || 0, screenshot.animated || 0, screenshot.width, screenshot.height];
 
                             // insert image
                             this.insert(
@@ -381,7 +380,6 @@ class IGDBModel extends DatabaseBase {
                             id: x.igdb_images_sys_key_id,
                             alpha_channel: x.alpha_channel[0],
                             animated: x.animated[0],
-                            url: x.url,
                             image_id: x.id,
                             width: x.width,
                             height: x.height,

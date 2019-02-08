@@ -6,13 +6,17 @@ export enum SQLErrorCodes {
     DUPLICATE_ROW = 1062
 }
 
-export const ExcludedGameIds: number[] = [40477, 76214, 20487, 44289, 8174, 90783, 74968, 103404, 15736, 112657, 113382, 68702, 41047, 112105, 96213, 106122, 90113, 111117, 9643, 59858, 59227, 25260, 2126, 24462, 109458, 89554, 113209, 109545, 113103, 96135, 74959, 29954, 87673, 103371];
+export const ExcludedGameIds: number[] = [];
+
+export const IGDBImageUploadPath: string = `https://images.igdb.com/igdb/image/upload`;
 
 export function getIGDBImage(uid: string, size: IGDBImageSizeEnums): string {
     return `https://images.igdb.com/igdb/image/upload/t_${size}/${uid}.jpg`;
 }
 
-export const IGDBImageUploadPath: string = `https://images.igdb.com/igdb/image/upload`;
+export function getCachedIGDBImage(uid: string, size: IGDBImageSizeEnums): string {
+    return `/cache/image-cacheing/${size}/${uid}.jpg`;
+}
 
 export function buildIGDBRequestBody(filters: string[], fields: string, limit: number, sort?: string, search?: string): string {
     let body: string = "";
@@ -735,7 +739,6 @@ export interface IGDBImage {
     id: number;
     alpha_channel: boolean;
     animated: boolean;
-    url: string;
     image_id: string;
     width: number;
     height: number;
@@ -817,7 +820,7 @@ export const DbTableIconsEnumFields: string[] = [`icons_enum_sys_key_id`, `id`, 
 export const DbTableIGDBExternalEnumFields: string[] = [`igdb_external_enum_sys_key_id`, `id`, `name`];
 export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`, `video_cached`, `image_cached`];
 export const DbTableIGDBGenreEnumFields: string[] = [`igdb_genre_enum_sys_key_id`, `id`, `name`];
-export const DbTableIGDBImagesFields: string[] = [`igdb_images_sys_key_id`, `id`, `alpha_channel`, `animated`, `url`, `width`, `height`];
+export const DbTableIGDBImagesFields: string[] = [`igdb_images_sys_key_id`, `id`, `alpha_channel`, `animated`, `width`, `height`];
 export const DbTableIGDBPlatformEnumFields: string[] = [`igdb_platform_enum_sys_key_id`, `id`, `name`];
 export const DbTableMigrationsFields: string[] = [`migration_sys_key_id`, `name`, `run_dt`];
 export const DbTablePlatformsFields: string[] = [`platforms_sys_key_id`, `igdb_platform_enum_sys_key_id`, `igdb_games_sys_key_id`];

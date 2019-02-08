@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, GenreEnums } from '../../../../client-server-common/common';
+import { GameResponse, GenreEnums, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage } from '../../../../client-server-common/common';
 import { Card } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 
@@ -55,7 +55,7 @@ const HighlightedGameList: React.SFC<IHighlightedGameListProps> = (props: IHighl
                                             </>}
                                         <div className={`final-price d-inline-block ${game.external.steam.discount_percent ? 'px-1' : 'px-3'}`}>{!isNaN(Number(game.external.steam.price)) ? `$${game.external.steam.price} USD` : game.external.steam.price}</div>
                                     </div>}
-                                <img className="w-100 h-100" src={game.screenshots ? game.screenshots[0].url : 'https://i.imgur.com/WcPkTiF.png'}/>
+                                <img className="w-100 h-100" src={game.screenshots ? (game.image_cached ? getCachedIGDBImage(game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big)) : 'https://i.imgur.com/WcPkTiF.png'}/>
                             </Card>
                         );
                     })}

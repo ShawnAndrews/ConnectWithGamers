@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Spinner from '../../../spinner/main';
-import { GameResponse } from '../../../../../client/client-server-common/common';
+import { GameResponse, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage } from '../../../../../client/client-server-common/common';
 import Summary from './Summary';
 import Platforms from './Platforms';
 import Genres from './Genres';
@@ -108,13 +108,14 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                 <Background
                     gameId={props.gameId}
                     screenshots={props.game.screenshots}
-                    video_cached={props.game.video_cached}
+                    videoCached={props.game.video_cached}
+                    imageCached={props.game.image_cached}
                 />}
             <div className="position-relative mx-5" style={getCoverContainerStyle()}>
                 <div className="d-inline-block" style={getCoverGameInfoStyle()}>
                     {props.game.cover &&
                         <Cover
-                            url={props.game.cover.url}
+                            url={props.game.image_cached ? getCachedIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big)}
                             discount_percent={props.game.external.steam && props.game.external.steam.discount_percent}
                             style={getCoverImgStyle()}
                         />}
@@ -160,6 +161,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                             video={props.game.video}
                             screenshots={props.game.screenshots}
                             mediaCarouselElement={props.mediaCarouselElement}
+                            imageCached={props.game.image_cached}
                         />
                     </div>
                 </div>

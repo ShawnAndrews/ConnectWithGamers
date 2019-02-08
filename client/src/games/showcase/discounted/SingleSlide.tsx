@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse } from '../../../../client-server-common/common';
+import { GameResponse, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage } from '../../../../client-server-common/common';
 
 interface ISingleSlideProps {
     games: GameResponse[];
@@ -24,7 +24,7 @@ const SingleSlide: React.SFC<ISingleSlideProps> = (props: ISingleSlideProps) => 
     return (
         <div className="single-slide position-relative" onMouseDown={props.onMouseDown} onMouseMove={props.onMouseMove} onMouseUp={props.onMouseUp}>
             <div className="img-container position-relative" onClick={() => props.onRedirect(game.id)} onMouseOver={() => props.onHoverGame(game.id)} onMouseOut={() => props.onHoverOutGame()}>
-                <img src={game.screenshots[0].url} />
+                <img src={game.image_cached ? getCachedIGDBImage(game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big)} />
                 <div className={`overlay ${props.hoveredGameId === game.id && 'active'}`} />
                 <div className="name px-2 mb-2">{game.external.steam && game.external.steam.discount_percent && `Save ${game.external.steam.discount_percent}% on ` } {game.name}</div>
                 {game.external.steam && game.external.steam.discount_percent &&

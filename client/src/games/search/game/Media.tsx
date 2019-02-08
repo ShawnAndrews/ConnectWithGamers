@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IGDBImage } from '../../../../client-server-common/common';
+import { IGDBImage, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage } from '../../../../client-server-common/common';
 import YouTube from 'react-youtube';
 import Slider from "react-slick";
 
@@ -7,6 +7,7 @@ interface IMediaProps {
     video: string;
     screenshots: IGDBImage[];
     mediaCarouselElement: any;
+    imageCached: boolean;
 }
 
 const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
@@ -18,7 +19,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
     if (youtubeId) {
         mediaPreviews.push(`https://img.youtube.com/vi/${youtubeId}/default.jpg`);
     }
-    props.screenshots.map((x: IGDBImage) => mediaPreviews.push(x.url));
+    props.screenshots.map((x: IGDBImage) => mediaPreviews.push(props.imageCached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big)));
     const settings = {
         customPaging: (i: number): any => {
             return (
@@ -38,7 +39,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
         autoplay: true,
         autoplaySpeed: 4000
     };
-    const screenshots: string[] = props.screenshots.map((x: IGDBImage) => x.url);
+    const screenshots: string[] = props.screenshots.map((x: IGDBImage) => props.imageCached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big));
     const deviceWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
     let slideshowImages: JSX.Element[] = [];
     

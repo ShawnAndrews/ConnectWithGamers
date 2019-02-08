@@ -40,19 +40,6 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             const games: GameResponse[] = gamesResponse.data
                 .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
                 .filter((game: GameResponse) => game.screenshots);
-            games.forEach((game: GameResponse, index: number) => {
-                game.screenshots.forEach((screenshot: IGDBImage) => {
-                    if (this.state.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1) {
-                        screenshot.url = getIGDBImage(screenshot.image_id, IGDBImageSizeEnums.screenshot_big);
-                    } else if (this.state.featureGamesIndicies.findIndex((x: number) => x === index) !== -1) {
-                        screenshot.url = getIGDBImage(screenshot.image_id, IGDBImageSizeEnums.screenshot_big);
-                    } else if (this.state.subFeatureGamesIndicies.findIndex((x: number) => x === index) !== -1) {
-                        screenshot.url = getIGDBImage(screenshot.image_id, IGDBImageSizeEnums.screenshot_med);
-                    } else {
-                        screenshot.url = getIGDBImage(screenshot.image_id, IGDBImageSizeEnums.screenshot_med);
-                    }
-                })
-            });
 
             this.setState({
                 loadingMsg: 'Loading images...',

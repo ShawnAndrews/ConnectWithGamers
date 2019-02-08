@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse } from '../../../../client-server-common/common';
+import { GameResponse, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage } from '../../../../client-server-common/common';
 
 interface ITripleSlideProps {
     games: GameResponse[];
@@ -28,7 +28,7 @@ const TripleSlide: React.SFC<ITripleSlideProps> = (props: ITripleSlideProps) => 
             <div className="row">
                 <div className="col-10 pl-0">
                     <div className="img-container position-relative cursor-pointer" onClick={() => props.onRedirect(gameOne.id)} onMouseOver={() => props.onHoverGame(gameOne.id)} onMouseOut={() => props.onHoverOutGame()}>
-                        <img src={gameOne.screenshots[0].url} />
+                        <img src={gameOne.image_cached ? getCachedIGDBImage(gameOne.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(gameOne.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big)} />
                         <div className={`overlay ${props.hoveredGameId === gameOne.id && 'active'}`} />
                         <div className="name px-2 mb-2">{gameOne.name}</div>
                         {gameOne.external.steam && gameOne.external.steam.discount_percent &&
@@ -42,14 +42,14 @@ const TripleSlide: React.SFC<ITripleSlideProps> = (props: ITripleSlideProps) => 
                 <div className="covers col-2 p-0">
                     <div className="h-50 position-relative cursor-pointer pb-1" onClick={() => props.onRedirect(gameTwo.id)} onMouseOver={() => props.onHoverGame(gameTwo.id)} onMouseOut={() => props.onHoverOutGame()}>
                         {gameTwo.cover && 
-                            <img className="w-100 h-100" src={gameTwo.cover.url} />} 
+                            <img className="w-100 h-100" src={gameTwo.image_cached ? getCachedIGDBImage(gameTwo.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(gameTwo.cover.image_id, IGDBImageSizeEnums.cover_big)} />} 
                         <div className={`overlay ${props.hoveredGameId === gameTwo.id && 'active'}`} />
                         {gameTwo.external.steam && gameTwo.external.steam.discount_percent && 
                             <div className="discount-percent mt-1 px-1">-{gameTwo.external.steam.discount_percent}%</div>}
                     </div>
                     <div className="h-50 position-relative cursor-pointer pt-1" onClick={() => props.onRedirect(gameThree.id)} onMouseOver={() => props.onHoverGame(gameThree.id)} onMouseOut={() => props.onHoverOutGame()}>
                         {gameThree.cover && 
-                            <img className="w-100 h-100" src={gameThree.cover.url} />} 
+                            <img className="w-100 h-100" src={gameThree.image_cached ? getCachedIGDBImage(gameThree.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(gameThree.cover.image_id, IGDBImageSizeEnums.cover_big)} />} 
                         <div className={`overlay ${props.hoveredGameId === gameThree.id && 'active'}`} />
                         {gameThree.external.steam && gameThree.external.steam.discount_percent && 
                             <div className="discount-percent mt-1 px-1">-{gameThree.external.steam.discount_percent}%</div>}

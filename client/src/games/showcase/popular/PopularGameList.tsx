@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, GamesPresets, GenreEnums } from '../../../../../client/client-server-common/common';
+import { GameResponse, GamesPresets, GenreEnums, getIGDBImage, IGDBImageSizeEnums, getCachedIGDBImage } from '../../../../../client/client-server-common/common';
 import { CardMedia } from '@material-ui/core';
 
 interface IPopularGameListProps {
@@ -31,7 +31,7 @@ const PopularGameList: React.SFC<IPopularGameListProps> = (props: IPopularGameLi
                                 return (
                                     <div key={x.id} className="table-container popular cursor-pointer primary-shadow d-inline-block mx-2" onClick={() => { props.onClickGame(x.id); }}>
                                         <CardMedia className="h-75 w-100">
-                                            <img className="w-100 h-100" src={x.cover ? x.cover.url : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
+                                            <img className="w-100 h-100" src={x.cover ? (x.image_cached ? getCachedIGDBImage(x.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(x.cover.image_id, IGDBImageSizeEnums.cover_big)) : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                                         </CardMedia>
                                         <div className="hover-primary h-25">
                                             <div className="clear"/>
