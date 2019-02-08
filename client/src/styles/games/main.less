@@ -186,26 +186,32 @@
                     opacity: 0.7;
                     font-size: 8px;
                 }
-    
+
                 &.no-price {
                     width: auto;
                     height: auto;
                     background: none;
-                }
-                
-                &.no-discount {
-                    width: auto;
-                    height: auto;
-                    background: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0) 100%);
-                }
-                
-                &.no-discount, &.no-price {
-                    
+
                     .text {
                         position: relative;
                         opacity: 0.85;
                         font-size: 11px;
-                    }   
+                        color: rgba(0,0,0,0.6);
+                        font-weight: 800;   
+                        text-transform: uppercase;
+                    }
+                }
+
+                &.no-discount {
+                    width: auto;
+                    height: auto;
+                    background: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0) 100%);
+
+                    .text {
+                        position: relative;
+                        opacity: 0.85;
+                        font-size: 11px;
+                    }
                 }
             }
 
@@ -220,11 +226,11 @@
                 position: absolute;
                 top: 6px;
                 right: -10px;
-                width: 100px;
+                width: 125px;
                 height: 27px;
                 
                 &.short {
-                    width: 60px;   
+                    width: 65px;   
                 }
             }
             
