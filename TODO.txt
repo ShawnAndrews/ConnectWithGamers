@@ -6,21 +6,21 @@ TODO:
 - (X) Bug fix - if file after upload === 0 bytes, delete it and dont update video_preview flag + test
 - (X) Get rid of IGDBImage.id, not needed
 - (X) coming soon/free/preorder banners
-- (30 mins) Rating a game recently broke
-- (1 hr) Random search query requests are stalling the 1st attempt, succeed subsequent attempts though
-- (15 mins) Need a Not Found page for invalid gameId in URL
+- (X) Add Image Cacheing Service worker (Covers/Thumbs/Screenshots)
+- (X) Rating a game recently broke
+- (X) Random search query requests are stalling the 1st attempt, succeed subsequent attempts though
+- (X) Need a Not Found page for invalid gameId in URL
+- (X) Local Results page sorting (sorting + filtering same as sidenav)
 - (1 days) Complete sidenav
     - (X) Make sidenav.home expanded + auto expand on initial load
     - (1 days) Add sidenav.home options (ie: ) (reminder: convert sidenav.home checkboxes to arrows)
-- (2 hr) Local Results page sorting (sorting + filtering same as sidenav)
 - (1 hr) Remove Imgur dependency (used in chatroom)
 - (15 mins) Remove Migrations dependency (stop using)
 - (3 hr) Remove Redis dependency (chatusers + news)
 - (30 mins) Remove old Steam/Discord/Twitch code + styles + config settings
-- (1 hr) Exapnd similar_game info to include name/rating/etc
+- (1 hr) Expand similar_game info to include name/rating/etc
 - (3 days) Add Pricing Service Worker GoG + Microsoft + Apple + Android pricing
 - (1 days) Learn and add SQL Job to delete expired prices + results + anything else
-- (1.5 days) Add Image Cacheing Service worker (Covers/Thumbs/Screenshots)
 - (8 hrs) Chatroom roles functionality: Add images for chatroom roles and functionality (mod=delete messages), add .deleted flag to chatroom_messages.
 - (2 weeks?) Library
 - (?) Add component to game page above summary
