@@ -4,6 +4,7 @@ import Filter from './Filter';
 import { IdNamePair, IGDBGenreEnums, IGDBPlatformEnums, IGDBCategoryEnums } from '../../../../client-server-common/common';
 
 export enum SortingOptionEnum {
+    "None",
     "PopularityAsc",
     "PopularityDesc",
     "ReleaseDateAsc",
@@ -99,7 +100,7 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
             categoryOptions: categoryOptions,
             platformOptions: platformOptions,
             sortingOptions: sortingOptions,
-            sortingSelection: undefined,
+            sortingSelection: SortingOptionEnum.None,
             genresSelection: [],
             platformsSelection: [],
             categorySelection: [],

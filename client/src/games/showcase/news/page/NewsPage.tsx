@@ -21,14 +21,14 @@ const News: React.SFC<INewsProps> = (props: INewsProps) => {
     
     return (
         <Paper className="results p-2 overflow-auto">
-            <TopnavContainer
-                title="Gaming news"
-            />
+            <div className="topnav text-center color-tertiary p-2 mx-auto mb-3 mt-2">
+                Gaming News
+            </div>
             <div className="row w-100 m-0">
                 {props.news && 
-                    props.news.map((newsItem: NewsArticleInterface, index: number) => (
+                    props.news.map((newsItem: NewsArticleInterface) => (
                         <NewsArticle 
-                            article={props.news[index]}
+                            article={newsItem}
                         />
                     ))}
             </div>

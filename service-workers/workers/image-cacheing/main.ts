@@ -28,7 +28,15 @@ export function processImageCacheing(gameId: number) {
 
                 if (!game.image_cached) {
                     const downloadPromises: Promise<void>[] = [];
-                    const downloadUids: string[] = game.screenshots.map((x: IGDBImage) => x.image_id).concat(game.cover.image_id);
+                    const downloadUids: string[] = [];
+
+                    if (game.screenshots) {
+                        game.screenshots.forEach((x: IGDBImage) => downloadUids.push(x.image_id));
+                    }
+
+                    if (game.cover) {
+                        downloadUids.push(game.cover.image_id);
+                    }
 
                     cachedImageSizes.forEach((imageSize: string) => {
                         downloadUids.forEach((uid: string) => {
@@ -41,10 +49,8 @@ export function processImageCacheing(gameId: number) {
 
                     Promise.all(downloadPromises)
                     .then(() => {
-                        console.log(`Successfully downloaded!`);
                         igdbModel.updateImageCached(gameId, true)
                             .then(() => {
-                                console.log(`Successfully updated!`);
                                 sendNotRunningMessage();
                             })
                             .catch((err: string) => {
@@ -53,10 +59,8 @@ export function processImageCacheing(gameId: number) {
                             });
                     })
                     .catch((err: string) => {
-                        console.log(`Error cacheing images(#${gameId}): Error: ${err}`);
                         sendNotRunningMessage();
                     });
-
 
                 } else {
                     sendNotRunningMessage();
@@ -86,7 +90,6 @@ function downloadAndSaveImage(inputPath: string, outputPath: string): Promise<vo
               response.data.pipe(writer);
           })
           .catch((err: string) => {
-              console.log(`Failed to download image for game. Error: ${err}`);
               return reject(err);
           });
 

@@ -4,6 +4,7 @@ import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GameResponse, MultiGameResponse, ResultsEnum, GamesPresets } from '../../../../client-server-common/common';
 import Results from './Results';
+import { SortingOptionEnum } from '../../sidenav/filter/FilterContainer';
 
 interface IResultsContainerProps extends RouteComponentProps<any> {
     
@@ -14,6 +15,7 @@ interface IResultsContainerState {
     searchQuery: string;
     games: GameResponse[];
     retry: boolean;
+    sortingSelection: SortingOptionEnum;
 }
 
 class ResultsContainer extends React.Component<IResultsContainerProps, IResultsContainerState> {
@@ -22,14 +24,17 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
         super(props);
         this.loadSearchGames = this.loadSearchGames.bind(this);
         this.onRetryClick = this.onRetryClick.bind(this);
-
-        this.loadSearchGames(props.location.search);
+        this.onSortingSelectionChange = this.onSortingSelectionChange.bind(this);
+        
+        const searchQuery: string = props.location.search;
+        this.loadSearchGames(searchQuery);
 
         this.state = {
             isLoading: true,
-            searchQuery: props.location.search,
+            searchQuery: searchQuery,
             games: undefined,
-            retry: false
+            retry: false,
+            sortingSelection: SortingOptionEnum.None
         };
     }
 
@@ -40,9 +45,17 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
 
             this.setState({
                 isLoading: true,
-                searchQuery: newSearchQuery
-            });
+                searchQuery: newSearchQuery,
+                games: undefined,
+                sortingSelection: SortingOptionEnum.None,
+            }, () => this.loadSearchGames(newSearchQuery));
         }
+    }
+
+    onSortingSelectionChange(event: any): void {
+        this.setState({
+            sortingSelection: event.target.value
+        });
     }
 
     getLocalSortType(queryString: string): string {
@@ -117,6 +130,8 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
                 games={this.state.games}
                 retry={this.state.retry}
                 onRetryClick={this.onRetryClick}
+                sortingSelection={this.state.sortingSelection}
+                onSortingSelectionChange={this.onSortingSelectionChange}
             />
         );
     }

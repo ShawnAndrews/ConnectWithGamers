@@ -33,8 +33,8 @@ interface IGameProps {
 }
 
 const Game: React.SFC<IGameProps> = (props: IGameProps) => {
-
-    if (props.isLoading || !props.game) {
+    console.log(`${props.isLoading} || ${props.game}`);
+    if (props.isLoading) {
         return (
             <div className="menu-center">
                 <Spinner className="text-center mt-5" loadingMsg="Loading game..." />
@@ -42,6 +42,14 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
         );
     }
     
+    if (!props.game) {
+        return (
+            <div className="text-center color-tertiary display-4">
+                Invalid game id
+            </div>
+        );
+    }
+
     const horizontalImage: boolean = props.game.cover && (props.game.cover.width > props.game.cover.height);
     const maxWidth: number = horizontalImage ? 300 : 250;
     const aspectRatio: number = props.game.cover && (maxWidth / props.game.cover.width);

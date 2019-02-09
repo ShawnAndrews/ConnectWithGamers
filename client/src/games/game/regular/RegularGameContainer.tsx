@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GameResponse } from '../../../../client-server-common/common';
-import RegulaGame from './RegularGame';
+import RegularGame from './RegularGame';
 
 interface IRegularGameContainerProps extends RouteComponentProps<any> {
     game: GameResponse;
@@ -22,7 +22,7 @@ class RegularGameContainer extends React.Component<IRegularGameContainerProps, I
 
     render() {
         return (
-            <RegulaGame
+            <RegularGame
                 game={this.props.game}
                 goToGame={this.goToGame}
             />

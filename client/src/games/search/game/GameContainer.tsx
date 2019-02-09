@@ -73,8 +73,7 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
                 this.setState({ isLoading: false, game: game, gameid: id });
             })
             .catch( (error: string) => {
-                popupS.modal({ content: error });
-                this.setState({ isLoading: false });
+                this.setState({ isLoading: false, game: undefined });
             });
     }
 

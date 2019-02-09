@@ -6,7 +6,7 @@ export enum SQLErrorCodes {
     DUPLICATE_ROW = 1062
 }
 
-export const ExcludedGameIds: number[] = [];
+export const ExcludedGameIds: number[] = [111063, 111908];
 
 export const IGDBImageUploadPath: string = `https://images.igdb.com/igdb/image/upload`;
 

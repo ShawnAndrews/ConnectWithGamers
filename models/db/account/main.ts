@@ -3,7 +3,7 @@ import axios from "axios";
 import DatabaseBase from "../base/dbBase";
 import { genRandStr } from "../../../util/main";
 import { sendVerificationEmail } from "../../../util/nodemailer";
-import { GenericModelResponse, RecoveryEmailInfo, AccountsInfo, SteamFriend, TwitchUser, TwitchEmote, TwitchPair, AccountInfo, GameRating, DbTableAccountsFields, DbTables, DbTableRatingsFields } from "../../../client/client-server-common/common";
+import { GenericModelResponse, RecoveryEmailInfo, AccountsInfo, SteamFriend, TwitchUser, TwitchEmote, TwitchPair, AccountInfo, GameRating, DbTableAccountsFields, DbTables, DbTableRatingsFields, DbTableIGDBGamesFields } from "../../../client/client-server-common/common";
 import config from "../../../config";
 
 export const SALT_RNDS = 10;
@@ -906,49 +906,61 @@ class AccountModel extends DatabaseBase {
      */
     rateGame(gameRating: GameRating): Promise<void> {
 
-        const columnValues: any[] = [gameRating.igdb_id, gameRating.account_id, gameRating.rating, gameRating.date];
-
         return new Promise( (resolve, reject) => {
 
             this.select(
-                DbTables.ratings,
-                DbTableRatingsFields,
-                `${DbTableRatingsFields[1]}=? AND ${DbTableRatingsFields[2]}=?`,
-                [gameRating.igdb_id, gameRating.account_id])
+                DbTables.igdb_games,
+                DbTableIGDBGamesFields,
+                `${DbTableIGDBGamesFields[1]}=?`,
+                [gameRating.igdb_id])
                 .then((dbResponse: GenericModelResponse) => {
-                    if (dbResponse.data.length > 0) {
+                    const igdb_game_sys_key_id: number = dbResponse.data[0][DbTableIGDBGamesFields[0]];
+                    const columnValues: any[] = [igdb_game_sys_key_id, gameRating.account_id, gameRating.rating, gameRating.date];
 
-                        // update rating
-                        this.update(
-                            DbTables.ratings,
-                            `${DbTableRatingsFields[3]}=?`,
-                            [gameRating.rating],
-                            `${DbTableRatingsFields[1]}=? AND ${DbTableRatingsFields[2]}=?`,
-                            [gameRating.igdb_id, gameRating.account_id])
-                            .then((dbResponse: GenericModelResponse) => {
-                                return resolve();
-                            })
-                            .catch((error: string) => {
-                                return reject(`Database error. ${error}`);
-                            });
-                    } else {
+                    this.select(
+                        DbTables.ratings,
+                        DbTableRatingsFields,
+                        `${DbTableRatingsFields[1]}=? AND ${DbTableRatingsFields[2]}=?`,
+                        [igdb_game_sys_key_id, gameRating.account_id])
+                        .then((dbResponse: GenericModelResponse) => {
 
-                        // insert rating
-                        this.insert(
-                            DbTables.ratings,
-                            DbTableRatingsFields.slice(1),
-                            columnValues,
-                            `?, ?, ?, FROM_UNIXTIME(?)`)
-                            .then((dbResponse: GenericModelResponse) => {
-                                return resolve();
-                            })
-                            .catch((error: string) => {
-                                return reject(`Database error. ${error}`);
-                            });
-                    }
+                            if (dbResponse.data.length > 0) {
+
+                                // update rating
+                                this.update(
+                                    DbTables.ratings,
+                                    `${DbTableRatingsFields[3]}=?`,
+                                    [gameRating.rating],
+                                    `${DbTableRatingsFields[1]}=? AND ${DbTableRatingsFields[2]}=?`,
+                                    [igdb_game_sys_key_id, gameRating.account_id])
+                                    .then(() => {
+                                        return resolve();
+                                    })
+                                    .catch((error: string) => {
+                                        return reject(`Database error. ${error}`);
+                                    });
+                            } else {
+
+                                // insert rating
+                                this.insert(
+                                    DbTables.ratings,
+                                    DbTableRatingsFields.slice(1),
+                                    columnValues,
+                                    `?, ?, ?, FROM_UNIXTIME(?)`)
+                                    .then(() => {
+                                        return resolve();
+                                    })
+                                    .catch((error: string) => {
+                                        return reject(`Database error. ${error}`);
+                                    });
+                            }
+                        })
+                        .catch((error: string) => {
+                            return reject(`Database error. ${error}`);
+                        });
                 })
-                .catch((error: string) => {
-                    return reject(`Database error. ${error}`);
+                .catch((err: string) => {
+
                 });
 
         });
