@@ -11,21 +11,22 @@ TODO:
 - (X) Random search query requests are stalling the 1st attempt, succeed subsequent attempts though
 - (X) Need a Not Found page for invalid gameId in URL
 - (X) Local Results page sorting (sorting + filtering same as sidenav)
-- (1 days) Complete sidenav
-    - (X) Make sidenav.home expanded + auto expand on initial load
-    - (1 days) Add sidenav.home options (ie: ) (reminder: convert sidenav.home checkboxes to arrows)
 - (1 hr) Remove Imgur dependency (used in chatroom)
 - (15 mins) Remove Migrations dependency (stop using)
 - (3 hr) Remove Redis dependency (chatusers + news)
 - (30 mins) Remove old Steam/Discord/Twitch code + styles + config settings
-- (1 hr) Expand similar_game info to include name/rating/etc
+- (1 days) Complete sidenav
+    - (X) Make sidenav.home expanded + auto expand on initial load
+    - (1 days) Add sidenav.home options (ie: ) (reminder: convert sidenav.home checkboxes to arrows)
 - (3 days) Add Pricing Service Worker GoG + Microsoft + Apple + Android pricing
-- (1 days) Learn and add SQL Job to delete expired prices + results + anything else
 - (8 hrs) Chatroom roles functionality: Add images for chatroom roles and functionality (mod=delete messages), add .deleted flag to chatroom_messages.
+- (1 days) Learn and add SQL Job to delete expired prices + results + anything else
 - (2 weeks?) Library
 - (?) Add component to game page above summary
     - Single-player
     - Multi-player (via IGDB "Multiplayer Mode" endpoint)
     - Achievements(?) (Steam-tier: Regular, xBox: Regular, Playstation: Bronze/Silver/Gold/Platinum) (for each platform: Top 10 acheivements in a tooltip containing info like name + points awarded
 
-(2 hr) global snackbar call(via redux)
+- (2 hr) global snackbar call(via redux)
+
+- (2 hr - pending IGDB bug fix) Expand similar_game info to include name/rating/etc
