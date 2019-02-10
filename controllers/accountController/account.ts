@@ -17,11 +17,6 @@ routes.addRoute("login", "/login");
 routes.addRoute("public/info", "/public/info");
 routes.addRoute("settings", "/settings");
 routes.addRoute("settings/change", "/settings/change");
-routes.addRoute("settings/twitchId", "/settings/twitchId");
-routes.addRoute("settings/twitchFollowers", "/settings/twitchFollowers");
-routes.addRoute("settings/steamId", "/settings/steamId");
-routes.addRoute("settings/steamFriends", "/settings/steamFriends");
-routes.addRoute("settings/discordLink", "/settings/discordLink");
 routes.addRoute("settings/image/change", "/settings/image/change");
 routes.addRoute("settings/image/delete", "/settings/image/delete");
 routes.addRoute("email/resend", "/email/resend");
@@ -199,115 +194,6 @@ router.post(routes.getRoute("settings/change"), (req: Request, res: Response) =>
         datalessResponse.error = error;
         return res
         .send(datalessResponse);
-    });
-
-});
-
-router.post(routes.getRoute("settings/twitchId"), (req: Request, res: Response) => {
-    const twitchIdResponse: TwitchIdResponse = { error: undefined };
-
-    // authorize
-    securityModel.authorize(req.headers.cookie)
-    .then((accountId: number) => {
-        return accountModel.getTwitchId(accountId);
-    })
-    .then((response: number) => {
-        twitchIdResponse.data = response;
-        return res
-        .send(twitchIdResponse);
-    })
-    .catch((error: string) => {
-        twitchIdResponse.error = error;
-        return res
-        .send(twitchIdResponse);
-    });
-
-});
-
-router.post(routes.getRoute("settings/twitchFollowers"), (req: Request, res: Response) => {
-    const twitchFollowersResponse: TwitchFollowersResponse = { error: undefined };
-
-    // authorize
-    securityModel.authorize(req.headers.cookie)
-    .then((accountId: number) => {
-        return accountModel.getTwitchFollows(accountId);
-    })
-    .then((follows: TwitchUser[]) => {
-        twitchFollowersResponse.data = follows;
-        return res
-        .send(twitchFollowersResponse);
-    })
-    .catch((error: string) => {
-        twitchFollowersResponse.error = error;
-        return res
-        .send(twitchFollowersResponse);
-    });
-
-});
-
-router.post(routes.getRoute("settings/steamId"), (req: Request, res: Response) => {
-    const steamIdResponse: SteamIdResponse = { error: undefined };
-
-    // authorize
-    securityModel.authorize(req.headers.cookie)
-    .then((accountId: number) => {
-        return accountModel.getSteamId(accountId);
-    })
-    .then((steamId: number) => {
-        steamIdResponse.data = steamId;
-        return res
-        .send(steamIdResponse);
-    })
-    .catch((error: string) => {
-        steamIdResponse.error = error;
-        return res
-        .send(steamIdResponse);
-    });
-
-});
-
-router.post(routes.getRoute("settings/discordLink"), (req: Request, res: Response) => {
-    const discordLinkResponse: DiscordLinkResponse = { error: undefined };
-
-    // authorize
-    securityModel.authorize(req.headers.cookie)
-    .then((accountId: number) => {
-        return accountModel.getDiscordLink(accountId);
-    })
-    .then((link: string) => {
-        discordLinkResponse.data = link;
-        return res
-        .send(discordLinkResponse);
-    })
-    .catch((error: string) => {
-        discordLinkResponse.error = error;
-        return res
-        .send(discordLinkResponse);
-    });
-
-});
-
-router.post(routes.getRoute("settings/steamFriends"), (req: Request, res: Response) => {
-    const steamFriendsResponse: SteamFriendsResponse = { error: undefined };
-
-    // authorize
-    securityModel.authorize(req.headers.cookie)
-    .then((accountId: number) => {
-        return accountModel.getSteamId(accountId);
-    })
-    .then((response: number) => {
-        const steamId: number = response;
-        return accountModel.getSteamFriends(steamId);
-    })
-    .then((friends: SteamFriend[]) => {
-        steamFriendsResponse.data = friends;
-        return res
-        .send(steamFriendsResponse);
-    })
-    .catch((error: string) => {
-        steamFriendsResponse.error = error;
-        return res
-        .send(steamFriendsResponse);
     });
 
 });

@@ -4,7 +4,6 @@ import NewsPageContainer from './showcase/news/page/NewsPageContainer';
 import HomeContainer from './home/HomeContainer';
 import SearchRouter from './search/main';
 import NotFoundPageContainer from './../notfound/NotFoundPageContainer';
-import GamingSwitch from './gaming/main';
 import SidenavContainer from './sidenav/SidenavContainer';
 import { SidenavEnums } from '../../client-server-common/common';
 
