@@ -1,6 +1,5 @@
 # Config files
 config.ts
-database.json
 
 # Dependency directory
 node_modules

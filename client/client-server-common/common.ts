@@ -797,7 +797,6 @@ export enum DbTables {
     igdb_genre_enum = "igdb_genre_enum",
     igdb_images = "igdb_images",
     igdb_platform_enum = "igdb_platform_enum",
-    migrations = "migrations",
     platforms = "platforms",
     pricings = "pricings",
     pricings_enum = "pricings_enum",
@@ -823,7 +822,6 @@ export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, 
 export const DbTableIGDBGenreEnumFields: string[] = [`igdb_genre_enum_sys_key_id`, `id`, `name`];
 export const DbTableIGDBImagesFields: string[] = [`igdb_images_sys_key_id`, `id`, `alpha_channel`, `animated`, `width`, `height`];
 export const DbTableIGDBPlatformEnumFields: string[] = [`igdb_platform_enum_sys_key_id`, `id`, `name`];
-export const DbTableMigrationsFields: string[] = [`migration_sys_key_id`, `name`, `run_dt`];
 export const DbTablePlatformsFields: string[] = [`platforms_sys_key_id`, `igdb_platform_enum_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `igdb_external_enum_sys_key_id`, `pricings_enum_sys_key_id`, `igdb_games_sys_key_id`, `id`, `price`, `discount_percent`, `url`, `expires_dt`];
 export const DbTablePricingsEnumFields: string[] = [`pricings_enum_sys_key_id`, `name`];
