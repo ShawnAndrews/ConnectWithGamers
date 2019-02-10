@@ -30,3 +30,5 @@ TODO:
 - (2 hr) global snackbar call(via redux)
 
 - (2 hr - pending IGDB bug fix) Expand similar_game info to include name/rating/etc
+
+- (?) Notifications: (Friend add from chatroom, Follow games and notify users of price updates)
