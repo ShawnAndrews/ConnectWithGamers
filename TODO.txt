@@ -11,7 +11,7 @@ TODO:
 - (X) Random search query requests are stalling the 1st attempt, succeed subsequent attempts though
 - (X) Need a Not Found page for invalid gameId in URL
 - (X) Local Results page sorting (sorting + filtering same as sidenav)
-- (1 hr) Remove Imgur dependency (used in chatroom)
+- (X) Remove Imgur dependency (used in chatroom)
 - (15 mins) Remove Migrations dependency (stop using)
 - (3 hr) Remove Redis dependency (chatusers + news)
 - (30 mins) Remove old Steam/Discord/Twitch code + styles + config settings
