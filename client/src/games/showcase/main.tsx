@@ -3,7 +3,6 @@ import RecentGameListContainer from './recent/RecentGameListContainer';
 import PopularGameListContainer from './popular/PopularGameListContainer';
 import UpcomingGameListContainer from './upcoming/UpcomingGameListContainer';
 import HighlightedGameListContainer from './highlighted/HighlightedGameListContainer';
-import Profiles from './profiles/Profiles';
 import NewsListContainer from './news/NewsListContainer';
 import { GameResponse, NewsArticle } from '../../../client-server-common/common';
 import Spinner from '../../spinner/main';
@@ -48,9 +47,6 @@ const Main: React.SFC<IMainProps> = (props: IMainProps) => {
                         />
                     </div>
                     <div className="row mx-0 mb-5">
-                        <Profiles
-                            goToRedirectCallback={props.goToRedirect}
-                        />
                         <PopularGameListContainer
                             popularGames={props.popularGames}
                         />

@@ -28,7 +28,7 @@ class App extends React.Component<IAppProps, IAppState> {
         super(props);
 
         this.state = {
-            authenticatedRoutes: ['/account', `/gaming`, `/gaming/twitch`, `/gaming/steam`, `/gaming/discord`],
+            authenticatedRoutes: ['/account'],
             unauthenticatedRedirect: '/account/login'
         };
     }
