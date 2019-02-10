@@ -52,7 +52,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
             </div>
         );
     }
-
+    console.log(`settings img: ${props.image}`);
     return (
         <div className="settings p-4 mx-auto mt-5 position-relative">
             <div className="chip-container position-relative">

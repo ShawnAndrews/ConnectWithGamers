@@ -8,7 +8,7 @@ const redis = require("redis");
 const fs = require("fs");
 const redisClient = redis.createClient();
 import { redisCache, IGDBCacheEntry, UserLog, GenericModelResponse, ChatHistoryResponse, SingleChatHistory, AccountInfo, CHATROOM_EVENTS, AccountsInfo, ChatroomEmote } from "./client/client-server-common/common";
-import { securityModel } from "./models/db/security/main";
+import { securityModel, SecurityCacheEnum } from "./models/db/security/main";
 import { chatroomModel } from "./models/db/chatroom/main";
 import { accountModel } from "./models/db/account/main";
 import { AUTH_TOKEN_NAME } from "./client/client-server-common/common";
@@ -36,13 +36,9 @@ function startChatServer(): void {
         let encodedText: string = text;
 
          emotes.forEach((chatroomEmote: ChatroomEmote) => {
-            const emoteLink: string = chatroomEmote.link;
             const emoteName: string = `${chatroomEmote.prefix}${chatroomEmote.suffix}`;
-            let foundPos: number = encodedText.indexOf(emoteName);
-            while (foundPos !== -1) {
-                encodedText = encodedText.substring(0, foundPos) + emoteLink + encodedText.substring(foundPos + emoteName.length);
-                foundPos = encodedText.indexOf(emoteName);
-            }
+            const emoteLink: string = `/cache/chatroom/emote/${emoteName}.${chatroomEmote.fileExtension}`;
+            encodedText = encodedText.replace(new RegExp(` ${emoteName}`, "g"), ` ${emoteLink}`);
         });
 
         return encodedText;
@@ -60,9 +56,9 @@ function startChatServer(): void {
             .then((accountId: number) => {
                 const accountid: number = accountId;
                 refreshUserActivity(accountid, socket, chatHandler)
-                .catch((error: string) => {
-                    console.log(`Chatroom error refreshing user activity: ${error}`);
-                });
+                    .catch((error: string) => {
+                        console.log(`Chatroom error refreshing user activity: ${error}`);
+                    });
             })
             .catch((error: string) => {
                 console.log(`Chat error authorizing: ${error}`);
@@ -150,32 +146,44 @@ function startChatServer(): void {
         });
 
         socket.on(CHATROOM_EVENTS.PostMessage, (data: any) => {
+            const imageBase64: string = data.attachmentBase64 && data.attachmentBase64.split(",")[1];
             let accountid: number = undefined;
             let username: string = undefined;
             let date: number = undefined;
             let text: string = undefined;
-            let image: string = undefined;
-            let attachment: string = undefined;
-            let chatroomid: number = undefined;
+            let profile: boolean = undefined;
+            let profile_file_extension: string = undefined;
+            let attachment: boolean = undefined;
+            let attachmentFileExtension: string = undefined;
+            let chatroomId: number = undefined;
+            let chatroom_messages_sys_key_id: number = undefined;
 
             const loggedIn: boolean = socket.handshake.headers.cookie && socket.handshake.headers.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
 
             const sendMessage = (): void => {
-                accountModel.getAccountImage(accountid)
-                .then((link: string) => {
+                accountModel.getAccountsInfoById([accountid])
+                .then((accountsInfo: AccountsInfo) => {
+                    const accountInfo: AccountInfo = accountsInfo.accounts[0];
+
                     date = Date.now();
-                    text = data.text;
-                    image = link;
-                    attachment = data.attachment;
-                    chatroomid = data.chatroomid;
-                    return chatroomModel.addChatMessage(username, date, text, image, attachment, chatroomid);
+                    text = ` ${data.text}`;
+                    profile = accountInfo.profile;
+                    profile_file_extension = accountInfo.profile_file_extension;
+                    attachment = data.attachmentBase64 ? true : false;
+                    attachmentFileExtension = data.attachmentFileExtension;
+                    chatroomId = data.chatroomId;
+                    return chatroomModel.addChatMessage(username, date, text, profile, attachment, attachmentFileExtension, chatroomId);
+                })
+                .then((insertId: number) => {
+                    chatroom_messages_sys_key_id = insertId;
+                    return securityModel.uploadImage(imageBase64, SecurityCacheEnum.attachment, attachmentFileExtension, chatroom_messages_sys_key_id.toString());
                 })
                 .then(() => {
                     return chatroomModel.getEmotes();
                 })
                 .then((emotes: ChatroomEmote[]) => {
                     const encodedText: string = encodeEmotes(emotes, text);
-                    const newChat: SingleChatHistory = { name: username, date: new Date(date), text: encodedText, image: image, attachment: attachment, chatroomid: chatroomid };
+                    const newChat: SingleChatHistory = { name: username, date: new Date(date), text: encodedText, profile: profile, profileFileExtension: profile_file_extension, attachment: attachment, attachmentFileExtension: attachmentFileExtension, chatroomId: chatroomId, chatroomMessageId: chatroom_messages_sys_key_id };
                     socket.emit(CHATROOM_EVENTS.Message, newChat);
                     socket.broadcast.emit(CHATROOM_EVENTS.Message, newChat);
                 })
@@ -331,7 +339,7 @@ export function getAllUserInfo(dbUsers: AccountsInfo): Promise<AccountInfo[]> {
                 const now: any = new Date();
                 const lastActive: Date = getLastActiveByIdSync(userLog, element.accountid);
                 const lastActiveMinsAgo: number = lastActive ? Math.abs(Math.round(((new Date(lastActive).getTime() - now.getTime()) / 1000 / 60))) : -1;
-                const AccountInfo: AccountInfo = { username: element.username, steam: element.steam, discord: element.discord, twitch: element.twitch, image: element.image, last_active: lastActiveMinsAgo };
+                const AccountInfo: AccountInfo = { username: element.username, steam: element.steam, discord: element.discord, twitch: element.twitch, last_active: lastActiveMinsAgo };
                 AccountInfos.push(AccountInfo);
             });
             return resolve(AccountInfos);

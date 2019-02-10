@@ -62,8 +62,8 @@ const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
                 {(props.profileImage || props.profileName) && 
                     <div className="icon d-inline-block align-middle cursor-pointer ml-4" onClick={() => props.onRedirect(`/account`)}>
                         {props.profileImage
-                            ? <Avatar src={props.profileImage}/>
-                            : <Avatar className="bg-primary-solid">{props.profileName.slice(0, 2).toUpperCase()}</Avatar>}
+                            ? <Avatar className="bg-transparent" src={props.profileImage}/>
+                            : <Avatar>{props.profileName.slice(0, 2).toUpperCase()}</Avatar>}
                     </div>}
             </form>
         </div>

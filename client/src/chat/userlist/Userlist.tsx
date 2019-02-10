@@ -43,14 +43,16 @@ const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
                 <div className={`userlist y-scrollable custom-scrollbar h-100 px-4 px-sm-5`}>
                     {props.userlist
                         .map((x: AccountInfo, index: number) => {
+                            const profileLink: string = `/cache/chatroom/profile/${x.accountid}.${x.profile_file_extension}`;
+
                             return (
                                 <Paper
                                     key={index}
                                     className="user row my-3 p-3"
                                     elevation={3}
                                 >
-                                    {x.image
-                                        ? <Avatar className="user-image col-2 col-lg-1 p-0" src={x.image}/>
+                                    {Boolean(x.profile)
+                                        ? <Avatar className="user-image col-2 col-lg-1 p-0" src={profileLink}/>
                                         : <Avatar className="user-image default color-primary col-2 col-lg-1">{x.username.slice(0, 2).toUpperCase()}</Avatar>}
                                     <div className="user-text col-10 col-md-6 col-lg-8">
                                         <Textfit className="name font-weight-bold h-50">{x.username}</Textfit>

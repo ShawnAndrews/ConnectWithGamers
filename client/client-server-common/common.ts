@@ -223,9 +223,6 @@ export interface Config {
     twitch: {
         clientId: string;
     };
-    imgur: {
-        clientId: string
-    };
     smtp: {
         host: string,
         secure: boolean,
@@ -237,7 +234,6 @@ export interface Config {
         cert: string,
         ca: string;
     };
-
     mysql: {
         host: string,
         user: string,
@@ -396,8 +392,9 @@ export interface AccountInfo {
     steam: string;
     twitch: string;
     discord: string;
-    image: string;
     emailVerified?: boolean;
+    profile?: boolean;
+    profile_file_extension?: string;
 }
 
 export interface AccountsInfo {
@@ -424,13 +421,16 @@ export interface SingleChatHistory {
     name: string;
     date: Date;
     text: string;
-    image: string;
-    attachment: string;
-    chatroomid: number;
+    profile: boolean;
+    profileFileExtension: string;
+    attachment: boolean;
+    attachmentFileExtension: string;
+    chatroomId: number;
+    chatroomMessageId: number;
 }
 
 export interface ChatroomEmote {
-    link: string;
+    fileExtension: string;
     prefix: string;
     suffix: string;
 }
@@ -582,8 +582,11 @@ export interface ChatHistoryResponse {
     name: string[];
     date: string[];
     text: string[];
-    image: string[];
-    attachment: string[];
+    profile: boolean[];
+    profile_file_extension: string[];
+    attachment: boolean[];
+    attachment_file_extension: string[];
+    chatroomMessageId: number[];
 }
 
 export interface GameResponse {
@@ -807,10 +810,10 @@ export enum DbTables {
     tokens = "tokens",
 }
 
-export const DbTableAccountsFields: string[] = [`accounts_sys_key_id`, `username`, `email`, `password_hash`, `salt`, `log_dt`, `discord`, `steam`, `twitch`, `image`, `email_verification_code`, `recovery_verification_code`];
+export const DbTableAccountsFields: string[] = [`accounts_sys_key_id`, `username`, `email`, `password_hash`, `salt`, `log_dt`, `discord`, `steam`, `twitch`, `email_verification_code`, `recovery_verification_code`, `profile`, `profile_file_extension`];
 export const DbTableAccountsRolesFields: string[] = [`accounts_roles_sys_key_id`, `accounts_role_enum_sys_key_id`, `accounts_sys_key_id`];
-export const DbTableChatEmotesFields: string[] = [`chat_emotes_sys_key_id`, `prefix`, `suffix`, `url`, `log_dt`];
-export const DbTableChatroomMessagesFields: string[] = [`chatroom_messages_sys_key_id`, `username`, `text`, `image`, `attachment`, `chatroom_id`, `log_dt`];
+export const DbTableChatEmotesFields: string[] = [`chat_emotes_sys_key_id`, `prefix`, `suffix`, `file_extension`, `log_dt`];
+export const DbTableChatroomMessagesFields: string[] = [`chatroom_messages_sys_key_id`, `username`, `text`, `attachment`, `attachment_file_extension`, `chatroom_id`, `log_dt`];
 export const DbTableCoversFields: string[] = [`covers_sys_key_id`, `igdb_images_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `igdb_genre_enum_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTableIconsFields: string[] = [`icons_sys_key_id`, `icons_enum_sys_key_id`, `igdb_games_sys_key_id`];

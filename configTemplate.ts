@@ -28,9 +28,6 @@ const config: Config = {
     twitch: {
         clientId: ""
     },
-    imgur: {
-        clientId: ""
-    },
     smtp: {
         host: "",
         secure: false,

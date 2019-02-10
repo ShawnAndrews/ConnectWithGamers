@@ -1,10 +1,17 @@
 import config from "../../../config";
 import DatabaseBase from "./../base/dbBase";
 import {
-    GenericModelResponse, ChatHistoryResponse, ChatroomEmote, DbTableChatroomMessagesFields, DbTables, DbTableChatEmotesFields } from "../../../client/client-server-common/common";
-const imgur = require("imgur");
+    GenericModelResponse, ChatHistoryResponse, ChatroomEmote, DbTableChatroomMessagesFields, DbTables, DbTableChatEmotesFields, DbTableAccountsFields } from "../../../client/client-server-common/common";
+import { SecurityCacheEnum } from "../security/main";
+const fs = require("fs");
 
-imgur.setClientId(config.imgur.clientId);
+Object.keys(SecurityCacheEnum).forEach((SecurityCacheEnum: string) => {
+    const outputFolderPath: string = `cache/chatroom/${SecurityCacheEnum}`;
+
+    if (!fs.existsSync(outputFolderPath)) {
+        fs.mkdirSync(outputFolderPath);
+    }
+});
 
 class ChatroomModel extends DatabaseBase {
 
@@ -15,7 +22,7 @@ class ChatroomModel extends DatabaseBase {
     /**
      * Add a chat message to the database.
      */
-    addChatMessage(username: string, date: number, text: string, image: string, attachment: string, chatroomid: number): Promise<GenericModelResponse> {
+    addChatMessage(username: string, date: number, text: string, profile: boolean, attachment: boolean, attachmentFileExtension: string, chatroomid: number): Promise<number> {
 
         return new Promise( (resolve, reject) => {
             const response: GenericModelResponse = {error: undefined, data: undefined};
@@ -23,14 +30,13 @@ class ChatroomModel extends DatabaseBase {
             this.insert(
                 DbTables.chatroom_messages,
                 DbTableChatroomMessagesFields.slice(1),
-                [username, text, image, attachment, chatroomid, date / 1000],
+                [username, text, attachment, attachmentFileExtension, chatroomid, date / 1000],
                 "?, ?, ?, ?, ?, FROM_UNIXTIME(?)")
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.error) {
                         return reject(dbResponse.error);
                     } else {
-                        response.data = { insertid: dbResponse.data.insertId };
-                        return resolve(response);
+                        return resolve(dbResponse.data.insertId);
                     }
                 });
 
@@ -75,18 +81,52 @@ class ChatroomModel extends DatabaseBase {
                 `${DbTableChatroomMessagesFields[5]}=?`,
                 [chatroomid],
                 config.chatHistoryCount)
-                .then((dbResponse: GenericModelResponse) => {
-                    const chatHistoryResponse: ChatHistoryResponse = { name: [], date: [], text: [], image: [], attachment: [] };
+                .then((rawChats: GenericModelResponse) => {
+                    const uniqueUsernames: Set<string> = new Set<string>();
 
-                    dbResponse.data.forEach((chat: any) => {
-                        chatHistoryResponse.name.push(chat.username);
-                        chatHistoryResponse.date.push(`${new Date(chat.log_dt).toLocaleDateString()} ${new Date(chat.log_dt).toLocaleTimeString()}`);
-                        chatHistoryResponse.text.push(chat.text);
-                        chatHistoryResponse.image.push(chat.image);
-                        chatHistoryResponse.attachment.push(chat.attachment);
+                    rawChats.data.forEach((chat: any) => {
+                        uniqueUsernames.add(chat.name);
                     });
 
-                    return resolve(chatHistoryResponse);
+                    this.select(
+                        DbTables.accounts,
+                        DbTableAccountsFields,
+                        `${DbTableAccountsFields[5]} IN (?)`,
+                        [Array.from(uniqueUsernames).join()])
+                        .then((rawAccounts: GenericModelResponse) => {
+                            const usernamesWithProfile: string[] = [];
+                            const usernamesWithProfileFileExtension: string[] = [];
+
+                            rawAccounts.data.forEach((account: any) => {
+                                if (account.profile) {
+                                    usernamesWithProfile.push(account.username);
+                                    usernamesWithProfileFileExtension.push(account.profile_file_extension);
+                                }
+                            });
+
+                            const chatHistoryResponse: ChatHistoryResponse = { name: [], date: [], text: [], profile: [], profile_file_extension: [], attachment: [], attachment_file_extension: [], chatroomMessageId: [] };
+
+                            rawChats.data.forEach((chat: any) => {
+                                const chatAccountIndex: number = usernamesWithProfile.findIndex((x: string) => x === chat.username);
+                                const chatAccountHasProfile: boolean = chatAccountIndex !== -1;
+
+                                chatHistoryResponse.name.push(chat.username);
+                                chatHistoryResponse.date.push(`${new Date(chat.log_dt).toLocaleDateString()} ${new Date(chat.log_dt).toLocaleTimeString()}`);
+                                chatHistoryResponse.text.push(chat.text);
+                                chatHistoryResponse.profile.push(chatAccountHasProfile ? true : false);
+                                chatHistoryResponse.profile_file_extension.push(chatAccountHasProfile ? usernamesWithProfileFileExtension[chatAccountIndex] : "");
+                                chatHistoryResponse.attachment.push(chat.attachment);
+                                chatHistoryResponse.attachment_file_extension.push(chat.attachment_file_extension || "");
+                                chatHistoryResponse.chatroomMessageId.push(chat.chatroom_messages_sys_key_id);
+                            });
+
+                            return resolve(chatHistoryResponse);
+                        })
+                        .catch((err: string) => {
+                            console.log(`Failed to get accounts!! ${err}`);
+                            return reject(err);
+                        });
+
                 })
                 .catch((err: string) => {
                     return reject(err);
@@ -98,14 +138,14 @@ class ChatroomModel extends DatabaseBase {
     /**
      * Upload a new chat emote.
      */
-    uploadChatEmote(emoteURL: string, emotePrefix: string, emoteSuffix: string): Promise<number> {
+    uploadChatEmote(emotePrefix: string, emoteSuffix: string, fileExtension: string): Promise < number > {
 
         return new Promise( (resolve, reject) => {
 
             this.insert(
                 DbTables.chat_emotes,
                 DbTableChatEmotesFields.slice(1),
-                [emotePrefix, emoteSuffix, emoteURL, Date.now() / 1000],
+                [emotePrefix, emoteSuffix, fileExtension, Date.now() / 1000],
                 "?, ?, ?, FROM_UNIXTIME(?)")
                 .then((dbResponse: GenericModelResponse) => {
                     const insertid: number = dbResponse.data.insertId;
@@ -121,7 +161,7 @@ class ChatroomModel extends DatabaseBase {
     /**
      * Delete a chat emote.
      */
-    deleteChatEmote(emotePrefix: string, emoteSuffix: string): Promise<GenericModelResponse> {
+    deleteChatEmote(emotePrefix: string, emoteSuffix: string): Promise < GenericModelResponse > {
         return new Promise( (resolve, reject) => {
             this.delete(
                 DbTables.chat_emotes,
@@ -137,25 +177,9 @@ class ChatroomModel extends DatabaseBase {
     }
 
     /**
-     * Upload base64 string to Imgur and return URL to image.
-     */
-    uploadImage(imageBase64: string): Promise <string> {
-        return new Promise( (resolve, reject) => {
-            imgur.uploadBase64(imageBase64)
-                .then((response: any) => {
-                    const link: string = response.data.link;
-                    return resolve(link);
-                })
-                .catch((error: string) => {
-                    return reject(`Error uploading chatroom message attachment. ${error}`);
-                });
-        });
-    }
-
-    /**
      * Get chatroom emotes.
      */
-    getEmotes(): Promise <ChatroomEmote[]> {
+    getEmotes(): Promise < ChatroomEmote[] > {
         return new Promise( (resolve, reject) => {
             this.select(
                 DbTables.chat_emotes,
@@ -164,7 +188,7 @@ class ChatroomModel extends DatabaseBase {
                     const chatroomEmotes: ChatroomEmote[] = [];
 
                     dbResponse.data.forEach((rawEmote: any) => {
-                        const chatroomEmote: ChatroomEmote = { link: rawEmote.url, prefix: rawEmote.prefix, suffix: rawEmote.suffix };
+                        const chatroomEmote: ChatroomEmote = { fileExtension: rawEmote.file_extension, prefix: rawEmote.prefix, suffix: rawEmote.suffix };
                         chatroomEmotes.push(chatroomEmote);
                     });
 

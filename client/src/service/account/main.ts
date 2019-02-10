@@ -187,14 +187,14 @@ export function httpResendAccountEmail (): Promise<null> {
 /**
  * HTTP request to change account's profile picture.
  */
-export function httpChangeAccountImage (imageBase64: string): Promise<AccountImageResponse> {
+export function httpChangeAccountImage (imageBase64: string, fileExtension: string): Promise<GenericModelResponse> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post(`/account/settings/image/change`, encodeURIComponent(imageBase64))
+        axios.post(`/account/settings/image/change`, { imageBase64: imageBase64, fileExtension: fileExtension })
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);
             } else {
-                const accountImageResponse: AccountImageResponse = result.data;
+                const accountImageResponse: GenericModelResponse = result.data;
                 return resolve(accountImageResponse);
             }
         })

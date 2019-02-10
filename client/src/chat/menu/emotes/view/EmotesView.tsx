@@ -34,13 +34,15 @@ const EmotesView: React.SFC<IEmotesViewProps> = (props: IEmotesViewProps) => {
                                 </Typography>
                                 <div className="emotes-container row p-2 m-0">
                                     {props.emotes
-                                    .filter((emote: ChatroomEmote) => {
-                                        return emote.prefix === uniquePrefix;
-                                    })
+                                    .filter((emote: ChatroomEmote) => (
+                                        emote.prefix === uniquePrefix
+                                    ))
                                     .map((emote: ChatroomEmote) => {
+                                        const emoteLink: string = `/cache/chatroom/emote/${emote.prefix}${emote.suffix}.${emote.fileExtension}`;
+
                                         return (
                                             <div className="emote color-tertiary m-2" key={`${emote.prefix}${emote.suffix}`}>
-                                                <img src={emote.link} width="28px" height="28px"/>
+                                                <img src={emoteLink} width="28px" height="28px"/>
                                                 <div>{`${emote.prefix}${emote.suffix}`}</div>
                                             </div>
                                         );

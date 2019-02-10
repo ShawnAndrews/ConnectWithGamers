@@ -1,3 +1,4 @@
+const fs = require("fs");
 const bcrypt = require("bcryptjs");
 import config from "../../../config";
 import DatabaseBase from "./../base/dbBase";
@@ -9,6 +10,13 @@ import {
     DbTables,
     DbTableAccountsFields,
     DbTableTokensFields } from "../../../client/client-server-common/common";
+import { resolve } from "path";
+
+export enum SecurityCacheEnum {
+    attachment = "attachment",
+    emote = "emote",
+    profile = "profile"
+}
 
 class SecurityModel extends DatabaseBase {
 
@@ -172,6 +180,46 @@ class SecurityModel extends DatabaseBase {
 
         });
 
+    }
+
+    /**
+     * Upload base64 image to disk.
+     */
+    uploadImage(imageBase64: string, SecurityCacheEnum: SecurityCacheEnum, fileExtension: string, uid: string): Promise < void > {
+        const outputPath: string = __dirname + `/../../../../cache/chatroom/${SecurityCacheEnum}/${uid}.${fileExtension}`;
+
+        return new Promise( (resolve, reject) => {
+            if (!imageBase64) {
+                return resolve();
+            }
+
+            fs.writeFile(outputPath, imageBase64, "base64", (err: any) => {
+                if (err) {
+                    return reject(err);
+                }
+                return resolve();
+            });
+        });
+    }
+
+    /**
+     * Delete base64 image from disk.
+     */
+    deleteImage(SecurityCacheEnum: SecurityCacheEnum, fileExtension: string, uid: string): Promise <void> {
+        const path: string = __dirname + `/../../../../cache/chatroom/${SecurityCacheEnum}/${uid}.${fileExtension}`;
+
+        return new Promise( (resolve, reject) => {
+            if (!fs.existsSync(path)) {
+                return resolve();
+            }
+
+            fs.unlink(path, (err: any) => {
+                if (err) {
+                    return reject(err);
+                }
+                return resolve();
+            });
+        });
     }
 
 }

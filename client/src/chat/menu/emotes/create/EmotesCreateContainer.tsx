@@ -10,6 +10,7 @@ interface IEmotesCreateContainerProps extends RouteComponentProps<any> { }
 
 interface IEmotesCreateContainerState {
     uploadedImage: string;
+    fileExtension: string;
     isLoading: boolean;
     isLoadingCreate: boolean;
     attachmentLoading: boolean;
@@ -31,6 +32,7 @@ class EmotesCreateContainer extends React.Component<IEmotesCreateContainerProps,
         
         this.state = { 
             uploadedImage: undefined, 
+            fileExtension: undefined,
             isLoading: true, 
             isLoadingCreate: undefined,
             attachmentLoading: undefined,
@@ -82,10 +84,15 @@ class EmotesCreateContainer extends React.Component<IEmotesCreateContainerProps,
                 reader.onerror = error => reject(error);
             });
         };
+        let fileExtension: string = undefined;
+
+        try {
+            fileExtension = event.target.files[0].name.split(".")[1];
+        } catch (err) { }
 
         getBase64(event.target.files[0])
         .then((imageBase64: string) => {
-            this.setState({ uploadedImage: imageBase64 });
+            this.setState({ uploadedImage: imageBase64, fileExtension: fileExtension });
         })
         .catch((error: string) => {
             popupS.modal({ content: `<div>Error converting image to base 64. ${error}</div>` });
@@ -100,9 +107,9 @@ class EmotesCreateContainer extends React.Component<IEmotesCreateContainerProps,
 
         if (this.state.emoteSuffix.length !== 0 && this.state.uploadedImage ) {
             this.setState({ isLoadingCreate: true }, () => {
-                ChatroomService.httpUploadEmote(this.state.uploadedImage, this.state.emotePrefix, this.state.emoteSuffix)
+                ChatroomService.httpUploadEmote(this.state.uploadedImage, this.state.fileExtension, this.state.emotePrefix, this.state.emoteSuffix)
                 .then( (response: ChatroomEmotesResponse) => {
-                    this.setState({ emoteSuffix: "", uploadedImage: undefined, isLoadingCreate: false, emoteCompletionScreen: true });
+                    this.setState({ emoteSuffix: "", uploadedImage: undefined, fileExtension: undefined, isLoadingCreate: false, emoteCompletionScreen: true });
                 })
                 .catch( (error: string) => {
                     this.setState({ attachmentLoading: false, isLoadingCreate: false });

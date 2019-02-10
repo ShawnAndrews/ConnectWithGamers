@@ -6,12 +6,13 @@ import * as ChatroomService from '../../../service/chatroom/main';
 import { ChatroomUploadImageResponse } from '../../../../../client/client-server-common/common';
 
 interface IMessageBoxContainerProps extends RouteComponentProps<any> {
-    onSendCallback: (text: string, attachmentLink: string) => void;
+    onSendCallback: (text: string, attachmentBase64: string, attachmentFileExtension: string) => void;
 }
 
 interface IMessageBoxContainerState {
     attachmentLoading: boolean;
-    attachmentLink: string;
+    attachmentBase64: string;
+    attachmentFileExtension: string;
     text: string;
 }
 
@@ -26,7 +27,8 @@ class MessageBoxContainer extends React.Component<IMessageBoxContainerProps, IMe
 
         this.state = { 
             attachmentLoading: false, 
-            attachmentLink: undefined,
+            attachmentBase64: undefined,
+            attachmentFileExtension: undefined,
             text: ''
         };
     }
@@ -42,9 +44,9 @@ class MessageBoxContainer extends React.Component<IMessageBoxContainerProps, IMe
     }
 
     onSend(): void {
-        if (this.state.text !== "" || this.state.attachmentLink !== "") {
-            this.props.onSendCallback(this.state.text, this.state.attachmentLink);
-            this.setState({ text: "", attachmentLink: undefined });
+        if (this.state.text !== "" || this.state.attachmentBase64) {
+            this.props.onSendCallback(this.state.text, this.state.attachmentBase64, this.state.attachmentFileExtension);
+            this.setState({ text: "", attachmentBase64: undefined, attachmentFileExtension: undefined });
         }
     }
 
@@ -59,17 +61,16 @@ class MessageBoxContainer extends React.Component<IMessageBoxContainerProps, IMe
             });
         };
 
+        let fileExtension: string = undefined;
+
+        try {
+            fileExtension = event.target.files[0].name.split(".")[1];
+        } catch (err) { }
+
         getBase64(event.target.files[0])
         .then((imageBase64: string) => {
             this.setState({ attachmentLoading: true }, () => {
-                ChatroomService.httpUploadAttachment(imageBase64)
-                    .then( (response: ChatroomUploadImageResponse) => {
-                        this.setState({ attachmentLoading: false, attachmentLink: response.link });
-                    })
-                    .catch( (error: string) => {
-                        this.setState({ attachmentLoading: false });
-                        popupS.modal({ content: `<div>• ${error}</div>` });
-                    });
+                this.setState({ attachmentLoading: false, attachmentBase64: imageBase64, attachmentFileExtension: fileExtension});
             });
         })
         .catch((error: string) => {

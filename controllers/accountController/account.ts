@@ -2,7 +2,7 @@ const express = require("express");
 const RateLimit = require("express-rate-limit");
 import { Request, Response, Router } from "express";
 const router: Router = express.Router();
-import { AUTH_TOKEN_NAME, validateCredentials, RecoveryEmailInfo, EmailRecoveryVerifyResponse, DatalessResponse, EmailVerifiedFlagResponse, AccountImageResponse, AccountInfo, AuthenticationInfo, TokenInfo, TwitchIdResponse, SteamIdResponse, SteamFriendsResponse, DiscordLinkResponse, TwitchFollowersResponse, AccountInfoResponse, AccountsInfo, SteamFriend, TwitchUser, GameRating } from "../../client/client-server-common/common";
+import { AUTH_TOKEN_NAME, validateCredentials, RecoveryEmailInfo, EmailRecoveryVerifyResponse, DatalessResponse, EmailVerifiedFlagResponse, AccountImageResponse, AccountInfo, AuthenticationInfo, TokenInfo, TwitchIdResponse, SteamIdResponse, SteamFriendsResponse, DiscordLinkResponse, TwitchFollowersResponse, AccountInfoResponse, AccountsInfo, SteamFriend, TwitchUser, GameRating, GenericModelResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { accountModel } from "../../models/db/account/main";
 import { securityModel } from "../../models/db/security/main";
@@ -115,14 +115,8 @@ router.post(routes.getRoute("public/info"), (req: Request, res: Response) => {
     .then((accountId: number) => {
         return accountModel.getAccountsInfoById([accountId]);
     })
-    .then((response: AccountsInfo) => {
-        publicAccountInfoResponse.data = {
-            image: response.accounts[0].image,
-            username: response.accounts[0].username,
-            discord: response.accounts[0].discord,
-            steam: response.accounts[0].steam,
-            twitch: response.accounts[0].twitch
-        };
+    .then((accountsInfo: AccountsInfo) => {
+        publicAccountInfoResponse.data = accountsInfo.accounts[0];
         return res
         .send(publicAccountInfoResponse);
     })
@@ -143,16 +137,7 @@ router.post(routes.getRoute("settings"), (req: Request, res: Response) => {
     .then((accountId: number) => {
         return settingsModel.getAccountInfo(accountId);
     })
-    .then((response: AccountInfo) => {
-        const accountInfo: AccountInfo = {
-            username: response.username,
-            email: response.email,
-            steam: response.steam,
-            discord: response.discord,
-            twitch: response.twitch,
-            image: response.image,
-            emailVerified: response.emailVerified
-        };
+    .then((accountInfo: AccountInfo) => {
         accountInfoResponse.data = accountInfo;
         return res
         .send(accountInfoResponse);
@@ -328,16 +313,16 @@ router.post(routes.getRoute("settings/steamFriends"), (req: Request, res: Respon
 });
 
 router.post(routes.getRoute("settings/image/change"), (req: Request, res: Response) => {
-    const accountImageResponse: AccountImageResponse = { error: undefined };
-    const imageBase64: string = Object.keys(req.body)[0].split(",")[1];
+    const accountImageResponse: GenericModelResponse = { error: undefined };
+    const imageBase64: string = req.body.imageBase64.split(",")[1];
+    const fileExtension: string = req.body.fileExtension;
 
     // authorize
     securityModel.authorize(req.headers.cookie)
     .then((accountId: number) => {
-        return settingsModel.changeAccountImage(accountId, imageBase64);
+        return settingsModel.changeAccountImage(accountId, imageBase64, fileExtension);
     })
-    .then((link: string) => {
-        accountImageResponse.link = link;
+    .then(() => {
         return res
         .send(accountImageResponse);
     })

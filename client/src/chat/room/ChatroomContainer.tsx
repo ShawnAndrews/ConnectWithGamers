@@ -64,7 +64,7 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, IChatro
     onNewMessageHistory(chats: ChatHistoryResponse): void {
         const newChatLog: Array<SingleChatHistory> = this.state.chatLog;
         for (let i = 0; i < chats.name.length; i++) {
-            const chat: SingleChatHistory = { name: chats.name[i], date: new Date(chats.date[i]), text: chats.text[i], image: chats.image[i], attachment: chats.attachment[i], chatroomid: this.state.chatroomid };
+            const chat: SingleChatHistory = { name: chats.name[i], date: new Date(chats.date[i]), text: chats.text[i], profile: chats.profile[i], profileFileExtension: chats.profile_file_extension[i], attachment: chats.attachment[i], attachmentFileExtension: chats.attachment_file_extension[i], chatroomId: this.state.chatroomid, chatroomMessageId: chats.chatroomMessageId[i] };
             newChatLog.push(chat);
         }
         this.setState({ messagesLoading: false, chatLog: newChatLog }, () => {
@@ -74,14 +74,14 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, IChatro
 
     onNewMessage(chat: SingleChatHistory): void {
         const newChatLog: Array<SingleChatHistory> = this.state.chatLog;
-        newChatLog.push({ name: chat.name, date: new Date(chat.date), text: chat.text, image: chat.image, attachment: chat.attachment, chatroomid: this.state.chatroomid });
+        newChatLog.push({ name: chat.name, date: new Date(chat.date), text: chat.text, profile: chat.profile, profileFileExtension: chat.profileFileExtension, attachment: chat.attachment, attachmentFileExtension: chat.attachmentFileExtension, chatroomId: this.state.chatroomid, chatroomMessageId: chat.chatroomMessageId });
         this.setState({ chatLog: newChatLog }, () => {
             this.scrollChatToMostRecent();
         });
     }
 
-    onSendCallback(text: string, attachmentLink: string): void {
-        if (text !== "" || attachmentLink !== "") {
+    onSendCallback(text: string, attachmentBase64: string, attachmentFileExtension: string): void {
+        if (text !== "" || attachmentBase64) {
             const cookieMatch: string[] = document.cookie.match(new RegExp(`${AUTH_TOKEN_NAME}=([^;]+)`));
             let authToken: string;
             if (cookieMatch) {
@@ -89,7 +89,7 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, IChatro
             } else {
                 authToken = undefined;
             }
-            this.state.socket.emit(CHATROOM_EVENTS.PostMessage, { authToken: authToken, text: text, attachment: attachmentLink, chatroomid: this.state.chatroomid });
+            this.state.socket.emit(CHATROOM_EVENTS.PostMessage, { authToken: authToken, text: text, attachmentBase64: attachmentBase64, attachmentFileExtension: attachmentFileExtension, chatroomId: this.state.chatroomid });
         }
     }
 

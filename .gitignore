@@ -24,7 +24,7 @@ coverage.lcov
 # Cache
 cache/image-cacheing/**/*
 cache/video-previews/**/*
-cache/images/**/*
+cache/chatroom/**/*
 
 # Readme
 README.md

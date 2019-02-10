@@ -30,6 +30,7 @@ interface ReduxDispatchProps {
 type Props = ISettingsFormContainerProps & ReduxStateProps & ReduxDispatchProps;
 
 interface ISettingsFormContainerState {
+    accountId: number;
     showLinks: boolean;
     isLoading: boolean;
     username: string;
@@ -68,6 +69,7 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
         this.saveChanges = this.saveChanges.bind(this);
 
         this.state = {
+            accountId: undefined,
             showLinks: false,
             isLoading: true,
             username: undefined,
@@ -92,15 +94,20 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
     loadSettings(): void {
         AccountService.httpAccountSettings()
             .then( (response: AccountInfoResponse) => {
+                const profile_file_extension: string = response.data.profile_file_extension;
+                const profile: boolean = Boolean(response.data.profile);
+                const accountId = response.data.accountid;
                 const username = response.data.username;
                 const email = response.data.email;
                 const password = '';
                 const discord = response.data.discord;
                 const steam = response.data.steam;
                 const twitch = response.data.twitch;
-                const image = response.data.image;
                 const emailVerified = response.data.emailVerified;
+                const profileLink: string = `/cache/chatroom/profile/${accountId}.${profile_file_extension}`;
                 this.setState({ 
+                    accountId: accountId,
+                    image: profile ? profileLink : undefined,
                     isLoading: false, 
                     username: username, 
                     email: email,
@@ -114,7 +121,6 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
                     newDiscord: discord,
                     newSteam: steam,
                     newTwitch: twitch,
-                    image: image,
                     emailVerified: emailVerified});
             })
             .catch( (error: string) => {
@@ -233,15 +239,23 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
                 reader.onerror = error => reject(error);
             });
         };
+        let fileExtension: string = undefined;
+
+        try {
+            fileExtension = event.target.files[0].name.split(".")[1];
+        } catch (err) { }
 
         getBase64(event.target.files[0])
         .then((imageBase64: string) => {
             this.setState({ isLoading: true, loadingMsg: `Updating profile picture...` }, () => {
-                AccountService.httpChangeAccountImage(imageBase64)
-                    .then( (response: AccountImageResponse) => {
+                AccountService.httpChangeAccountImage(imageBase64, fileExtension)
+                    .then(() => {
+                        const profileLink: string = `/cache/chatroom/profile/${this.state.accountId}.${fileExtension}`;
+
                         this.setState({
                             isLoading: false,
-                            image: response.link });
+                            image: profileLink
+                        });
                     })
                     .catch( (error: string) => {
                         this.setState({ 
@@ -261,7 +275,7 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
                 .then( (response: AccountImageResponse) => {
                     this.setState({
                         isLoading: false,
-                        image: response.link });
+                        image: undefined });
                 })
                 .catch( (error: string) => {
                     this.setState({ 

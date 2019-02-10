@@ -75,8 +75,10 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         
         httpGetPublicAccountInfo()
         .then((response: AccountInfoResponse) => {
+            const profileLink: string = `/cache/chatroom/profile/${response.data.accountid}.${response.data.profile_file_extension}`;
+
             this.setState({
-                profileImage: response.data.image,
+                profileImage: Boolean(response.data.profile) ? profileLink : undefined,
                 profileName: response.data.username
             });
         })

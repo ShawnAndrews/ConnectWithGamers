@@ -8,7 +8,7 @@ import Message from './message/Message';
 interface IChatroomProps {
     messagesLoading: boolean;
     chatLog: Array<SingleChatHistory>;
-    onSendCallback: (text: string, attachmentLink: string) => void;
+    onSendCallback: (text: string, attachmentBase64: string, attachmentFileExtension: string) => void;
 }
 
 const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {

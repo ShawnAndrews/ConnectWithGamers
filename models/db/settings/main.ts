@@ -6,10 +6,8 @@ import {
     validateUsername, validateEmail, validateURL, validatePassword,
     GenericModelResponse, AccountInfo, DbTables, DbTableAccountsFields } from "../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
+import { securityModel, SecurityCacheEnum } from "../security/main";
 const bcrypt = require("bcryptjs");
-const imgur = require("imgur");
-
-imgur.setClientId(config.imgur.clientId);
 
 class SettingsModel extends DatabaseBase {
 
@@ -30,20 +28,24 @@ class SettingsModel extends DatabaseBase {
                 `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
+                    const accountId = dbResponse.data[0].accounts_sys_key_id;
+                    const profile = dbResponse.data[0].profile;
+                    const profileFileExtension = dbResponse.data[0].profile_file_extension;
                     const username = dbResponse.data[0].username;
                     const email = dbResponse.data[0].email;
                     const discord = dbResponse.data[0].discord || "";
                     const steam = dbResponse.data[0].steam || "";
                     const twitch = dbResponse.data[0].twitch || "";
-                    const image = dbResponse.data[0].image;
                     const emailVerified = dbResponse.data[0].email_verification_code === null;
                     const accountInfo: AccountInfo = {
+                        accountid: accountId,
+                        profile: profile,
+                        profile_file_extension: profileFileExtension,
                         username: username,
                         email: email,
                         discord: discord,
                         steam: steam,
                         twitch: twitch,
-                        image: image,
                         emailVerified: emailVerified};
                     return resolve(accountInfo);
                 })
@@ -80,30 +82,50 @@ class SettingsModel extends DatabaseBase {
     /**
      * Change the account profile picture given a base64 encoded string.
      */
-    changeAccountImage(accountid: number, imageBase64: string): Promise<string> {
+    changeAccountImage(accountid: number, imageBase64: string, fileExtension: string): Promise<void> {
         return new Promise( (resolve, reject) => {
-            imgur.uploadBase64(imageBase64)
-                .then((response: any) => {
-                    const link: string = response.data.link;
-                    this.update(
-                        DbTables.accounts,
-                        `${DbTableAccountsFields[9]}=?`,
-                        [link],
-                        `${DbTableAccountsFields[0]}=?`,
-                        [accountid])
-                        .then((dbResponse: GenericModelResponse) => {
-                            if (dbResponse.data.affectedRows == 1) {
-                                return resolve(link);
-                            } else {
-                                return reject(`Database error.`);
-                            }
+
+            this.select(
+                DbTables.accounts,
+                DbTableAccountsFields,
+                `${DbTableAccountsFields[0]}=?`,
+                [accountid])
+                .then((dbResponse: GenericModelResponse) => {
+                    const oldFileExtension: string = dbResponse.data[0].profile_file_extension;
+
+                    securityModel.deleteImage(SecurityCacheEnum.profile, oldFileExtension, accountid.toString())
+                    .then(() => {
+
+                        securityModel.uploadImage(imageBase64, SecurityCacheEnum.profile, fileExtension, accountid.toString())
+                        .then(() => {
+
+                            this.update(
+                                DbTables.accounts,
+                                `${DbTableAccountsFields[11]}=?, ${DbTableAccountsFields[12]}=?`,
+                                [true, fileExtension],
+                                `${DbTableAccountsFields[0]}=?`,
+                                [accountid])
+                                .then((dbResponse: GenericModelResponse) => {
+                                    if (dbResponse.data.affectedRows == 1) {
+                                        return resolve();
+                                    } else {
+                                        return reject(`Database error.`);
+                                    }
+                                })
+                                .catch((error: string) => {
+                                    return reject(`Database error.`);
+                                });
                         })
-                        .catch((error: string) => {
-                            return reject(`Database error.`);
+                        .catch((err: string) => {
+                            return reject(`Error changing account image. ${err}`);
                         });
+                    })
+                    .catch((err: string) => {
+                        return reject(`Error deleting old account image. ${err}`);
+                    });
                 })
                 .catch((error: string) => {
-                    return reject(`Error changing account image. ${error}`);
+                    return reject(error);
                 });
 
         });
@@ -114,20 +136,40 @@ class SettingsModel extends DatabaseBase {
      */
     deleteAccountImage(accountid: number): Promise<void> {
         return new Promise( (resolve, reject) => {
-            this.update(
+
+            this.select(
                 DbTables.accounts,
-                `${DbTableAccountsFields[9]}=?`,
-                [undefined],
+                DbTableAccountsFields,
                 `${DbTableAccountsFields[0]}=?`,
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
-                    if (dbResponse.data.affectedRows == 1) {
-                        return resolve();
-                    } else {
-                        return reject(`Database error.`);
-                    }
+                    const profileFileExtension: string = dbResponse.data[0].profile_file_extension;
+
+                    securityModel.deleteImage(SecurityCacheEnum.profile, profileFileExtension, accountid.toString())
+                        .then(() => {
+
+                            this.update(
+                                DbTables.accounts,
+                                `${DbTableAccountsFields[11]}=?, ${DbTableAccountsFields[12]}=?`,
+                                [false, undefined],
+                                `${DbTableAccountsFields[0]}=?`,
+                                [accountid])
+                                .then((dbResponse: GenericModelResponse) => {
+                                    if (dbResponse.data.affectedRows == 1) {
+                                        return resolve();
+                                    } else {
+                                        return reject(`Database error.`);
+                                    }
+                                })
+                                .catch((error: string) => {
+                                    return reject(`Database error.`);
+                                });
+                        })
+                        .catch((err: string) => {
+                            return reject(`Database error.`);
+                        });
                 })
-                .catch((error: string) => {
+                .catch((err: string) => {
                     return reject(`Database error.`);
                 });
         });
@@ -136,7 +178,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Change the account's username.
      */
-    changeAccountUsername(accountid: number, newUsername: string): Promise<null> {
+    changeAccountUsername(accountid: number, newUsername: string): Promise < null > {
 
         return new Promise( (resolve, reject) => {
 
@@ -168,7 +210,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Change the account's email address.
      */
-    changeAccountEmail(accountid: number, newEmail: string): Promise<null> {
+    changeAccountEmail(accountid: number, newEmail: string): Promise < null > {
 
         const emailVerification = genRandStr(EMAIL_VERIFICATION_LEN);
 
@@ -202,7 +244,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Change the account's password.
      */
-    changeAccountPassword(accountid: number, newPassword: string): Promise<null> {
+    changeAccountPassword(accountid: number, newPassword: string): Promise < null > {
 
         return new Promise( (resolve, reject) => {
 
@@ -237,7 +279,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Change the account's Discord link.
      */
-    changeAccountDiscord(accountid: number, newDiscord: string): Promise<null> {
+    changeAccountDiscord(accountid: number, newDiscord: string): Promise < null > {
 
         return new Promise( (resolve, reject) => {
 
@@ -271,7 +313,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Change the account's Twitch link.
      */
-    changeAccountTwitch(accountid: number, newTwitch: string): Promise<null> {
+    changeAccountTwitch(accountid: number, newTwitch: string): Promise < null > {
 
         const updatePromise = (): Promise<null> => {
             return new Promise( (resolve, reject) => {
@@ -337,7 +379,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Change the account's Steam link.
      */
-    changeAccountSteam(accountid: number, newSteam: string): Promise<null> {
+    changeAccountSteam(accountid: number, newSteam: string): Promise < null > {
 
         const updatePromise = (): Promise<null> => {
             return new Promise( (resolve, reject) => {
@@ -397,7 +439,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Change the account's password via account recovery.
      */
-    recoverAccountPassword(newPassword: string, uid: string): Promise<number> {
+    recoverAccountPassword(newPassword: string, uid: string): Promise < number > {
 
         return new Promise( (resolve, reject) => {
 
@@ -432,7 +474,7 @@ class SettingsModel extends DatabaseBase {
     /**
      * Set a new recovery id for account.
      */
-    resetAccountRecoveryId(accountid: number): Promise<null> {
+    resetAccountRecoveryId(accountid: number): Promise < null > {
 
         return new Promise( (resolve, reject) => {
 

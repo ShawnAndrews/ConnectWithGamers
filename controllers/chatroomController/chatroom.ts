@@ -1,9 +1,10 @@
 const express = require("express");
 import { Request, Response } from "express";
 const router = express.Router();
-import { GenericModelResponse, ChatroomUploadImageResponse, ChatroomEmotesResponse, ChatroomEmote } from "../../client/client-server-common/common";
+import { GenericModelResponse, ChatroomEmotesResponse, ChatroomEmote } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { chatroomModel } from "../../models/db/chatroom/main";
+import { securityModel, SecurityCacheEnum } from "../../models/db/security/main";
 
 export const routes = new routeModel();
 
@@ -11,7 +12,7 @@ export const routes = new routeModel();
 routes.addRoute("emotes/get", "/emotes/get");
 routes.addRoute("emote/upload", "/emote/upload");
 routes.addRoute("emote/delete", "/emote/delete");
-routes.addRoute("attachment/upload", "/attachment/upload");
+// routes.addRoute("attachment/upload", "/attachment/upload");
 
 router.post(routes.getRoute("emotes/get"), (req: Request, res: Response) => {
     const chatroomEmotesResponse: ChatroomEmotesResponse = { error: undefined };
@@ -32,13 +33,14 @@ router.post(routes.getRoute("emotes/get"), (req: Request, res: Response) => {
 router.post(routes.getRoute("emote/upload"), (req: Request, res: Response) => {
     const chatroomEmoteUploadResponse: GenericModelResponse = { error: undefined, data: undefined };
     const imageBase64: string = req.body.emoteBase64.split(",")[1];
+    const fileExtension: string = req.body.fileExtension;
     const emotePrefix: string = req.body.emotePrefix;
     const emoteSuffix: string = req.body.emoteSuffix;
+    const emoteUid: string = emotePrefix.concat(emoteSuffix);
 
-    chatroomModel.uploadImage(imageBase64)
-    .then((link: string) => {
-        const emoteURL: string = link;
-        return chatroomModel.uploadChatEmote(emoteURL, emotePrefix, emoteSuffix);
+    securityModel.uploadImage(imageBase64, SecurityCacheEnum.emote, fileExtension, emoteUid)
+    .then(() => {
+        return chatroomModel.uploadChatEmote(emotePrefix, emoteSuffix, fileExtension);
     })
     .then(() => {
         return res
@@ -66,24 +68,6 @@ router.post(routes.getRoute("emote/delete"), (req: Request, res: Response) => {
         chatroomEmoteDeleteResponse.error = error;
         return res
         .send(chatroomEmoteDeleteResponse);
-    });
-
-});
-
-router.post(routes.getRoute("attachment/upload"), (req: Request, res: Response) => {
-    const chatroomAttachmentResponse: ChatroomUploadImageResponse = { error: undefined };
-    const imageBase64: string = Object.keys(req.body)[0].split(",")[1];
-
-    chatroomModel.uploadImage(imageBase64)
-    .then((link: string) => {
-        chatroomAttachmentResponse.link = link;
-        return res
-        .send(chatroomAttachmentResponse);
-    })
-    .catch((error: string) => {
-        chatroomAttachmentResponse.error = error;
-        return res
-        .send(chatroomAttachmentResponse);
     });
 
 });

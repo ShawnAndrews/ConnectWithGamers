@@ -104,27 +104,6 @@ class AccountModel extends DatabaseBase {
 
         });
     }
-
-    /**
-     * Get link to account's profile picture.
-     */
-    getAccountImage(accountid: number): Promise<string> {
-
-        return new Promise( (resolve, reject) => {
-            this.select(
-                DbTables.accounts,
-                DbTableAccountsFields,
-                `${DbTableAccountsFields[0]}=?`,
-                [accountid])
-                .then((dbResponse: GenericModelResponse) => {
-                    return resolve(dbResponse.data[0].image);
-                })
-                .catch((error: string) => {
-                    return reject(`Database error. ${error}`);
-                });
-        });
-    }
-
     /**
      * Get account recovery info by username.
      */
@@ -190,8 +169,7 @@ class AccountModel extends DatabaseBase {
                                 username: element.username,
                                 discord: element.discord,
                                 steam: element.steam,
-                                twitch: element.twitch,
-                                image: element.image
+                                twitch: element.twitch
                             };
                             accounts.push(account);
                         });
@@ -231,7 +209,8 @@ class AccountModel extends DatabaseBase {
                                 discord: element.discord,
                                 steam: element.steam,
                                 twitch: element.twitch,
-                                image: element.image
+                                profile: element.profile,
+                                profile_file_extension: element.profile_file_extension
                             };
                             accounts.push(account);
                         });
@@ -243,42 +222,6 @@ class AccountModel extends DatabaseBase {
                 .catch((err: string) => {
                     console.log(`Database error: ${err}`);
                     return reject();
-                });
-
-        });
-    }
-
-    /**
-     * Get public account information.
-     */
-    getAccountInfo(accountid: number): Promise<AccountInfo> {
-
-        return new Promise( (resolve, reject) => {
-
-            this.select(
-                DbTables.accounts,
-                DbTableAccountsFields,
-                `${DbTableAccountsFields[0]}=?`,
-                [accountid])
-                .then((dbResponse: GenericModelResponse) => {
-                    if (dbResponse.data.length > 0) {
-                        const account: AccountInfo = {
-                            accountid: dbResponse.data[0].accounts_sys_key_id,
-                            username: dbResponse.data[0].username,
-                            discord: dbResponse.data[0].discord,
-                            steam: dbResponse.data[0].steam,
-                            twitch: dbResponse.data[0].twitch,
-                            image: dbResponse.data[0].image
-                        };
-                        const dbUser: AccountInfo = account;
-                        return resolve(dbUser);
-                    } else {
-                        return reject(accountid);
-                    }
-                })
-                .catch((err: string) => {
-                    console.log(`Database error: ${err}`);
-                    return reject(accountid);
                 });
 
         });

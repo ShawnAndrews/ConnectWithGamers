@@ -72,6 +72,7 @@ class UserlistContainer extends React.Component<IUserlistContainerProps, IUserli
 
     onUsers(users: AccountInfo[]): void {
         const newUserlist: AccountInfo[] = users;
+        console.log(`Got user list: ${JSON.stringify(newUserlist)}`);
         this.setState({ userlist: newUserlist });
     }
 

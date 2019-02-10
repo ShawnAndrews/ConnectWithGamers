@@ -53,25 +53,28 @@ const Rightnav: React.SFC<IRightnavProps> = (props: IRightnavProps) => {
                 </div>}
             {props.users.length !== 0 && 
                 <List>
-                    {props.users.map((user: AccountInfo, index: number) => (
-                        <React.Fragment key={user.username}>
-                            <ListItem className="user row m-0 p-0" onClick={() => { props.goToRedirect(`/chat/users/${user.username}`); }} button={true}>
-                                <div className="col-md-2 p-0">
-                                    <div className={`user-image ${!user.image && 'default color-primary'}`}>
-                                        {user.image
-                                            ? <img src={user.image}/>
-                                            : user.username.slice(0, 2).toUpperCase()}
-                                        <div className={`user-indicator ${getIndicatorStatus(user.last_active) === IndicatorStatus.Green ? 'green' : ''} ${getIndicatorStatus(user.last_active) === IndicatorStatus.Yellow ? 'yellow' : ''} ${getIndicatorStatus(user.last_active) === IndicatorStatus.Red ? 'red' : ''}`}/>
+                    {props.users.map((user: AccountInfo, index: number) => {
+                        const profileLink: string = `/cache/chatroom/profile/${user.accountid}.${user.profile_file_extension}`;
+
+                        return (
+                            <React.Fragment key={user.username}>
+                                <ListItem className="user row m-0 p-0" onClick={() => { props.goToRedirect(`/chat/users/${user.username}`); }} button={true}>
+                                    <div className="col-md-2 p-0">
+                                        <div className={`user-image ${!Boolean(user.profile) && 'default color-primary'}`}>
+                                            {Boolean(user.profile)
+                                                ? <img src={profileLink}/>
+                                                : user.username.slice(0, 2).toUpperCase()}
+                                            <div className={`user-indicator ${getIndicatorStatus(user.last_active) === IndicatorStatus.Green ? 'green' : ''} ${getIndicatorStatus(user.last_active) === IndicatorStatus.Yellow ? 'yellow' : ''} ${getIndicatorStatus(user.last_active) === IndicatorStatus.Red ? 'red' : ''}`}/>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="user-text col-10 pl-4 pr-0">
-                                    <Textfit className="name w-100" max={17} mode="single">{user.username}</Textfit>
-                                    <Textfit className="time h-35" max={11} mode="single">{lastActive(user.last_active)}</Textfit>
-                                </div>
-                            </ListItem>
-                            {index !== props.users.length && <hr className="translucent-hr my-2"/>}
-                        </React.Fragment>
-                    ))}
+                                    <div className="user-text col-10 pl-4 pr-0">
+                                        <Textfit className="name w-100" max={17} mode="single">{user.username}</Textfit>
+                                        <Textfit className="time h-35" max={11} mode="single">{lastActive(user.last_active)}</Textfit>
+                                    </div>
+                                </ListItem>
+                                {index !== props.users.length && <hr className="translucent-hr my-2"/>}
+                            </React.Fragment>);
+                        })}
                 </List>}
         </Paper>
     );
