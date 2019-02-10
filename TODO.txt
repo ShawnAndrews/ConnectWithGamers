@@ -19,7 +19,7 @@ TODO:
     - (X) Make sidenav.home expanded + auto expand on initial load
     - (1 days) Add sidenav.home options (ie: ) (reminder: convert sidenav.home checkboxes to arrows)
 - (3 days) Add Pricing Service Worker GoG + Microsoft + Apple + Android pricing
-- (8 hrs) Chatroom roles functionality: Add images for chatroom roles and functionality (mod=delete messages), add .deleted flag to chatroom_messages.
+- (8 hrs) Chatroom roles functionality: Add images for chatroom roles and functionality (mod=delete messages + emotes + ban?), add .deleted flag to chatroom_messages.
 - (1 days) Learn and add SQL Job to delete expired prices + results + anything else
 - (2 weeks?) Library
 - (?) Add component to game page above summary
