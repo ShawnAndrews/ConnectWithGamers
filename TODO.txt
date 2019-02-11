@@ -14,7 +14,7 @@ TODO:
 - (X) Remove Imgur dependency (used in chatroom)
 - (X) Remove Migrations dependency (stopped using)
 - (X) Remove old Steam/Discord/Twitch code + styles + config settings
-- (3 hr) Remove Redis dependency (chatusers + news)
+- (X) Remove Redis dependency (chatusers + news)
 - (1 days) Complete sidenav
     - (X) Make sidenav.home expanded + auto expand on initial load
     - (1 days) Add sidenav.home options (ie: ) (reminder: convert sidenav.home checkboxes to arrows)
