@@ -20,7 +20,7 @@ const News: React.SFC<INewsProps> = (props: INewsProps) => {
                     props.news.map((newsItem: NewsArticleInterface) => {
                         return (
                             <NewsArticle 
-                                key={newsItem.id}
+                                key={newsItem.title}
                                 article={newsItem}
                             />
                         );

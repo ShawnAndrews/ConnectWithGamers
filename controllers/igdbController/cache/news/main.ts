@@ -1,23 +1,21 @@
 import config from "../../../../config";
 import {
-    NewsArticle, RawNewsArticle, NewsArticleFields,
-    redisCache, IGDBCacheEntry, getTodayUnixTimestampInSeconds, buildIGDBRequestBody } from "../../../../client/client-server-common/common";
+    NewsArticle, RawNewsArticle, NewsArticleFields, getTodayUnixTimestampInSeconds, buildIGDBRequestBody } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-const redis = require("redis");
-const redisClient = redis.createClient();
+import { igdbModel } from "../../../../models/db/igdb/main";
 
 /**
- * Check if redis key exists.
+ * Check if news exists.
  */
 export function newsKeyExists(): Promise<boolean> {
-    const cacheEntry: IGDBCacheEntry = redisCache[1];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.exists(cacheEntry.key, (error: string, value: boolean) => {
-            if (error) {
-                return reject(error);
-            }
-            return resolve(value);
+        igdbModel.newsExists()
+        .then((exists: boolean) => {
+            return resolve(exists);
+        })
+        .catch((err: string) => {
+            return reject(err);
         });
     });
 
@@ -27,15 +25,17 @@ export function newsKeyExists(): Promise<boolean> {
  * Get redis-cached news.
  */
 export function getCachedNews(): Promise<NewsArticle[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[1];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.get(cacheEntry.key, (error: string, stringifiedNews: string) => {
-            if (error) {
-                return reject(error);
-            }
-            return resolve(JSON.parse(stringifiedNews));
+
+        igdbModel.getNews()
+        .then((newsArticles: NewsArticle[]) => {
+            return resolve(newsArticles);
+        })
+        .catch((err: string) => {
+            return reject(err);
         });
+
     });
 
 }
@@ -44,11 +44,9 @@ export function getCachedNews(): Promise<NewsArticle[]> {
  * Cache news.
  */
 export function cacheNews(): Promise<NewsArticle[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[1];
     const CURRENT_UNIX_TIME_S: number = getTodayUnixTimestampInSeconds();
 
     return new Promise((resolve: any, reject: any) => {
-
         const URL: string = `${config.igdb.apiURL}/pulses`;
         const body: string = buildIGDBRequestBody(
             [
@@ -71,27 +69,31 @@ export function cacheNews(): Promise<NewsArticle[]> {
         })
         .then( (response: AxiosResponse) => {
             const rawResponse: RawNewsArticle[] = response.data;
-            const newsResponse: NewsArticle[] = [];
+            const newsArticles: NewsArticle[] = [];
+            const datePlus7Days: Date = new Date();
+            datePlus7Days.setDate(datePlus7Days.getDate() + 7);
 
             rawResponse.forEach((x: RawNewsArticle) => {
-                const id: number = x.id;
                 const title: string =  x.title;
                 const author: string = x.author;
                 const image: string = x.image;
                 const url: string = x.website && x.website.url;
-                const created_at: number = x.created_at;
-                const newsOrg: string = x.pulse_source.name;
+                const created_dt: Date = new Date(x.created_at * 1000);
+                const org: string = x.pulse_source.name;
+                const expires_dt: Date = datePlus7Days;
 
-                const NewsArticle: NewsArticle = { id: id, title: title, author: author, image: image, url: url, created_at: created_at, newsOrg: newsOrg };
-                newsResponse.push(NewsArticle);
+                const NewsArticle: NewsArticle = { title: title, author: author, image: image, url: url, created_dt: created_dt, org: org, expires_dt: expires_dt };
+                newsArticles.push(NewsArticle);
             });
 
-            redisClient.set(cacheEntry.key, JSON.stringify(newsResponse));
-            if (cacheEntry.expiry !== -1) {
-                redisClient.expire(cacheEntry.key, cacheEntry.expiry);
-            }
+            igdbModel.setNews(newsArticles)
+            .then(() => {
+                return resolve(newsArticles);
+            })
+            .catch((err: string) => {
+                return reject(err);
+            });
 
-            return resolve(newsResponse);
         })
         .catch((error: string) => {
             return reject(error);

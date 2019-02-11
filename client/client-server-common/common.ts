@@ -184,13 +184,6 @@ export enum Breakpoints {
     md = 768
 }
 
-enum RedisExpirationTime {
-    ONE_HOUR = 60 * 60,
-    ONE_DAY = 60 * 60 * 24,
-    ONE_WEEK = 60 * 60 * 24 * 7,
-    INF = -1
-}
-
 export const steamAppUrl: string = `https://store.steampowered.com/app`;
 
 export const androidAppUrl: string = `https://play.google.com/store/apps/details?id=`;
@@ -247,11 +240,6 @@ export interface PlatformOption {
     id: number;
     name: string;
 }
-
-export const redisCache: IGDBCacheEntry[] = [
-    {key: "chatusers", expiry: RedisExpirationTime.INF},
-    {key: "news", expiry: RedisExpirationTime.ONE_HOUR},
-];
 
 export enum ResultsEnum {
     SearchResults = 1,
@@ -488,13 +476,13 @@ export interface GameRating {
 }
 
 export interface NewsArticle {
-    id: number;
     title: string;
     author: string;
     image: string;
     url: string;
-    created_at: number;
-    newsOrg: string;
+    created_dt: Date;
+    org: string;
+    expires_dt: Date;
 }
 
 export const NewsArticleFields: string[] = [`id`, `title`, `author`, `image`, `website.*`, `created_at`, `pulse_source.*`];
@@ -682,11 +670,6 @@ export interface PriceInfoResponse {
  *  IGDB Types
  */
 
-export interface IGDBCacheEntry {
-    key: string;
-    expiry: number; // seconds
-}
-
 export interface IGDBPlatform {
     id: number;
     abbreviation: string;
@@ -796,6 +779,7 @@ export enum DbTables {
     igdb_games = "igdb_games",
     igdb_genre_enum = "igdb_genre_enum",
     igdb_images = "igdb_images",
+    igdb_news = "igdb_news",
     igdb_platform_enum = "igdb_platform_enum",
     platforms = "platforms",
     pricings = "pricings",
@@ -832,6 +816,7 @@ export const DbTableResultsEnumFields: string[] = [`results_enum_sys_key_id`, `n
 export const DbTableScreenshotsFields: string[] = [`screenshots_sys_key_id`, `igdb_images_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `igdb_games_sys_key_id`, `similar_igdb_games_sys_key_id`, `similar_name`, `similar_cover_id`];
 export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];
+export const DbTableIGDBNewsFields: string[] = [`igdb_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];
 
 /* Service Worker */
 

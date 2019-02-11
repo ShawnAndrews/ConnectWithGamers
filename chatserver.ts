@@ -4,10 +4,8 @@ const express = require("express");
 const app: Express = express();
 const http = require("http");
 const https = require("https");
-const redis = require("redis");
 const fs = require("fs");
-const redisClient = redis.createClient();
-import { redisCache, IGDBCacheEntry, UserLog, GenericModelResponse, ChatHistoryResponse, SingleChatHistory, AccountInfo, CHATROOM_EVENTS, AccountsInfo, ChatroomEmote } from "./client/client-server-common/common";
+import { UserLog, GenericModelResponse, ChatHistoryResponse, SingleChatHistory, AccountInfo, CHATROOM_EVENTS, AccountsInfo, ChatroomEmote } from "./client/client-server-common/common";
 import { securityModel, SecurityCacheEnum } from "./models/db/security/main";
 import { chatroomModel } from "./models/db/chatroom/main";
 import { accountModel } from "./models/db/account/main";
@@ -356,18 +354,19 @@ export function getAllUserInfo(dbUsers: AccountsInfo): Promise<AccountInfo[]> {
  * Get redis-cached users in chatroom.
  */
 export function getCachedChatUsers(): Promise<UserLog[]> {
-    const cacheEntry: IGDBCacheEntry = redisCache[0];
+    // const cacheEntry: IGDBCacheEntry = redisCache[0];
 
     return new Promise((resolve: any, reject: any) => {
-        redisClient.get(cacheEntry.key, (error: string, stringifiedChatUsers: string) => {
-            if (error) {
-                return reject(error);
-            }
-            if (!stringifiedChatUsers) {
-                return resolve([]);
-            }
-            return resolve(JSON.parse(stringifiedChatUsers));
-        });
+        return resolve([]);
+        // redisClient.get(cacheEntry.key, (error: string, stringifiedChatUsers: string) => {
+        //     if (error) {
+        //         return reject(error);
+        //     }
+        //     if (!stringifiedChatUsers) {
+        //         return resolve([]);
+        //     }
+        //     return resolve(JSON.parse(stringifiedChatUsers));
+        // });
     });
 
 }
@@ -376,15 +375,15 @@ export function getCachedChatUsers(): Promise<UserLog[]> {
  * Cache users in chatroom.
  */
 export function cacheChatUsers(userLog: UserLog[]): Promise<void> {
-    const cacheEntry: IGDBCacheEntry = redisCache[0];
+    // const cacheEntry: IGDBCacheEntry = redisCache[0];
 
     return new Promise((resolve: any, reject: any) => {
 
-        redisClient.set(cacheEntry.key, JSON.stringify(userLog));
+        // redisClient.set(cacheEntry.key, JSON.stringify(userLog));
 
-        if (cacheEntry.expiry !== -1) {
-            redisClient.expire(cacheEntry.key, cacheEntry.expiry);
-        }
+        // if (cacheEntry.expiry !== -1) {
+        //     redisClient.expire(cacheEntry.key, cacheEntry.expiry);
+        // }
 
         return resolve();
     });

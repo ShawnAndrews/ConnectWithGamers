@@ -22,7 +22,6 @@ routes.addRoute("discountedgames", "/games/discounted");
 
 type CachedRouteTypes = GameResponse[] | GameResponse[] | NewsArticle[] | GameResponse;
 
-/* Generic route function for data cached in Redis */
 export function GenericCachedRoute<T extends CachedRouteTypes> (keyExists: () => Promise<boolean>, getCachedData: () => Promise<T>, cacheData: () => Promise<T>): Promise<T> {
 
     return new Promise((resolve: any, reject: any) => {
@@ -53,7 +52,6 @@ export function GenericCachedRoute<T extends CachedRouteTypes> (keyExists: () =>
 
 }
 
-/* Generic route function for data cached in Redis */
 export function GenericCachedWithDataRoute<T extends CachedRouteTypes, V> (keyExists: (key: V) => Promise<boolean>, getCachedData: (key: V) => Promise<T>, cacheData: (key: V) => Promise<T>, param: V): Promise<T> {
 
     return new Promise((resolve: any, reject: any) => {

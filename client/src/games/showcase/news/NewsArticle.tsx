@@ -15,8 +15,8 @@ const NewsArticle: React.SFC<INewsArticleProps> = (props: INewsArticleProps) => 
                 <div className="hover-tertiary-solid">
                     <div className="title p-2">{props.article.title}</div>
                     <div className="row">
-                        <div className="author col-8 pl-4 pr-2">By {props.article.author ? props.article.author.split(' ').slice(0, 2).join(' ') : 'Anonymous'} at {props.article.newsOrg}</div>
-                        <div className="date col-4 pl-0 pr-4 mb-1">{formatDate(props.article.created_at, true)}</div>
+                        <div className="author col-8 pl-4 pr-2">By {props.article.author ? props.article.author.split(' ').slice(0, 2).join(' ') : 'Anonymous'} at {props.article.org}</div>
+                        <div className="date col-4 pl-0 pr-4 mb-1">{formatDate(new Date(props.article.created_dt).getTime() / 1000, true)}</div>
                     </div>
                 </div>
                 <div className="news-media text-center">

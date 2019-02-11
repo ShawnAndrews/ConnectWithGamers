@@ -1,5 +1,5 @@
 import DatabaseBase from "./../base/dbBase";
-import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, GameExternalInfo, DbTablePricingsFields, ExternalInfo, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableResultsFields, ResultsEnum, SimilarGame, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, ServiceWorkerEnums } from "../../../client/client-server-common/common";
+import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, GameExternalInfo, DbTablePricingsFields, ExternalInfo, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableResultsFields, ResultsEnum, SimilarGame, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, ServiceWorkerEnums, NewsArticle, DbTableIGDBNewsFields } from "../../../client/client-server-common/common";
 import { steamAPIGetPriceInfo } from "../../../util/main";
 import { MysqlError } from "mysql";
 import config from "../../../config";
@@ -1072,6 +1072,127 @@ class IGDBModel extends DatabaseBase {
             });
 
             return resolve();
+
+        });
+
+    }
+
+    /**
+     * Check if news exists that is not expired.
+     */
+    newsExists(): Promise<boolean> {
+
+        return new Promise((resolve, reject) => {
+            this.custom(
+                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.igdb_news}`,
+                [])
+                .then((dbResponse: GenericModelResponse) => {
+
+                    if (dbResponse.data[0][`COUNT(*)`] === 0) {
+                        return resolve(false);
+                    } else {
+
+                        this.custom(
+                            `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.igdb_news}
+                            WHERE ${DbTableIGDBNewsFields[7]} < NOW()`,
+                            [])
+                            .then((dbResponse: GenericModelResponse) => {
+
+                                if (dbResponse.data[0][`COUNT(*)`] === 0) {
+                                    return resolve(true);
+                                } else {
+                                    return resolve(false);
+                                }
+
+                            })
+                            .catch((err: string) => {
+                                return reject(err);
+                            });
+
+                    }
+
+                })
+                .catch((err: string) => {
+                    return reject(err);
+                });
+
+        });
+
+    }
+
+    /**
+     * Get news articles.
+     */
+    getNews(): Promise <NewsArticle[]> {
+
+        return new Promise((resolve, reject) => {
+
+            // get news
+            this.select(
+                DbTables.igdb_news,
+                DbTableIGDBNewsFields,
+                undefined,
+                [])
+                .then((dbResponse: GenericModelResponse) => {
+
+                    if (dbResponse.data.length > 0) {
+                        const newsArticles: NewsArticle[] = [];
+
+                        dbResponse.data.forEach((rawNewsArticle: any) => {
+                            const newsArticle: NewsArticle = { title: rawNewsArticle.title, author: rawNewsArticle.author, image: rawNewsArticle.image, url: rawNewsArticle.url, created_dt: rawNewsArticle.created_dt, org: rawNewsArticle.org, expires_dt: rawNewsArticle.expires_dt };
+                            newsArticles.push(newsArticle);
+                        });
+
+                        return resolve(newsArticles);
+                    } else {
+                        return reject("Database error.");
+                    }
+
+                })
+                .catch((err: string) => {
+                    return reject(err);
+                });
+
+        });
+
+    }
+
+    /**
+     * Set news articles.
+     */
+    setNews(newsArticles: NewsArticle[]): Promise <void> {
+        const columnValues: any[] = [];
+
+        newsArticles.forEach((newsArticle: any) => {
+            for (const key in newsArticle) {
+                const value: any = newsArticle[key];
+                columnValues.push(value);
+            }
+        });
+
+        return new Promise((resolve, reject) => {
+
+            // delete old news
+            this.custom(
+                `TRUNCATE TABLE ${DbTables.igdb_news}`,
+                [])
+                .then(() => {
+
+                    // insert news
+                    this.custom(
+                        `INSERT INTO ${DbTables.igdb_news} (${DbTableIGDBNewsFields.slice(1)})
+                        VALUES ${newsArticles.map(() => `(${DbTableIGDBNewsFields.slice(1).map(() => "?").join()})`).join()}`,
+                        columnValues)
+                        .then((dbResponse: GenericModelResponse) => {
+                            return resolve();
+                        })
+                        .catch((err: MysqlError) => {
+                            return reject(err);
+                        });
+                })
+                .catch((err: MysqlError) => {
+                    return reject(err);
+                });
 
         });
 
