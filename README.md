@@ -59,6 +59,7 @@
 - Store: View discounted, upcoming and recently released video games across PC, consoles and handhelds.
 - Pricing: Compare up-to-date prices and discounts between popular marketplaces such as Steam, GoG, Microsoft, IOS and Android.
 - Library: Import games from Steam or manually add games from other platforms.
+- Notifications: Get notified of games that go on discount, get released or become available for preorder.
 - Play games: Play any game on your computer without the need for launching multiple clients like BattleNet, Steam or Uplay.
 - Reviews and 5-star ratings - Read reviews and rate the games you like or dislike.
 - Global Chatroom - Talk with fellow gamers about exciting new releases with all your favorite emojis and custom emotes!
@@ -259,7 +260,7 @@ This will start running the HTTP/HTTPS web and chat server. You may now access t
 
 ## FAQ
 ### Why is it called Connect With Gamers?
-This website was designed to encourage fellow gamers to meet by talking in chat, viewing each others gaming profile, and giving them a library of games to talk about.
+This website was designed to provide information, pricing and notifications abut all the games you love, and give you an opportunity in the chatroom to talk with fellow gamers about them.
 
 ### Do you have other projects i can check out?
 Of course! You can check them out on my portfolio website at [saportfolio.ca](http://www.saportfolio.ca)
