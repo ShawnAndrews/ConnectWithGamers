@@ -82,51 +82,57 @@ class ChatroomModel extends DatabaseBase {
                 [chatroomid],
                 config.chatHistoryCount)
                 .then((rawChats: GenericModelResponse) => {
-                    const uniqueUsernames: Set<string> = new Set<string>();
+                    const chatHistoryResponse: ChatHistoryResponse = { accountId: [], name: [], date: [], text: [], profile: [], profile_file_extension: [], attachment: [], attachment_file_extension: [], chatroomMessageId: [] };
 
-                    rawChats.data.forEach((chat: any) => {
-                        uniqueUsernames.add(chat.username);
-                    });
+                    if (rawChats.data.length > 0) {
 
-                    this.select(
-                        DbTables.accounts,
-                        DbTableAccountsFields,
-                        `${DbTableAccountsFields[1]} IN (${Array.from(uniqueUsernames).map(() => "?").join()})`,
-                        Array.from(uniqueUsernames))
-                        .then((rawAccounts: GenericModelResponse) => {
-                            const usernamesWithProfile: string[] = [];
-                            const usernamesWithProfileFileExtension: string[] = [];
+                        const uniqueUsernames: Set<string> = new Set<string>();
 
-                            rawAccounts.data.forEach((account: any) => {
-                                if (account.profile) {
-                                    usernamesWithProfile.push(account.username);
-                                    usernamesWithProfileFileExtension.push(account.profile_file_extension);
-                                }
-                            });
-
-                            const chatHistoryResponse: ChatHistoryResponse = { accountId: [], name: [], date: [], text: [], profile: [], profile_file_extension: [], attachment: [], attachment_file_extension: [], chatroomMessageId: [] };
-
-                            rawChats.data.forEach((chat: any) => {
-                                const chatAccountId: number = rawAccounts.data.find((x: any) => x.username === chat.username).accounts_sys_key_id;
-                                const chatAccountIndex: number = usernamesWithProfile.findIndex((x: string) => x === chat.username);
-                                const chatAccountHasProfile: boolean = chatAccountIndex !== -1;
-
-                                chatHistoryResponse.accountId.push(chatAccountId);
-                                chatHistoryResponse.name.push(chat.username);
-                                chatHistoryResponse.date.push(`${new Date(chat.log_dt).toLocaleDateString()} ${new Date(chat.log_dt).toLocaleTimeString()}`);
-                                chatHistoryResponse.text.push(chat.text);
-                                chatHistoryResponse.profile.push(chatAccountHasProfile ? true : false);
-                                chatHistoryResponse.profile_file_extension.push(chatAccountHasProfile ? usernamesWithProfileFileExtension[chatAccountIndex] : "");
-                                chatHistoryResponse.attachment.push(chat.attachment);
-                                chatHistoryResponse.attachment_file_extension.push(chat.attachment_file_extension || "");
-                                chatHistoryResponse.chatroomMessageId.push(chat.chatroom_messages_sys_key_id);
-                            });
-
-                            return resolve(chatHistoryResponse);
-                        })
-                        .catch((err: string) => {
-                            return reject(err);
+                        rawChats.data.forEach((chat: any) => {
+                            uniqueUsernames.add(chat.username);
                         });
+
+                        this.select(
+                            DbTables.accounts,
+                            DbTableAccountsFields,
+                            `${DbTableAccountsFields[1]} IN (${Array.from(uniqueUsernames).map(() => "?").join()})`,
+                            Array.from(uniqueUsernames))
+                            .then((rawAccounts: GenericModelResponse) => {
+                                const usernamesWithProfile: string[] = [];
+                                const usernamesWithProfileFileExtension: string[] = [];
+
+                                rawAccounts.data.forEach((account: any) => {
+                                    if (account.profile) {
+                                        usernamesWithProfile.push(account.username);
+                                        usernamesWithProfileFileExtension.push(account.profile_file_extension);
+                                    }
+                                });
+
+                                rawChats.data.forEach((chat: any) => {
+                                    const chatAccountId: number = rawAccounts.data.find((x: any) => x.username === chat.username).accounts_sys_key_id;
+                                    const chatAccountIndex: number = usernamesWithProfile.findIndex((x: string) => x === chat.username);
+                                    const chatAccountHasProfile: boolean = chatAccountIndex !== -1;
+
+                                    chatHistoryResponse.accountId.push(chatAccountId);
+                                    chatHistoryResponse.name.push(chat.username);
+                                    chatHistoryResponse.date.push(`${new Date(chat.log_dt).toLocaleDateString()} ${new Date(chat.log_dt).toLocaleTimeString()}`);
+                                    chatHistoryResponse.text.push(chat.text);
+                                    chatHistoryResponse.profile.push(chatAccountHasProfile ? true : false);
+                                    chatHistoryResponse.profile_file_extension.push(chatAccountHasProfile ? usernamesWithProfileFileExtension[chatAccountIndex] : "");
+                                    chatHistoryResponse.attachment.push(chat.attachment);
+                                    chatHistoryResponse.attachment_file_extension.push(chat.attachment_file_extension || "");
+                                    chatHistoryResponse.chatroomMessageId.push(chat.chatroom_messages_sys_key_id);
+                                });
+
+                                return resolve(chatHistoryResponse);
+                            })
+                            .catch((err: string) => {
+                                return reject(err);
+                            });
+
+                    } else {
+                        return resolve(chatHistoryResponse);
+                    }
 
                 })
                 .catch((err: string) => {
