@@ -54,7 +54,7 @@ class Message extends React.PureComponent<IMessageProps, null> {
     }
 
     render() {
-        const profileLink: string = `/cache/chatroom/profile/NEEDTOPASSACCTIDHERE.${this.props.chat.profileFileExtension}`;
+        const profileLink: string = `/cache/chatroom/profile/${this.props.chat.accountId}.${this.props.chat.profileFileExtension}`;
         const hasAttachment: boolean = Boolean(this.props.chat.attachment);
         const attachmentLink: string = `/cache/chatroom/attachment/${this.props.chat.chatroomMessageId}.${this.props.chat.attachmentFileExtension}`;
 

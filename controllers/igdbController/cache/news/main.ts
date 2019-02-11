@@ -22,7 +22,7 @@ export function newsKeyExists(): Promise<boolean> {
 }
 
 /**
- * Get redis-cached news.
+ * Get news.
  */
 export function getCachedNews(): Promise<NewsArticle[]> {
 

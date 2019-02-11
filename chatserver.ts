@@ -181,7 +181,7 @@ function startChatServer(): void {
                 })
                 .then((emotes: ChatroomEmote[]) => {
                     const encodedText: string = encodeEmotes(emotes, text);
-                    const newChat: SingleChatHistory = { name: username, date: new Date(date), text: encodedText, profile: profile, profileFileExtension: profile_file_extension, attachment: attachment, attachmentFileExtension: attachmentFileExtension, chatroomId: chatroomId, chatroomMessageId: chatroom_messages_sys_key_id };
+                    const newChat: SingleChatHistory = { accountId: accountid, name: username, date: new Date(date), text: encodedText, profile: profile, profileFileExtension: profile_file_extension, attachment: attachment, attachmentFileExtension: attachmentFileExtension, chatroomId: chatroomId, chatroomMessageId: chatroom_messages_sys_key_id };
                     socket.emit(CHATROOM_EVENTS.Message, newChat);
                     socket.broadcast.emit(CHATROOM_EVENTS.Message, newChat);
                 })
@@ -241,7 +241,7 @@ function startChatServer(): void {
 export function getLastActiveById(accountid: number): Promise<Date> {
 
     return new Promise((resolve: any, reject: any) => {
-        getCachedChatUsers()
+        chatroomModel.getChatroomUserlist()
         .then((userLog: UserLog[]) => {
             return getLastActiveByIdSync(userLog, accountid);
         })
@@ -254,8 +254,8 @@ export function getLastActiveById(accountid: number): Promise<Date> {
 
 function getLastActiveByIdSync(userLog: UserLog[], accountid: number): Date {
     for (let i = 0; i < userLog.length; i++) {
-        if (userLog[i].accountid === accountid ) {
-            return userLog[i].lastActive;
+        if (userLog[i].accountId === accountid ) {
+            return userLog[i].log_dt;
         }
     }
     return undefined;
@@ -264,41 +264,35 @@ function getLastActiveByIdSync(userLog: UserLog[], accountid: number): Date {
 /**
  * Refresh chatroom user's activity.
  */
-export function refreshUserActivity(userAccountId: number, socket: any, chatHandler: any): Promise<void> {
+export function refreshUserActivity(accountId: number, socket: any, chatHandler: any): Promise<void> {
 
     return new Promise((resolve: any, reject: any) => {
-        getCachedChatUsers()
-        .then((userLog: UserLog[]) => {
-            const currentTime: Date = new Date();
-            if (userLog.length === 0) {
-                // insert (if empty)
-                userLog.push({ accountid: userAccountId, lastActive: currentTime });
-            } else {
-                for (let i = 0; i < userLog.length; i++) {
-                    if (userLog[i].accountid === userAccountId ) {
-                        // update
-                        userLog[i].lastActive = currentTime;
-                        break;
-                    }
-                    if (i === userLog.length - 1) {
-                        // insert (if not empty)
-                        userLog.push({ accountid: userAccountId, lastActive: currentTime });
-                        break;
-                    }
+        chatroomModel.getChatroomUserlist()
+            .then((userLog: UserLog[]) => {
+                const currentTime: Date = new Date();
+                const user: UserLog = { accountId: accountId, log_dt: currentTime };
+                const userAlreadyExists: boolean = userLog.findIndex((x: UserLog) => x.accountId === accountId) !== -1;
+                let promiseToDo: Promise<void> = undefined;
+
+                if (!userAlreadyExists) {
+                    promiseToDo = chatroomModel.insertChatroomUserlist(user);
+                } else {
+                    promiseToDo = chatroomModel.updateChatroomUserlist(user);
                 }
-            }
-            cacheChatUsers(userLog)
-            .then(() => {
-                chatHandler.emit(CHATROOM_EVENTS.UpdateUsers);
-                return resolve();
+
+                promiseToDo
+                .then(() => {
+                    chatHandler.emit(CHATROOM_EVENTS.UpdateUsers);
+                    return resolve();
+                })
+                .catch((err: string) => {
+                    return reject(err);
+                });
+
             })
             .catch((error: string) => {
                 return reject(error);
             });
-        })
-        .catch((error: string) => {
-            return reject(error);
-        });
     });
 
 }
@@ -309,11 +303,11 @@ export function refreshUserActivity(userAccountId: number, socket: any, chatHand
 export function getAllUserIds(): Promise<number[]> {
 
     return new Promise((resolve: any, reject: any) => {
-        getCachedChatUsers()
+        chatroomModel.getChatroomUserlist()
         .then((userLog: UserLog[]) => {
             let userLogIds: number[] = [];
             if (userLog.length !== 0) {
-                userLogIds = userLog.map((user: UserLog) => { return user.accountid; });
+                userLogIds = userLog.map((user: UserLog) => { return user.accountId; });
             }
             return resolve(userLogIds);
         })
@@ -330,62 +324,23 @@ export function getAllUserIds(): Promise<number[]> {
 export function getAllUserInfo(dbUsers: AccountsInfo): Promise<AccountInfo[]> {
 
     return new Promise((resolve: any, reject: any) => {
-        getCachedChatUsers()
+        chatroomModel.getChatroomUserlist()
         .then((userLog: UserLog[]) => {
             const AccountInfos: AccountInfo[] = [];
+
             dbUsers.accounts.forEach((element: AccountInfo) => {
                 const now: any = new Date();
                 const lastActive: Date = getLastActiveByIdSync(userLog, element.accountid);
                 const lastActiveMinsAgo: number = lastActive ? Math.abs(Math.round(((new Date(lastActive).getTime() - now.getTime()) / 1000 / 60))) : -1;
-                const AccountInfo: AccountInfo = { username: element.username, steam: element.steam, discord: element.discord, twitch: element.twitch, last_active: lastActiveMinsAgo };
+                const AccountInfo: AccountInfo = { ...element, last_active: lastActiveMinsAgo };
                 AccountInfos.push(AccountInfo);
             });
+
             return resolve(AccountInfos);
         })
         .catch((error: string) => {
             return reject(error);
         });
-    });
-
-}
-
-
-/**
- * Get redis-cached users in chatroom.
- */
-export function getCachedChatUsers(): Promise<UserLog[]> {
-    // const cacheEntry: IGDBCacheEntry = redisCache[0];
-
-    return new Promise((resolve: any, reject: any) => {
-        return resolve([]);
-        // redisClient.get(cacheEntry.key, (error: string, stringifiedChatUsers: string) => {
-        //     if (error) {
-        //         return reject(error);
-        //     }
-        //     if (!stringifiedChatUsers) {
-        //         return resolve([]);
-        //     }
-        //     return resolve(JSON.parse(stringifiedChatUsers));
-        // });
-    });
-
-}
-
-/**
- * Cache users in chatroom.
- */
-export function cacheChatUsers(userLog: UserLog[]): Promise<void> {
-    // const cacheEntry: IGDBCacheEntry = redisCache[0];
-
-    return new Promise((resolve: any, reject: any) => {
-
-        // redisClient.set(cacheEntry.key, JSON.stringify(userLog));
-
-        // if (cacheEntry.expiry !== -1) {
-        //     redisClient.expire(cacheEntry.key, cacheEntry.expiry);
-        // }
-
-        return resolve();
     });
 
 }

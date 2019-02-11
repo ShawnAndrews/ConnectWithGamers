@@ -40,7 +40,7 @@ const Userlist: React.SFC<IUserlistProps> = (props: IUserlistProps) => {
                     </div>
                 </div>
                 :
-                <div className={`userlist y-scrollable custom-scrollbar h-100 px-4 px-sm-5`}>
+                <div className={`userlist y-scrollable custom-scrollbar-slim h-100 px-4 px-sm-5`}>
                     {props.userlist
                         .map((x: AccountInfo, index: number) => {
                             const profileLink: string = `/cache/chatroom/profile/${x.accountid}.${x.profile_file_extension}`;

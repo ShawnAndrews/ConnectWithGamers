@@ -163,14 +163,8 @@ class AccountModel extends DatabaseBase {
                 .then((dbResponse: GenericModelResponse) => {
                     const accounts: AccountInfo[] = [];
                     if (dbResponse.data.length > 0) {
-                        dbResponse.data.forEach((element: any) => {
-                            const account: AccountInfo = {
-                                accountid: element.accounts_sys_key_id,
-                                username: element.username,
-                                discord: element.discord,
-                                steam: element.steam,
-                                twitch: element.twitch
-                            };
+                        dbResponse.data.forEach((rawAccount: any) => {
+                            const account: AccountInfo = { accountid: rawAccount.accounts_sys_key_id, username: rawAccount.username, profile: rawAccount.profile, profile_file_extension: rawAccount.profile_file_extension, discord: rawAccount.discord, twitch: rawAccount.twitch, steam: rawAccount.steam };
                             accounts.push(account);
                         });
                     }

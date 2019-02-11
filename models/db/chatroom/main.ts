@@ -1,7 +1,7 @@
 import config from "../../../config";
 import DatabaseBase from "./../base/dbBase";
 import {
-    GenericModelResponse, ChatHistoryResponse, ChatroomEmote, DbTableChatroomMessagesFields, DbTables, DbTableChatEmotesFields, DbTableAccountsFields } from "../../../client/client-server-common/common";
+    GenericModelResponse, ChatHistoryResponse, ChatroomEmote, DbTableChatroomMessagesFields, DbTables, DbTableChatEmotesFields, DbTableAccountsFields, UserLog, DbTableChatroomUserlistFields } from "../../../client/client-server-common/common";
 import { SecurityCacheEnum } from "../security/main";
 const fs = require("fs");
 
@@ -85,14 +85,14 @@ class ChatroomModel extends DatabaseBase {
                     const uniqueUsernames: Set<string> = new Set<string>();
 
                     rawChats.data.forEach((chat: any) => {
-                        uniqueUsernames.add(chat.name);
+                        uniqueUsernames.add(chat.username);
                     });
 
                     this.select(
                         DbTables.accounts,
                         DbTableAccountsFields,
-                        `${DbTableAccountsFields[5]} IN (?)`,
-                        [Array.from(uniqueUsernames).join()])
+                        `${DbTableAccountsFields[1]} IN (${Array.from(uniqueUsernames).map(() => "?").join()})`,
+                        Array.from(uniqueUsernames))
                         .then((rawAccounts: GenericModelResponse) => {
                             const usernamesWithProfile: string[] = [];
                             const usernamesWithProfileFileExtension: string[] = [];
@@ -104,12 +104,14 @@ class ChatroomModel extends DatabaseBase {
                                 }
                             });
 
-                            const chatHistoryResponse: ChatHistoryResponse = { name: [], date: [], text: [], profile: [], profile_file_extension: [], attachment: [], attachment_file_extension: [], chatroomMessageId: [] };
+                            const chatHistoryResponse: ChatHistoryResponse = { accountId: [], name: [], date: [], text: [], profile: [], profile_file_extension: [], attachment: [], attachment_file_extension: [], chatroomMessageId: [] };
 
                             rawChats.data.forEach((chat: any) => {
+                                const chatAccountId: number = rawAccounts.data.find((x: any) => x.username === chat.username).accounts_sys_key_id;
                                 const chatAccountIndex: number = usernamesWithProfile.findIndex((x: string) => x === chat.username);
                                 const chatAccountHasProfile: boolean = chatAccountIndex !== -1;
 
+                                chatHistoryResponse.accountId.push(chatAccountId);
                                 chatHistoryResponse.name.push(chat.username);
                                 chatHistoryResponse.date.push(`${new Date(chat.log_dt).toLocaleDateString()} ${new Date(chat.log_dt).toLocaleTimeString()}`);
                                 chatHistoryResponse.text.push(chat.text);
@@ -123,7 +125,6 @@ class ChatroomModel extends DatabaseBase {
                             return resolve(chatHistoryResponse);
                         })
                         .catch((err: string) => {
-                            console.log(`Failed to get accounts!! ${err}`);
                             return reject(err);
                         });
 
@@ -198,6 +199,76 @@ class ChatroomModel extends DatabaseBase {
                     return reject(err);
                 });
         });
+    }
+
+    /**
+     * Get chatroom userlist.
+     */
+    getChatroomUserlist(): Promise <UserLog[]> {
+        return new Promise( (resolve, reject) => {
+            this.select(
+                DbTables.chatroom_userlist,
+                DbTableChatroomUserlistFields)
+                .then((dbResponse: GenericModelResponse) => {
+                    const userLog: UserLog[] = [];
+
+                    dbResponse.data.forEach((rawUser: any) => {
+                        const user: UserLog = { accountId: rawUser.accounts_sys_key_id, log_dt: rawUser.log_dt };
+                        userLog.push(user);
+                    });
+
+                    return resolve(userLog);
+                })
+                .catch((err: string) => {
+                    return reject(err);
+                });
+        });
+    }
+
+    /**
+     * Insert chatroom userlist.
+     */
+    insertChatroomUserlist(user: UserLog): Promise <void> {
+
+        return new Promise( (resolve, reject) => {
+            this.insert(
+                DbTables.chatroom_userlist,
+                DbTableChatroomUserlistFields,
+                [user.accountId, user.log_dt],
+                DbTableChatroomUserlistFields.map(() => "?").join())
+                .then((dbResponse: GenericModelResponse) => {
+                    if (dbResponse.error) {
+                        return reject(dbResponse.error);
+                    } else {
+                        return resolve();
+                    }
+                });
+        });
+
+    }
+
+    /**
+     * Update user in chatroom userlist.
+     */
+    updateChatroomUserlist(user: UserLog): Promise <void> {
+
+        return new Promise( (resolve, reject) => {
+
+            this.update(
+                DbTables.chatroom_userlist,
+                `${DbTableChatroomUserlistFields[1]}=?`,
+                [user.log_dt],
+                `${DbTableChatroomUserlistFields[0]}=?`,
+                [user.accountId])
+                .then(() => {
+                    return resolve();
+                })
+                .catch((error: string) => {
+                    return reject(`Database error. ${error}`);
+                });
+
+        });
+
     }
 
 }

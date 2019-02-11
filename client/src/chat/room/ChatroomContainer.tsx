@@ -64,7 +64,7 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, IChatro
     onNewMessageHistory(chats: ChatHistoryResponse): void {
         const newChatLog: Array<SingleChatHistory> = this.state.chatLog;
         for (let i = 0; i < chats.name.length; i++) {
-            const chat: SingleChatHistory = { name: chats.name[i], date: new Date(chats.date[i]), text: chats.text[i], profile: chats.profile[i], profileFileExtension: chats.profile_file_extension[i], attachment: chats.attachment[i], attachmentFileExtension: chats.attachment_file_extension[i], chatroomId: this.state.chatroomid, chatroomMessageId: chats.chatroomMessageId[i] };
+            const chat: SingleChatHistory = { accountId: chats.accountId[i], name: chats.name[i], date: new Date(chats.date[i]), text: chats.text[i], profile: chats.profile[i], profileFileExtension: chats.profile_file_extension[i], attachment: chats.attachment[i], attachmentFileExtension: chats.attachment_file_extension[i], chatroomId: this.state.chatroomid, chatroomMessageId: chats.chatroomMessageId[i] };
             newChatLog.push(chat);
         }
         this.setState({ messagesLoading: false, chatLog: newChatLog }, () => {
@@ -74,7 +74,7 @@ class ChatroomContainer extends React.Component<IChatroomContainerProps, IChatro
 
     onNewMessage(chat: SingleChatHistory): void {
         const newChatLog: Array<SingleChatHistory> = this.state.chatLog;
-        newChatLog.push({ name: chat.name, date: new Date(chat.date), text: chat.text, profile: chat.profile, profileFileExtension: chat.profileFileExtension, attachment: chat.attachment, attachmentFileExtension: chat.attachmentFileExtension, chatroomId: this.state.chatroomid, chatroomMessageId: chat.chatroomMessageId });
+        newChatLog.push({ accountId: chat.accountId, name: chat.name, date: new Date(chat.date), text: chat.text, profile: chat.profile, profileFileExtension: chat.profileFileExtension, attachment: chat.attachment, attachmentFileExtension: chat.attachmentFileExtension, chatroomId: this.state.chatroomid, chatroomMessageId: chat.chatroomMessageId });
         this.setState({ chatLog: newChatLog }, () => {
             this.scrollChatToMostRecent();
         });

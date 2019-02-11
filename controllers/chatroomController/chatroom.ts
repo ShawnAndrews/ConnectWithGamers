@@ -12,7 +12,6 @@ export const routes = new routeModel();
 routes.addRoute("emotes/get", "/emotes/get");
 routes.addRoute("emote/upload", "/emote/upload");
 routes.addRoute("emote/delete", "/emote/delete");
-// routes.addRoute("attachment/upload", "/attachment/upload");
 
 router.post(routes.getRoute("emotes/get"), (req: Request, res: Response) => {
     const chatroomEmotesResponse: ChatroomEmotesResponse = { error: undefined };

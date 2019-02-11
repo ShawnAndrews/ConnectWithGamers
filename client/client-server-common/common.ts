@@ -247,8 +247,8 @@ export enum ResultsEnum {
 }
 
 export interface UserLog {
-    accountid: number;
-    lastActive: Date;
+    accountId: number;
+    log_dt: Date;
 }
 
 export const enum CHATROOM_EVENTS {
@@ -406,6 +406,7 @@ export interface RecoveryEmailInfo {
 }
 
 export interface SingleChatHistory {
+    accountId: number;
     name: string;
     date: Date;
     text: string;
@@ -567,6 +568,7 @@ export interface ChatroomUploadImageResponse {
 }
 
 export interface ChatHistoryResponse {
+    accountId: number[];
     name: string[];
     date: string[];
     text: string[];
@@ -771,6 +773,7 @@ export enum DbTables {
     accounts_roles = "accounts_roles",
     chat_emotes = "chat_emotes",
     chatroom_messages = "chatroom_messages",
+    chatroom_userlist = "chatroom_userlist",
     covers = "covers",
     genres = "genres",
     icons = "icons",
@@ -797,6 +800,7 @@ export const DbTableAccountsFields: string[] = [`accounts_sys_key_id`, `username
 export const DbTableAccountsRolesFields: string[] = [`accounts_roles_sys_key_id`, `accounts_role_enum_sys_key_id`, `accounts_sys_key_id`];
 export const DbTableChatEmotesFields: string[] = [`chat_emotes_sys_key_id`, `prefix`, `suffix`, `file_extension`, `log_dt`];
 export const DbTableChatroomMessagesFields: string[] = [`chatroom_messages_sys_key_id`, `username`, `text`, `attachment`, `attachment_file_extension`, `chatroom_id`, `log_dt`];
+export const DbTableChatroomUserlistFields: string[] = [`accounts_sys_key_id`, `log_dt`];
 export const DbTableCoversFields: string[] = [`covers_sys_key_id`, `igdb_images_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `igdb_genre_enum_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTableIconsFields: string[] = [`icons_sys_key_id`, `icons_enum_sys_key_id`, `igdb_games_sys_key_id`];
