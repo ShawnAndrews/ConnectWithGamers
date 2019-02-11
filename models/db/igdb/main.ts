@@ -1078,7 +1078,7 @@ class IGDBModel extends DatabaseBase {
     }
 
     /**
-     * Check if news exists that is not expired.
+     * Check if news exists.
      */
     newsExists(): Promise<boolean> {
 
@@ -1088,32 +1088,15 @@ class IGDBModel extends DatabaseBase {
                 [])
                 .then((dbResponse: GenericModelResponse) => {
 
-                    if (dbResponse.data[0][`COUNT(*)`] === 0) {
-                        return resolve(false);
+                    if (dbResponse.data[0][`COUNT(*)`] !== 0) {
+                        return resolve(true);
                     } else {
-
-                        this.custom(
-                            `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.igdb_news}
-                            WHERE ${DbTableIGDBNewsFields[7]} < NOW()`,
-                            [])
-                            .then((dbResponse: GenericModelResponse) => {
-
-                                if (dbResponse.data[0][`COUNT(*)`] === 0) {
-                                    return resolve(true);
-                                } else {
-                                    return resolve(false);
-                                }
-
-                            })
-                            .catch((err: string) => {
-                                return reject(err);
-                            });
-
+                        return resolve(false);
                     }
 
                 })
-                .catch((err: string) => {
-                    return reject(err);
+                .catch(() => {
+                    return reject(false);
                 });
 
         });
