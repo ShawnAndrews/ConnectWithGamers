@@ -71,7 +71,7 @@
 
 <p align="center">
   <br>
-  <img src="https://cdn.discordapp.com/attachments/507670507433361473/530260603567341570/h.png" />
+  <img src="https://i.imgur.com/anDpba3.jpg" />
 </p>
 
 ## Updates
