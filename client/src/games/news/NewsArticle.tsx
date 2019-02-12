@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { NewsArticle } from '../../../../client-server-common/common';
+import { NewsArticle } from '../../../client-server-common/common';
 import { Card } from '@material-ui/core';
-import { formatDate, onImgError } from '../../../util/main';
+import { formatDate, onImgError } from '../../util/main';
 
 interface INewsArticleProps {
     article: NewsArticle;

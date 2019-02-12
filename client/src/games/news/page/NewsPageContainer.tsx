@@ -1,8 +1,8 @@
 const popupS = require('popups');
 import * as React from 'react';
-import * as IGDBService from '../../../../service/igdb/main';
+import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { NewsArticle, MultiNewsResponse } from '../../../../../client-server-common/common';
+import { NewsArticle, MultiNewsResponse } from '../../../../client-server-common/common';
 import NewsPage from './NewsPage';
 
 interface INewsPageContainerProps extends RouteComponentProps<any> {

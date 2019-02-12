@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NewsArticle as NewsArticleInterface } from '../../../../client-server-common/common';
+import { NewsArticle as NewsArticleInterface } from '../../../client-server-common/common';
 import NewsArticle from './NewsArticle';
 
 interface INewsProps {

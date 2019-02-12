@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import NewsPageContainer from './showcase/news/page/NewsPageContainer';
+import NewsPageContainer from './news/page/NewsPageContainer';
 import HomeContainer from './home/HomeContainer';
 import SearchRouter from './search/main';
 import NotFoundPageContainer from './../notfound/NotFoundPageContainer';

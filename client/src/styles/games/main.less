@@ -157,14 +157,16 @@
                 position: absolute;
                 top: 0;
                 right: 0;
-                color: white;
-                background-color: rgba(black, 0.5);
-                width: 100px;
+                color: rgba(0,0,0,0.8);
+                font-weight: 800;
+                background-color: rgba(@tertiary-color, 0.8);
+                width: 110px;
                 height: 24px;
 
                 .discount {
-                    color: rgba(white, 0.6);
-                    background-color: rgba(green, 0.5);
+                    opacity: 0.5;
+                    font-size: 15px;
+                    background: linear-gradient(to left, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 15%, rgba(255,255,255,0.6) 100%);
                 }
 
                 .original-price {
@@ -192,7 +194,7 @@
                     bottom: 0px;
                     right: 0px;
                     opacity: 0.7;
-                    font-size: 8px;
+                    font-size: 9px;
                 }
 
                 &.no-price {
@@ -210,14 +212,19 @@
                 }
 
                 &.no-discount {
-                    width: auto;
-                    height: auto;
-                    background: linear-gradient(to left, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 20%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0) 100%);
+                    width: 85px;
+                    height: 20px;
+                    background: @tertiary-color;
+                    opacity: 0.8;
 
                     .text {
-                        position: relative;
-                        opacity: 0.85;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        line-height: 20px;
                         font-size: 11px;
+                        font-weight: 800;
+                        color: rgba(0,0,0,0.8);
                     }
                 }
             }
@@ -238,7 +245,7 @@
                 opacity: 0.75;
                 
                 &.short {
-                    width: 65px;
+                    width: 57px;
                     right: -7px; 
                 }
             }
@@ -501,6 +508,7 @@
                 background-color: #232323;
             }
         }
+
     }
 
     .content {
@@ -516,6 +524,45 @@
 
             @media @sm {
                 display: none!important;
+            }
+        }
+
+        .news-article {
+
+            .title {
+                position: relative;
+                overflow: hidden;
+                color: #90d794d8;
+                font-size: .8em;
+            }
+        
+            .author {
+                color: hsla(0,0%,100%,.5);
+                font-size: .6em;
+                height: 1.4em;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        
+            .date {
+                color: orange;
+                font-size: .8em;
+                text-align: right;
+                overflow: hidden;
+                height: 1.4em;
+            }
+        
+            > div {
+                background-color: rgba(white,0.05)
+            }
+        
+            img {
+                max-height: 165px;
+            }
+        
+            * {
+                color: white;
             }
         }
     }
