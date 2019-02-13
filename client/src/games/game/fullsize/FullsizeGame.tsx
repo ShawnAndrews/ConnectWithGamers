@@ -83,7 +83,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                             <div className="discount d-inline-block px-1">-{props.game.external.steam.discount_percent}%</div>
                             <div className="original-price d-inline-block px-1"><del>${originalPrice} USD</del></div>
                         </>}
-                    <div className={`text d-inline-block ${props.game.external.steam.discount_percent ? 'px-1' : 'pr-2 pl-1'}`}>{!isNaN(Number(props.game.external.steam.price)) ? `$${props.game.external.steam.price} USD` : props.game.external.steam.price}</div>
+                    <div className="text d-inline-block px-1">{!isNaN(Number(props.game.external.steam.price)) ? `$${props.game.external.steam.price} USD` : props.game.external.steam.price}</div>
                 </div>}
         </Card>
     );

@@ -216,7 +216,7 @@
                 }
 
                 &.no-discount {
-                    width: 85px;
+                    width: 78px;
                     height: 20px;
                     background: @tertiary-color;
                     opacity: 0.8;
@@ -244,12 +244,12 @@
                 position: absolute;
                 top: 5px;
                 right: -14px;
-                width: 125px;
+                width: 115px;
                 height: 27px;
                 opacity: 0.75;
                 
                 &.short {
-                    width: 57px;
+                    width: 50px;
                     right: -7px; 
                 }
             }
@@ -460,6 +460,13 @@
         background-color: #232323;
         overflow-y: scroll;
         overflow-x: hidden;
+
+        .option {
+            
+            &.selected {
+                background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            }
+        }
     }
 
     .sidenav {
