@@ -27,12 +27,22 @@
             border-radius: 5px;
             overflow: visible;
 
-            &.feature {
+            &.editor-feature {
                 grid-row: span 3;
+                grid-column: span 5;
+    
+                @media @md {
+                    grid-row: span 1;
+                    grid-column: span 2;
+                }
+            }
+
+            &.feature {
+                grid-row: span 2;
                 grid-column: span 3;
     
                 @media @md {
-                    grid-row: span 2;
+                    grid-row: span 1;
                     grid-column: span 2;
                 }
             }
@@ -43,7 +53,7 @@
     
                 @media @md {
                     grid-row: span 1;
-                    grid-column: span 2;
+                    grid-column: span 1;
                 }
             }
 
@@ -51,7 +61,7 @@
                 
                 div, img {
                     width: 100%;
-                    height: 100%;
+                    height: calc(100% + 1px);
                 }
             }
 
@@ -114,17 +124,17 @@
     
                 .genres {
                     font-size: 0.8rem;
-                    margin-bottom: 10px;
+                }
+
+                .platforms {
+                    font-size: 1.3rem;
                 }
 
                 &.editors-choice {
                     position: absolute;
-                    margin: auto;
-                    bottom: 0;
-                    top: calc(50% + 39px);
-                    left: 0;
-                    right: 0;
+                    top: 50%;
                     transform: translateY(-50%);
+                    height: min-content;
                     text-align: center;
 
                     .name {
@@ -237,7 +247,9 @@
                 position: absolute; 
                 top: 0;
                 left: 0;
-                background-color: rgba(black,0.5);
+                height: calc(100% + 1px);
+                width: 100%;
+                background: radial-gradient(ellipse at center, rgba(0,0,0,0.7) 20%, transparent);
             }
 
             .status-banner {

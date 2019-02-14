@@ -3,7 +3,7 @@ const loadImage = require('image-promise');
 import * as React from 'react';
 import Home from './Home';
 import * as IGDBService from '../../service/igdb/main';
-import { MultiGameResponse, GameResponse, GamesPresets, IGDBImage, IGDBImageSizeEnums, getIGDBImage, ExcludedGameIds } from '../../../client-server-common/common';
+import { MultiGameResponse, GameResponse, GamesPresets, IGDBImage, IGDBImageSizeEnums, getIGDBImage, ExcludedGameIds, GenericModelResponse } from '../../../client-server-common/common';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 interface IHomeContainerProps extends RouteComponentProps<any> { }
@@ -12,6 +12,7 @@ interface IHomeContainerState {
     isLoading: boolean;
     loadingMsg: string;
     games: GameResponse[];
+    bigGame: GameResponse;
     editorsGamesIndicies: number[];
     featureGamesIndicies: number[];
     subFeatureGamesIndicies: number[];
@@ -26,34 +27,33 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             isLoading: true,
             loadingMsg: 'Loading games...',
             games: undefined,
+            bigGame: undefined,
             editorsGamesIndicies: [0],
-            featureGamesIndicies: [0,42],
-            subFeatureGamesIndicies: [10,17,28,33]
+            featureGamesIndicies: [41],
+            subFeatureGamesIndicies: [4,14,28,33]
         };
 
     }
 
     componentDidMount(): void {
+        let games: GameResponse[] = undefined;
+        let bigGame: GameResponse = undefined;
 
         IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.highlighted}`)
         .then((gamesResponse: MultiGameResponse) => {
-            const games: GameResponse[] = gamesResponse.data
+            games = gamesResponse.data
                 .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
                 .filter((game: GameResponse) => game.screenshots);
 
-            this.setState({
-                loadingMsg: 'Loading images...',
-                games: games
-            }, () => {
-                const allScreenshots: string[] = [].concat(...this.state.games.map((x: GameResponse) => x.screenshots));
+            return IGDBService.httpGenericGetData<GenericModelResponse>(`/igdb/game/107315`);
+        })
+        .then((gamesResponse: GenericModelResponse) => {
+            bigGame = gamesResponse.data;
 
-                loadImage(allScreenshots)
-                .then(() => {
-                    this.setState({ isLoading: false });
-                })
-                .catch((error: Object) => {
-                    this.setState({ isLoading: false });
-                });
+            this.setState({
+                isLoading: false,
+                games: games,
+                bigGame: bigGame
             });
         })
         .catch((error: string) => {
@@ -68,6 +68,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 isLoading={this.state.isLoading}
                 loadingMsg={this.state.loadingMsg}
                 games={this.state.games}
+                bigGame={this.state.bigGame}
                 editorsGamesIndicies={this.state.editorsGamesIndicies}
                 featureGamesIndicies={this.state.featureGamesIndicies}
                 subFeatureGamesIndicies={this.state.subFeatureGamesIndicies}

@@ -8,6 +8,7 @@ interface IHomeProps {
     isLoading: boolean;
     loadingMsg: string;
     games: GameResponse[];
+    bigGame: GameResponse;
     editorsGamesIndicies: number[];
     featureGamesIndicies: number[];
     subFeatureGamesIndicies: number[];
@@ -33,7 +34,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                         return (
                             <FullsizeGameContainer
                                 index={index}
-                                game={game}
+                                game={isEditorsChoiceGame ? props.bigGame : game}
                                 isEditorsChoiceGame={isEditorsChoiceGame}
                                 isFeatureGame={isFeatureGame}
                                 isSubFeatureGame={isSubFeatureGame}

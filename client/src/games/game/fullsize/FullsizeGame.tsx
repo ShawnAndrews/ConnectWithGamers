@@ -15,6 +15,8 @@ interface IFullsizeGameProps {
     hoveredScreenshotIndex: number;
     goToGame: () => void;
     goToSteamPage: () => void;
+    onVideoPreviewEnded: () => void;
+    videoPreviewEnded: boolean;
 }
 
 const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) => {
@@ -27,12 +29,24 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
     }
 
     return (
-        <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
-            <div className="screenshot w-100 h-100">
-                <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
-            </div>
+        <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'editor-feature overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
+            {!props.isEditorsChoiceGame &&
+                <div className="screenshot w-100 h-100">
+                    <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
+                </div>}
+            {props.isEditorsChoiceGame &&
+                (!props.videoPreviewEnded
+                ?
+                <video className="video-preview w-100 h-100" muted={true} autoPlay={true} onEnded={props.onVideoPreviewEnded} playsInline={true}>
+                    <source src={`/cache/video-previews/${props.game.id}.mp4`} type="Video/mp4"/>
+                    <span>Your browser does not support the video tag.</span>
+                </video>
+                :
+                <>
+                    {<img className="screenshot w-100 h-100" src={props.game.image_cached ? getCachedIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big)} />}
+                </>)}
             <div className='overlay'/>
-            <div className='text-overlay'/>
+            {!props.isEditorsChoiceGame && <div className='text-overlay'/>}
             {props.isEditorsChoiceGame &&
                 <>
                     <div className="filter w-100 h-100" />
@@ -64,9 +78,12 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                         <div className='genres'>
                             {props.game.genres && props.game.genres.map((x: number) => GenreEnums[x]).join(', ')}
                         </div>
+                        <div className='platforms'>
+                            {props.game.linkIcons && props.game.linkIcons.map((x: string) => <i className={`fab ${x} mx-2`}/>)}
+                        </div>
                         {props.game.external.steam && 
                             <Button
-                                className="steam-btn" 
+                                className="steam-btn mt-3" 
                                 variant="raised"
                                 onClick={props.goToSteamPage}
                             >
