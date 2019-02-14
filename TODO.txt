@@ -27,3 +27,6 @@ TODO:
 - (2 hr) global snackbar call(via redux)
 - (?) Notifications: (Friend add from chatroom, Follow games and notify users of price updates)
 - (2 weeks?) Library
+
+
+- precache mp4 preview + loop instead of black screen if no screenshots only video
