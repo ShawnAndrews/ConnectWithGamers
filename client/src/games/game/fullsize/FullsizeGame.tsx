@@ -37,7 +37,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
             {props.isEditorsChoiceGame &&
                 (!props.videoPreviewEnded
                 ?
-                <video className="video-preview w-100 h-100" muted={true} autoPlay={true} onEnded={props.onVideoPreviewEnded} playsInline={true}>
+                <video className="video-preview w-100 h-100" muted={true} autoPlay={true} loop={!props.screenshots ? true : false} onEnded={props.onVideoPreviewEnded} playsInline={true}>
                     <source src={`/cache/video-previews/${props.game.id}.mp4`} type="Video/mp4"/>
                     <span>Your browser does not support the video tag.</span>
                 </video>
