@@ -70,11 +70,17 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
             const RawGame: RawGame = response.data[0];
             convertRawGame([RawGame])
                 .then((gameResponses: GameResponse[]) => {
-                    const game: GameResponse = gameResponses[0];
+                    const coonvertedGame: GameResponse = gameResponses[0];
 
-                    igdbModel.setGame(game)
+                    igdbModel.setGame(coonvertedGame)
                         .then(() => {
-                            return resolve(game);
+                            igdbModel.getGame(gameId)
+                                .then((game: GameResponse) => {
+                                    return resolve(game);
+                                })
+                                .catch((error: string) => {
+                                    return reject(error);
+                                });
                         })
                         .catch((error: string) => {
                             return reject(error);
@@ -118,11 +124,18 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
 
                 convertRawGame([RawGame])
                     .then((gameResponses: GameResponse[]) => {
-                        const game: GameResponse = gameResponses[0];
+                        const convertedGame: GameResponse = gameResponses[0];
 
-                        igdbModel.setGame(game)
+                        igdbModel.setGame(convertedGame)
                             .then(() => {
-                                return resolve(game);
+
+                                igdbModel.getGame(gameId)
+                                    .then((game: GameResponse) => {
+                                        return resolve(game);
+                                    })
+                                    .catch((error: string) => {
+                                        return reject(error);
+                                    });
                             })
                             .catch((error: string) => {
                                 return reject(error);

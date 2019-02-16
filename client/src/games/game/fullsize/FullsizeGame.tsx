@@ -20,13 +20,13 @@ interface IFullsizeGameProps {
 }
 
 const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) => {
-    const isNoPrice: boolean = props.game.external.steam && isNaN(Number(props.game.external.steam.price));
-    const isFree: boolean = props.game.external.steam && props.game.external.steam.price === `Free`;
-    let originalPrice: number = undefined;
+    // const isNoPrice: boolean = props.game.external.steam && isNaN(Number(props.game.external.steam.price));
+    // const isFree: boolean = props.game.external.steam && props.game.external.steam.price === `Free`;
+    // let originalPrice: number = undefined;
 
-    if (props.game.external.steam) {
-        originalPrice = + (parseFloat(props.game.external.steam.price) / ((100 - props.game.external.steam.discount_percent) / 100)).toFixed(2);
-    }
+    // if (props.game.external.steam) {
+    //     originalPrice = + (parseFloat(props.game.external.steam.price) / ((100 - props.game.external.steam.discount_percent) / 100)).toFixed(2);
+    // }
 
     return (
         <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'editor-feature overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
@@ -37,7 +37,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
             {props.isEditorsChoiceGame &&
                 (!props.videoPreviewEnded
                 ?
-                <video className="video-preview w-100 h-100" muted={true} autoPlay={true} loop={!props.screenshots ? true : false} onEnded={props.onVideoPreviewEnded} playsInline={true}>
+                <video className="video-preview w-100 h-100" muted={true} autoPlay={true} loop={props.game.screenshots.length > 0 ? false : true} onEnded={props.onVideoPreviewEnded} playsInline={true}>
                     <source src={`/cache/video-previews/${props.game.id}.mp4`} type="Video/mp4"/>
                     <span>Your browser does not support the video tag.</span>
                 </video>
@@ -52,11 +52,11 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                     <div className="filter w-100 h-100" />
                     <img className="editor-banner" src="https://i.imgur.com/B57fSZj.png" />
                     <div className="editor-banner-text color-primary">Editor's Choice</div>
-                    {props.game.external.steam && props.game.external.steam.discount_percent && 
+                    {/* {props.game.external.steam && props.game.external.steam.discount_percent && 
                         <>
                             <img className="discount-banner" src="https://i.imgur.com/vkHYtW8.png" />
                             <div className="discount-banner-text color-primary">{props.game.external.steam.discount_percent}% off</div>
-                        </>}
+                        </>} */}
                 </>}
             <div className={`highlighted-table-text ${props.isEditorsChoiceGame ? 'editors-choice' : ''}`}>
                 {!props.isEditorsChoiceGame
@@ -81,17 +81,17 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                         <div className='platforms'>
                             {props.game.linkIcons && props.game.linkIcons.map((x: string) => <i className={`fab ${x} mx-2`}/>)}
                         </div>
-                        {props.game.external.steam && 
+                        {/* {props.game.external.steam && 
                             <Button
                                 className="steam-btn mt-3" 
                                 variant="raised"
                                 onClick={props.goToSteamPage}
                             >
                                 Buy now for ${props.game.external.steam.price} USD
-                            </Button>}
+                            </Button>} */}
                     </>}
             </div>
-            {!props.isEditorsChoiceGame && isNoPrice &&
+            {/* {!props.isEditorsChoiceGame && isNoPrice &&
                 <img className={`status-banner ${isFree ? 'short' : ''}`} src="https://i.imgur.com/QpvQV2Q.png"/>}
             {!props.isEditorsChoiceGame && props.game.external.steam &&
                 <div className={`price-container ${isNoPrice ? `no-price` : (!props.game.external.steam.discount_percent ? 'no-discount': '')} mt-1`}>
@@ -101,7 +101,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                             <div className="original-price d-inline-block px-1"><del>${originalPrice} USD</del></div>
                         </>}
                     <div className="text d-inline-block px-1">{!isNaN(Number(props.game.external.steam.price)) ? `$${props.game.external.steam.price} USD` : props.game.external.steam.price}</div>
-                </div>}
+                </div>} */}
         </Card>
     );
 

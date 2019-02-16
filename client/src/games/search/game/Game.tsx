@@ -124,17 +124,16 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     {props.game.cover &&
                         <Cover
                             url={props.game.image_cached ? getCachedIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big)}
-                            discount_percent={props.game.external.steam && props.game.external.steam.discount_percent}
                             style={getCoverImgStyle()}
                         />}
                     <div className="game-info my-2">
-                        {props.game.external.steam && 
+                        {/* {props.game.external.steam && 
                             <SteamInfo
                                 steam={`${props.game.external.steam.url}`}
                                 price={props.game.external.steam.price}
                                 discount_percent={props.game.external.steam.discount_percent}
                                 handleSteamClick={props.handleSteamClick}
-                            />}
+                            />} */}
                         {props.game.platforms && 
                             <Platforms
                                 platforms={props.game.platforms}

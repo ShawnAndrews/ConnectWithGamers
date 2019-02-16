@@ -6,7 +6,7 @@ export enum SQLErrorCodes {
     DUPLICATE_ROW = 1062
 }
 
-export const ExcludedGameIds: number[] = [111063, 111908];
+export const ExcludedGameIds: number[] = [111063, 111908, 114910, 59227, 25260];
 
 export const IGDBImageUploadPath: string = `https://images.igdb.com/igdb/image/upload`;
 
@@ -594,31 +594,19 @@ export interface GameResponse {
     screenshots: IGDBImage[];
     video: string;
     video_cached: boolean;
-    external: GameExternalInfo;
     similar_games: SimilarGame[];
     image_cached: boolean;
+    steam_link: string;
+    gog_link: string;
+    microsoft_link: string;
+    apple_link: string;
+    android_link: string;
 }
 
 export interface SimilarGame {
     id: number;
     name: string;
     cover_id: string;
-}
-
-export interface GameExternalInfo {
-    steam?: ExternalInfo;
-    gog?: ExternalInfo;
-    microsoft?: ExternalInfo;
-    apple?: ExternalInfo;
-    android?: ExternalInfo;
-}
-
-export interface ExternalInfo {
-    id: string;
-    pricings_enum: PricingsEnum;
-    url: string;
-    price: string;
-    discount_percent: number;
 }
 
 export interface MultiGameResponse {
@@ -663,9 +651,12 @@ export interface MultiNewsResponse {
 
 export interface PriceInfoResponse {
     externalEnum: IGDBExternalCategoryEnum;
-    uid: string;
+    pricingEnum: PricingsEnum;
+    igdbGamesSysKeyId: number;
+    title: string;
     price: string;
     discount_percent: number;
+    expires_dt: Date;
 }
 
 /**
@@ -760,10 +751,11 @@ export enum PricingsEnum {
     discounted_with_xbox_game_pass = 3,
     discounted_with_xbox_live_gold = 4,
     main_game = 5,
-    dlc_or_bundles = 6,
-    coming_soon = 7,
-    preorder = 8,
-    in_app_purchase = 9,
+    bundles = 6,
+    dlc = 7,
+    coming_soon = 8,
+    preorder = 9,
+    in_app_purchase = 10,
 }
 
 /* Database tables */
@@ -806,12 +798,12 @@ export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `igdb_genre_e
 export const DbTableIconsFields: string[] = [`icons_sys_key_id`, `icons_enum_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTableIconsEnumFields: string[] = [`icons_enum_sys_key_id`, `id`, `name`];
 export const DbTableIGDBExternalEnumFields: string[] = [`igdb_external_enum_sys_key_id`, `id`, `name`];
-export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`, `video_cached`, `image_cached`];
+export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`, `video_cached`, `image_cached`, `steam_link`, `gog_link`, `microsoft_link`, `apple_link`, `android_link`];
 export const DbTableIGDBGenreEnumFields: string[] = [`igdb_genre_enum_sys_key_id`, `id`, `name`];
 export const DbTableIGDBImagesFields: string[] = [`igdb_images_sys_key_id`, `id`, `alpha_channel`, `animated`, `width`, `height`];
 export const DbTableIGDBPlatformEnumFields: string[] = [`igdb_platform_enum_sys_key_id`, `id`, `name`];
 export const DbTablePlatformsFields: string[] = [`platforms_sys_key_id`, `igdb_platform_enum_sys_key_id`, `igdb_games_sys_key_id`];
-export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `igdb_external_enum_sys_key_id`, `pricings_enum_sys_key_id`, `igdb_games_sys_key_id`, `id`, `price`, `discount_percent`, `url`, `expires_dt`];
+export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `igdb_external_enum_sys_key_id`, `pricings_enum_sys_key_id`, `igdb_games_sys_key_id`, `title`, `price`, `discount_percent`, `expires_dt`];
 export const DbTablePricingsEnumFields: string[] = [`pricings_enum_sys_key_id`, `name`];
 export const DbTableRatingsFields: string[] = [`ratings_sys_key_id`, `igdb_games_sys_key_id`, `accounts_sys_key_id`, `rating`, `log_dt`];
 export const DbTableReleaseDatesFields: string[] = [`release_dates_sys_key_id`, `release_date_ts`, `igdb_games_sys_key_id`];

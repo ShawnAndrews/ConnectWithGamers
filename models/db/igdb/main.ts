@@ -1,9 +1,9 @@
 import DatabaseBase from "./../base/dbBase";
-import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, GameExternalInfo, DbTablePricingsFields, ExternalInfo, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableResultsFields, ResultsEnum, SimilarGame, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, ServiceWorkerEnums, NewsArticle, DbTableIGDBNewsFields } from "../../../client/client-server-common/common";
-import { steamAPIGetPriceInfo } from "../../../util/main";
+import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, DbTablePricingsFields, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableResultsFields, ResultsEnum, SimilarGame, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, ServiceWorkerEnums, NewsArticle, DbTableIGDBNewsFields } from "../../../client/client-server-common/common";
 import { MysqlError } from "mysql";
 import config from "../../../config";
 import { addTaskToWorker } from "../../../service-workers/main";
+import { isArray } from "util";
 
 class IGDBModel extends DatabaseBase {
 
@@ -44,7 +44,7 @@ class IGDBModel extends DatabaseBase {
     setGame(game: GameResponse): Promise<void> {
 
         return new Promise((resolve, reject) => {
-            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, game.summary, game.first_release_date, game.video, game.video_cached, game.image_cached];
+            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, game.summary, game.first_release_date, game.video, game.video_cached, game.image_cached, game.steam_link, game.gog_link, game.microsoft_link, game.apple_link, game.android_link];
 
             this.insert(
                 DbTables.igdb_games,
@@ -61,9 +61,6 @@ class IGDBModel extends DatabaseBase {
                     }
                     if (game.screenshots) {
                         gamePromises.push(this.setGameScreenshots(inserted_igdb_games_sys_key_id, game.screenshots));
-                    }
-                    if (game.external) {
-                        gamePromises.push(this.setGamePricing(inserted_igdb_games_sys_key_id, game.external));
                     }
                     if (game.linkIcons) {
                         gamePromises.push(this.setGameIcons(inserted_igdb_games_sys_key_id, game.linkIcons));
@@ -86,6 +83,7 @@ class IGDBModel extends DatabaseBase {
                             resolve();
                             addTaskToWorker(game.id, ServiceWorkerEnums.video_previews);
                             addTaskToWorker(game.id, ServiceWorkerEnums.image_cacheing);
+                            addTaskToWorker(game.id, ServiceWorkerEnums.pricing_update);
                         })
                         .catch((err: MysqlError) => {
                             if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
@@ -110,13 +108,12 @@ class IGDBModel extends DatabaseBase {
     /**
      * Get game from database.
      */
-    getGame(gameId: number, skipVideoPreview: boolean = false, skipImageCacheing: boolean = false): Promise <GameResponse> {
+    getGame(gameId: number, skipServiceWorkers: boolean = false): Promise <GameResponse> {
 
         return new Promise((resolve, reject) => {
-            const gamePromises: Promise<any>[] = [this.getGameCover(gameId), this.getGameScreenshots(gameId), this.getGamePricing(gameId), this.getGameIcons(gameId), this.getGameReleaseDates(gameId), this.getGamePlatforms(gameId), this.getGameGenres(gameId), this.getGameSimilarGames(gameId)];
+            const gamePromises: Promise<any>[] = [this.getGameCover(gameId), this.getGameScreenshots(gameId), this.getGameIcons(gameId), this.getGameReleaseDates(gameId), this.getGamePlatforms(gameId), this.getGameGenres(gameId), this.getGameSimilarGames(gameId)];
             let cover: IGDBImage = undefined;
             let screenshots: IGDBImage[] = undefined;
-            let pricing: GameExternalInfo = undefined;
             let linkIcons: string[] = undefined;
             let releaseDates: number[] = undefined;
             let platforms: number[] = undefined;
@@ -127,12 +124,11 @@ class IGDBModel extends DatabaseBase {
                 .then((vals: any) => {
                     cover = vals[0];
                     screenshots = vals[1];
-                    pricing = vals[2];
-                    linkIcons = vals[3];
-                    releaseDates = vals[4];
-                    platforms = vals[5];
-                    genres = vals[6];
-                    similar_games = vals[7];
+                    linkIcons = vals[2];
+                    releaseDates = vals[3];
+                    platforms = vals[4];
+                    genres = vals[5];
+                    similar_games = vals[6];
 
                     // get game
                     this.select(
@@ -156,16 +152,19 @@ class IGDBModel extends DatabaseBase {
                                     screenshots: screenshots,
                                     genres: genres,
                                     platforms: platforms,
-                                    external: pricing,
                                     similar_games: similar_games,
                                     video_cached: dbResponse.data[0].video_cached,
                                     image_cached: dbResponse.data[0].image_cached,
+                                    steam_link: dbResponse.data[0].steam_link,
+                                    gog_link: dbResponse.data[0].gog_link,
+                                    microsoft_link: dbResponse.data[0].microsoft_link,
+                                    apple_link: dbResponse.data[0].apple_link,
+                                    android_link: dbResponse.data[0].android_link,
                                 };
-                                if (!skipVideoPreview) {
+                                if (!skipServiceWorkers) {
                                     addTaskToWorker(game.id, ServiceWorkerEnums.video_previews);
-                                }
-                                if (!skipImageCacheing) {
                                     addTaskToWorker(game.id, ServiceWorkerEnums.image_cacheing);
+                                    addTaskToWorker(game.id, ServiceWorkerEnums.pricing_update);
                                 }
                                 return resolve(game);
                             } else {
@@ -248,6 +247,30 @@ class IGDBModel extends DatabaseBase {
                     return reject(err);
                 });
 
+        });
+
+    }
+
+    /**
+     * Get game's sys key id in database.
+     */
+    getGameSysKey(gameId: number): Promise <number> {
+
+        return new Promise((resolve, reject) => {
+
+            // check if cover exists
+            this.custom(
+                `SELECT ${DbTableIGDBGamesFields[0]} FROM ${DbTables.igdb_games} WHERE id=?`,
+                [gameId])
+                .then((dbResponse: GenericModelResponse) => {
+                    const igdb_games_sys_key_id: number = dbResponse.data[0].igdb_games_sys_key_id;
+                    return resolve(igdb_games_sys_key_id);
+                })
+                .catch((error: string) => {
+                    return reject(error);
+                });
+
+            return;
         });
 
     }
@@ -396,69 +419,44 @@ class IGDBModel extends DatabaseBase {
     }
 
     /**
-     * Set game pricing in database if does not exist.
+     * Check if game's pricing is expired or does not exist.
      */
-    setGamePricing(inserted_igdb_games_sys_key_id: number, external: GameExternalInfo): Promise <void> {
-        const datePlus7Days: Date = new Date();
-        datePlus7Days.setDate(datePlus7Days.getDate() + 7);
+    isGamePricingExpired(gameId: number): Promise<boolean> {
 
         return new Promise((resolve, reject) => {
 
-            // check if pricing exists
             this.custom(
-                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.pricings} pc
-                JOIN ${DbTables.igdb_games} ig ON pc.${DbTablePricingsFields[3]} = ig.${DbTableIGDBGamesFields[0]}
-                WHERE ig.${DbTableIGDBGamesFields[0]}=?`,
-                [inserted_igdb_games_sys_key_id])
+                `SELECT COUNT(*) FROM ${DbTables.pricings} pc
+                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = pc.${DbTablePricingsFields[3]}
+                WHERE ig.${DbTableIGDBGamesFields[1]}=? AND pc.${DbTablePricingsFields[7]} < NOW()`,
+                [gameId])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data[0][`COUNT(*)`] !== 0) {
-                        return resolve();
+                        return resolve(true);
                     } else {
-                        const priceInfo: any[][] = [];
 
-                        if (external.steam) {
-                            priceInfo.push([IGDBExternalCategoryEnum.steam, external.steam.pricings_enum, inserted_igdb_games_sys_key_id, external.steam.id, external.steam.price, external.steam.discount_percent, external.steam.url, datePlus7Days]);
-                        }
+                        this.custom(
+                            `SELECT COUNT(*) FROM ${DbTables.pricings} pc
+                            JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = pc.${DbTablePricingsFields[3]}
+                            WHERE ig.${DbTableIGDBGamesFields[1]}=?`,
+                            [gameId])
+                            .then((dbResponseInner: GenericModelResponse) => {
 
-                        if (external.gog) {
-                            priceInfo.push([IGDBExternalCategoryEnum.gog, external.gog.pricings_enum, inserted_igdb_games_sys_key_id, external.gog.id, external.gog.price, external.gog.discount_percent, external.gog.url, datePlus7Days]);
-                        }
+                                if (dbResponseInner.data[0][`COUNT(*)`] !== 0) {
+                                    return resolve(false);
+                                } else {
+                                    return resolve(true);
+                                }
+                            })
+                            .catch((error: string) => {
+                                return reject(error);
+                            });
 
-                        if (external.microsoft) {
-                            priceInfo.push([IGDBExternalCategoryEnum.microsoft, external.microsoft.pricings_enum, inserted_igdb_games_sys_key_id, external.microsoft.id, external.microsoft.price, external.microsoft.discount_percent, external.microsoft.url, datePlus7Days]);
-                        }
-
-                        if (external.apple) {
-                            priceInfo.push([IGDBExternalCategoryEnum.apple, external.apple.pricings_enum, inserted_igdb_games_sys_key_id, external.apple.id, external.apple.price, external.apple.discount_percent, external.apple.url, datePlus7Days]);
-                        }
-
-                        if (external.android) {
-                            priceInfo.push([IGDBExternalCategoryEnum.android, external.android.pricings_enum, inserted_igdb_games_sys_key_id, external.android.id, external.android.price, external.android.discount_percent, external.android.url, datePlus7Days]);
-                        }
-
-                        priceInfo.forEach((columnValues: any[]) => {
-
-                            this.insert(
-                                DbTables.pricings,
-                                DbTablePricingsFields.slice(1),
-                                columnValues,
-                                DbTablePricingsFields.slice(1).map(() => "?").join(", "),
-                                false)
-                                .catch((err: MysqlError) => {
-                                    if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
-                                        return reject(err);
-                                    }
-                                });
-
-                        });
-
-                        return resolve();
                     }
-
                 })
-                .catch((err: string) => {
-                    return reject(err);
+                .catch((error: string) => {
+                    return reject(error);
                 });
 
         });
@@ -466,84 +464,36 @@ class IGDBModel extends DatabaseBase {
     }
 
     /**
-     * Get game pricing in database if exists.
+     * Check if game's pricing is expired.
      */
-    getGamePricing(gameId: number): Promise <GameExternalInfo> {
-        const today: Date = new Date();
-        const datePlus7Days: Date = new Date();
-        datePlus7Days.setDate(datePlus7Days.getDate() + 7);
+    addGamePricings(pricings: PriceInfoResponse[]): Promise<void> {
 
         return new Promise((resolve, reject) => {
 
-            // check if pricing exists
+            if (isArray(pricings) && pricings.length === 0) {
+                return resolve();
+            }
+            const pricingsVals: any[] = [];
+
+            for (let i = 0; i < pricings.length; i++) {
+                for (const val of Object.values(pricings[i])) {
+                    // console.log(`adding val ${val}..`);
+                    pricingsVals.push(val);
+                }
+            }
+            // console.log(`# of ()'s ${pricings.length}`);
+            // console.log(`# of vals ${pricingsVals.length} === ${pricings.length * 7}?`);
             this.custom(
-                `SELECT pc.${DbTablePricingsFields[4]}, pc.${DbTablePricingsFields[2]}, pc.${DbTablePricingsFields[7]}, pc.${DbTablePricingsFields[5]}, pc.${DbTablePricingsFields[6]}, ee.${DbTableIGDBExternalEnumFields[1]} as "external_enum_id" FROM ${config.mysql.database}.${DbTables.pricings} pc
-                JOIN ${DbTables.igdb_external_enum} ee ON ee.${DbTableIGDBExternalEnumFields[0]} = pc.${DbTablePricingsFields[1]}
-                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = pc.${DbTablePricingsFields[3]}
-                WHERE ig.id=?`,
-                [gameId])
-                .then((dbResponse: GenericModelResponse) => {
-                    const expiredPricePromises: Promise<PriceInfoResponse[]>[] = [];
-                    const gameExternalInfo: GameExternalInfo = {};
-
-                    dbResponse.data.forEach((x: any) => {
-                        const externalInfo: ExternalInfo = {
-                            id: x.id,
-                            pricings_enum: x.pricings_enum_sys_key_id,
-                            url: x.url,
-                            price: x.price,
-                            discount_percent: x.discount_percent
-                        };
-
-                        if (x.external_enum_id === IGDBExternalCategoryEnum.steam) {
-                            gameExternalInfo.steam = externalInfo;
-                        } else if (x.external_enum_id === IGDBExternalCategoryEnum.gog) {
-                            gameExternalInfo.gog = externalInfo;
-                        } else if (x.external_enum_id === IGDBExternalCategoryEnum.microsoft) {
-                            gameExternalInfo.microsoft = externalInfo;
-                        } else if (x.external_enum_id === IGDBExternalCategoryEnum.apple) {
-                            gameExternalInfo.apple = externalInfo;
-                        } else if (x.external_enum_id === IGDBExternalCategoryEnum.android) {
-                            gameExternalInfo.android = externalInfo;
-                        }
-
-                        if (x.expires <= today) {
-                            expiredPricePromises.push(steamAPIGetPriceInfo([parseInt(gameExternalInfo.steam.id)]));
-                        }
-
-                    });
-
-                    Promise.all(expiredPricePromises)
-                        .then((vals: PriceInfoResponse[][]) => {
-
-                            vals.forEach((priceInfo: PriceInfoResponse[]) => {
-
-                                this.update(
-                                    DbTables.pricings,
-                                    `${DbTablePricingsFields[4]}=?, ${DbTablePricingsFields[5]}=?, ${DbTablePricingsFields[7]}=?`,
-                                    [priceInfo[0].price, priceInfo[0].discount_percent, datePlus7Days],
-                                    `${DbTablePricingsFields[1]}=? AND ${DbTablePricingsFields[3]}=?`,
-                                    [priceInfo[0].externalEnum, gameId])
-                                    .then((dbResponse: GenericModelResponse) => {
-                                        if (dbResponse.data.affectedRows !== 1) {
-                                            return reject(`Database error.`);
-                                        }
-                                    })
-                                    .catch((error: string) => {
-                                        return reject(`Database error.`);
-                                    });
-
-                            });
-
-                            return resolve(gameExternalInfo);
-                        })
-                        .catch((error: string) => {
-                            return reject(error);
-                        });
-
+                `INSERT INTO ${DbTables.pricings}
+                (${DbTablePricingsFields.slice(1).join()})
+                VALUES
+                ${pricings.map(() => `(${DbTablePricingsFields.slice(1).map(() => "?").join()})`).join()}`,
+                pricingsVals)
+                .then(() => {
+                    return resolve();
                 })
-                .catch((err: string) => {
-                    return reject(err);
+                .catch((error: string) => {
+                    return reject(error);
                 });
 
         });
@@ -1166,7 +1116,7 @@ class IGDBModel extends DatabaseBase {
                         `INSERT INTO ${DbTables.igdb_news} (${DbTableIGDBNewsFields.slice(1)})
                         VALUES ${newsArticles.map(() => `(${DbTableIGDBNewsFields.slice(1).map(() => "?").join()})`).join()}`,
                         columnValues)
-                        .then((dbResponse: GenericModelResponse) => {
+                        .then(() => {
                             return resolve();
                         })
                         .catch((err: MysqlError) => {

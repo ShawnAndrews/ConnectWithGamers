@@ -71,7 +71,7 @@ class FullsizeGameContainer extends React.Component<IFullsizeGameContainerProps,
     }
 
     goToSteamPage(): void {
-        this.props.history.push(`${this.props.game.external.steam.url}`);
+        // this.props.history.push(`${this.props.game.external.steam.url}`);
     }
 
     onVideoPreviewEnded(): void {

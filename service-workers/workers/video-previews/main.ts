@@ -17,12 +17,12 @@ export function processVideoPreview(gameId: number) {
     try {
         sendRunningMessage();
 
-        igdbModel.getGame(gameId, true, true)
+        igdbModel.getGame(gameId, true)
             .then((game: GameResponse) => {
                 const failedUploadCached: boolean = fs.existsSync(outputPath) && getFilesizeInBytes(outputPath) === 0;
 
                 if (failedUploadCached) {
-                    fs.unlink(outputPath);
+                    fs.unlinkSync(outputPath);
                 }
 
                 if (game.video && (!game.video_cached || failedUploadCached)) {

@@ -1,5 +1,5 @@
-import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IdNamePair, IGDBExternalGame, IGDBExternalCategoryEnum, IGDBReleaseDate, IGDBImage, PriceInfoResponse, GameFields, buildIGDBRequestBody, getIGDBImage, IGDBImageSizeEnums, GameExternalInfo, steamAppUrl, androidAppUrl, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, SimilarGame, PricingsEnum } from "../../../client/client-server-common/common";
-import { ArrayClean, steamAPIGetPriceInfo } from "../../../util/main";
+import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IGDBReleaseDate, IGDBImage, GameFields, buildIGDBRequestBody, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, SimilarGame, IGDBExternalCategoryEnum, IGDBExternalGame } from "../../../client/client-server-common/common";
+import { ArrayClean } from "../../../util/main";
 import config from "../../../config";
 import axios, { AxiosResponse } from "axios";
 import { cachePreloadedGame } from "./game/main";
@@ -52,106 +52,7 @@ export function getGamesBySteamIds(steamIds: number[], requiredMedia?: boolean):
 
 }
 
-export function parseSteamIds(webpage: string): number[] {
-
-    const steamIds: number[] = [];
-    const prefix: string = `data-ds-appid="`;
-    const suffix: string = `"`;
-
-    let foundPrefixIndex: number = webpage.search(prefix);
-
-    while (foundPrefixIndex !== -1) {
-        let foundSuffixIndex: number;
-        let steamId: number;
-
-        // remove pre-id text
-        webpage = webpage.substring(foundPrefixIndex + prefix.length);
-
-        // get id
-        foundSuffixIndex = webpage.search(suffix);
-        steamId = parseInt(webpage.substring(0, foundSuffixIndex));
-        steamIds.push(steamId);
-
-        // remove id text
-        webpage = webpage.substring(foundSuffixIndex + suffix.length);
-
-        // find next id
-        foundPrefixIndex = webpage.search(prefix);
-
-    }
-
-    return steamIds;
-}
-
 export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
-
-    const steamPricePromise = (rawResponse: RawGame[]): Promise<PriceInfoResponse[]> => {
-
-        return new Promise((resolve: any, reject: any) => {
-            const pricesResponse: PriceInfoResponse[] = [];
-            const steamids: number[] = rawResponse
-                .filter((x: RawGame) => {
-                    let hasSteamLink: boolean = false;
-
-                    if (!x.external_games) {
-                        return false;
-                    }
-
-                    x.external_games.forEach((y: IGDBExternalGame) => {
-                        if (y.category === IGDBExternalCategoryEnum.steam) {
-                            hasSteamLink = true;
-                        }
-                    });
-                    return hasSteamLink;
-                })
-                .map((x: RawGame) => {
-                    let steamId: number;
-                    x.external_games.forEach((y: IGDBExternalGame) => {
-                        if (y.category === IGDBExternalCategoryEnum.steam) {
-                            steamId = parseInt(y.uid);
-                        }
-                    });
-                    return steamId;
-                });
-
-            steamAPIGetPriceInfo(steamids)
-            .then( (PriceInfoResponse: PriceInfoResponse[]) => {
-                rawResponse.forEach((x: RawGame) => {
-                    const priceResponse: PriceInfoResponse = {
-                        externalEnum: undefined,
-                        uid: undefined,
-                        price: undefined,
-                        discount_percent: undefined,
-                    };
-
-                    if (x.external_games) {
-                        let steamId: number = undefined;
-                        x.external_games.forEach((y: IGDBExternalGame) => {
-                            if (y.category === IGDBExternalCategoryEnum.steam) {
-                                steamId = parseInt(y.uid);
-                            }
-                        });
-
-                        const foundIndex: number = PriceInfoResponse.findIndex((priceInfo: PriceInfoResponse) => { return parseInt(priceInfo.uid) === steamId; });
-                        if (foundIndex !== -1) {
-                            priceResponse.externalEnum = IGDBExternalCategoryEnum.steam;
-                            priceResponse.uid = steamId.toString();
-                            priceResponse.price = PriceInfoResponse[foundIndex].price;
-                            priceResponse.discount_percent = PriceInfoResponse[foundIndex].discount_percent;
-                        }
-                    }
-
-                    pricesResponse.push(priceResponse);
-                });
-
-                return resolve(pricesResponse);
-            })
-            .catch ((error: string) => {
-                return reject(error);
-            });
-
-        });
-    };
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -162,7 +63,6 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             let name: string = undefined;
             let aggregated_rating: number;
             let total_rating_count: number = undefined;
-            let steamid: number = undefined;
             let cover: IGDBImage = undefined;
             let summary: string = undefined;
             let linkIcons: string[] = undefined;
@@ -172,8 +72,12 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             let release_dates: number[] = undefined;
             let screenshots: IGDBImage[] = undefined;
             let video: string = undefined;
-            const external: GameExternalInfo = {};
             let similar_games: SimilarGame[] = undefined;
+            let steam_link: string = undefined;
+            let gog_link: string = undefined;
+            let microsoft_link: string = undefined;
+            let apple_link: string = undefined;
+            let android_link: string = undefined;
 
             // id
             id = RawGame.id;
@@ -186,15 +90,6 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
 
             // total_rating_count
             total_rating_count = RawGame.total_rating_count;
-
-            // steam url
-            if (RawGame.external_games) {
-                const foundSteamIndex: number = RawGame.external_games.findIndex((IGDBExternalGame: IGDBExternalGame) => { return IGDBExternalGame.category == IGDBExternalCategoryEnum.steam; });
-
-                if (foundSteamIndex !== -1) {
-                    steamid = parseInt(RawGame.external_games[foundSteamIndex].uid);
-                }
-            }
 
             // cover
             if (RawGame.cover && isNaN(Number(RawGame.cover)) && RawGame.cover.image_id) {
@@ -274,63 +169,25 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 }
             }
 
-            // external
+            // links
             if (RawGame.external_games) {
-                RawGame.external_games.forEach((x: IGDBExternalGame) => {
+                const getExternalGameFromCategory = (category: number): IGDBExternalGame => {
+                    let foundIndex: number = undefined;
 
-                    if (x.category === IGDBExternalCategoryEnum.steam) {
-                        const uidStr: string = x.uid;
-
-                        external.steam = {
-                            id: uidStr,
-                            pricings_enum: PricingsEnum.main_game,
-                            price: undefined,
-                            discount_percent: undefined,
-                            url: `${steamAppUrl}/${uidStr}`
-                        };
-                    } else if (x.category === IGDBExternalCategoryEnum.microsoft) {
-
-                        external.microsoft = {
-                            id: x.uid,
-                            pricings_enum: PricingsEnum.main_game,
-                            price: undefined,
-                            discount_percent: undefined,
-                            url: x.url
-                        };
-                    } else if (x.category === IGDBExternalCategoryEnum.gog) {
-
-                        external.gog = {
-                            id: x.uid,
-                            pricings_enum: PricingsEnum.main_game,
-                            price: undefined,
-                            discount_percent: undefined,
-                            url: x.url
-                        };
-                    } else if (x.category === IGDBExternalCategoryEnum.apple) {
-                        let url: string = undefined;
-
-                        if (x.url) {
-                            const foundIndex: number = x.url.indexOf("?");
-                            url = x.url.substr(0, foundIndex);
+                    RawGame.external_games.forEach((raw_external_game: IGDBExternalGame, index: number) => {
+                        if (raw_external_game.category === category) {
+                            foundIndex = index;
                         }
+                    });
 
-                        external.apple = {
-                            id: x.uid,
-                            pricings_enum: PricingsEnum.main_game,
-                            price: undefined,
-                            discount_percent: undefined,
-                            url: url
-                        };
-                    } else if (x.category === IGDBExternalCategoryEnum.android) {
-                        external.android = {
-                            id: x.uid,
-                            pricings_enum: PricingsEnum.main_game,
-                            price: undefined,
-                            discount_percent: undefined,
-                            url: `${androidAppUrl}${x.uid}`
-                        };
-                    }
-                });
+                    return foundIndex !== -1 ? RawGame.external_games[foundIndex] : undefined;
+                };
+
+                steam_link = getExternalGameFromCategory(IGDBExternalCategoryEnum.steam) && (getExternalGameFromCategory(IGDBExternalCategoryEnum.steam).url ? `${getExternalGameFromCategory(IGDBExternalCategoryEnum.steam).url}/?cc=us` : `${config.steam.appURL}/${getExternalGameFromCategory(IGDBExternalCategoryEnum.steam).uid}/?cc=us`);
+                gog_link = getExternalGameFromCategory(IGDBExternalCategoryEnum.gog) && getExternalGameFromCategory(IGDBExternalCategoryEnum.gog).url;
+                microsoft_link = getExternalGameFromCategory(IGDBExternalCategoryEnum.microsoft) && (getExternalGameFromCategory(IGDBExternalCategoryEnum.microsoft).url.startsWith(`https://www.microsoft.com`) ? getExternalGameFromCategory(IGDBExternalCategoryEnum.microsoft).url : undefined);
+                apple_link = getExternalGameFromCategory(IGDBExternalCategoryEnum.apple) && getExternalGameFromCategory(IGDBExternalCategoryEnum.apple).url;
+                android_link = getExternalGameFromCategory(IGDBExternalCategoryEnum.android) && getExternalGameFromCategory(IGDBExternalCategoryEnum.android).url;
             }
 
             const gameResponse: GameResponse = {
@@ -347,31 +204,52 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 first_release_date: first_release_date,
                 screenshots: screenshots,
                 video: video,
-                external: external,
                 similar_games: similar_games,
                 video_cached: false,
-                image_cached: false
+                image_cached: false,
+                steam_link: steam_link,
+                gog_link: gog_link,
+                microsoft_link: microsoft_link,
+                apple_link: apple_link,
+                android_link: android_link
             };
 
             gameResponses.push(gameResponse);
         });
 
-        // prices
-        steamPricePromise(RawGames)
-        .then((prices: PriceInfoResponse[]) => {
-            gameResponses.forEach((x: GameResponse, index: number) => {
-                if (x.external.steam) {
-                    x.external.steam.price = prices[index].price;
-                    x.external.steam.discount_percent = prices[index].discount_percent;
-                }
-            });
-
-            return resolve(gameResponses);
-        })
-        .catch((error: string) => {
-            return reject(error);
-        });
+        return resolve(gameResponses);
 
     });
 
+}
+
+export function parseSteamIds(webpage: string): number[] {
+
+    const steamIds: number[] = [];
+    const prefix: string = `data-ds-appid="`;
+    const suffix: string = `"`;
+
+    let foundPrefixIndex: number = webpage.search(prefix);
+
+    while (foundPrefixIndex !== -1) {
+        let foundSuffixIndex: number;
+        let steamId: number;
+
+        // remove pre-id text
+        webpage = webpage.substring(foundPrefixIndex + prefix.length);
+
+        // get id
+        foundSuffixIndex = webpage.search(suffix);
+        steamId = parseInt(webpage.substring(0, foundSuffixIndex));
+        steamIds.push(steamId);
+
+        // remove id text
+        webpage = webpage.substring(foundSuffixIndex + suffix.length);
+
+        // find next id
+        foundPrefixIndex = webpage.search(prefix);
+
+    }
+
+    return steamIds;
 }

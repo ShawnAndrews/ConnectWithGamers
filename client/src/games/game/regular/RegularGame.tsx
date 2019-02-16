@@ -25,13 +25,13 @@ const RegularGame: React.SFC<IRegularGameProps> = (props: IRegularGameProps) => 
                     {props.game.linkIcons && 
                         props.game.linkIcons.map((platformIcon: string, index: number) => { return <i key={index} className={`${platformIcon} mx-1`}/>; })}
                 </div>
-                {props.game.external.steam && 
+                {/* {props.game.external.steam && 
                     <Textfit className="price color-secondary text-nowrap text-right px-2" max={14}>
                         {(props.game.external.steam.price === 'Free' || props.game.external.steam.price === 'Coming Soon')
                             ? <span className="plain-text">{props.game.external.steam.price}</span>
                             : <span>${props.game.external.steam.price} USD{props.game.external.steam.discount_percent && props.game.external.steam.discount_percent !== 0 && <i className="discount-text ml-1">(-{props.game.external.steam.discount_percent}%)</i>}</span>}
                         <a href={`${props.game.external.steam.url}`}><i className="fab fa-steam-square fa-lg color-secondary ml-2"/></a>
-                    </Textfit>}
+                    </Textfit>} */}
             </Paper>
         </div>
     );

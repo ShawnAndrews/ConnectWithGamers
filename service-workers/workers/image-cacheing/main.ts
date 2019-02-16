@@ -23,7 +23,7 @@ export function processImageCacheing(gameId: number) {
     try {
         sendRunningMessage();
 
-        igdbModel.getGame(gameId, true, true)
+        igdbModel.getGame(gameId, true)
             .then((game: GameResponse) => {
 
                 if (!game.image_cached) {
