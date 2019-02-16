@@ -49,7 +49,7 @@ export function processPricingsUpdate(gameId: number) {
                                     // pricingPromises.push(getSteamPricings(igdb_games_sys_key_id, steam_link));
                                 }
                                 if (gog_link) {
-                                    pricingPromises.push(getGogPricings(igdb_games_sys_key_id, gog_link));
+                                    // pricingPromises.push(getGogPricings(igdb_games_sys_key_id, gog_link));
                                 }
                                 if (microsoft_link) {
                                     // pricingPromises.push(getMicrosoftPricings(igdb_games_sys_key_id, microsoft_link));

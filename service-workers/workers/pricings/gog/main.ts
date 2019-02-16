@@ -1,7 +1,6 @@
 import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum, convertIGDBExternCateEndumToSysKeyId } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
-const fs = require("fs");
 const GOG_RATE_LIMIT_MS: number = 1000;
 
 export function getGogPricings(igdb_games_sys_key_id: number, gog_link: string): Promise<PriceInfoResponse[]> {
@@ -15,7 +14,8 @@ export function getGogPricings(igdb_games_sys_key_id: number, gog_link: string):
                 method: "get",
                 url: gog_link,
                 headers: {
-                    "birthtime": 28801
+                    "birthtime": 28801,
+                    "Cookie": "gog_lc=CA_USD_en-US;"
                 },
                 maxRedirects: 5
             })
@@ -26,33 +26,26 @@ export function getGogPricings(igdb_games_sys_key_id: number, gog_link: string):
                 const datePlus7Days: Date = new Date();
                 datePlus7Days.setDate(datePlus7Days.getDate() + 7);
 
-                // main game/bundles/pre orders/free
-                $(".game_area_purchase_game").each((i: number, element: CheerioElement) => {
-                    const title: string = $(element).find(`h1`).clone().children().remove().end().text().replace(`Buy `, ``).replace(`Pre-Purchase`, ``).replace(`Play`, ``).trim();
-                    const discountPercent: number = Number.parseInt($(element).find(`.discount_pct, .bundle_base_discount`).text().replace(`-`, ``).replace(`%`, ``)) || undefined;
-                    let price: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`$`, ``) : $(element).find(`.game_purchase_price`).text().replace(`$`, ``).trim();
-                    const isFree: boolean = i === 0 && price === `Free to Play`;
-                    const isPreorder: boolean = i === 0 && $(element).find(`h1`).text().startsWith(`Pre-Purchase`);
-                    const pricingEnum: PricingsEnum = isFree ? PricingsEnum.free : (isPreorder ? PricingsEnum.preorder : (i === 0 ? PricingsEnum.main_game : PricingsEnum.bundles));
-                    price = price === `Free to Play` ? undefined : price;
+                const isFree: boolean = $(`.product-actions-price__final-amount`).text() === `FREE`;
+                const title: string = $(`.productcard-basics__title`).text().trim();
+                let price: string = undefined;
+                let pricingEnum: PricingsEnum = undefined;
+                let discountPercent: number = undefined;
 
-                    // console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${pricingEnum} | Discount percent: ${discountPercent} | Price: ${price}`);
-                    const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
-                    pricings.push(pricing);
-                });
+                if (isFree) {
+                    pricingEnum = PricingsEnum.free;
+                } else {
+                    const halfTempLen = $(`.product-actions-price`).text().length / 2;
+                    const basePrice: number = Number.parseFloat($(`.product-actions-price`).text().slice(0, halfTempLen));
+                    const discountedPrice: number = Number.parseFloat($(`.product-actions-price`).text().slice(halfTempLen));
+                    discountPercent = basePrice !== discountedPrice ? Math.round(Number.parseFloat((discountedPrice / basePrice).toFixed(2)) * 100) || undefined : undefined;
+                    price = $(`.product-actions-price__final-amount`).text();
+                    pricingEnum = PricingsEnum.main_game;
+                }
 
-                // dlc
-                $(".game_area_dlc_row").each((i: number, element: CheerioElement) => {
-                    const pricingEnum: PricingsEnum = PricingsEnum.dlc;
-                    const title: string = $(element).find(`.game_area_dlc_name`).text().trim();
-                    const discountPercent: number = Number.parseInt($(element).find(`.discount_pct`).text().replace(`-`, ``).replace(`%`, ``)) || undefined;
-                    let price: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`$`, ``) : $(element).find(`.game_area_dlc_price`).text().replace(`$`, ``).trim();
-                    price = price === `N/A` ? undefined : price;
-
-                    // console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${pricingEnum} | Discount percent: ${discountPercent} | Price: ${price}`);
-                    const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
-                    pricings.push(pricing);
-                });
+                console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${pricingEnum} | Discount percent: ${discountPercent} | Price: ${price}`);
+                const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                pricings.push(pricing);
 
                 return resolve(pricings);
             })

@@ -1,7 +1,6 @@
 import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum, convertIGDBExternCateEndumToSysKeyId } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
-const fs = require("fs");
 const MICROSOFT_RATE_LIMIT_MS: number = 1000;
 
 export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_link: string): Promise<PriceInfoResponse[]> {
