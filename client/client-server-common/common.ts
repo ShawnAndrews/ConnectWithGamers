@@ -700,6 +700,22 @@ export enum IGDBExternalCategoryEnum {
     "android" = 15
 }
 
+export const convertIGDBExternCateEndumToSysKeyId = (externCateEnum: IGDBExternalCategoryEnum): number => {
+    if (externCateEnum === IGDBExternalCategoryEnum.steam) {
+        return 1;
+    } else if (externCateEnum === IGDBExternalCategoryEnum.gog) {
+        return 2;
+    } else if (externCateEnum === IGDBExternalCategoryEnum.microsoft) {
+        return 3;
+    } else if (externCateEnum === IGDBExternalCategoryEnum.apple) {
+        return 4;
+    } else if (externCateEnum === IGDBExternalCategoryEnum.android) {
+        return 5;
+    } else {
+        return -1;
+    }
+};
+
 export interface IGDBReleaseDate {
     id: number;
     category: number;
@@ -747,15 +763,14 @@ export interface IGDBExternalGame {
 
 export enum PricingsEnum {
     free = 1,
-    free_with_xbox_game_pass = 2,
-    discounted_with_xbox_game_pass = 3,
-    discounted_with_xbox_live_gold = 4,
-    main_game = 5,
-    bundles = 6,
-    dlc = 7,
-    coming_soon = 8,
-    preorder = 9,
-    in_app_purchase = 10,
+    free_or_discounted_with_xbox_game_pass = 2,
+    free_or_discounted_with_xbox_live_gold = 3,
+    main_game = 4,
+    bundles = 5,
+    dlc = 6,
+    coming_soon = 7,
+    preorder = 8,
+    in_app_purchase = 9,
 }
 
 /* Database tables */

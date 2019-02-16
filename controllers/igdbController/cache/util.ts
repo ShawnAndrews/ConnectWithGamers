@@ -185,7 +185,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
 
                 steam_link = getExternalGameFromCategory(IGDBExternalCategoryEnum.steam) && (getExternalGameFromCategory(IGDBExternalCategoryEnum.steam).url ? `${getExternalGameFromCategory(IGDBExternalCategoryEnum.steam).url}/?cc=us` : `${config.steam.appURL}/${getExternalGameFromCategory(IGDBExternalCategoryEnum.steam).uid}/?cc=us`);
                 gog_link = getExternalGameFromCategory(IGDBExternalCategoryEnum.gog) && getExternalGameFromCategory(IGDBExternalCategoryEnum.gog).url;
-                microsoft_link = getExternalGameFromCategory(IGDBExternalCategoryEnum.microsoft) && (getExternalGameFromCategory(IGDBExternalCategoryEnum.microsoft).url.startsWith(`https://www.microsoft.com`) ? getExternalGameFromCategory(IGDBExternalCategoryEnum.microsoft).url : undefined);
+                microsoft_link = getExternalGameFromCategory(IGDBExternalCategoryEnum.microsoft) && getExternalGameFromCategory(IGDBExternalCategoryEnum.microsoft).url;
                 apple_link = getExternalGameFromCategory(IGDBExternalCategoryEnum.apple) && getExternalGameFromCategory(IGDBExternalCategoryEnum.apple).url;
                 android_link = getExternalGameFromCategory(IGDBExternalCategoryEnum.android) && getExternalGameFromCategory(IGDBExternalCategoryEnum.android).url;
             }

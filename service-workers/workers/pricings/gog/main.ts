@@ -2,18 +2,18 @@ import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum, convertIGDBE
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 const fs = require("fs");
-const STEAM_RATE_LIMIT_MS: number = 1000;
+const GOG_RATE_LIMIT_MS: number = 1000;
 
-export function getSteamPricings(igdb_games_sys_key_id: number, steam_link: string): Promise<PriceInfoResponse[]> {
+export function getGogPricings(igdb_games_sys_key_id: number, gog_link: string): Promise<PriceInfoResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
 
         setTimeout(() => {
 
-            // console.log(steam_link);
+            console.log(gog_link);
             axios({
                 method: "get",
-                url: steam_link,
+                url: gog_link,
                 headers: {
                     "birthtime": 28801
                 },
@@ -21,7 +21,7 @@ export function getSteamPricings(igdb_games_sys_key_id: number, steam_link: stri
             })
             .then((response: AxiosResponse) => {
                 const $: CheerioStatic = cheerio.load(response.data);
-                const externalEnumSysKey: number = convertIGDBExternCateEndumToSysKeyId(IGDBExternalCategoryEnum.steam);
+                const externalEnumSysKey: number = convertIGDBExternCateEndumToSysKeyId(IGDBExternalCategoryEnum.gog);
                 const pricings: PriceInfoResponse[] = [];
                 const datePlus7Days: Date = new Date();
                 datePlus7Days.setDate(datePlus7Days.getDate() + 7);
@@ -60,7 +60,7 @@ export function getSteamPricings(igdb_games_sys_key_id: number, steam_link: stri
                 return reject(error);
             });
 
-        }, STEAM_RATE_LIMIT_MS);
+        }, GOG_RATE_LIMIT_MS);
 
     });
 
