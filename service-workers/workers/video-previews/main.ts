@@ -36,6 +36,7 @@ export function processVideoPreview(gameId: number) {
                                 const readable: any = ytdl(game.video, { filter: (format: any) => format.container === "mp4", begin: captureStartTimeMs }).pipe(writable);
 
                                 readable.on(`close`, () => {
+                                    fs.chmodSync(outputPath, "777");
                                     igdbModel.updateVideoCached(gameId, true)
                                         .then(() => {
                                             sendNotRunningMessage();
