@@ -1,5 +1,5 @@
 import DatabaseBase from "./../base/dbBase";
-import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, DbTablePricingsFields, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableResultsFields, ResultsEnum, SimilarGame, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, ServiceWorkerEnums, NewsArticle, DbTableIGDBNewsFields } from "../../../client/client-server-common/common";
+import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, DbTablePricingsFields, IGDBExternalCategoryEnum, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableResultsFields, ResultsEnum, SimilarGame, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, ServiceWorkerEnums, NewsArticle, DbTableIGDBNewsFields, PriceInfo, DbTablePricingsEnumFields } from "../../../client/client-server-common/common";
 import { MysqlError } from "mysql";
 import config from "../../../config";
 import { addTaskToWorker } from "../../../service-workers/main";
@@ -111,7 +111,7 @@ class IGDBModel extends DatabaseBase {
     getGame(gameId: number, skipServiceWorkers: boolean = false): Promise <GameResponse> {
 
         return new Promise((resolve, reject) => {
-            const gamePromises: Promise<any>[] = [this.getGameCover(gameId), this.getGameScreenshots(gameId), this.getGameIcons(gameId), this.getGameReleaseDates(gameId), this.getGamePlatforms(gameId), this.getGameGenres(gameId), this.getGameSimilarGames(gameId)];
+            const gamePromises: Promise<any>[] = [this.getGameCover(gameId), this.getGameScreenshots(gameId), this.getGameIcons(gameId), this.getGameReleaseDates(gameId), this.getGamePlatforms(gameId), this.getGameGenres(gameId), this.getGameSimilarGames(gameId), this.getGamePricings(gameId)];
             let cover: IGDBImage = undefined;
             let screenshots: IGDBImage[] = undefined;
             let linkIcons: string[] = undefined;
@@ -119,6 +119,7 @@ class IGDBModel extends DatabaseBase {
             let platforms: number[] = undefined;
             let genres: number[] = undefined;
             let similar_games: SimilarGame[] = undefined;
+            let pricings: PriceInfo[] = undefined;
 
             Promise.all(gamePromises)
                 .then((vals: any) => {
@@ -129,6 +130,7 @@ class IGDBModel extends DatabaseBase {
                     platforms = vals[4];
                     genres = vals[5];
                     similar_games = vals[6];
+                    pricings = vals[7];
 
                     // get game
                     this.select(
@@ -160,6 +162,7 @@ class IGDBModel extends DatabaseBase {
                                     microsoft_link: dbResponse.data[0].microsoft_link,
                                     apple_link: dbResponse.data[0].apple_link,
                                     android_link: dbResponse.data[0].android_link,
+                                    pricings: pricings
                                 };
                                 if (!skipServiceWorkers) {
                                     addTaskToWorker(game.id, ServiceWorkerEnums.video_previews);
@@ -178,6 +181,39 @@ class IGDBModel extends DatabaseBase {
                 })
                 .catch((error: string) => {
                     return reject();
+                });
+
+        });
+
+    }
+
+    /**
+     * Get game's sys key id in database.
+     */
+    getGamePricings(gameId: number): Promise <PriceInfo[]> {
+
+        return new Promise((resolve, reject) => {
+
+            // check if cover exists
+            this.custom(
+                `SELECT ee.${DbTableIGDBExternalEnumFields[1]} as 'external_category_enum', pc.${DbTablePricingsFields[2]}, pc.${DbTablePricingsFields[4]}, pc.${DbTablePricingsFields[5]}, pc.${DbTablePricingsFields[6]} FROM ${DbTables.pricings} pc
+                JOIN ${DbTables.igdb_games} ig ON pc.${DbTablePricingsFields[3]} = ig.${DbTableIGDBGamesFields[0]}
+                JOIN ${DbTables.igdb_external_enum} ee ON pc.${DbTablePricingsFields[1]} = ee.${DbTableIGDBExternalEnumFields[0]}
+                WHERE ig.${DbTableIGDBGamesFields[1]}=?`,
+                [gameId])
+                .then((dbResponse: GenericModelResponse) => {
+                    const pricings: PriceInfo[] = [];
+
+                    dbResponse.data.forEach((rawPricing: any) => {
+                        const pricing: PriceInfo = { external_category_enum: rawPricing.external_category_enum, pricings_enum: rawPricing.pricings_enum_sys_key_id, title: rawPricing.title, price: rawPricing.price, discount_percent: rawPricing.discount_percent };
+                        pricings.push(pricing);
+                    });
+
+                    return resolve(pricings);
+
+                })
+                .catch((err: string) => {
+                    return reject(err);
                 });
 
         });

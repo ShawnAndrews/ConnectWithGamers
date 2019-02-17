@@ -601,6 +601,15 @@ export interface GameResponse {
     microsoft_link: string;
     apple_link: string;
     android_link: string;
+    pricings: PriceInfo[];
+}
+
+export interface PriceInfo {
+    external_category_enum: IGDBExternalCategoryEnum;
+    pricings_enum: PricingsEnum;
+    title: string;
+    price: string;
+    discount_percent: number;
 }
 
 export interface SimilarGame {

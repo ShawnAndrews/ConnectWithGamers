@@ -10,7 +10,6 @@ export function getSteamPricings(igdb_games_sys_key_id: number, steam_link: stri
 
         setTimeout(() => {
 
-            // console.log(steam_link);
             axios({
                 method: "get",
                 url: steam_link,
@@ -31,12 +30,11 @@ export function getSteamPricings(igdb_games_sys_key_id: number, steam_link: stri
                     const title: string = $(element).find(`h1`).clone().children().remove().end().text().replace(`Buy `, ``).replace(`Pre-Purchase`, ``).replace(`Play`, ``).trim();
                     const discountPercent: number = Number.parseInt($(element).find(`.discount_pct, .bundle_base_discount`).text().replace(`-`, ``).replace(`%`, ``)) || undefined;
                     let price: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`$`, ``) : $(element).find(`.game_purchase_price`).text().replace(`$`, ``).trim();
-                    const isFree: boolean = i === 0 && price === `Free to Play`;
+                    const isFree: boolean = i === 0 && price.includes(`Free`);
                     const isPreorder: boolean = i === 0 && $(element).find(`h1`).text().startsWith(`Pre-Purchase`);
                     const pricingEnum: PricingsEnum = isFree ? PricingsEnum.free : (isPreorder ? PricingsEnum.preorder : (i === 0 ? PricingsEnum.main_game : PricingsEnum.bundles));
-                    price = price === `Free to Play` ? undefined : price;
+                    price = price.includes(`Free`) ? undefined : price;
 
-                    // console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${pricingEnum} | Discount percent: ${discountPercent} | Price: ${price}`);
                     const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
                     pricings.push(pricing);
                 });
@@ -49,7 +47,6 @@ export function getSteamPricings(igdb_games_sys_key_id: number, steam_link: stri
                     let price: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`$`, ``) : $(element).find(`.game_area_dlc_price`).text().replace(`$`, ``).trim();
                     price = price === `N/A` ? undefined : price;
 
-                    // console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${pricingEnum} | Discount percent: ${discountPercent} | Price: ${price}`);
                     const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
                     pricings.push(pricing);
                 });

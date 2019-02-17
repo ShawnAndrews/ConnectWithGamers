@@ -129,7 +129,7 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
                         igdbModel.setGame(convertedGame)
                             .then(() => {
 
-                                igdbModel.getGame(gameId)
+                                igdbModel.getGame(gameId, true)
                                     .then((game: GameResponse) => {
                                         return resolve(game);
                                     })

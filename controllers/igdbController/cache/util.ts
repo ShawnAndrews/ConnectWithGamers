@@ -211,7 +211,8 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 gog_link: gog_link,
                 microsoft_link: microsoft_link,
                 apple_link: apple_link,
-                android_link: android_link
+                android_link: android_link,
+                pricings: undefined
             };
 
             gameResponses.push(gameResponse);

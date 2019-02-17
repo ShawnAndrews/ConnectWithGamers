@@ -11,7 +11,6 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
 
             const isXboxNotMicrosoft: boolean = microsoft_link.startsWith(`http://marketplace.xbox.com`);
 
-            console.log(microsoft_link);
             axios({
                 method: "get",
                 url: microsoft_link,
@@ -39,7 +38,6 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                         const discountPercent: number = undefined;
                         const price: string = isFree ? undefined : $(element).find(`.ProductPrice`).text().replace(`$`, ``);
 
-                        // console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${pricingEnum} | Discount percent: ${discountPercent} | Price: ${price}`);
                         const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
                         pricings.push(pricing);
                     });
@@ -58,7 +56,6 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                             const price: string = $(element).find(`[itemprop='price']`).text().replace(`$`, ``);
                             const discountPercent: number = undefined;
 
-                            // console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${pricingEnum} | Discount percent: ${discountPercent} | Price: ${price}`);
                             const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
                             pricings.push(pricing);
                         });
@@ -72,7 +69,6 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                             const pricingEnum: PricingsEnum = PricingsEnum.free;
                             const discountPercent: number = undefined;
                             const price: string = undefined;
-                            // console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${PricingsEnum.free_or_discounted_with_xbox_game_pass} | Discount percent: ${discountPercent} | Price: ${price}`);
                             const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
                             pricings.push(pricing);
                         }
@@ -84,7 +80,6 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                             const discountPercent: number = undefined;
                             const pricingEnum: PricingsEnum = PricingsEnum.free_or_discounted_with_xbox_live_gold;
                             const price: string = $(`.remediation-cta-label`).text().replace(`with Xbox Live Gold`, ``).replace(`$`, ``).trim();
-                            // console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${pricingEnum} | Discount percent: ${discountPercent} | Price: ${price}`);
                             const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
                             pricings.push(pricing);
                         }
@@ -97,7 +92,6 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                             const price: string = $(element).find(`#ProductPrice_productPrice_PriceContainer`).children().first().text().replace(`$`, ``);
                             const pricingEnum: PricingsEnum = isPreorder ? PricingsEnum.preorder : PricingsEnum.main_game;
 
-                            // console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${pricingEnum} | Discount percent: ${discountPercent} | Price: ${price}`);
                             const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
                             pricings.push(pricing);
                         });
@@ -111,7 +105,6 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                         const price: string = $(element).find(`[itemprop='price']`).text().replace(`$`, ``);
                         const pricingEnum: PricingsEnum = PricingsEnum.in_app_purchase;
 
-                        // console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${pricingEnum} | Discount percent: ${discountPercent} | Price: ${price}`);
                         const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
                         pricings.push(pricing);
                     });

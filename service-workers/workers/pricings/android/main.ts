@@ -10,7 +10,6 @@ export function getAndroidPricings(igdb_games_sys_key_id: number, android_link: 
 
         setTimeout(() => {
 
-            console.log(android_link);
             axios({
                 method: "get",
                 url: android_link,
@@ -41,7 +40,6 @@ export function getAndroidPricings(igdb_games_sys_key_id: number, android_link: 
                     pricingEnum = PricingsEnum.main_game;
                 }
 
-                // console.log(`IGDB_games_sys_key_id: ${igdb_games_sys_key_id} | Title: ${title} | Pricing Enum: ${pricingEnum} | Discount percent: ${discountPercent} | Price: ${price}`);
                 const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
                 pricings.push(pricing);
 

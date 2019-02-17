@@ -10,7 +10,6 @@ export function getApplePricings(igdb_games_sys_key_id: number, apple_link: stri
 
         setTimeout(() => {
 
-            console.log(apple_link);
             axios({
                 method: "get",
                 url: apple_link,

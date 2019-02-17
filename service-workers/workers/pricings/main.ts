@@ -46,16 +46,16 @@ export function processPricingsUpdate(gameId: number) {
                                 const pricingPromises: Promise<PriceInfoResponse[]>[] = [];
 
                                 if (steam_link) {
-                                    // pricingPromises.push(getSteamPricings(igdb_games_sys_key_id, steam_link));
+                                    pricingPromises.push(getSteamPricings(igdb_games_sys_key_id, steam_link));
                                 }
                                 if (gog_link) {
-                                    // pricingPromises.push(getGogPricings(igdb_games_sys_key_id, gog_link));
+                                    pricingPromises.push(getGogPricings(igdb_games_sys_key_id, gog_link));
                                 }
                                 if (microsoft_link) {
-                                    // pricingPromises.push(getMicrosoftPricings(igdb_games_sys_key_id, microsoft_link));
+                                    pricingPromises.push(getMicrosoftPricings(igdb_games_sys_key_id, microsoft_link));
                                 }
                                 if (apple_link) {
-                                    // pricingPromises.push(getApplePricings(igdb_games_sys_key_id, apple_link));
+                                    pricingPromises.push(getApplePricings(igdb_games_sys_key_id, apple_link));
                                 }
                                 if (android_link) {
                                     pricingPromises.push(getAndroidPricings(igdb_games_sys_key_id, android_link));
