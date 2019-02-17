@@ -55,7 +55,7 @@ export function processPricingsUpdate(gameId: number) {
                                     // pricingPromises.push(getMicrosoftPricings(igdb_games_sys_key_id, microsoft_link));
                                 }
                                 if (apple_link) {
-                                    pricingPromises.push(getApplePricings(igdb_games_sys_key_id, apple_link));
+                                    // pricingPromises.push(getApplePricings(igdb_games_sys_key_id, apple_link));
                                 }
                                 if (android_link) {
                                     pricingPromises.push(getAndroidPricings(igdb_games_sys_key_id, android_link));
