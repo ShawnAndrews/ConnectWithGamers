@@ -30,3 +30,4 @@ TODO:
 
 
 - precache mp4 preview + loop instead of black screen if no screenshots only video
+- IGDB login oauth
