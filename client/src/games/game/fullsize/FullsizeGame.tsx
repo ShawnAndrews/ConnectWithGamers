@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, IGDBGenre, IGDBImage, GenreEnums, IGDBImageSizeEnums, getIGDBImage, getCachedIGDBImage } from '../../../../client-server-common/common';
+import { GameResponse, IGDBGenre, IGDBImage, GenreEnums, IGDBImageSizeEnums, getIGDBImage, getCachedIGDBImage, PriceInfo, IGDBExternalCategoryEnum } from '../../../../client-server-common/common';
 import { Card, Button } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 import Crossfade from '../crossfade/CrossfadeContainer';
@@ -20,13 +20,31 @@ interface IFullsizeGameProps {
 }
 
 const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) => {
-    // const isNoPrice: boolean = props.game.external.steam && isNaN(Number(props.game.external.steam.price));
-    // const isFree: boolean = props.game.external.steam && props.game.external.steam.price === `Free`;
-    // let originalPrice: number = undefined;
+    let steamPriceInfo: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.steam);
+    let steamIsFree: boolean = steamPriceInfo && !steamPriceInfo.price;
+    let steamIsDiscounted: boolean = steamPriceInfo && steamPriceInfo.price && !!steamPriceInfo.discount_percent;
+    let steamBasePrice: number = steamIsDiscounted && + (parseFloat(steamPriceInfo.price) / ((100 - steamPriceInfo.discount_percent) / 100)).toFixed(2);
 
-    // if (props.game.external.steam) {
-    //     originalPrice = + (parseFloat(props.game.external.steam.price) / ((100 - props.game.external.steam.discount_percent) / 100)).toFixed(2);
-    // }
+    let gogPriceInfo: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.gog);
+    let goIsFree: boolean = steamPriceInfo && !steamPriceInfo.price;
+    let goIsDiscounted: boolean = steamPriceInfo && steamPriceInfo.price && !!steamPriceInfo.discount_percent;
+    let goBasePrice: number = steamIsDiscounted && + (parseFloat(steamPriceInfo.price) / ((100 - steamPriceInfo.discount_percent) / 100)).toFixed(2);
+
+    let microsoftPriceInfo: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.microsoft);
+    let microsoftIsFree: boolean = steamPriceInfo && !steamPriceInfo.price;
+    let microsoftIsDiscounted: boolean = steamPriceInfo && steamPriceInfo.price && !!steamPriceInfo.discount_percent;
+    let microsoftBasePrice: number = steamIsDiscounted && + (parseFloat(steamPriceInfo.price) / ((100 - steamPriceInfo.discount_percent) / 100)).toFixed(2);
+
+    let applePriceInfo: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.apple);
+    let appleIsFree: boolean = steamPriceInfo && !steamPriceInfo.price;
+    let appleIsDiscounted: boolean = steamPriceInfo && steamPriceInfo.price && !!steamPriceInfo.discount_percent;
+    let appleBasePrice: number = steamIsDiscounted && + (parseFloat(steamPriceInfo.price) / ((100 - steamPriceInfo.discount_percent) / 100)).toFixed(2);
+
+    let androidPriceInfo: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.android);
+    let androidIsFree: boolean = steamPriceInfo && !steamPriceInfo.price;
+    let androidIsDiscounted: boolean = steamPriceInfo && steamPriceInfo.price && !!steamPriceInfo.discount_percent;
+    let androidBasePrice: number = steamIsDiscounted && + (parseFloat(steamPriceInfo.price) / ((100 - steamPriceInfo.discount_percent) / 100)).toFixed(2);
+
 
     return (
         <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'editor-feature overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
@@ -52,11 +70,6 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                     <div className="filter w-100 h-100" />
                     <img className="editor-banner" src="https://i.imgur.com/B57fSZj.png" />
                     <div className="editor-banner-text color-primary">Editor's Choice</div>
-                    {/* {props.game.external.steam && props.game.external.steam.discount_percent && 
-                        <>
-                            <img className="discount-banner" src="https://i.imgur.com/vkHYtW8.png" />
-                            <div className="discount-banner-text color-primary">{props.game.external.steam.discount_percent}% off</div>
-                        </>} */}
                 </>}
             <div className={`highlighted-table-text ${props.isEditorsChoiceGame ? 'editors-choice' : ''}`}>
                 {!props.isEditorsChoiceGame

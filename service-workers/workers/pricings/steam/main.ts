@@ -45,7 +45,7 @@ export function getSteamPricings(igdb_games_sys_key_id: number, steam_link: stri
                     const title: string = $(element).find(`.game_area_dlc_name`).text().trim();
                     const discountPercent: number = Number.parseInt($(element).find(`.discount_pct`).text().replace(`-`, ``).replace(`%`, ``)) || undefined;
                     let price: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`$`, ``) : $(element).find(`.game_area_dlc_price`).text().replace(`$`, ``).trim();
-                    price = price === `N/A` ? undefined : price;
+                    price = (price === `N/A` || price === `Free`) ? undefined : price;
 
                     const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
                     pricings.push(pricing);

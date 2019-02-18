@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Button from '@material-ui/core/Button';
 import { Tooltip } from '@material-ui/core';
-import { IdNamePair, PlatformEnums } from '../../../../client-server-common/common';
+import { PlatformEnums } from '../../../../client-server-common/common';
 
 interface IPlatformsProps {
     platforms: number[];

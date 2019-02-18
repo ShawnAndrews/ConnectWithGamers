@@ -36,63 +36,39 @@
 
     .game-info {
     
-        .price-container {
-            height: @game-details-price-height;
-
-            .steam-btn {
-                float: left;
-                min-width: unset!important;
-                min-height: unset!important;
-                background-color: #4c6b22!important;
-                color: white!important;
-                font-size: 0.75rem;
-                margin-bottom: 4px;
-
-                i {
-                    font-size: 1.1rem;
-                }
-
-                .name {
-                    vertical-align: middle;
-                }
-            }
-
+        .pricing {
+            position: relative;
+            height: 50px;
+            margin-bottom: 30px;
+            
             .price {
-                float: right;
-                background-color: @game-details-highlight-color;
+                position: absolute;
+                bottom: -20px;
+                right: 25px;
+                width: 100px;
+                border-radius: 0px;
+                background-color: @tertiary-color;
+                text-align: center;
+                vertical-align: middle;
+                line-height: 36px;
+                font-weight: bold;
+                color: rgba(black,0.6);
 
-                .usd {
-                    position: relative;
-                    font-size: 14px;
-                    top: -1px;
-                    margin-left: 8px;
-    
-                    &.nodiscount {
-                        top: 4px;
-                        margin-right: 8px;
-                    }
+                .price-container {
+                    font-size: 0.8rem;
                 }
-    
-                .discount {
-                    position: relative;
-                    top: 5px;
-                    height: 22px;
-                    width: 38px;
-                    color: #a4d007;
-                    background: #4c6b22;
-    
-                    > span {
-                        position: absolute;
-                        left: 50%;
-                        top: 50%;
-                        transform: translate(-50%, -50%);
-                        width: 100%;
-                        text-align: center;
-                        font-size: 12px;
-                    }
+
+                del {
+                    opacity: 0.5;
+                    font-size: 0.7rem;
                 }
             }
-        }
+
+            img {
+                object-fit: cover;
+                outline: 2px solid rgba(@tertiary-color, 0.8);
+            }
+         }
     
         .platforms, .genres {
     

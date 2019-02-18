@@ -1,13 +1,13 @@
 import * as React from 'react';
 import Spinner from '../../../spinner/main';
-import { GameResponse, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage } from '../../../../../client/client-server-common/common';
+import { GameResponse, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage, PriceInfo, IGDBExternalCategoryEnum, PricingsEnum } from '../../../../../client/client-server-common/common';
 import Summary from './Summary';
 import Platforms from './Platforms';
 import Genres from './Genres';
 import Media from './Media';
 import { Paper } from '@material-ui/core';
 import Title from './Title';
-import SteamInfo from './SteamInfo';
+import Pricing from './Pricing';
 import Cover from './Cover';
 import Background from './Background';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -33,7 +33,7 @@ interface IGameProps {
 }
 
 const Game: React.SFC<IGameProps> = (props: IGameProps) => {
-    console.log(`${props.isLoading} || ${props.game}`);
+    
     if (props.isLoading) {
         return (
             <div className="menu-center">
@@ -49,9 +49,38 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
             </div>
         );
     }
+    
+    let steamPricings: PriceInfo[] = props.game.pricings.filter((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.steam);
+    let steamMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.steam) && (priceInfo.pricings_enum === PricingsEnum.free || priceInfo.pricings_enum === PricingsEnum.main_game));
+    let steamIsFree: boolean = steamMainGame && !steamMainGame.price;
+    let steamIsDiscounted: boolean = steamMainGame && steamMainGame.price && !!steamMainGame.discount_percent;
+    let steamBasePrice: number = steamIsDiscounted && + (parseFloat(steamMainGame.price) / ((100 - steamMainGame.discount_percent) / 100)).toFixed(2);
 
-    const horizontalImage: boolean = props.game.cover && (props.game.cover.width > props.game.cover.height);
-    const maxWidth: number = horizontalImage ? 300 : 250;
+    let gogPricings: PriceInfo[] = props.game.pricings.filter((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.gog);
+    let gogMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.gog) && (priceInfo.pricings_enum === PricingsEnum.free || priceInfo.pricings_enum === PricingsEnum.main_game));
+    let gogIsFree: boolean = gogMainGame && !gogMainGame.price;
+    let gogIsDiscounted: boolean = gogMainGame && gogMainGame.price && !!gogMainGame.discount_percent;
+    let gogBasePrice: number = gogIsDiscounted && + (parseFloat(gogMainGame.price) / ((100 - gogMainGame.discount_percent) / 100)).toFixed(2);
+
+    let microsoftPricings: PriceInfo[] = props.game.pricings.filter((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.microsoft);
+    let microsoftMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.microsoft) && (priceInfo.pricings_enum === PricingsEnum.free || priceInfo.pricings_enum === PricingsEnum.main_game));
+    let microsoftIsFree: boolean = microsoftMainGame && !microsoftMainGame.price;
+    let microsoftIsDiscounted: boolean = microsoftMainGame && microsoftMainGame.price && !!microsoftMainGame.discount_percent;
+    let microsoftBasePrice: number = microsoftIsDiscounted && + (parseFloat(microsoftMainGame.price) / ((100 - microsoftMainGame.discount_percent) / 100)).toFixed(2);
+
+    let applePricings: PriceInfo[] = props.game.pricings.filter((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.apple);
+    let appleMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.apple) && (priceInfo.pricings_enum === PricingsEnum.free || priceInfo.pricings_enum === PricingsEnum.main_game));
+    let appleIsFree: boolean = appleMainGame && !appleMainGame.price;
+    let appleIsDiscounted: boolean = appleMainGame && appleMainGame.price && !!appleMainGame.discount_percent;
+    let appleBasePrice: number = appleIsDiscounted && + (parseFloat(appleMainGame.price) / ((100 - appleMainGame.discount_percent) / 100)).toFixed(2);
+
+    let androidPricings: PriceInfo[] = props.game.pricings.filter((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.android);
+    let androidMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.android) && (priceInfo.pricings_enum === PricingsEnum.free || priceInfo.pricings_enum === PricingsEnum.main_game));
+    let androidIsFree: boolean = androidMainGame && !androidMainGame.price;
+    let androidIsDiscounted: boolean = androidMainGame && androidMainGame.price && !!androidMainGame.discount_percent;
+    let androidBasePrice: number = androidIsDiscounted && + (parseFloat(androidMainGame.price) / ((100 - androidMainGame.discount_percent) / 100)).toFixed(2);
+
+    const maxWidth: number = 250;
     const aspectRatio: number = props.game.cover && (maxWidth / props.game.cover.width);
     const newWidth: number = props.game.cover && (aspectRatio * props.game.cover.width);
     const newHeight: number = props.game.cover && (aspectRatio * props.game.cover.height);
@@ -126,14 +155,47 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                             url={props.game.image_cached ? getCachedIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big)}
                             style={getCoverImgStyle()}
                         />}
-                    <div className="game-info my-2">
-                        {/* {props.game.external.steam && 
-                            <SteamInfo
-                                steam={`${props.game.external.steam.url}`}
-                                price={props.game.external.steam.price}
-                                discount_percent={props.game.external.steam.discount_percent}
-                                handleSteamClick={props.handleSteamClick}
-                            />} */}
+                    <div className="game-info my-4">
+                        {steamMainGame && 
+                            <Pricing
+                                pricings={steamPricings}
+                                isFree={steamIsFree}
+                                isDiscounted={steamIsDiscounted}
+                                basePrice={steamBasePrice}
+                                externalCategoryEnum={IGDBExternalCategoryEnum.steam}
+                            />}
+                        {gogMainGame && 
+                            <Pricing
+                                pricings={gogPricings}
+                                isFree={gogIsFree}
+                                isDiscounted={gogIsDiscounted}
+                                basePrice={gogBasePrice}
+                                externalCategoryEnum={IGDBExternalCategoryEnum.gog}
+                            />}
+                        {microsoftMainGame && 
+                            <Pricing
+                                pricings={microsoftPricings}
+                                isFree={microsoftIsFree}
+                                isDiscounted={microsoftIsDiscounted}
+                                basePrice={microsoftBasePrice}
+                                externalCategoryEnum={IGDBExternalCategoryEnum.microsoft}
+                            />}
+                        {appleMainGame && 
+                            <Pricing
+                                pricings={applePricings}
+                                isFree={appleIsFree}
+                                isDiscounted={appleIsDiscounted}
+                                basePrice={appleBasePrice}
+                                externalCategoryEnum={IGDBExternalCategoryEnum.apple}
+                            />}
+                        {androidMainGame && 
+                            <Pricing
+                                pricings={androidPricings}
+                                isFree={androidIsFree}
+                                isDiscounted={androidIsDiscounted}
+                                basePrice={androidBasePrice}
+                                externalCategoryEnum={IGDBExternalCategoryEnum.android}
+                            />}
                         {props.game.platforms && 
                             <Platforms
                                 platforms={props.game.platforms}
