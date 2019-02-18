@@ -835,7 +835,7 @@ export const DbTableReleaseDatesFields: string[] = [`release_dates_sys_key_id`, 
 export const DbTableResultsFields: string[] = [`results_sys_key_id`, `results_enum_sys_key_id`, `igdb_games_sys_key_id`, `param`, `expires_dt`];
 export const DbTableResultsEnumFields: string[] = [`results_enum_sys_key_id`, `name`];
 export const DbTableScreenshotsFields: string[] = [`screenshots_sys_key_id`, `igdb_images_sys_key_id`, `igdb_games_sys_key_id`];
-export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `igdb_games_sys_key_id`, `similar_igdb_games_sys_key_id`, `similar_name`, `similar_cover_id`];
+export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `igdb_games_sys_key_id`, `similar_id`, `similar_name`, `similar_cover_id`];
 export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];
 export const DbTableIGDBNewsFields: string[] = [`igdb_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];
 

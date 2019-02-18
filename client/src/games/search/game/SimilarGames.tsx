@@ -51,7 +51,7 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
         nextArrow: <NextArrow />,
         prevArrow: <PrevArrow />
     };
-    console.log(`sim games len: ${props.similarGames.length}`);
+    
     return (
 
         <div className="similar-games-carousel-container my-5">

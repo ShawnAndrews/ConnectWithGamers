@@ -906,14 +906,13 @@ class IGDBModel extends DatabaseBase {
 
             // check if similar games exists
             this.custom(
-                `SELECT ig.${DbTableIGDBGamesFields[1]}, sg.${DbTableSimilarGamesFields[3]}, sg.${DbTableSimilarGamesFields[4]} FROM ${DbTables.similar_games} sg
-                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = sg.${DbTableSimilarGamesFields[1]}
+                `SELECT * FROM ${DbTables.similar_games} sg
                 WHERE sg.${DbTableSimilarGamesFields[1]}=(SELECT ig.${DbTableIGDBGamesFields[0]} FROM ${DbTables.igdb_games} ig WHERE ig.${DbTableIGDBGamesFields[1]}=?)`,
                 [gameId])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
                         const similarGames: SimilarGame[] = dbResponse.data.map((rawSimilarGame: any) => {
-                            const similarGame: SimilarGame = {id: rawSimilarGame.id, name: rawSimilarGame.similar_name, cover_id: rawSimilarGame.similar_cover_id};
+                            const similarGame: SimilarGame = {id: rawSimilarGame.similar_id, name: rawSimilarGame.similar_name, cover_id: rawSimilarGame.similar_cover_id};
                             return similarGame;
                         });
 

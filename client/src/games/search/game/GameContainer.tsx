@@ -130,6 +130,7 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
 
     goToGame(id: number): void {
         if (!this.state.mouseDragged) {
+            console.log(`going to ${`/search/game/${id}`}`);
             this.props.history.push(`/search/game/${id}`);
         }
     }
