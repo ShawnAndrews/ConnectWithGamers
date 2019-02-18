@@ -24,7 +24,6 @@ class FullsizeGameContainer extends React.Component<IFullsizeGameContainerProps,
     constructor(props: IFullsizeGameContainerProps) {
         super(props);
         this.goToGame = this.goToGame.bind(this);
-        this.goToSteamPage = this.goToSteamPage.bind(this);
         this.onHoverGame = this.onHoverGame.bind(this);
         this.onHoverOutGame = this.onHoverOutGame.bind(this);
         this.nextScreenshotIndex = this.nextScreenshotIndex.bind(this);
@@ -70,10 +69,6 @@ class FullsizeGameContainer extends React.Component<IFullsizeGameContainerProps,
         this.props.history.push(`/search/game/${this.props.game.id}`);
     }
 
-    goToSteamPage(): void {
-        // this.props.history.push(`${this.props.game.external.steam.url}`);
-    }
-
     onVideoPreviewEnded(): void {
         this.setState({
             videoPreviewEnded: this.props.game.screenshots && this.props.game.screenshots.length > 0 ? true : false
@@ -92,7 +87,6 @@ class FullsizeGameContainer extends React.Component<IFullsizeGameContainerProps,
                 onHoverOutGame={this.onHoverOutGame}
                 hoveredScreenshotIndex={this.state.hoveredScreenshotIndex}
                 goToGame={this.goToGame}
-                goToSteamPage={this.goToSteamPage}
                 onVideoPreviewEnded={this.onVideoPreviewEnded}
                 videoPreviewEnded={this.state.videoPreviewEnded}
             />
