@@ -22,43 +22,55 @@ export function processVideoPreview(gameId: number) {
                 const failedUploadCached: boolean = fs.existsSync(outputPath) && getFilesizeInBytes(outputPath) === 0;
 
                 if (failedUploadCached) {
-                    fs.unlinkSync(outputPath);
-                }
 
-                if (game.video && (!game.video_cached || failedUploadCached)) {
-                    ytdl.getInfo(game.video)
-                        .then((videoInfo: any) => {
-                            const videoLenMs: number = videoInfo.player_response.streamingData.formats.length > 0 && videoInfo.player_response.streamingData.formats[0].approxDurationMs;
-
-                            if (videoLenMs) {
-                                const captureStartTimeMs: number = videoLenMs < MAX_VIDEO_CAPTURE_LEN_MS + 3000 ? 0 : videoLenMs - MAX_VIDEO_CAPTURE_LEN_MS;
-                                const writable: Writable = fs.createWriteStream(outputPath);
-                                const readable: any = ytdl(game.video, { filter: (format: any) => format.container === "mp4", begin: captureStartTimeMs }).pipe(writable);
-
-                                readable.on(`close`, () => {
-                                    fs.chmodSync(outputPath, "777");
-                                    igdbModel.updateVideoCached(gameId, true)
-                                        .then(() => {
-                                            sendNotRunningMessage();
-                                        })
-                                        .catch((err: string) => {
-                                            console.log(`Failure updating video_preview! ${err}`);
-                                            sendNotRunningMessage();
-                                        });
-                                });
-
-                            } else {
-                                console.log(`Failure getting video length! ${videoLenMs}`);
-                                sendNotRunningMessage();
-                            }
+                    igdbModel.updateVideoCached(gameId, false)
+                        .then(() => {
+                            fs.unlinkSync(outputPath);
+                            sendNotRunningMessage();
                         })
                         .catch((err: string) => {
-                            console.log(`Failure getting video_preview meta data! ${err}`);
+                            console.log(`Failure updating video_preview! ${err}`);
                             sendNotRunningMessage();
                         });
 
                 } else {
-                    sendNotRunningMessage();
+
+                    if (game.video && (!game.video_cached || failedUploadCached)) {
+                        ytdl.getInfo(game.video)
+                            .then((videoInfo: any) => {
+                                const videoLenMs: number = videoInfo.player_response.streamingData.formats.length > 0 && videoInfo.player_response.streamingData.formats[0].approxDurationMs;
+
+                                if (videoLenMs) {
+                                    const captureStartTimeMs: number = videoLenMs < MAX_VIDEO_CAPTURE_LEN_MS + 3000 ? 0 : videoLenMs - MAX_VIDEO_CAPTURE_LEN_MS;
+                                    const writable: Writable = fs.createWriteStream(outputPath);
+                                    const readable: any = ytdl(game.video, { filter: (format: any) => format.container === "mp4", begin: captureStartTimeMs }).pipe(writable);
+
+                                    readable.on(`close`, () => {
+                                        fs.chmodSync(outputPath, "777");
+                                        igdbModel.updateVideoCached(gameId, true)
+                                            .then(() => {
+                                                sendNotRunningMessage();
+                                            })
+                                            .catch((err: string) => {
+                                                console.log(`Failure updating video_preview! ${err}`);
+                                                sendNotRunningMessage();
+                                            });
+                                    });
+
+                                } else {
+                                    console.log(`Failure getting video length! ${videoLenMs}`);
+                                    sendNotRunningMessage();
+                                }
+                            })
+                            .catch((err: string) => {
+                                console.log(`Failure getting video_preview meta data! ${err}`);
+                                sendNotRunningMessage();
+                            });
+
+                    } else {
+                        sendNotRunningMessage();
+                    }
+
                 }
 
             })
@@ -66,7 +78,9 @@ export function processVideoPreview(gameId: number) {
                 console.log(`Failed to get video preview for game id #${gameId}: ${err}`);
                 sendNotRunningMessage();
             });
+
     } catch (err) {
+        console.log(`FAILED!`);
         sendNotRunningMessage();
     }
 
