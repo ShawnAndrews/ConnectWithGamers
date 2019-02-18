@@ -18,6 +18,7 @@ interface IGameContainerState {
     mediaCarouselElement: any;
     mouseDragged: boolean;
     mouseClicked: boolean;
+    notifcationsEnabled: boolean;
 }
 
 class GameContainer extends React.PureComponent<IGameContainerProps, IGameContainerState> {
@@ -33,7 +34,8 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
             gameRatedSnackbarOpen: false,
             mediaCarouselElement: undefined,
             mouseDragged: false,
-            mouseClicked: false
+            mouseClicked: false,
+            notifcationsEnabled: false
         };
         this.loadGame = this.loadGame.bind(this);
         this.handleSteamClick = this.handleSteamClick.bind(this);
@@ -46,6 +48,7 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
         this.onSimilarGamesMouseMove = this.onSimilarGamesMouseMove.bind(this);
         this.onSimilarGamesMouseDown = this.onSimilarGamesMouseDown.bind(this);
         this.onSimilarGamesMouseUp = this.onSimilarGamesMouseUp.bind(this);
+        this.onNotificationsClick = this.onNotificationsClick.bind(this);
     }
 
     componentWillMount(): void {
@@ -118,6 +121,12 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
         });
     }
 
+    onNotificationsClick(): void {
+        this.setState({
+            notifcationsEnabled: !this.state.notifcationsEnabled
+        });
+    }
+
     goToGame(id: number): void {
         if (!this.state.mouseDragged) {
             this.props.history.push(`/search/game/${id}`);
@@ -156,6 +165,7 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
                 game={this.state.game}
                 summaryExpanded={this.state.summaryExpanded}
                 gameRatedSnackbarOpen={this.state.gameRatedSnackbarOpen}
+                notifcationsEnabled={this.state.notifcationsEnabled}
                 handleSteamClick={this.handleSteamClick}
                 handlePlatformClick={this.handlePlatformClick}
                 handleGenreClick={this.handleGenreClick}
@@ -167,6 +177,7 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
                 onSimilarGamesMouseDown={this.onSimilarGamesMouseDown}
                 onSimilarGamesMouseUp={this.onSimilarGamesMouseUp}
                 onSimilarGamesMouseMove={this.onSimilarGamesMouseMove}
+                onNotificationsClick={this.onNotificationsClick}
             />
         );
     }

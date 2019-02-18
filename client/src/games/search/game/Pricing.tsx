@@ -62,30 +62,30 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
                         <>
                             {noAdditonalPricingsExist && <div className="tooltip-header">No additional content available.</div>}
                             {xboxPassPricingsExist && 
-                                <>
-                                    <p className="tooltip-header mt-3">Xbox Game Pass - Free and Discount games</p>
+                                <div className="my-2">
+                                    <p className="tooltip-header">Xbox Game Pass - Free and Discount games</p>
                                     {getEntriesByPricingsEnum(PricingsEnum.free_or_discounted_with_xbox_game_pass)}
-                                </>}
+                                </div>}
                             {xboxGoldPricingsExist && 
-                                <>
-                                    <p className="tooltip-header mt-3">Xbox Live Gold - Discounted games</p>
+                                <div className="my-2">
+                                    <p className="tooltip-header">Xbox Live Gold - Discounted games</p>
                                     {getEntriesByPricingsEnum(PricingsEnum.free_or_discounted_with_xbox_live_gold)}
-                                </>}
+                                </div>}
                             {dlcPricingsExist && 
-                                <>
-                                    <p className="tooltip-header mt-3">Downloadable Content</p>
+                                <div className="my-2">
+                                    <p className="tooltip-header">Downloadable Content</p>
                                     {getEntriesByPricingsEnum(PricingsEnum.dlc)}
-                                </>}
+                                </div>}
                             {inAppPurchasePricingsExist && 
-                                <>
-                                    <p className="tooltip-header mt-3">In-App Purchases</p>
+                                <div className="my-2">
+                                    <p className="tooltip-header">In-App Purchases</p>
                                     {getEntriesByPricingsEnum(PricingsEnum.in_app_purchase)}
-                                </>}
+                                </div>}
                             {bundlesPricingsExist && 
-                                <>
-                                    <p className="tooltip-header mt-3">Bundles</p>
+                                <div className="my-2">
+                                    <p className="tooltip-header">Bundles</p>
                                     {getEntriesByPricingsEnum(PricingsEnum.bundles)}
-                                </>}
+                                </div>}
                         </>
                     }
                     placement="right"

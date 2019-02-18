@@ -5,7 +5,7 @@ import Summary from './Summary';
 import Platforms from './Platforms';
 import Genres from './Genres';
 import Media from './Media';
-import { Paper } from '@material-ui/core';
+import { Paper, Button } from '@material-ui/core';
 import Title from './Title';
 import Pricing from './Pricing';
 import Cover from './Cover';
@@ -19,6 +19,7 @@ interface IGameProps {
     game: GameResponse;
     summaryExpanded: boolean;
     gameRatedSnackbarOpen: boolean;
+    notifcationsEnabled: boolean;
     handleSteamClick: (url: string) => void;
     handlePlatformClick: (index: number) => void;
     handleGenreClick: (index: number) => void;
@@ -30,6 +31,7 @@ interface IGameProps {
     onSimilarGamesMouseMove: (event: React.MouseEvent<HTMLDivElement>) => void;
     onSimilarGamesMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
     onSimilarGamesMouseUp: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onNotificationsClick: () => void;
 }
 
 const Game: React.SFC<IGameProps> = (props: IGameProps) => {
@@ -155,7 +157,20 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                             url={props.game.image_cached ? getCachedIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big)}
                             style={getCoverImgStyle()}
                         />}
-                    <div className="game-info my-4">
+                    <div className="game-info">
+                        <Button className={`game-notifications-btn ${props.notifcationsEnabled ? `enabled` : `disabled`} mt-2 mb-5`} onClick={props.onNotificationsClick} variant="contained" fullWidth={true}>
+                            {props.notifcationsEnabled
+                                ?
+                                <>
+                                    <i className="fas fa-bell-slash mr-2"/>
+                                    Disable notifcations
+                                </>
+                                :
+                                <>
+                                    <i className="fas fa-bell mr-2"/>
+                                    Enable notifcations
+                                </>}
+                        </Button>
                         {steamMainGame && 
                             <Pricing
                                 pricings={steamPricings}
