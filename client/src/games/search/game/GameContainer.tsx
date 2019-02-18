@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Game from './Game';
-import { SingleGameResponse, GameResponse } from '../../../../../client/client-server-common/common';
+import { SingleGameResponse, GameResponse, IGDBExternalCategoryEnum } from '../../../../../client/client-server-common/common';
 import { loggedIn } from '../../../service/account/main';
 
 interface IGameContainerProps extends RouteComponentProps<any> { }
@@ -49,6 +49,7 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
         this.onSimilarGamesMouseDown = this.onSimilarGamesMouseDown.bind(this);
         this.onSimilarGamesMouseUp = this.onSimilarGamesMouseUp.bind(this);
         this.onNotificationsClick = this.onNotificationsClick.bind(this);
+        this.onPricingClick = this.onPricingClick.bind(this);
     }
 
     componentWillMount(): void {
@@ -157,6 +158,24 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
             }), 50);
     };
 
+    onPricingClick(externalCategoryEnum: IGDBExternalCategoryEnum): void {
+        let link: string = undefined;
+
+        if (externalCategoryEnum === IGDBExternalCategoryEnum.steam) {
+            link = this.state.game.steam_link;
+        } else if (externalCategoryEnum === IGDBExternalCategoryEnum.gog) {
+            link = this.state.game.gog_link;
+        } else if (externalCategoryEnum === IGDBExternalCategoryEnum.microsoft) {
+            link = this.state.game.microsoft_link;
+        } else if (externalCategoryEnum === IGDBExternalCategoryEnum.apple) {
+            link = this.state.game.apple_link;
+        } else if (externalCategoryEnum === IGDBExternalCategoryEnum.android) {
+            link = this.state.game.android_link;
+        }
+
+        window.open(link, "_blank");
+    }
+
     render() {
         return (
             <Game
@@ -178,6 +197,7 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
                 onSimilarGamesMouseUp={this.onSimilarGamesMouseUp}
                 onSimilarGamesMouseMove={this.onSimilarGamesMouseMove}
                 onNotificationsClick={this.onNotificationsClick}
+                onPricingClick={this.onPricingClick}
             />
         );
     }

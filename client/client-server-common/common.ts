@@ -608,7 +608,9 @@ export interface PriceInfo {
     external_category_enum: IGDBExternalCategoryEnum;
     pricings_enum: PricingsEnum;
     title: string;
-    price: string;
+    price: number;
+    coming_soon: boolean;
+    preorder: boolean;
     discount_percent: number;
 }
 
@@ -663,7 +665,9 @@ export interface PriceInfoResponse {
     pricingEnum: PricingsEnum;
     igdbGamesSysKeyId: number;
     title: string;
-    price: string;
+    price: number;
+    coming_soon: boolean;
+    preorder: boolean;
     discount_percent: number;
     expires_dt: Date;
 }
@@ -709,7 +713,7 @@ export enum IGDBExternalCategoryEnum {
     "android" = 15
 }
 
-export const convertIGDBExternCateEndumToSysKeyId = (externCateEnum: IGDBExternalCategoryEnum): number => {
+export const convertIGDBExternCateEnumToSysKeyId = (externCateEnum: IGDBExternalCategoryEnum): number => {
     if (externCateEnum === IGDBExternalCategoryEnum.steam) {
         return 1;
     } else if (externCateEnum === IGDBExternalCategoryEnum.gog) {
@@ -771,15 +775,12 @@ export interface IGDBExternalGame {
 }
 
 export enum PricingsEnum {
-    free = 1,
-    free_or_discounted_with_xbox_game_pass = 2,
-    free_or_discounted_with_xbox_live_gold = 3,
-    main_game = 4,
-    bundles = 5,
-    dlc = 6,
-    coming_soon = 7,
-    preorder = 8,
-    in_app_purchase = 9,
+    free_or_discounted_with_xbox_game_pass = 1,
+    free_or_discounted_with_xbox_live_gold = 2,
+    main_game = 3,
+    bundles = 4,
+    dlc = 5,
+    in_app_purchase = 6,
 }
 
 /* Database tables */
@@ -827,7 +828,7 @@ export const DbTableIGDBGenreEnumFields: string[] = [`igdb_genre_enum_sys_key_id
 export const DbTableIGDBImagesFields: string[] = [`igdb_images_sys_key_id`, `id`, `alpha_channel`, `animated`, `width`, `height`];
 export const DbTableIGDBPlatformEnumFields: string[] = [`igdb_platform_enum_sys_key_id`, `id`, `name`];
 export const DbTablePlatformsFields: string[] = [`platforms_sys_key_id`, `igdb_platform_enum_sys_key_id`, `igdb_games_sys_key_id`];
-export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `igdb_external_enum_sys_key_id`, `pricings_enum_sys_key_id`, `igdb_games_sys_key_id`, `title`, `price`, `discount_percent`, `expires_dt`];
+export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `igdb_external_enum_sys_key_id`, `pricings_enum_sys_key_id`, `igdb_games_sys_key_id`, `title`, `price`, `discount_percent`, `coming_soon`, `preorder`, `expires_dt`];
 export const DbTablePricingsEnumFields: string[] = [`pricings_enum_sys_key_id`, `name`];
 export const DbTableRatingsFields: string[] = [`ratings_sys_key_id`, `igdb_games_sys_key_id`, `accounts_sys_key_id`, `rating`, `log_dt`];
 export const DbTableReleaseDatesFields: string[] = [`release_dates_sys_key_id`, `release_date_ts`, `igdb_games_sys_key_id`];

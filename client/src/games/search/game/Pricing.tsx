@@ -8,6 +8,7 @@ interface IPricingProps {
     isDiscounted: boolean;
     basePrice: number;
     externalCategoryEnum: IGDBExternalCategoryEnum;
+    onPricingClick: (externalCategoryEnum: IGDBExternalCategoryEnum) => void;
 }
 
 const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
@@ -94,7 +95,7 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
                         ? 
                         <div>Free</div>
                         : 
-                        <div className="price-container">
+                        <div className="price-container" onClick={() => props.onPricingClick(props.externalCategoryEnum)}>
                             {props.isDiscounted && <del className="pr-1">${props.basePrice}</del>}
                             ${mainGame.price}
                         </div>}

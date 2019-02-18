@@ -32,6 +32,7 @@ interface IGameProps {
     onSimilarGamesMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
     onSimilarGamesMouseUp: (event: React.MouseEvent<HTMLDivElement>) => void;
     onNotificationsClick: () => void;
+    onPricingClick: (externalCategoryEnum: IGDBExternalCategoryEnum) => void;
 }
 
 const Game: React.SFC<IGameProps> = (props: IGameProps) => {
@@ -53,34 +54,34 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
     }
     
     let steamPricings: PriceInfo[] = props.game.pricings.filter((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.steam);
-    let steamMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.steam) && (priceInfo.pricings_enum === PricingsEnum.free || priceInfo.pricings_enum === PricingsEnum.main_game));
+    let steamMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.steam) && priceInfo.pricings_enum === PricingsEnum.main_game);
     let steamIsFree: boolean = steamMainGame && !steamMainGame.price;
     let steamIsDiscounted: boolean = steamMainGame && steamMainGame.price && !!steamMainGame.discount_percent;
-    let steamBasePrice: number = steamIsDiscounted && + (parseFloat(steamMainGame.price) / ((100 - steamMainGame.discount_percent) / 100)).toFixed(2);
+    let steamBasePrice: number = steamIsDiscounted && + (steamMainGame.price / ((100 - steamMainGame.discount_percent) / 100)).toFixed(2);
 
     let gogPricings: PriceInfo[] = props.game.pricings.filter((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.gog);
-    let gogMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.gog) && (priceInfo.pricings_enum === PricingsEnum.free || priceInfo.pricings_enum === PricingsEnum.main_game));
+    let gogMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.gog) && priceInfo.pricings_enum === PricingsEnum.main_game);
     let gogIsFree: boolean = gogMainGame && !gogMainGame.price;
     let gogIsDiscounted: boolean = gogMainGame && gogMainGame.price && !!gogMainGame.discount_percent;
-    let gogBasePrice: number = gogIsDiscounted && + (parseFloat(gogMainGame.price) / ((100 - gogMainGame.discount_percent) / 100)).toFixed(2);
+    let gogBasePrice: number = gogIsDiscounted && + (gogMainGame.price / ((100 - gogMainGame.discount_percent) / 100)).toFixed(2);
 
     let microsoftPricings: PriceInfo[] = props.game.pricings.filter((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.microsoft);
-    let microsoftMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.microsoft) && (priceInfo.pricings_enum === PricingsEnum.free || priceInfo.pricings_enum === PricingsEnum.main_game));
+    let microsoftMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.microsoft) && priceInfo.pricings_enum === PricingsEnum.main_game);
     let microsoftIsFree: boolean = microsoftMainGame && !microsoftMainGame.price;
     let microsoftIsDiscounted: boolean = microsoftMainGame && microsoftMainGame.price && !!microsoftMainGame.discount_percent;
-    let microsoftBasePrice: number = microsoftIsDiscounted && + (parseFloat(microsoftMainGame.price) / ((100 - microsoftMainGame.discount_percent) / 100)).toFixed(2);
+    let microsoftBasePrice: number = microsoftIsDiscounted && + (microsoftMainGame.price / ((100 - microsoftMainGame.discount_percent) / 100)).toFixed(2);
 
     let applePricings: PriceInfo[] = props.game.pricings.filter((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.apple);
-    let appleMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.apple) && (priceInfo.pricings_enum === PricingsEnum.free || priceInfo.pricings_enum === PricingsEnum.main_game));
+    let appleMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.apple) && priceInfo.pricings_enum === PricingsEnum.main_game);
     let appleIsFree: boolean = appleMainGame && !appleMainGame.price;
     let appleIsDiscounted: boolean = appleMainGame && appleMainGame.price && !!appleMainGame.discount_percent;
-    let appleBasePrice: number = appleIsDiscounted && + (parseFloat(appleMainGame.price) / ((100 - appleMainGame.discount_percent) / 100)).toFixed(2);
+    let appleBasePrice: number = appleIsDiscounted && + (appleMainGame.price / ((100 - appleMainGame.discount_percent) / 100)).toFixed(2);
 
     let androidPricings: PriceInfo[] = props.game.pricings.filter((priceInfo: PriceInfo) => priceInfo.external_category_enum === IGDBExternalCategoryEnum.android);
-    let androidMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.android) && (priceInfo.pricings_enum === PricingsEnum.free || priceInfo.pricings_enum === PricingsEnum.main_game));
+    let androidMainGame: PriceInfo = props.game.pricings.find((priceInfo: PriceInfo) => (priceInfo.external_category_enum === IGDBExternalCategoryEnum.android) && priceInfo.pricings_enum === PricingsEnum.main_game);
     let androidIsFree: boolean = androidMainGame && !androidMainGame.price;
     let androidIsDiscounted: boolean = androidMainGame && androidMainGame.price && !!androidMainGame.discount_percent;
-    let androidBasePrice: number = androidIsDiscounted && + (parseFloat(androidMainGame.price) / ((100 - androidMainGame.discount_percent) / 100)).toFixed(2);
+    let androidBasePrice: number = androidIsDiscounted && + (androidMainGame.price / ((100 - androidMainGame.discount_percent) / 100)).toFixed(2);
 
     const maxWidth: number = 250;
     const aspectRatio: number = props.game.cover && (maxWidth / props.game.cover.width);
@@ -178,6 +179,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 isDiscounted={steamIsDiscounted}
                                 basePrice={steamBasePrice}
                                 externalCategoryEnum={IGDBExternalCategoryEnum.steam}
+                                onPricingClick={props.onPricingClick}
                             />}
                         {gogMainGame && 
                             <Pricing
@@ -186,6 +188,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 isDiscounted={gogIsDiscounted}
                                 basePrice={gogBasePrice}
                                 externalCategoryEnum={IGDBExternalCategoryEnum.gog}
+                                onPricingClick={props.onPricingClick}
                             />}
                         {microsoftMainGame && 
                             <Pricing
@@ -194,6 +197,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 isDiscounted={microsoftIsDiscounted}
                                 basePrice={microsoftBasePrice}
                                 externalCategoryEnum={IGDBExternalCategoryEnum.microsoft}
+                                onPricingClick={props.onPricingClick}
                             />}
                         {appleMainGame && 
                             <Pricing
@@ -202,6 +206,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 isDiscounted={appleIsDiscounted}
                                 basePrice={appleBasePrice}
                                 externalCategoryEnum={IGDBExternalCategoryEnum.apple}
+                                onPricingClick={props.onPricingClick}
                             />}
                         {androidMainGame && 
                             <Pricing
@@ -210,6 +215,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 isDiscounted={androidIsDiscounted}
                                 basePrice={androidBasePrice}
                                 externalCategoryEnum={IGDBExternalCategoryEnum.android}
+                                onPricingClick={props.onPricingClick}
                             />}
                         {props.game.platforms && 
                             <Platforms

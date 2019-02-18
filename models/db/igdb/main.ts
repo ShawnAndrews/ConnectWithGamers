@@ -196,7 +196,7 @@ class IGDBModel extends DatabaseBase {
 
             // check if cover exists
             this.custom(
-                `SELECT ee.${DbTableIGDBExternalEnumFields[1]} as 'external_category_enum', pc.${DbTablePricingsFields[2]}, pc.${DbTablePricingsFields[4]}, pc.${DbTablePricingsFields[5]}, pc.${DbTablePricingsFields[6]} FROM ${DbTables.pricings} pc
+                `SELECT ee.${DbTableIGDBExternalEnumFields[1]} as 'external_category_enum', pc.${DbTablePricingsFields[2]}, pc.${DbTablePricingsFields[4]}, pc.${DbTablePricingsFields[5]}, pc.${DbTablePricingsFields[6]}, pc.${DbTablePricingsFields[7]}, pc.${DbTablePricingsFields[8]} FROM ${DbTables.pricings} pc
                 JOIN ${DbTables.igdb_games} ig ON pc.${DbTablePricingsFields[3]} = ig.${DbTableIGDBGamesFields[0]}
                 JOIN ${DbTables.igdb_external_enum} ee ON pc.${DbTablePricingsFields[1]} = ee.${DbTableIGDBExternalEnumFields[0]}
                 WHERE ig.${DbTableIGDBGamesFields[1]}=?`,
@@ -205,7 +205,7 @@ class IGDBModel extends DatabaseBase {
                     const pricings: PriceInfo[] = [];
 
                     dbResponse.data.forEach((rawPricing: any) => {
-                        const pricing: PriceInfo = { external_category_enum: rawPricing.external_category_enum, pricings_enum: rawPricing.pricings_enum_sys_key_id, title: rawPricing.title, price: rawPricing.price, discount_percent: rawPricing.discount_percent };
+                        const pricing: PriceInfo = { external_category_enum: rawPricing.external_category_enum, pricings_enum: rawPricing.pricings_enum_sys_key_id, title: rawPricing.title, price: rawPricing.price, discount_percent: rawPricing.discount_percent, coming_soon: rawPricing.coming_soon, preorder: rawPricing.preorder };
                         pricings.push(pricing);
                     });
 

@@ -1,4 +1,4 @@
-import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum, convertIGDBExternCateEndumToSysKeyId } from "../../../../client/client-server-common/common";
+import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum, convertIGDBExternCateEnumToSysKeyId } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import * as cheerio from "cheerio";
 const fs = require("fs");
@@ -20,27 +20,24 @@ export function getAndroidPricings(igdb_games_sys_key_id: number, android_link: 
             })
             .then((response: AxiosResponse) => {
                 const $: CheerioStatic = cheerio.load(response.data);
-                const externalEnumSysKey: number = convertIGDBExternCateEndumToSysKeyId(IGDBExternalCategoryEnum.android);
+                const externalEnumSysKey: number = convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.android);
                 const pricings: PriceInfoResponse[] = [];
                 const datePlus7Days: Date = new Date();
                 datePlus7Days.setDate(datePlus7Days.getDate() + 7);
 
+                const coming_soon: boolean = undefined;
+                const preorder: boolean = undefined;
                 const isFree: boolean = $(`.oocvOe button`).clone().children().remove().end().text() === `Install`;
                 const title: string = $(`h1 span`).text();
-                let price: string = undefined;
-                let pricingEnum: PricingsEnum = undefined;
+                let price: number = undefined;
+                const pricingEnum: PricingsEnum = PricingsEnum.main_game;
                 let discountPercent: number = undefined;
 
                 // free/main game
-                if (isFree) {
-                    pricingEnum = PricingsEnum.free;
-                } else {
-                    price = $(`.oocvOe button`).clone().children().remove().end().text().replace(`$`, ``).replace(`Buy`, ``).trim();
-                    discountPercent = Math.round((1 - (Number.parseFloat(price) / Number.parseFloat($(`.LV0gI`).text().replace(`$`, ``)))) * 100) || undefined;
-                    pricingEnum = PricingsEnum.main_game;
-                }
+                price = $(`.oocvOe button`).clone().children().remove().end().text() === `Install` ? undefined : Number.parseFloat($(`.oocvOe button`).clone().children().remove().end().text().replace(`$`, ``).replace(`Buy`, ``).trim());
+                discountPercent = Math.round((1 - (price / Number.parseFloat($(`.LV0gI`).text().replace(`$`, ``)))) * 100) || undefined;
 
-                const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                 pricings.push(pricing);
 
                 return resolve(pricings);
