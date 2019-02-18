@@ -512,13 +512,17 @@ class IGDBModel extends DatabaseBase {
             const pricingsVals: any[] = [];
 
             for (let i = 0; i < pricings.length; i++) {
-                for (const val of Object.values(pricings[i])) {
-                    // console.log(`adding val ${val}..`);
-                    pricingsVals.push(val);
-                }
+                pricingsVals.push(pricings[i].externalEnum);
+                pricingsVals.push(pricings[i].pricingEnum);
+                pricingsVals.push(pricings[i].igdbGamesSysKeyId);
+                pricingsVals.push(pricings[i].title);
+                pricingsVals.push(pricings[i].price);
+                pricingsVals.push(pricings[i].discount_percent);
+                pricingsVals.push(pricings[i].coming_soon);
+                pricingsVals.push(pricings[i].preorder);
+                pricingsVals.push(pricings[i].expires_dt);
             }
-            // console.log(`# of ()'s ${pricings.length}`);
-            // console.log(`# of vals ${pricingsVals.length} === ${pricings.length * 7}?`);
+
             this.custom(
                 `INSERT INTO ${DbTables.pricings}
                 (${DbTablePricingsFields.slice(1).join()})
