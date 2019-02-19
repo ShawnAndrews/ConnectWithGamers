@@ -21,7 +21,7 @@ TODO:
 - (8 hrs) Add component to game page above summary
     - Multi-player (via IGDB "Multiplayer Mode" endpoint)
     - Achievements(?) (Steam-tier: Regular, xBox: Regular, Playstation: Bronze/Silver/Gold/Platinum) (for each platform: Top 10 acheivements in a tooltip containing info like name + points awarded)
-- (6 hrs) Expand similar games, onHover include name/genres/platform + 1.1 zoom = dark filter
+- (12 hrs) Expand similar games, load all games data not just meta, onHover include name/genres/platform + 1.1 zoom + dark filter
 - (12 hrs) Chatroom roles functionality: Add images for chatroom roles and functionality (mod=delete messages + emotes + ban?), add .deleted flag to chatroom_messages. Clean up code.
 
 - (2 hr) global snackbar call(via redux)
