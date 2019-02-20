@@ -17,6 +17,7 @@ TODO:
 - (X) Remove Redis dependency (chatusers + news)
 - (X) Add Pricing Service Worker GoG + Microsoft + Apple + Android pricing
 
+- (1 hr) Add to homepage main game "Available 2019/2/12" with btn Preorder Now with custom link/date 
 - (?) IGDB login oauth
 - (8 hrs) Add component to game page above summary
     - Multi-player (via IGDB "Multiplayer Mode" endpoint)
