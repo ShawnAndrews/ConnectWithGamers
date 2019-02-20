@@ -72,13 +72,13 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                         <div className='platforms'>
                             {props.game.linkIcons && props.game.linkIcons.map((x: string) => <i className={`fab ${x} mx-2`}/>)}
                         </div>
-                        {props.game.pricings.length > 0 && 
-                            <Button
-                                className="price-btn mt-3" 
-                                variant="raised"
-                            >
-                                Buy now for ${bestPricing.price} USD
-                            </Button>}
+                        <div className="font-weight-bold color-tertiary"> Available 03/18</div>
+                        <Button
+                            className="price-btn mt-3" 
+                            variant="raised"
+                        >
+                            Pre-order for $59.99 USD
+                        </Button>
                     </>}
             </div>
             {!props.isEditorsChoiceGame && !bestPricing.price && props.game.pricings.length > 0 &&
