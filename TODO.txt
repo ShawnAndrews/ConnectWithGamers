@@ -15,19 +15,16 @@ TODO:
 - (X) Remove Migrations dependency (stopped using)
 - (X) Remove old Steam/Discord/Twitch code + styles + config settings
 - (X) Remove Redis dependency (chatusers + news)
-- (4 days) Add Pricing Service Worker GoG + Microsoft + Apple + Android pricing
-- (12 hrs) Chatroom roles functionality: Add images for chatroom roles and functionality (mod=delete messages + emotes + ban?), add .deleted flag to chatroom_messages. Clean up code.
+- (X) Add Pricing Service Worker GoG + Microsoft + Apple + Android pricing
 
-- (4 hrs - pending IGDB fix) Add component to game page above summary
-    - Single-player
+- (1 hr) Add to homepage main game "Available 2019/2/12" with btn Preorder Now with custom link/date 
+- (?) IGDB login oauth
+- (8 hrs) Add component to game page above summary
     - Multi-player (via IGDB "Multiplayer Mode" endpoint)
     - Achievements(?) (Steam-tier: Regular, xBox: Regular, Playstation: Bronze/Silver/Gold/Platinum) (for each platform: Top 10 acheivements in a tooltip containing info like name + points awarded)
-- (2 hr - pending IGDB bug fix) Expand similar_game info to include name/rating/etc
+- (12 hrs) Expand similar games, load all games data not just meta, onHover include name/genres/platform + 1.1 zoom + dark filter
+- (12 hrs) Chatroom roles functionality: Add images for chatroom roles and functionality (mod=delete messages + emotes + ban?), add .deleted flag to chatroom_messages. Clean up code.
 
 - (2 hr) global snackbar call(via redux)
 - (?) Notifications: (Friend add from chatroom, Follow games and notify users of price updates)
 - (2 weeks?) Library
-
-
-- precache mp4 preview + loop instead of black screen if no screenshots only video
-- IGDB login oauth
