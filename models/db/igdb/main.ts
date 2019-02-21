@@ -44,7 +44,7 @@ class IGDBModel extends DatabaseBase {
     setGame(game: GameResponse): Promise<void> {
 
         return new Promise((resolve, reject) => {
-            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, game.summary, game.first_release_date, game.video, game.video_cached, game.image_cached, game.steam_link, game.gog_link, game.microsoft_link, game.apple_link, game.android_link];
+            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, game.summary, game.first_release_date, game.video, game.video_cached, game.image_cached, game.steam_link, game.gog_link, game.microsoft_link, game.apple_link, game.android_link, game.multiplayer_enabled];
 
             this.insert(
                 DbTables.igdb_games,
@@ -80,7 +80,7 @@ class IGDBModel extends DatabaseBase {
 
                     Promise.all(gamePromises)
                         .then(() => {
-                            resolve();
+                            return resolve();
                             addTaskToWorker(game.id, ServiceWorkerEnums.video_previews);
                             addTaskToWorker(game.id, ServiceWorkerEnums.image_cacheing);
                             addTaskToWorker(game.id, ServiceWorkerEnums.pricing_update);
@@ -120,7 +120,7 @@ class IGDBModel extends DatabaseBase {
             let genres: number[] = undefined;
             let similar_games: SimilarGame[] = undefined;
             let pricings: PriceInfo[] = undefined;
-
+            
             Promise.all(gamePromises)
                 .then((vals: any) => {
                     cover = vals[0];
@@ -162,7 +162,8 @@ class IGDBModel extends DatabaseBase {
                                     microsoft_link: dbResponse.data[0].microsoft_link,
                                     apple_link: dbResponse.data[0].apple_link,
                                     android_link: dbResponse.data[0].android_link,
-                                    pricings: pricings
+                                    pricings: pricings,
+                                    multiplayer_enabled: dbResponse.data[0].multiplayer_enabled
                                 };
                                 if (!skipServiceWorkers) {
                                     addTaskToWorker(game.id, ServiceWorkerEnums.video_previews);
