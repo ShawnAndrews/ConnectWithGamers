@@ -228,7 +228,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 genres={props.game.genres}
                                 handleGenreClick={props.handleGenreClick}
                             />}
-                        {props.game.multi_enabled && 
+                        {props.game.multiplayer_enabled && 
                             <div className="multiplayer text-center mt-3">
                                 <i className="fas fa-users mr-2"/>
                                 Online Multiplayer

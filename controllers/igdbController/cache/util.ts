@@ -79,7 +79,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             let apple_link: string = undefined;
             let android_link: string = undefined;
             let multiplayer_enabled: boolean = false;
-            
+
             // id
             id = RawGame.id;
 
@@ -158,11 +158,11 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             if (RawGame.multiplayer_modes) {
                 RawGame.multiplayer_modes.forEach((multiplayerMode: IGDBMultiplayerMode) => {
                     if (multiplayerMode.onlinemax) {
-                        multiplayer_enabled = true;  
+                        multiplayer_enabled = true;
                     }
                 });
             }
-            
+
             // screenshots
             screenshots = RawGame.screenshots && isNaN(Number(RawGame.screenshots[0])) && RawGame.screenshots.map((x: IGDBImage) => {
                 if (typeof x === "number") {

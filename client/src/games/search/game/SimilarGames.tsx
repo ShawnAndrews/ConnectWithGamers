@@ -60,7 +60,7 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
                 <i className="fas fa-chevron-right"/>
             </div>
             <Slider {...settings}>
-                {props.similarGames.filter((similarGame: SimilarGame) => return similarGame.cover_id).map((similarGame: SimilarGame) => (
+                {props.similarGames.filter((similarGame: SimilarGame) => similarGame.cover_id).map((similarGame: SimilarGame) => (
                         <div key={similarGame.id} className="similar-game px-2">
                             <img 
                                 className="cursor-pointer"

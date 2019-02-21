@@ -120,7 +120,7 @@ class IGDBModel extends DatabaseBase {
             let genres: number[] = undefined;
             let similar_games: SimilarGame[] = undefined;
             let pricings: PriceInfo[] = undefined;
-            
+
             Promise.all(gamePromises)
                 .then((vals: any) => {
                     cover = vals[0];

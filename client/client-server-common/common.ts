@@ -745,7 +745,7 @@ export interface IGDBReleaseDate {
     y: number;
 }
 
-exort interface IGDBMultiplayerMode {
+export interface IGDBMultiplayerMode {
     id: number;
     campaigncoop: boolean;
     dropin: boolean;
