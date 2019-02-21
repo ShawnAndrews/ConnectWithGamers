@@ -603,7 +603,7 @@ export interface GameResponse {
     apple_link: string;
     android_link: string;
     pricings: PriceInfo[];
-    multi_enabled: boolean;
+    multiplayer_enabled: boolean;
 }
 
 export interface PriceInfo {
