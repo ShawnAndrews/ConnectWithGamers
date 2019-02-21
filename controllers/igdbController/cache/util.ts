@@ -1,4 +1,4 @@
-import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IGDBReleaseDate, IGDBImage, GameFields, buildIGDBRequestBody, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, SimilarGame, IGDBExternalCategoryEnum, IGDBExternalGame } from "../../../client/client-server-common/common";
+import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IGDBReleaseDate, IGDBImage, IGDBMultiplayerMode, GameFields, buildIGDBRequestBody, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, SimilarGame, IGDBExternalCategoryEnum, IGDBExternalGame } from "../../../client/client-server-common/common";
 import { ArrayClean } from "../../../util/main";
 import config from "../../../config";
 import axios, { AxiosResponse } from "axios";
@@ -78,7 +78,8 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             let microsoft_link: string = undefined;
             let apple_link: string = undefined;
             let android_link: string = undefined;
-
+            let multiplayer_enabled: boolean = false;
+            
             // id
             id = RawGame.id;
 
@@ -153,6 +154,15 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 return releaseDate || 0;
             });
 
+            // multiplayer enabled
+            if (RawGame.multiplayer_modes) {
+                RawGame.multiplayer_modes.forEach((multiplayerMode: IGDBMultiplayerMode) => {
+                    if (multiplayerMode.onlinemax) {
+                        multiplayer_enabled = true;  
+                    }
+                });
+            }
+            
             // screenshots
             screenshots = RawGame.screenshots && isNaN(Number(RawGame.screenshots[0])) && RawGame.screenshots.map((x: IGDBImage) => {
                 if (typeof x === "number") {
@@ -212,7 +222,8 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 microsoft_link: microsoft_link,
                 apple_link: apple_link,
                 android_link: android_link,
-                pricings: undefined
+                pricings: undefined,
+                multiplayer_enabled: multiplayer_enabled
             };
 
             gameResponses.push(gameResponse);
