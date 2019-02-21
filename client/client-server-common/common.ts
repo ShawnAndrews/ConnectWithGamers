@@ -444,9 +444,10 @@ export interface RawGame {
     videos: IGDBVideo[];
     external_games: IGDBExternalGame[];
     similar_games: RawGame[];
+    multiplayer_modes: IGDBMultiplayerMode[];
 }
 
-export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`, `similar_games.*`, `similar_games.cover.image_id`];
+export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`, `similar_games.*`, `similar_games.cover.image_id`, `multiplayer_modes.*`];
 
 export interface Genre {
     name: string;
@@ -602,6 +603,7 @@ export interface GameResponse {
     apple_link: string;
     android_link: string;
     pricings: PriceInfo[];
+    multi_enabled: boolean;
 }
 
 export interface PriceInfo {
@@ -741,6 +743,23 @@ export interface IGDBReleaseDate {
     created_at: number;
     updated_at: number;
     y: number;
+}
+
+exort interface IGDBMultiplayerMode {
+    id: number;
+    campaigncoop: boolean;
+    dropin: boolean;
+    game: number;
+    lancoop: boolean;
+    offlinecoop: boolean;
+    offlinecoopmax: number;
+    offlinemax: number;
+    onlinecoop: boolean;
+    onlinecoopmax: number;
+    onlinemax: number;
+    platform: number;
+    splitscreen: boolean;
+    splitscreenonline: boolean;
 }
 
 export interface IGDBImage {
