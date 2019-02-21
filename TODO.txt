@@ -28,3 +28,7 @@ TODO:
 - (2 hr) global snackbar call(via redux)
 - (?) Notifications: (Friend add from chatroom, Follow games and notify users of price updates)
 - (2 weeks?) Library
+
+
+- g2a pricing? https://www.g2a.com/search?query=call%20of%20duty%20wwii
+- kinguin pricing? https://www.kinguin.net/catalogsearch/result/index?p=1&q=call+of+duty+wwii

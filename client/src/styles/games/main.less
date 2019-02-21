@@ -11,7 +11,7 @@
     .fullsize-results {
         display: grid;
         grid-gap: 17px;
-        grid-template-columns: auto auto auto auto auto;
+        grid-template-columns: auto auto auto auto;
         grid-auto-rows: minmax(125px, 17vh);
     
         @media @lg {
@@ -29,7 +29,7 @@
 
             &.editor-feature {
                 grid-row: span 3;
-                grid-column: span 4;
+                grid-column: span 3;
     
                 @media @md {
                     grid-row: span 1;
@@ -70,7 +70,7 @@
                 position: absolute;
                 top: 0px;
                 left: 0px;
-                height: 100%;
+                height: calc(100% + 1px);
                 width: 100%;
                 background: radial-gradient(ellipse at center, rgba(255,255,255,0) 0%,rgba(255,255,255,.25) 100%);
                 display: none;
@@ -154,11 +154,15 @@
                     .price-btn {
                         min-width: unset!important;
                         min-height: unset!important;
-                        background-color: #4c6b22!important;
+                        background-color: !important;
                         color: white!important;
                         font-size: 0.7rem;
                         margin-bottom: 4px;
                         pointer-events: all;
+                        
+                        &:hover {
+                            background-color: #699230!important
+                        }
                     }
                 }
 

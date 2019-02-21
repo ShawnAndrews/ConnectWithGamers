@@ -93,7 +93,13 @@ function downloadAndSaveImage(inputPath: string, outputPath: string): Promise<vo
               return reject(err);
           });
 
-          writer.on("finish", () => { return resolve(); } );
+          writer.on("finish", () => {
+            if (fs.existsSync(outputPath)) {
+                return resolve();
+            } else {
+                return reject(`Failed to retrieve image for caching.`);
+            }
+          });
           writer.on("error", (error: string) => { return reject(error); } );
     });
   }
