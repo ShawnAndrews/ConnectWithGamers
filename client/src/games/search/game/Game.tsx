@@ -228,6 +228,11 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 genres={props.game.genres}
                                 handleGenreClick={props.handleGenreClick}
                             />}
+                        {props.game.multi_enabled && 
+                            <div className="multiplayer text-center mt-3">
+                                <i className="fas fa-users mr-2"/>
+                                Online Multiplayer
+                            </div>}
                     </div>
                 </div>
                 <div className="d-inline-block align-top pl-4 h-100 w-md-100" style={getCoverTitleContainerStyle()}>
