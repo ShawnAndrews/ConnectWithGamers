@@ -25,22 +25,22 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
     const bestPricingBasePrice: number = bestPricing.price && bestPricing.discount_percent && + (bestPricing.price / ((100 - bestPricing.discount_percent) / 100)).toFixed(2);
 
     return (
-        <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'editor-feature overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
+        <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'editor-feature overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
             {!props.isEditorsChoiceGame &&
-                <div className="screenshot w-100 h-100">
+                <div className="screenshot w-100 h-100" onClick={props.goToGame}>
                     <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
                 </div>}
             {props.isEditorsChoiceGame &&
                 (!props.videoPreviewEnded
-                ?
-                <video className="video-preview w-100 h-100" muted={true} autoPlay={true} loop={true} onEnded={props.onVideoPreviewEnded} playsInline={true}>
-                    <source src={`/cache/video-previews/${props.game.id}.mp4`} type="Video/mp4"/>
-                    <span>Your browser does not support the video tag.</span>
-                </video>
-                :
-                <>
-                    {<img className="screenshot w-100 h-100" src={props.game.image_cached ? getCachedIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big)} />}
-                </>)}
+                    ?
+                    <video className="video-preview in-grid w-100 h-100" muted={true} autoPlay={true} loop={true} onEnded={props.onVideoPreviewEnded} playsInline={true} onClick={props.goToGame}>
+                        <source src={`/cache/video-previews/${props.game.id}.mp4`} type="Video/mp4"/>
+                        <span>Your browser does not support the video tag.</span>
+                    </video>
+                    :
+                    <>
+                        {<img className="screenshot w-100 h-100" src={props.game.image_cached ? getCachedIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big)} />}
+                    </>)}
             <div className='overlay'/>
             {!props.isEditorsChoiceGame && <div className='text-overlay'/>}
             {props.isEditorsChoiceGame &&
@@ -75,6 +75,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                         <Button
                             className="price-btn mt-3" 
                             variant="raised"
+                            onClick={() => window.open('https://playspellbreak.com/#pre-alpha-section', '_blank')}
                         >
                             Sign up for alpha
                         </Button>
