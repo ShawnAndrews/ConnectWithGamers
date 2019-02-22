@@ -180,6 +180,11 @@ export enum GenreEnums {
     Sports = 14
 }
 
+export enum TokenEnums {
+    CWG_TOKEN = 1,
+    IGDB_TOKEN = 2
+}
+
 export enum Breakpoints {
     md = 768
 }
