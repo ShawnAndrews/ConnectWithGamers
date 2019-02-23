@@ -3,6 +3,7 @@ import Spinner from '../../spinner/main';
 import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Paper, TextField, Checkbox } from '@material-ui/core';
+import config from '../../../../config';
 
 interface ILoginFormProps {
     isLoading: boolean;
@@ -10,6 +11,7 @@ interface ILoginFormProps {
     password: string;
     rememberme: boolean;
     onClickLogin: (event: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLFormElement>) => void;
+    onClickIGDB: (event: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLFormElement>) => void;
     onClickNotAMember: React.MouseEventHandler<HTMLElement>;
     usernameChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
     passwordChanged: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -80,7 +82,12 @@ const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
                         </div>
                     </div>
                 </div>
-                <Button className="login-btn mt-3" onClick={props.onClickLogin} variant="contained" color="primary" fullWidth={true}>
+                
+                <Button className="igdb-btn mt-3" onClick={() => window.location.href = `${config.igdb.callback}&redirect_uri=${config.igdb.redirect_uri}&client_id=${config.igdb.client_id}`} variant="contained" color="primary" fullWidth={true}>
+                    <img className="mr-2" src="https://i.imgur.com/IULXbSp.png" height="23px" />
+                    Continue with IGDB
+                </Button>
+                <Button className="login-btn mt-2" onClick={props.onClickLogin} variant="contained" color="primary" fullWidth={true}>
                     Login
                 </Button>
             </form>

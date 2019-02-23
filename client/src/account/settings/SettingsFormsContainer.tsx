@@ -88,7 +88,10 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
             image: undefined,
             emailVerified: undefined
         };
-        this.loadSettings();
+
+        console.log(`CURRENT: ${JSON.stringify(this.props.history.location)}`);
+
+        // this.loadSettings();
     }
 
     loadSettings(): void {

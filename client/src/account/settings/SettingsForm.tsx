@@ -48,7 +48,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
     if (props.isLoading) {
         return (
             <div className="account-center">
-                <Spinner className="text-center mt-5" loadingMsg={props.loadingMsg} />
+                <Spinner className="text-center mt-5 pt-5" loadingMsg={props.loadingMsg} />
             </div>
         );
     }

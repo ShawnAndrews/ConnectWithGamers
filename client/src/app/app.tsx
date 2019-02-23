@@ -46,6 +46,10 @@ class App extends React.Component<IAppProps, IAppState> {
                         />
                     ));
 
+        if (this.props.history.location.pathname.startsWith(`/igdb/callback`)) {
+            return <Redirect to={`/account/igdb/auth${this.props.location.search}`} />;
+        }
+
         return (
             <>
                 <NavbarContainer/>
