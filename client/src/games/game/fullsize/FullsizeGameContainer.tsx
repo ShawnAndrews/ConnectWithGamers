@@ -46,7 +46,7 @@ class FullsizeGameContainer extends React.Component<IFullsizeGameContainerProps,
     }
 
     onHoverGame(): void {
-        $(`.game-${this.props.index} .overlay`).fadeIn("fast");
+        $(`.game-${this.props.index} .overlay`).stop().fadeIn("fast");
         this.setState({
             hoveredTimeout: window.setTimeout(() => {
                 this.setState({ 

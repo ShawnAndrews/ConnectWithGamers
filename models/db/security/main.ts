@@ -9,7 +9,8 @@ import {
     TokenInfo,
     DbTables,
     DbTableAccountsFields,
-    DbTableTokensFields } from "../../../client/client-server-common/common";
+    DbTableTokensFields,
+    TokenEnums } from "../../../client/client-server-common/common";
 import { resolve } from "path";
 
 export enum SecurityCacheEnum {
@@ -143,12 +144,13 @@ class SecurityModel extends DatabaseBase {
                 const response: GenericModelResponse = {error: undefined, data: undefined};
                 const authToken: string = genRandStr(config.token_length);
                 const authTokenExpiration: number = remember ? Date.now() + config.token_remember_expiration : Date.now() + config.token_expiration;
+                const tokenEnum: TokenEnums.CWG_TOKEN;
 
                 this.insert(
                     DbTables.tokens,
                     DbTableTokensFields.slice(1),
-                    [dbAccountid, authToken, Date.now() / 1000, authTokenExpiration / 1000],
-                    "?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?)")
+                    [dbAccountid, authToken, tokenEnum, Date.now() / 1000, authTokenExpiration / 1000],
+                    "?, ?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?)")
                     .then((dbResponse: GenericModelResponse) => {
                         if (dbResponse.error) {
                             return reject(dbResponse.error);
