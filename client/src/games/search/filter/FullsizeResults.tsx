@@ -19,7 +19,7 @@ const FullsizeResults: React.SFC<IFullsizeResultsProps> = (props: IFullsizeResul
 
     if (props.isLoading) {
         return (
-            <Spinner className="text-center mt-5" loadingMsg={props.loadingMsg} />
+            <Spinner className="text-center mt-5 pt-5" loadingMsg={props.loadingMsg} />
         );
     }
 

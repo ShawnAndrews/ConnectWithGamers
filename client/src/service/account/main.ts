@@ -83,6 +83,27 @@ export function httpAccountSettings(): Promise<AccountInfoResponse> {
 /**
  * HTTP request to verify login credentials.
  */
+export function httpIGDBLogin (igdbAuthCode): Promise<null> {
+    return new Promise((resolve: any, reject: any) => {
+        axios.post('/account/login/igdb', {
+            igdbAuthCode: igdbAuthCode
+        })
+        .then((result) => {
+            if (result.data.error) {
+                return reject(result.data.error);
+            } else {
+                return resolve();
+            }
+        })
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
+        });
+    }); 
+}
+
+/**
+ * HTTP request to verify login credentials.
+ */
 export function httpLogin (username: string, password: string, remember: boolean): Promise<null> {
     return new Promise((resolve: any, reject: any) => {
         axios.post('/account/login', {

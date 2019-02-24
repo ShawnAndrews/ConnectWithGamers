@@ -19,7 +19,7 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
     
     if (props.isLoading) {
         return (
-            <Spinner className="text-center mt-5" loadingMsg="Loading results..." />
+            <Spinner className="text-center mt-5 pt-5" loadingMsg="Loading results..." />
         );
     }
 

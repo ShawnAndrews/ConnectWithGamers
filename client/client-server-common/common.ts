@@ -2,11 +2,15 @@ import config from "../../config";
 const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
+export const SALT_RNDS = 10;
+export const EMAIL_VERIFICATION_LEN = 15;
+export const ACCOUNT_RECOVERYID_LEN = 32;
+
+export const ExcludedGameIds: number[] = [111063, 111908, 114910, 59227, 25260];
+
 export enum SQLErrorCodes {
     DUPLICATE_ROW = 1062
 }
-
-export const ExcludedGameIds: number[] = [111063, 111908, 114910, 59227, 25260];
 
 export const IGDBImageUploadPath: string = `https://images.igdb.com/igdb/image/upload`;
 
@@ -180,9 +184,9 @@ export enum GenreEnums {
     Sports = 14
 }
 
-export enum TokenEnums {
-    CWG_TOKEN = 1,
-    IGDB_TOKEN = 2
+export enum AccountTypeEnums {
+    CWG = 1,
+    IGDB = 2
 }
 
 export enum Breakpoints {
@@ -210,11 +214,12 @@ export interface Config {
         apiURL: string,
         key: string,
         pageLimit: number,
-        callback: string,
         client_id: string,
         client_secret: string,
         redirect_uri: string,
-        grant_type: string
+        grant_type: string,
+        token_url: string,
+        auth_url: string
     };
     steam: {
         dbURL: string,
@@ -310,6 +315,8 @@ export function validateUsername(username: string): string {
         return `Username too long. Must be at most ${MAX_USER_LEN} characters.`;
     } else if (username.length < MIN_USER_LEN) {
         return `Username too short. Must be at least ${MIN_USER_LEN} characters.`;
+    } else if (username.startsWith(`Anonymous`)) {
+        return `Username starts with a prohibited word 'Anonymous'.`;
     } else {
         return undefined;
     }
@@ -384,6 +391,7 @@ export function validateCredentials(username: string, password: string, email?: 
 
 export interface AccountInfo {
     accountid?: number;
+    accountType?: AccountTypeEnums;
     last_active?: number;
     username: string;
     email?: string;
@@ -842,7 +850,7 @@ export enum DbTables {
     tokens = "tokens",
 }
 
-export const DbTableAccountsFields: string[] = [`accounts_sys_key_id`, `username`, `email`, `password_hash`, `salt`, `log_dt`, `discord`, `steam`, `twitch`, `email_verification_code`, `recovery_verification_code`, `profile`, `profile_file_extension`];
+export const DbTableAccountsFields: string[] = [`accounts_sys_key_id`, `accounts_type_enum_sys_key_id`, `username`, `email`, `password_hash`, `salt`, `log_dt`, `discord`, `steam`, `twitch`, `email_verification_code`, `recovery_verification_code`, `profile`, `profile_file_extension`, `igdb_account_id`];
 export const DbTableAccountsRolesFields: string[] = [`accounts_roles_sys_key_id`, `accounts_role_enum_sys_key_id`, `accounts_sys_key_id`];
 export const DbTableChatEmotesFields: string[] = [`chat_emotes_sys_key_id`, `prefix`, `suffix`, `file_extension`, `log_dt`];
 export const DbTableChatroomMessagesFields: string[] = [`chatroom_messages_sys_key_id`, `username`, `text`, `attachment`, `attachment_file_extension`, `chatroom_id`, `log_dt`];
@@ -865,8 +873,8 @@ export const DbTableResultsFields: string[] = [`results_sys_key_id`, `results_en
 export const DbTableResultsEnumFields: string[] = [`results_enum_sys_key_id`, `name`];
 export const DbTableScreenshotsFields: string[] = [`screenshots_sys_key_id`, `igdb_images_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `igdb_games_sys_key_id`, `similar_id`, `similar_name`, `similar_cover_id`];
-export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `token_enum_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];
-export const DbTableTokenEnumFields: string[] = [`token_enum_sys_key_id`, `name`];
+export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `accounts_type_enum_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];
+export const DbTableAccountsTypeEnumFields: string[] = [`accounts_type_enum_sys_key_id`, `name`];
 export const DbTableIGDBNewsFields: string[] = [`igdb_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];
 
 /* Service Worker */

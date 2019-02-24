@@ -14,7 +14,7 @@ const EmotesView: React.SFC<IEmotesViewProps> = (props: IEmotesViewProps) => {
     if (props.isLoading) {
         return (
             <div className="account-center margin-top">
-                <Spinner className="margin-top text-center mt-5" loadingMsg="Loading..." />
+                <Spinner className="margin-top text-center mt-5 pt-5" loadingMsg="Loading..." />
             </div>
         );
     }

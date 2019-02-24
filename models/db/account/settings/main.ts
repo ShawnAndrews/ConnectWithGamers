@@ -1,12 +1,12 @@
-import config from "../../../config";
-import { genRandStr } from "../../../util/main";
-import DatabaseBase from "../base/dbBase";
-import { EMAIL_VERIFICATION_LEN, SALT_RNDS, ACCOUNT_RECOVERYID_LEN } from "../account/main";
+import config from "../../../../config";
+import { genRandStr } from "../../../../util/main";
+import DatabaseBase from "../../base/dbBase";
 import {
     validateUsername, validateEmail, validateURL, validatePassword,
-    GenericModelResponse, AccountInfo, DbTables, DbTableAccountsFields } from "../../../client/client-server-common/common";
+    GenericModelResponse, AccountInfo, DbTables, DbTableAccountsFields,
+    EMAIL_VERIFICATION_LEN, SALT_RNDS, ACCOUNT_RECOVERYID_LEN } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-import { securityModel, SecurityCacheEnum } from "../security/main";
+import { securityModel, SecurityCacheEnum } from "../../security/main";
 const bcrypt = require("bcryptjs");
 
 class SettingsModel extends DatabaseBase {
@@ -29,6 +29,7 @@ class SettingsModel extends DatabaseBase {
                 [accountid])
                 .then((dbResponse: GenericModelResponse) => {
                     const accountId = dbResponse.data[0].accounts_sys_key_id;
+                    const accountType = dbResponse.data[0].accounts_type_enum_sys_key_id;
                     const profile = dbResponse.data[0].profile;
                     const profileFileExtension = dbResponse.data[0].profile_file_extension;
                     const username = dbResponse.data[0].username;
@@ -39,6 +40,7 @@ class SettingsModel extends DatabaseBase {
                     const emailVerified = dbResponse.data[0].email_verification_code === null;
                     const accountInfo: AccountInfo = {
                         accountid: accountId,
+                        accountType: accountType,
                         profile: profile,
                         profile_file_extension: profileFileExtension,
                         username: username,
@@ -66,7 +68,7 @@ class SettingsModel extends DatabaseBase {
             this.select(
                 DbTables.accounts,
                 DbTableAccountsFields,
-                `${DbTableAccountsFields[1]}=?`,
+                `${DbTableAccountsFields[2]}=?`,
                 [username])
                 .then((dbResponse: GenericModelResponse) => {
                     const recoveryid: string = dbResponse.data[0].recovery_verification_code;
@@ -101,7 +103,7 @@ class SettingsModel extends DatabaseBase {
 
                             this.update(
                                 DbTables.accounts,
-                                `${DbTableAccountsFields[11]}=?, ${DbTableAccountsFields[12]}=?`,
+                                `${DbTableAccountsFields[12]}=?, ${DbTableAccountsFields[13]}=?`,
                                 [true, fileExtension],
                                 `${DbTableAccountsFields[0]}=?`,
                                 [accountid])
@@ -150,7 +152,7 @@ class SettingsModel extends DatabaseBase {
 
                             this.update(
                                 DbTables.accounts,
-                                `${DbTableAccountsFields[11]}=?, ${DbTableAccountsFields[12]}=?`,
+                                `${DbTableAccountsFields[12]}=?, ${DbTableAccountsFields[13]}=?`,
                                 [false, undefined],
                                 `${DbTableAccountsFields[0]}=?`,
                                 [accountid])
@@ -189,7 +191,7 @@ class SettingsModel extends DatabaseBase {
 
             this.update(
                 DbTables.accounts,
-                `${DbTableAccountsFields[1]}=?`,
+                `${DbTableAccountsFields[2]}=?`,
                 [newUsername],
                 `${DbTableAccountsFields[0]}=?`,
                 [accountid])
@@ -223,7 +225,7 @@ class SettingsModel extends DatabaseBase {
 
             this.update(
                 DbTables.accounts,
-                `${DbTableAccountsFields[2]}=?,${DbTableAccountsFields[10]}=?`,
+                `${DbTableAccountsFields[3]}=?,${DbTableAccountsFields[10]}=?`,
                 [newEmail, emailVerification],
                 `${DbTableAccountsFields[0]}=?`,
                 [accountid])
@@ -258,7 +260,7 @@ class SettingsModel extends DatabaseBase {
 
             this.update(
                 DbTables.accounts,
-                `${DbTableAccountsFields[3]}=?,${DbTableAccountsFields[4]}=?`,
+                `${DbTableAccountsFields[4]}=?,${DbTableAccountsFields[5]}=?`,
                 [hash, salt],
                 `${DbTableAccountsFields[0]}=?`,
                 [accountid])
@@ -292,7 +294,7 @@ class SettingsModel extends DatabaseBase {
 
             this.update(
                 DbTables.accounts,
-                `${DbTableAccountsFields[6]}=?`,
+                `${DbTableAccountsFields[7]}=?`,
                 [newDiscord === "" ? undefined : newDiscord],
                 `${DbTableAccountsFields[0]}=?`,
                 [accountid])
@@ -319,7 +321,7 @@ class SettingsModel extends DatabaseBase {
             return new Promise( (resolve, reject) => {
                 this.update(
                     DbTables.accounts,
-                    `${DbTableAccountsFields[8]}=?`,
+                    `${DbTableAccountsFields[9]}=?`,
                     [newTwitch === "" ? undefined : newTwitch],
                     `${DbTableAccountsFields[0]}=?`,
                     [accountid])
@@ -385,7 +387,7 @@ class SettingsModel extends DatabaseBase {
             return new Promise( (resolve, reject) => {
                 this.update(
                     DbTables.accounts,
-                    `${DbTableAccountsFields[7]}=?`,
+                    `${DbTableAccountsFields[8]}=?`,
                     [newSteam === "" ? undefined : newSteam],
                     `${DbTableAccountsFields[0]}=?`,
                     [accountid])
@@ -451,7 +453,7 @@ class SettingsModel extends DatabaseBase {
             this.select(
                 DbTables.accounts,
                 DbTableAccountsFields,
-                `${DbTableAccountsFields[11]}=?`,
+                `${DbTableAccountsFields[12]}=?`,
                 [uid])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
@@ -480,7 +482,7 @@ class SettingsModel extends DatabaseBase {
 
             this.update(
                 DbTables.accounts,
-                `${DbTableAccountsFields[11]}=?`,
+                `${DbTableAccountsFields[12]}=?`,
                 [genRandStr(ACCOUNT_RECOVERYID_LEN)],
                 `${DbTableAccountsFields[0]}=?`,
                 [accountid])

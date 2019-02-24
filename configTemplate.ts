@@ -17,11 +17,12 @@ const config: Config = {
         apiURL: "https://api-v3.igdb.com",
         key: "",
         pageLimit: 50,
-        callback: "",
         client_id: "",
         client_secret: "",
         redirect_uri: "",
-        grant_type: "authorization_code"
+        grant_type: "authorization_code",
+        token_url: "https://www.igdb.com/oauth/token.json",
+        auth_url: "https://www.igdb.com/oauth/authorize"
     },
     steam: {
         dbURL: "https://steamdb.info/app",

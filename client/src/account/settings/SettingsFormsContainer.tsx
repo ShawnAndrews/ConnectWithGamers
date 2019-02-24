@@ -4,7 +4,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import SettingsForm from "../settings/SettingsForm";
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { AccountImageResponse, AccountInfoResponse } from '../../../../client/client-server-common/common';
+import { AccountImageResponse, AccountInfoResponse, AccountTypeEnums } from '../../../../client/client-server-common/common';
 import * as AccountService from '../../service/account/main';
 import { setLoggedIn } from '../../actions/main';
 
@@ -31,6 +31,7 @@ type Props = ISettingsFormContainerProps & ReduxStateProps & ReduxDispatchProps;
 
 interface ISettingsFormContainerState {
     accountId: number;
+    accountType: AccountTypeEnums;
     showLinks: boolean;
     isLoading: boolean;
     username: string;
@@ -70,6 +71,7 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
 
         this.state = {
             accountId: undefined,
+            accountType: undefined,
             showLinks: false,
             isLoading: true,
             username: undefined,
@@ -89,9 +91,7 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
             emailVerified: undefined
         };
 
-        console.log(`CURRENT: ${JSON.stringify(this.props.history.location)}`);
-
-        // this.loadSettings();
+        this.loadSettings();
     }
 
     loadSettings(): void {
@@ -100,6 +100,7 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
                 const profile_file_extension: string = response.data.profile_file_extension;
                 const profile: boolean = Boolean(response.data.profile);
                 const accountId = response.data.accountid;
+                const accountType = response.data.accountType;
                 const username = response.data.username;
                 const email = response.data.email;
                 const password = '';
@@ -110,6 +111,7 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
                 const profileLink: string = `/cache/chatroom/profile/${accountId}.${profile_file_extension}`;
                 this.setState({ 
                     accountId: accountId,
+                    accountType: accountType,
                     image: profile ? profileLink : undefined,
                     isLoading: false, 
                     username: username, 
@@ -298,6 +300,7 @@ class SettingsFormContainer extends React.Component<Props, ISettingsFormContaine
                 isLoading={this.state.isLoading}
                 loadingMsg={this.state.loadingMsg}
                 showLinks={this.state.showLinks}
+                accountType={this.state.accountType}
                 image={this.state.image}
                 username={this.state.username}
                 password={this.state.password}

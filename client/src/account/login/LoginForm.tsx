@@ -24,7 +24,7 @@ const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
     if (props.isLoading) {
         return (
             <div className="account-center">
-                <Spinner className="text-center mt-5" loadingMsg="Logging in..." />
+                <Spinner className="text-center mt-5 pt-5" loadingMsg="Logging in..." />
             </div>
         );
     }
@@ -83,11 +83,11 @@ const LoginForm: React.SFC<ILoginFormProps> = (props: ILoginFormProps) => {
                     </div>
                 </div>
                 
-                <Button className="igdb-btn mt-3" onClick={() => window.location.href = `${config.igdb.callback}&redirect_uri=${config.igdb.redirect_uri}&client_id=${config.igdb.client_id}`} variant="contained" color="primary" fullWidth={true}>
-                    <img className="mr-2" src="https://i.imgur.com/IULXbSp.png" height="23px" />
+                <Button className="igdb-btn color-primary mt-3" onClick={() => window.location.href = `${config.igdb.auth_url}?scope=read_user&response_type=code&redirect_uri=${config.igdb.redirect_uri}&client_id=${config.igdb.client_id}`} variant="contained" color="primary" fullWidth={true}>
+                    <img className="mr-2" src="https://i.imgur.com/B6J50bm.png" height="23px" />
                     Continue with IGDB
                 </Button>
-                <Button className="login-btn mt-2" onClick={props.onClickLogin} variant="contained" color="primary" fullWidth={true}>
+                <Button className="login-btn color-primary mt-2" onClick={props.onClickLogin} variant="contained" color="primary" fullWidth={true}>
                     Login
                 </Button>
             </form>

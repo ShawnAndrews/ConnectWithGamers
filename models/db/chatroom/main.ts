@@ -95,7 +95,7 @@ class ChatroomModel extends DatabaseBase {
                         this.select(
                             DbTables.accounts,
                             DbTableAccountsFields,
-                            `${DbTableAccountsFields[1]} IN (${Array.from(uniqueUsernames).map(() => "?").join()})`,
+                            `${DbTableAccountsFields[2]} IN (${Array.from(uniqueUsernames).map(() => "?").join()})`,
                             Array.from(uniqueUsernames))
                             .then((rawAccounts: GenericModelResponse) => {
                                 const usernamesWithProfile: string[] = [];

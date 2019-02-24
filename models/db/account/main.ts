@@ -1,14 +1,8 @@
 const bcrypt = require("bcryptjs");
-import axios from "axios";
 import DatabaseBase from "../base/dbBase";
 import { genRandStr } from "../../../util/main";
 import { sendVerificationEmail } from "../../../util/nodemailer";
-import { GenericModelResponse, RecoveryEmailInfo, AccountsInfo, SteamFriend, TwitchUser, TwitchEmote, TwitchPair, AccountInfo, GameRating, DbTableAccountsFields, DbTables, DbTableRatingsFields, DbTableIGDBGamesFields } from "../../../client/client-server-common/common";
-import config from "../../../config";
-
-export const SALT_RNDS = 10;
-export const EMAIL_VERIFICATION_LEN = 15;
-export const ACCOUNT_RECOVERYID_LEN = 32;
+import { GenericModelResponse, RecoveryEmailInfo, AccountsInfo, AccountInfo, GameRating, DbTableAccountsFields, DbTables, DbTableRatingsFields, DbTableIGDBGamesFields, SALT_RNDS, ACCOUNT_RECOVERYID_LEN, EMAIL_VERIFICATION_LEN, AccountTypeEnums } from "../../../client/client-server-common/common";
 
 class AccountModel extends DatabaseBase {
 
@@ -19,12 +13,13 @@ class AccountModel extends DatabaseBase {
     /**
      * Create an account.
      */
-    createAccount(username: string, email: string, password: string, defaultTwitch?: string, defaultSteam?: string, defaultDiscord?: string): Promise<number> {
+    createAccount(username: string, email: string, password: string): Promise<number> {
 
         const salt = bcrypt.genSaltSync(SALT_RNDS);
         const hash = bcrypt.hashSync(password, salt);
         const emailVerification = genRandStr(EMAIL_VERIFICATION_LEN);
-        const columnValues: any[] = [username, email, hash, salt, Date.now() / 1000, defaultDiscord || undefined, defaultSteam || undefined, defaultTwitch || undefined, undefined, emailVerification, genRandStr(ACCOUNT_RECOVERYID_LEN)];
+
+        const columnValues: any[] = [AccountTypeEnums.CWG, username, email, hash, salt, Date.now() / 1000, undefined, undefined, undefined, emailVerification, genRandStr(ACCOUNT_RECOVERYID_LEN), false, undefined, undefined];
 
         return new Promise( (resolve, reject) => {
 
@@ -32,7 +27,7 @@ class AccountModel extends DatabaseBase {
                 DbTables.accounts,
                 DbTableAccountsFields.slice(1),
                 columnValues,
-                `?, ?, ?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?`)
+                `?, ?, ?, ?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?`)
                 .then((response: GenericModelResponse) => {
                     sendVerificationEmail(email, `http://www.connectwithgamers.com/account/verify/${emailVerification}`)
                     .then(() => {
@@ -44,7 +39,6 @@ class AccountModel extends DatabaseBase {
                     });
                 })
                 .catch((error: string) => {
-                    console.log(`Faled insert: ${error}`);
                     return reject(`Username is taken.`);
                 });
 
@@ -63,7 +57,7 @@ class AccountModel extends DatabaseBase {
             this.select(
                 DbTables.accounts,
                 DbTableAccountsFields,
-                `${DbTableAccountsFields[1]}=?`,
+                `${DbTableAccountsFields[2]}=?`,
                 [username])
                 .then((dbResponse: GenericModelResponse) => {
                     const accountid: number = dbResponse.data[0].accounts_sys_key_id;
@@ -113,7 +107,7 @@ class AccountModel extends DatabaseBase {
             this.select(
                 DbTables.accounts,
                 DbTableAccountsFields,
-                `${DbTableAccountsFields[1]}=?`,
+                `${DbTableAccountsFields[2]}=?`,
                 [username])
                 .then((dbResponse: GenericModelResponse) => {
                     const RecoveryEmailInfo: RecoveryEmailInfo = { email: dbResponse.data[0].email, uid: dbResponse.data[0].recovery_verification_code };
@@ -158,7 +152,7 @@ class AccountModel extends DatabaseBase {
             this.select(
                 DbTables.accounts,
                 DbTableAccountsFields,
-                `${DbTableAccountsFields[1]} LIKE ${usernameFilter ? `?` : `'%'`}`,
+                `${DbTableAccountsFields[2]} LIKE ${usernameFilter ? `?` : `'%'`}`,
                 [`%${usernameFilter}%`])
                 .then((dbResponse: GenericModelResponse) => {
                     const accounts: AccountInfo[] = [];
@@ -173,8 +167,7 @@ class AccountModel extends DatabaseBase {
                     return resolve(dbUsers);
                 })
                 .catch((err: string) => {
-                    console.log(`Database error: ${err}`);
-                    return reject();
+                    return reject(`Database error: ${err}`);
                 });
 
         });
@@ -214,8 +207,7 @@ class AccountModel extends DatabaseBase {
                     return resolve(dbUsers);
                 })
                 .catch((err: string) => {
-                    console.log(`Database error: ${err}`);
-                    return reject();
+                    return reject(`Database error: ${err}`);
                 });
 
         });
@@ -273,7 +265,7 @@ class AccountModel extends DatabaseBase {
 
                     return this.update(
                         DbTables.accounts,
-                        `${DbTableAccountsFields[10]}=?`,
+                        `${DbTableAccountsFields[11]}=?`,
                         [undefined],
                         `${DbTableAccountsFields[0]}=?`,
                         [accountid])

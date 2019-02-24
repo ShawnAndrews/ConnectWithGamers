@@ -19,7 +19,7 @@ const RecoveryForm: React.SFC<IRecoveryFormProps> = (props: IRecoveryFormProps) 
 
     if (props.isLoading) {
         return (
-            <Spinner className="text-center mt-5" loadingMsg="Loading..." />
+            <Spinner className="text-center mt-5 pt-5" loadingMsg="Loading..." />
         );
     }
 

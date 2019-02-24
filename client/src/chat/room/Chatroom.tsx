@@ -51,7 +51,7 @@ const Chatroom: React.SFC<IChatroomProps> = (props: IChatroomProps) => {
                 <div className={`chatroom-messages-container y-scrollable custom-scrollbar h-100`}>
                     {props.messagesLoading && 
                         <div className="chatroom-messages-loading">
-                            <Spinner className="text-center mt-5" loadingMsg="Loading chat..." />
+                            <Spinner className="text-center mt-5 pt-5" loadingMsg="Loading chat..." />
                         </div>}
                     {!props.messagesLoading && props.chatLog.length === 0 && 
                         <h3 className="text-center mt-5 color-tertiary">No comments<i className="far fa-comments ml-3"/></h3>}

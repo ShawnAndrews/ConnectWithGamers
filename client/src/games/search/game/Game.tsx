@@ -40,7 +40,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
     if (props.isLoading) {
         return (
             <div className="menu-center">
-                <Spinner className="text-center mt-5" loadingMsg="Loading game..." />
+                <Spinner className="text-center mt-5 pt-5" loadingMsg="Loading game..." />
             </div>
         );
     }

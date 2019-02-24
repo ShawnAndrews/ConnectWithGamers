@@ -6,7 +6,7 @@ import { AUTH_TOKEN_NAME, validateCredentials, RecoveryEmailInfo, EmailRecoveryV
 import routeModel from "../../models/routemodel";
 import { accountModel } from "../../models/db/account/main";
 import { securityModel } from "../../models/db/security/main";
-import { settingsModel } from "../../models/db/settings/main";
+import { settingsModel } from "../../models/db/account/settings/main";
 import { sendRecoveryEmail } from "../../util/nodemailer";
 
 export const routes = new routeModel();
@@ -14,6 +14,7 @@ export const routes = new routeModel();
 /* routes */
 routes.addRoute("signup", "/signup");
 routes.addRoute("login", "/login");
+routes.addRoute("login/igdb", "/login/igdb");
 routes.addRoute("public/info", "/public/info");
 routes.addRoute("settings", "/settings");
 routes.addRoute("settings/change", "/settings/change");
@@ -59,6 +60,30 @@ router.post(routes.getRoute("signup"), (req: Request, res: Response) => {
             .send(datalessResponse);
         })
         .catch((error: string) => {
+            datalessResponse.error = error;
+            return res
+            .send(datalessResponse);
+        });
+
+});
+
+router.post(routes.getRoute("login/igdb"), (req: Request, res: Response) => {
+
+    const datalessResponse: DatalessResponse = { error: undefined };
+    const igdbAuthCode: string = req.body.igdbAuthCode;
+
+    // authenticate
+    securityModel.IGDBAuthenticate(igdbAuthCode)
+        .then((response: TokenInfo) => {
+            // token success
+            const newToken: string = response.token;
+            const newTokenExpiration: Date = response.tokenExpiration;
+            return res
+            .cookie(AUTH_TOKEN_NAME, newToken, { expires: newTokenExpiration })
+            .send(datalessResponse);
+        })
+        .catch((error: string) => {
+            // authentication or token failure
             datalessResponse.error = error;
             return res
             .send(datalessResponse);

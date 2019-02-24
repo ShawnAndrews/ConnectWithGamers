@@ -15,7 +15,7 @@ const News: React.SFC<INewsProps> = (props: INewsProps) => {
     
     if (props.isLoading) {
         return (
-            <Spinner className="text-center mt-5" loadingMsg="Loading news..." />
+            <Spinner className="text-center mt-5 pt-5" loadingMsg="Loading news..." />
         );
     }
     
