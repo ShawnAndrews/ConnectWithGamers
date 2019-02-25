@@ -1,8 +1,9 @@
-import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IGDBReleaseDate, IGDBImage, IGDBMultiplayerMode, GameFields, buildIGDBRequestBody, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, SimilarGame, IGDBExternalCategoryEnum, IGDBExternalGame } from "../../../client/client-server-common/common";
+import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IGDBReleaseDate, IGDBImage, IGDBMultiplayerMode, GameFields, buildIGDBRequestBody, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, IGDBExternalCategoryEnum, IGDBExternalGame } from "../../../client/client-server-common/common";
 import { ArrayClean } from "../../../util/main";
 import config from "../../../config";
 import axios, { AxiosResponse } from "axios";
-import { cachePreloadedGame } from "./game/main";
+import { cachePreloadedGame, gameKeyExists, getCachedGame, cacheGame } from "./game/main";
+import { igdbModel } from "../../../models/db/igdb/main";
 
 export function getGamesBySteamIds(steamIds: number[], requiredMedia?: boolean): Promise<GameResponse[]> {
     const filters: string[] = [`external_games.uid = (${steamIds.join()})`];
@@ -72,13 +73,13 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             let release_dates: number[] = undefined;
             let screenshots: IGDBImage[] = undefined;
             let video: string = undefined;
-            let similar_games: SimilarGame[] = undefined;
             let steam_link: string = undefined;
             let gog_link: string = undefined;
             let microsoft_link: string = undefined;
             let apple_link: string = undefined;
             let android_link: string = undefined;
             let multiplayer_enabled: boolean = false;
+            let similar_games: number[] = undefined;
 
             // id
             id = RawGame.id;
@@ -103,13 +104,8 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             }
 
             // similar games
-            if (RawGame.similar_games) {
-                similar_games = [];
-                RawGame.similar_games.forEach((rawSimilarGame: RawGame) => {
-                    const similarGameCoverId: string = rawSimilarGame.cover && isNaN(Number(rawSimilarGame.cover)) && rawSimilarGame.cover.image_id;
-                    const similarGame: SimilarGame = {id: rawSimilarGame.id, name: rawSimilarGame.name, cover_id: similarGameCoverId};
-                    similar_games.push(similarGame);
-                });
+            if (RawGame.similar_games && RawGame.similar_games.length > 0) {
+                similar_games = RawGame.similar_games;
             }
 
             // summary
@@ -214,7 +210,6 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 first_release_date: first_release_date,
                 screenshots: screenshots,
                 video: video,
-                similar_games: similar_games,
                 video_cached: false,
                 image_cached: false,
                 steam_link: steam_link,
@@ -223,7 +218,8 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 apple_link: apple_link,
                 android_link: android_link,
                 pricings: undefined,
-                multiplayer_enabled: multiplayer_enabled
+                multiplayer_enabled: multiplayer_enabled,
+                similar_games: similar_games
             };
 
             gameResponses.push(gameResponse);

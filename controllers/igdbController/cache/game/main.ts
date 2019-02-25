@@ -70,9 +70,8 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
             const RawGame: RawGame = response.data[0];
             convertRawGame([RawGame])
                 .then((gameResponses: GameResponse[]) => {
-                    const coonvertedGame: GameResponse = gameResponses[0];
-
-                    igdbModel.setGame(coonvertedGame)
+                    const convertedGame: GameResponse = gameResponses[0];
+                    igdbModel.setGame(convertedGame)
                         .then(() => {
                             igdbModel.getGame(gameId)
                                 .then((game: GameResponse) => {
@@ -125,10 +124,8 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
                 convertRawGame([RawGame])
                     .then((gameResponses: GameResponse[]) => {
                         const convertedGame: GameResponse = gameResponses[0];
-
                         igdbModel.setGame(convertedGame)
                             .then(() => {
-
                                 igdbModel.getGame(gameId, true)
                                     .then((game: GameResponse) => {
                                         return resolve(game);
@@ -140,7 +137,6 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
                             .catch((error: string) => {
                                 return reject(error);
                             });
-
                     })
                     .catch((error: string) => {
                         return reject(error);

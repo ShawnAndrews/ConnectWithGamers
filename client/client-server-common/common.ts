@@ -6,7 +6,7 @@ export const SALT_RNDS = 10;
 export const EMAIL_VERIFICATION_LEN = 15;
 export const ACCOUNT_RECOVERYID_LEN = 32;
 
-export const ExcludedGameIds: number[] = [111063, 111908, 114910, 59227, 25260];
+export const ExcludedGameIds: number[] = [111063, 111908, 114910, 59227, 25260, 27441];
 
 export enum SQLErrorCodes {
     DUPLICATE_ROW = 1062
@@ -461,11 +461,11 @@ export interface RawGame {
     screenshots: IGDBImage[];
     videos: IGDBVideo[];
     external_games: IGDBExternalGame[];
-    similar_games: RawGame[];
+    similar_games: number[];
     multiplayer_modes: IGDBMultiplayerMode[];
 }
 
-export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`, `similar_games.*`, `similar_games.cover.image_id`, `multiplayer_modes.*`];
+export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`, `similar_games`, `multiplayer_modes.*`];
 
 export interface Genre {
     name: string;
@@ -613,7 +613,6 @@ export interface GameResponse {
     screenshots: IGDBImage[];
     video: string;
     video_cached: boolean;
-    similar_games: SimilarGame[];
     image_cached: boolean;
     steam_link: string;
     gog_link: string;
@@ -622,6 +621,7 @@ export interface GameResponse {
     android_link: string;
     pricings: PriceInfo[];
     multiplayer_enabled: boolean;
+    similar_games: number[];
 }
 
 export interface PriceInfo {
@@ -632,12 +632,6 @@ export interface PriceInfo {
     coming_soon: boolean;
     preorder: boolean;
     discount_percent: number;
-}
-
-export interface SimilarGame {
-    id: number;
-    name: string;
-    cover_id: string;
 }
 
 export interface MultiGameResponse {
@@ -872,7 +866,7 @@ export const DbTableReleaseDatesFields: string[] = [`release_dates_sys_key_id`, 
 export const DbTableResultsFields: string[] = [`results_sys_key_id`, `results_enum_sys_key_id`, `igdb_games_sys_key_id`, `param`, `expires_dt`];
 export const DbTableResultsEnumFields: string[] = [`results_enum_sys_key_id`, `name`];
 export const DbTableScreenshotsFields: string[] = [`screenshots_sys_key_id`, `igdb_images_sys_key_id`, `igdb_games_sys_key_id`];
-export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `igdb_games_sys_key_id`, `similar_id`, `similar_name`, `similar_cover_id`];
+export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `igdb_games_sys_key_id`, `similar_to_igdb_games_id`];
 export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `accounts_type_enum_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];
 export const DbTableAccountsTypeEnumFields: string[] = [`accounts_type_enum_sys_key_id`, `name`];
 export const DbTableIGDBNewsFields: string[] = [`igdb_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];

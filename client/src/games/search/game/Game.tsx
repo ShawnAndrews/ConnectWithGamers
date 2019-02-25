@@ -17,6 +17,7 @@ interface IGameProps {
     isLoading: boolean;
     gameId: number;
     game: GameResponse;
+    similar_games: GameResponse[];
     summaryExpanded: boolean;
     gameRatedSnackbarOpen: boolean;
     notifcationsEnabled: boolean;
@@ -31,8 +32,11 @@ interface IGameProps {
     onSimilarGamesMouseMove: (event: React.MouseEvent<HTMLDivElement>) => void;
     onSimilarGamesMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
     onSimilarGamesMouseUp: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onSimilarGamesMouseOver: (index: number) => void;
+    onSimilarGamesMouseLeave: () => void;
     onNotificationsClick: () => void;
     onPricingClick: (externalCategoryEnum: IGDBExternalCategoryEnum) => void;
+    hoveredSimilarGameIndex: number;
 }
 
 const Game: React.SFC<IGameProps> = (props: IGameProps) => {
@@ -261,11 +265,14 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     </div>
                 </div>
                 <SimilarGames
-                    similarGames={props.game.similar_games}
+                    similarGames={props.similar_games}
+                    hoveredSimilarGameIndex={props.hoveredSimilarGameIndex}
                     goToGame={props.goToGame}
                     onSimilarGamesMouseDown={props.onSimilarGamesMouseDown}
                     onSimilarGamesMouseUp={props.onSimilarGamesMouseUp}
                     onSimilarGamesMouseMove={props.onSimilarGamesMouseMove}
+                    onSimilarGamesMouseOver={props.onSimilarGamesMouseOver}
+                    onSimilarGamesMouseLeave={props.onSimilarGamesMouseLeave}
                 />
             </div>
             <Snackbar

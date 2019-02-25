@@ -11,6 +11,7 @@ import { gameKeyExists, getCachedGame, cacheGame } from "./cache/game/main";
 import { resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames } from "./cache/results/main";
 import { newsKeyExists, getCachedNews, cacheNews } from "./cache/news/main";
 import { discountedGamesKeyExists, getCachedDiscountedGames, cacheDiscountedGames } from "./cache/discountedGames/main";
+import { igdbModel } from "../../models/db/igdb/main";
 
 export const routes = new routeModel();
 
