@@ -5,6 +5,7 @@ import { GameResponse, ServiceWorkerEnums, IGDBImageSizeEnums, IGDBImageUploadPa
 import { ServiceWorkerMessage } from "../../main";
 import Axios, { AxiosResponse } from "axios";
 
+const MAX_ATTEMPTS: number = 10;
 const message = (running: boolean): ServiceWorkerMessage => ( { serviceWorkerEnum: ServiceWorkerEnums.image_cacheing, running: running } );
 const sendNotRunningMessage = (): void => parentPort.postMessage(message(false));
 const sendRunningMessage = (): void => parentPort.postMessage(message(true));
@@ -43,12 +44,13 @@ export function processImageCacheing(gameId: number) {
                             const outputPath: string = `cache/image-cacheing/${imageSize}/${uid}.jpg`;
                             const inputPath: string = `${IGDBImageUploadPath}/t_${imageSize}/${uid}.jpg`;
 
-                            downloadPromises.push(downloadAndSaveImage(inputPath, outputPath));
+                            downloadPromises.push(downloadAndSaveImage(inputPath, outputPath, MAX_ATTEMPTS));
                         });
                     });
 
                     Promise.all(downloadPromises)
                     .then(() => {
+                        console.log(`Downloaded all images for (${downloadUids.join(` `)}).`);
                         igdbModel.updateImageCached(gameId, true)
                             .then(() => {
                                 sendNotRunningMessage();
@@ -78,28 +80,43 @@ export function processImageCacheing(gameId: number) {
 
 }
 
-function downloadAndSaveImage(inputPath: string, outputPath: string): Promise<void> {
-    const writer = fs.createWriteStream(outputPath);
+/**
+ * Attempt to download and cache an image to disk with a finite amount of attempts.
+ */
+function downloadAndSaveImage(inputPath: string, outputPath: string, attemptsLeft: number): Promise<void> {
 
     return new Promise((resolve, reject) => {
+
+        if (attemptsLeft === 0) {
+            console.log(`Image caching: Failed MAX_ATTEMPTS(${MAX_ATTEMPTS}).`);
+            return reject();
+        }
+
+        const writer = fs.createWriteStream(outputPath);
+
+        writer
+        .on("finish", () => {
+            if (fs.existsSync(outputPath)) {
+                console.log(`Success: ${outputPath}`);
+                return resolve();
+            } else {
+                return reject();
+            }
+        })
+        .on("error", (error: string) => {
+            return reject();
+        });
+
         Axios(inputPath, {
             method: "GET",
             responseType: "stream"
-          })
-          .then((response: AxiosResponse) => {
-              response.data.pipe(writer);
-          })
-          .catch((err: string) => {
-              return reject(err);
-          });
-
-          writer.on("finish", () => {
-            if (fs.existsSync(outputPath)) {
-                return resolve();
-            } else {
-                return reject(`Failed to retrieve image for caching.`);
-            }
-          });
-          writer.on("error", (error: string) => { return reject(error); } );
+        })
+        .then((response: AxiosResponse) => {
+            response.data.pipe(writer);
+        })
+        .catch((err: AxiosResponse) => {
+            console.log(`Download Image Error: (${inputPath}): || ${err}. Retrying...`);
+            downloadAndSaveImage(inputPath, outputPath, attemptsLeft - 1);
+        });
     });
   }
