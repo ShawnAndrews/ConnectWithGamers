@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, IGDBImage, GenreEnums, IGDBImageSizeEnums, getIGDBImage, getCachedIGDBImage, PriceInfo } from '../../../../client-server-common/common';
+import { GameResponse, IGDBImage, GenreEnums, IGDBImageSizeEnums, getIGDBImage, getCachedIGDBImage, PriceInfoResponse } from '../../../../client-server-common/common';
 import { Card, Button } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 import Crossfade from '../crossfade/CrossfadeContainer';
@@ -21,14 +21,14 @@ interface IFullsizeGameProps {
 
 const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) => {
 
-    const bestPricing: PriceInfo = getGameBestPricingStatus(props.game.pricings);
+    const bestPricing: PriceInfoResponse = getGameBestPricingStatus(props.game.pricings);
     const bestPricingBasePrice: number = bestPricing.price && bestPricing.discount_percent && + (bestPricing.price / ((100 - bestPricing.discount_percent) / 100)).toFixed(2);
 
     return (
         <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'editor-feature overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
             {!props.isEditorsChoiceGame &&
                 <div className="screenshot w-100 h-100" onClick={props.goToGame}>
-                    <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
+                    <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_screenshot_big_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
                 </div>}
             {props.isEditorsChoiceGame &&
                 (!props.videoPreviewEnded
@@ -39,7 +39,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                     </video>
                     :
                     <>
-                        {<img className="screenshot w-100 h-100" src={props.game.image_cached ? getCachedIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big)} />}
+                        {<img className="screenshot w-100 h-100" src={props.game.image_screenshot_big_cached ? getCachedIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big)} />}
                     </>)}
             <div className='overlay'/>
             {!props.isEditorsChoiceGame && <div className='text-overlay'/>}
@@ -83,7 +83,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
             </div>
             {!props.isEditorsChoiceGame && !bestPricing.price && props.game.pricings.length > 0 &&
                 <img className={`status-banner ${!bestPricing.price ? `short` : ``}`} src="https://i.imgur.com/QpvQV2Q.png"/>}
-            {!props.isEditorsChoiceGame && props.game.pricings.length > 0 &&
+            {!props.isEditorsChoiceGame && bestPricing.price !== Number.MAX_SAFE_INTEGER && props.game.pricings.length > 0 &&
                 <div className={`price-container ${!bestPricing.price ? `no-price` : (!bestPricing.discount_percent ? 'no-discount': '')} mt-1`}>
                     {bestPricing.discount_percent && 
                         <>

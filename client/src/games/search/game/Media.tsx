@@ -7,7 +7,7 @@ interface IMediaProps {
     video: string;
     screenshots: IGDBImage[];
     mediaCarouselElement: any;
-    imageCached: boolean;
+    imageScreenshotBigCached: boolean;
 }
 
 const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
@@ -19,7 +19,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
     if (youtubeId) {
         mediaPreviews.push(`https://img.youtube.com/vi/${youtubeId}/default.jpg`);
     }
-    props.screenshots.map((x: IGDBImage) => mediaPreviews.push(props.imageCached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big)));
+    props.screenshots.map((x: IGDBImage) => mediaPreviews.push(props.imageScreenshotBigCached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big)));
     const settings = {
         customPaging: (i: number): any => {
             return (
@@ -39,7 +39,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
         autoplay: true,
         autoplaySpeed: 4000
     };
-    const screenshots: string[] = props.screenshots.map((x: IGDBImage) => props.imageCached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big));
+    const screenshots: string[] = props.screenshots.map((x: IGDBImage) => props.imageScreenshotBigCached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big));
     const deviceWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;
     let slideshowImages: JSX.Element[] = [];
     

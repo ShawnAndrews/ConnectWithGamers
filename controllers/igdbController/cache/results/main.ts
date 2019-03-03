@@ -11,7 +11,6 @@ import { igdbModel } from "../../../../models/db/igdb/main";
 export function resultsGamesKeyExists(queryString: string): Promise<boolean> {
 
     return new Promise((resolve: any, reject: any) => {
-
         igdbModel.resultsExists(ResultsEnum.SearchResults, queryString)
             .then((exists: boolean) => {
                 return resolve(exists);
@@ -32,7 +31,6 @@ export function getCachedResultsGames(queryString: string): Promise<GameResponse
     return new Promise((resolve: any, reject: any) => {
         igdbModel.getResults(ResultsEnum.SearchResults, queryString)
             .then((gameIds: number[]) => {
-
                 const gamePromises: Promise<GameResponse>[] = gameIds.map((id: number) => getCachedGame(id));
 
                 Promise.all(gamePromises)

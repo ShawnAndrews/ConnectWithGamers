@@ -613,25 +613,18 @@ export interface GameResponse {
     screenshots: IGDBImage[];
     video: string;
     video_cached: boolean;
-    image_cached: boolean;
+    image_micro_cached: boolean;
+    image_cover_big_cached: boolean;
+    image_screenshot_med_cached: boolean;
+    image_screenshot_big_cached: boolean;
     steam_link: string;
     gog_link: string;
     microsoft_link: string;
     apple_link: string;
     android_link: string;
-    pricings: PriceInfo[];
+    pricings: PriceInfoResponse[];
     multiplayer_enabled: boolean;
     similar_games: number[];
-}
-
-export interface PriceInfo {
-    external_category_enum: IGDBExternalCategoryEnum;
-    pricings_enum: PricingsEnum;
-    title: string;
-    price: number;
-    coming_soon: boolean;
-    preorder: boolean;
-    discount_percent: number;
 }
 
 export interface MultiGameResponse {
@@ -854,7 +847,7 @@ export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `igdb_genre_e
 export const DbTableIconsFields: string[] = [`icons_sys_key_id`, `icons_enum_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTableIconsEnumFields: string[] = [`icons_enum_sys_key_id`, `id`, `name`];
 export const DbTableIGDBExternalEnumFields: string[] = [`igdb_external_enum_sys_key_id`, `id`, `name`];
-export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`, `video_cached`, `image_cached`, `steam_link`, `gog_link`, `microsoft_link`, `apple_link`, `android_link`];
+export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`, `video_cached`, `image_micro_cached`, `image_cover_big_cached`, `image_screenshot_med_cached`, `image_screenshot_big_cached`, `steam_link`, `gog_link`, `microsoft_link`, `apple_link`, `android_link`];
 export const DbTableIGDBGenreEnumFields: string[] = [`igdb_genre_enum_sys_key_id`, `id`, `name`];
 export const DbTableIGDBImagesFields: string[] = [`igdb_images_sys_key_id`, `id`, `alpha_channel`, `animated`, `width`, `height`];
 export const DbTableIGDBPlatformEnumFields: string[] = [`igdb_platform_enum_sys_key_id`, `id`, `name`];
@@ -870,11 +863,3 @@ export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, 
 export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `accounts_type_enum_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];
 export const DbTableAccountsTypeEnumFields: string[] = [`accounts_type_enum_sys_key_id`, `name`];
 export const DbTableIGDBNewsFields: string[] = [`igdb_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];
-
-/* Service Worker */
-
-export enum ServiceWorkerEnums {
-    video_previews,
-    image_cacheing,
-    pricing_update
-}

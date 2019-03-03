@@ -1,4 +1,4 @@
-import { PriceInfo, PricingsEnum } from "../../client-server-common/common";
+import { PriceInfoResponse, PricingsEnum } from "../../client-server-common/common";
 
 /**
  * Convert Date->MM-DD-YYYY/Today at/Yesterday at/<day_of_week> at.
@@ -55,14 +55,14 @@ export function onImgError(image: any): any {
 /**
  * Get a game's best price. 
  */
-export function getGameBestPricingStatus(pricings: PriceInfo[]): PriceInfo {
+export function getGameBestPricingStatus(pricings: PriceInfoResponse[]): PriceInfoResponse {
     let lowestPrice: number = Number.MAX_SAFE_INTEGER;
     let lowestDiscountPercent: number = undefined;
     let comingSoon: boolean = false;
     let preorder: boolean = false;
 
-    pricings.forEach((pricing: PriceInfo) => {
-        if (pricing.pricings_enum === PricingsEnum.main_game) {
+    pricings.forEach((pricing: PriceInfoResponse) => {
+        if (pricing.pricingEnum === PricingsEnum.main_game) {
             if (!pricing.coming_soon && !pricing.preorder) {
                 if (pricing.coming_soon) {
                     comingSoon = true;
@@ -83,6 +83,6 @@ export function getGameBestPricingStatus(pricings: PriceInfo[]): PriceInfo {
         }
     })
 
-    const priceInfo: PriceInfo = { title: undefined, coming_soon: comingSoon, preorder: preorder, price: lowestPrice, discount_percent: lowestDiscountPercent, external_category_enum: undefined, pricings_enum: PricingsEnum.main_game };
+    const priceInfo: PriceInfoResponse = { title: undefined, coming_soon: comingSoon, preorder: preorder, price: lowestPrice, discount_percent: lowestDiscountPercent, externalEnum: undefined, pricingEnum: PricingsEnum.main_game, igdbGamesSysKeyId: undefined, expires_dt: undefined };
     return priceInfo;
 }

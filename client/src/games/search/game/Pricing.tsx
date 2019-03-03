@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Tooltip } from '@material-ui/core';
-import { PriceInfo, IGDBExternalCategoryEnum, PricingsEnum } from '../../../../client-server-common/common';
+import { PriceInfoResponse, IGDBExternalCategoryEnum, PricingsEnum } from '../../../../client-server-common/common';
 
 interface IPricingProps {
-    pricings: PriceInfo[];
+    pricings: PriceInfoResponse[];
     isFree: boolean;
     isDiscounted: boolean;
     basePrice: number;
@@ -13,12 +13,12 @@ interface IPricingProps {
 
 const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
 
-    const mainGame: PriceInfo = props.pricings.find((priceInfo: PriceInfo) => priceInfo.pricings_enum === PricingsEnum.main_game);
-    const xboxPassPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfo) => priceInfo.pricings_enum === PricingsEnum.free_or_discounted_with_xbox_game_pass) !== -1;
-    const xboxGoldPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfo) => priceInfo.pricings_enum === PricingsEnum.free_or_discounted_with_xbox_live_gold) !== -1;
-    const dlcPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfo) => priceInfo.pricings_enum === PricingsEnum.dlc) !== -1;
-    const inAppPurchasePricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfo) => priceInfo.pricings_enum === PricingsEnum.in_app_purchase) !== -1;
-    const bundlesPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfo) => priceInfo.pricings_enum === PricingsEnum.bundles) !== -1;
+    const mainGame: PriceInfoResponse = props.pricings.find((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.main_game);
+    const xboxPassPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.free_or_discounted_with_xbox_game_pass) !== -1;
+    const xboxGoldPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.free_or_discounted_with_xbox_live_gold) !== -1;
+    const dlcPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.dlc) !== -1;
+    const inAppPurchasePricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.in_app_purchase) !== -1;
+    const bundlesPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.bundles) !== -1;
     const noAdditonalPricingsExist: boolean = !xboxPassPricingsExist && !xboxGoldPricingsExist && !dlcPricingsExist && !inAppPurchasePricingsExist && !bundlesPricingsExist && !bundlesPricingsExist;
 
     let imgSrc: string = undefined;
@@ -37,10 +37,10 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
 
     const getEntriesByPricingsEnum = (pricingEnum: PricingsEnum): any[] => {
         return props.pricings
-            .filter((priceInfo: PriceInfo) => {
-                return priceInfo.pricings_enum === pricingEnum
+            .filter((priceInfo: PriceInfoResponse) => {
+                return priceInfo.pricingEnum === pricingEnum
             })
-            .map((priceInfo: PriceInfo) => (
+            .map((priceInfo: PriceInfoResponse) => (
                 <div>
                     <em>{priceInfo.title}</em> for 
                     {!priceInfo.price

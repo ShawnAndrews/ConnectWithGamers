@@ -68,28 +68,14 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
         })
         .then( (response: AxiosResponse) => {
             const RawGame: RawGame = response.data[0];
-            convertRawGame([RawGame])
-                .then((gameResponses: GameResponse[]) => {
-                    const convertedGame: GameResponse = gameResponses[0];
-                    igdbModel.setGame(convertedGame)
-                        .then(() => {
-                            igdbModel.getGame(gameId)
-                                .then((game: GameResponse) => {
-                                    return resolve(game);
-                                })
-                                .catch((error: string) => {
-                                    return reject(error);
-                                });
-                        })
-                        .catch((error: string) => {
-                            return reject(error);
-                        });
 
+            convertAndInsertGame(RawGame)
+                .then((game: GameResponse) => {
+                    return resolve(game);
                 })
                 .catch((error: string) => {
                     return reject(error);
                 });
-
         })
         .catch((error: string) => {
             return reject(error);
@@ -111,7 +97,7 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
 
             if (exists) {
 
-                igdbModel.getGame(gameId)
+                getCachedGame(gameId)
                     .then((game: GameResponse) => {
                         return resolve(game);
                     })
@@ -121,22 +107,9 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
 
             } else {
 
-                convertRawGame([RawGame])
-                    .then((gameResponses: GameResponse[]) => {
-                        const convertedGame: GameResponse = gameResponses[0];
-                        igdbModel.setGame(convertedGame)
-                            .then(() => {
-                                igdbModel.getGame(gameId, true)
-                                    .then((game: GameResponse) => {
-                                        return resolve(game);
-                                    })
-                                    .catch((error: string) => {
-                                        return reject(error);
-                                    });
-                            })
-                            .catch((error: string) => {
-                                return reject(error);
-                            });
+                convertAndInsertGame(RawGame)
+                    .then((game: GameResponse) => {
+                        return resolve(game);
                     })
                     .catch((error: string) => {
                         return reject(error);
@@ -147,6 +120,39 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
         .catch((error: string) => {
             return reject(error);
         });
+
+    });
+
+}
+
+/**
+ * Convert game and insert to db.
+ */
+function convertAndInsertGame(RawGame: RawGame): Promise<GameResponse> {
+    const gameId: number = RawGame.id;
+
+    return new Promise((resolve: any, reject: any) => {
+
+        convertRawGame([RawGame])
+            .then((gameResponses: GameResponse[]) => {
+                const convertedGame: GameResponse = gameResponses[0];
+                igdbModel.setGame(convertedGame)
+                    .then(() => {
+                        getCachedGame(gameId)
+                            .then((game: GameResponse) => {
+                                return resolve(game);
+                            })
+                            .catch((error: string) => {
+                                return reject(error);
+                            });
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
 
     });
 

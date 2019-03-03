@@ -5,7 +5,7 @@ interface IBackgroundProps {
     gameId: number;
     screenshots: IGDBImage[];
     videoCached: boolean;
-    imageCached: boolean;
+    imageScreenshotBigCached: boolean;
 }
 
 const Background: React.SFC<IBackgroundProps> = (props: IBackgroundProps) => {
@@ -14,7 +14,7 @@ const Background: React.SFC<IBackgroundProps> = (props: IBackgroundProps) => {
         <div className="background-container">
             {!props.videoCached
                 ?
-                <img className="screenshot w-100 h-100" src={props.imageCached ? getCachedIGDBImage(props.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(props.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big)} />
+                <img className="screenshot w-100 h-100" src={props.imageScreenshotBigCached ? getCachedIGDBImage(props.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(props.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big)} />
                 :
                 <video className="video-preview w-100 h-100" muted={true} autoPlay={true} loop={true} playsInline={true}>
                     <source src={`/cache/video-previews/${props.gameId}.mp4`} type="Video/mp4"/>

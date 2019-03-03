@@ -1,4 +1,4 @@
-import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum, convertIGDBExternCateEnumToSysKeyId } from "../../../../client/client-server-common/common";
+import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum, convertIGDBExternCateEnumToSysKeyId } from "../../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 const fs = require("fs");

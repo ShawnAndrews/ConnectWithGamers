@@ -4,7 +4,7 @@ import igdbController from "./controllers/igdbController/igdb";
 import config from "./config";
 import logIP from "./controllers/logger/main";
 import { Request, Response, Express, NextFunction } from "express";
-import StartServiceWorkers from "./service-workers/main";
+import { IGDBImageSizeEnums } from "./client/client-server-common/common";
 const blocked = require("blocked");
 const express = require("express");
 const app: Express = express();
@@ -75,5 +75,12 @@ if (config.useStrictlyHttps) {
     secureServer.listen(config.httpsPort);
 }
 
-/* start service workers */
-StartServiceWorkers();
+/* create directories */
+const cachedImageSizes: string[] = [IGDBImageSizeEnums.micro, IGDBImageSizeEnums.cover_big, IGDBImageSizeEnums.screenshot_big, IGDBImageSizeEnums.screenshot_med];
+cachedImageSizes.forEach((imageSize: string) => {
+    const outputFolderPath: string = `cache/image-cacheing/${imageSize}`;
+
+    if (!fs.existsSync(outputFolderPath)) {
+        fs.mkdirSync(outputFolderPath);
+    }
+});

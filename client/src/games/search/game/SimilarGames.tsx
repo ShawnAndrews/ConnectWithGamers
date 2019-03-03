@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getIGDBImage, IGDBImageSizeEnums, GameResponse, PriceInfo, PricingsEnum } from '../../../../client-server-common/common';
+import { getIGDBImage, IGDBImageSizeEnums, GameResponse, PriceInfoResponse, PricingsEnum, getCachedIGDBImage } from '../../../../client-server-common/common';
 import Slider from "react-slick";
 import { Button } from '@material-ui/core';
 
@@ -69,9 +69,9 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
                         let bestPrice: number = Number.MAX_SAFE_INTEGER;
 
                         if (pricingExists) {
-                            similarGame.pricings.forEach((pricing: PriceInfo) => {
+                            similarGame.pricings.forEach((pricing: PriceInfoResponse) => {
                                 if (bestPrice) {
-                                    if (pricing.pricings_enum === PricingsEnum.main_game) {
+                                    if (pricing.pricingEnum === PricingsEnum.main_game) {
                                         if (!pricing.price) {
                                             bestPrice = undefined;
                                         } else {
@@ -88,7 +88,7 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
                             <div key={similarGame.id} className="similar-game" onMouseEnter={() => props.onSimilarGamesMouseOver(index)} onMouseLeave={props.onSimilarGamesMouseLeave}>
                                 <img 
                                     className={`cursor-pointer ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`}
-                                    src={getIGDBImage(similarGame.cover.image_id, IGDBImageSizeEnums.cover_big)}
+                                    src={similarGame.image_cover_big_cached ? getCachedIGDBImage(similarGame.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(similarGame.cover.image_id, IGDBImageSizeEnums.cover_big)}
                                     onClick={() => props.goToGame(similarGame.id)}
                                     onMouseDown={props.onSimilarGamesMouseDown}
                                     onMouseMove={props.onSimilarGamesMouseMove}
