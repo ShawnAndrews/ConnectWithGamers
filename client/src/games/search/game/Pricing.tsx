@@ -91,14 +91,16 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
                     }
                     placement="right"
                 >
-                    {props.isFree 
-                        ? 
-                        <div>Free</div>
-                        : 
-                        <div className="price-container" onClick={() => props.onPricingClick(props.externalCategoryEnum)}>
-                            {props.isDiscounted && <del className="pr-1">${props.basePrice}</del>}
-                            ${mainGame.price}
-                        </div>}
+                    <div onClick={() => props.onPricingClick(props.externalCategoryEnum)}>
+                        {props.isFree 
+                            ? 
+                            <div>Free</div>
+                            : 
+                            <div className="price-container">
+                                {props.isDiscounted && <del className="pr-1">${props.basePrice}</del>}
+                                ${mainGame.price}
+                            </div>}
+                    </div>
                 </Tooltip>
             </div>
         </div>
