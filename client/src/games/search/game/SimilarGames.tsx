@@ -94,13 +94,16 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
                                     onMouseMove={props.onSimilarGamesMouseMove}
                                     onMouseUp={props.onSimilarGamesMouseUp}
                                 />
-                                <div className={`overlay ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`} onClick={() => !pricingExists && props.goToGame(similarGame.id)} />
+                                <div className={`overlay ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`} />
                                 <div className={`text-container text-center w-100 ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`}>
                                     <div className="name mb-1">{similarGame.name}</div>
-                                    {pricingExists && 
-                                        <Button variant="contained" color="primary" onClick={() => props.goToGame(similarGame.id)}>
-                                            {bestPrice ? `$${bestPrice} USD` : 'Free'}
-                                        </Button>}
+                                    <Button variant="contained" color="primary" onClick={() => props.goToGame(similarGame.id)}>
+                                        {!pricingExists
+                                            ?
+                                            `Visit`
+                                            :
+                                            bestPrice ? `$${bestPrice} USD` : 'Free'}
+                                    </Button>
                                 </div>
                             </div>
                         );

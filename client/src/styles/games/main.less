@@ -179,15 +179,15 @@
                 right: 0;
                 color: rgba(white,0.8);
                 background-color: #4c6b22b3;
-                width: 100px;
+                width: 105px;
                 height: 24px;
 
                 .discount {
                     position: absolute;
                     top: 0;
                     height: 100%;
-                    font-size: 15px;
-                    background: rgb(66, 91, 32);
+                    font-size: 17px;
+                    background: #516b2d;
                     color: rgba(white, 0.7);
                 }
 
@@ -259,17 +259,26 @@
                 pointer-events: none;
             }
 
-            .status-banner {
+            .banner {
                 position: absolute;
-                top: 5px;
-                right: -14px;
-                width: 115px;
-                height: 27px;
-                opacity: 0.75;
-                
-                &.short {
-                    width: 50px;
-                    right: -7px; 
+                top: -7px;
+                right: -16px;
+                width: 93px;
+            }
+
+            .banner-text {
+                position: absolute;
+                top: 8px;
+                right: 1px;
+                font-size: 10px;
+                font-weight: 900;
+                text-transform: uppercase;
+                transform: rotate(43deg);
+
+                &.long-text {
+                    top: 9px;
+                    right: -9px;
+                    font-size: 8px;
                 }
             }
             
@@ -288,7 +297,6 @@
                 font-weight: bold;
                 text-transform: uppercase;
                 transform: rotate(-43deg);
-                opacity: 0.76;
             }
 
         }

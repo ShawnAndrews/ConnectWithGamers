@@ -23,6 +23,8 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
 
     const bestPricing: PriceInfoResponse = getGameBestPricingStatus(props.game.pricings);
     const bestPricingBasePrice: number = bestPricing.price && bestPricing.discount_percent && + (bestPricing.price / ((100 - bestPricing.discount_percent) / 100)).toFixed(2);
+    const numericalStatus: boolean = !!bestPricing.price;
+    const noBestPricingExists: boolean = bestPricing && bestPricing.price === Number.MAX_SAFE_INTEGER;
 
     return (
         <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'editor-feature overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
@@ -81,17 +83,24 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                         </Button>
                     </>}
             </div>
-            {!props.isEditorsChoiceGame && !bestPricing.price && props.game.pricings.length > 0 &&
-                <img className={`status-banner ${!bestPricing.price ? `short` : ``}`} src="https://i.imgur.com/QpvQV2Q.png"/>}
-            {!props.isEditorsChoiceGame && bestPricing.price !== Number.MAX_SAFE_INTEGER && props.game.pricings.length > 0 &&
-                <div className={`price-container ${!bestPricing.price ? `no-price` : (!bestPricing.discount_percent ? 'no-discount': '')} mt-1`}>
-                    {bestPricing.discount_percent && 
+            {!props.isEditorsChoiceGame && !noBestPricingExists &&
+                <>
+                    {numericalStatus
+                        ?
+                        <div className={`price-container ${!bestPricing.price ? `no-price` : (!bestPricing.discount_percent ? 'no-discount': '')} mt-1`}>
+                            {bestPricing.discount_percent && 
+                                <>
+                                    <div className="discount d-inline-block px-1">-{bestPricing.discount_percent}%</div>
+                                    <div className="base-price d-inline-block px-1"><del>${bestPricingBasePrice} USD</del></div>
+                                </>}
+                            <div className="text d-inline-block px-1">${bestPricing.price} USD</div>
+                        </div>
+                        :
                         <>
-                            <div className="discount d-inline-block px-1">-{bestPricing.discount_percent}%</div>
-                            <div className="base-price d-inline-block px-1"><del>${bestPricing.price} USD</del></div>
+                            <img className="banner" src="https://i.imgur.com/tHFxgQt.png" />
+                            <div className={`banner-text ${bestPricing.preorder && 'long-text'} color-primary`}>{bestPricing.coming_soon ? `Soon` : (bestPricing.preorder ? `Preorder` : `Free`)}</div>
                         </>}
-                    <div className="text d-inline-block px-1">{!isNaN(bestPricing.price) ? `$${bestPricing.price} USD` : `${bestPricing.coming_soon ? `Coming Soon` : (bestPricing.preorder ? `Preorder` : `Free`)}`}</div>
-                </div>}
+                </>}
         </Card>
     );
 

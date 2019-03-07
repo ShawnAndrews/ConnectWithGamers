@@ -1533,9 +1533,9 @@ class IGDBModel extends DatabaseBase {
             })
             .catch((err: AxiosError) => {
 
-                if (err && err.response.status === 200) {
+                if (err && err.response && err.response.status === 200) {
                     pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(err); });
-                } else if (err.response.status.toString().startsWith("50")) {
+                } else if (err && err.response && err.response.status.toString().startsWith("50")) {
                     return resolve();
                 } else {
 
@@ -1546,7 +1546,7 @@ class IGDBModel extends DatabaseBase {
                     })
                     .catch((err: AxiosError) => {
 
-                        if (err && err.response.status === 200) {
+                        if (err && err.response && err.response.status === 200) {
                             pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(err); });
                         } else {
 
@@ -1557,7 +1557,7 @@ class IGDBModel extends DatabaseBase {
                             })
                             .catch((err: AxiosError) => {
 
-                                if (err && err.response.status === 200) {
+                                if (err && err.response && err.response.status === 200) {
                                     pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(err); });
                                 } else {
 
@@ -1568,7 +1568,7 @@ class IGDBModel extends DatabaseBase {
                                     })
                                     .catch((err: AxiosError) => {
 
-                                        if (err && err.response.status === 200) {
+                                        if (err && err.response && err.response.status === 200) {
                                             pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(err); });
                                         } else {
 
@@ -1579,7 +1579,7 @@ class IGDBModel extends DatabaseBase {
                                             })
                                             .catch((err: AxiosError) => {
 
-                                                if (err && err.response.status === 200) {
+                                                if (err && err.response && err.response.status === 200) {
                                                     pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(err); });
                                                 } else {
                                                     console.log(`Maxmium retries exceeded for ${inputPath}.`);
@@ -1835,7 +1835,8 @@ class IGDBModel extends DatabaseBase {
                         }
                     })
                     .catch((err: string) => {
-                        return reject(`Failure getting video_preview meta data! ${err}`);
+                        console.log(`Failure getting video_preview meta data for #${gameId}! ${err}`);
+                        return resolve(false);
                     });
 
             }
