@@ -72,6 +72,11 @@ export enum SidenavEnums {
     home,
     search,
     discounted,
+    xbox,
+    playstation,
+    switch,
+    ios,
+    android,
     news,
     cog,
 }

@@ -30,10 +30,6 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             this.props.history.push(`/search/recent`);
         } else if (homeOptionEnum === HomeOptionsEnum.Upcoming) {
             this.props.history.push(`/search/upcoming`);
-        } else if (homeOptionEnum === HomeOptionsEnum.IOSComingSoon) {
-            this.props.history.push(`/search/ios-coming-soon`);
-        } else if (homeOptionEnum === HomeOptionsEnum.AndroidComingSoon) {
-            this.props.history.push(`/search/android-coming-soon`);
         }
     }
 
