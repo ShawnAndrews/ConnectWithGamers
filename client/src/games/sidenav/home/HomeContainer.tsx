@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Home, { HomeOptionsEnum } from './Home';
+import { BREAKING_NEWS_TOKEN_NAME } from '../../../../client-server-common/common';
 
 interface IHomeContainerProps extends RouteComponentProps<any> {
     
@@ -8,6 +9,9 @@ interface IHomeContainerProps extends RouteComponentProps<any> {
 
 interface IHomeContainerState {
     selectedOption: HomeOptionsEnum;
+    breakingNewsClickCollapsed: boolean;
+    breakingNewsGameName: string;
+    breakingNewsGameId: number;
 }
 
 class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerState> {
@@ -17,9 +21,26 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
         this.goToOption = this.goToOption.bind(this);
         this.onOptionClick = this.onOptionClick.bind(this);
         this.isSelected = this.isSelected.bind(this);
+        this.onBreakingNewsClick = this.onBreakingNewsClick.bind(this);
+        this.onClickBreakingNewsCollapse = this.onClickBreakingNewsCollapse.bind(this);
+        
+        const newsNewsGameId: number = 112870;
+        const newNewsGameName: string = `Spellbreak`;
+        
+        let newsClosed: boolean = false
+        const cookieMatch: string[] = document.cookie.match(new RegExp(`${BREAKING_NEWS_TOKEN_NAME}=([^;]+)`));
+        if (cookieMatch) {
+            const oldNewsGameName: string = decodeURIComponent(cookieMatch[1]);
+            if (oldNewsGameName === newNewsGameName) {
+                newsClosed = true;
+            }
+        }
 
         this.state = {
-            selectedOption: undefined
+            selectedOption: undefined,
+            breakingNewsClickCollapsed: newsClosed,
+            breakingNewsGameName: newNewsGameName,
+            breakingNewsGameId: newsNewsGameId
         };
     }
 
@@ -51,11 +72,25 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
         return false;
     }
 
+    onBreakingNewsClick(link: string): void {
+        this.props.history.push(link);
+    }
+
+    onClickBreakingNewsCollapse(): void {
+        document.cookie = `${BREAKING_NEWS_TOKEN_NAME}=${encodeURIComponent(this.state.breakingNewsGameName)}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/;`;
+        this.setState({ breakingNewsClickCollapsed: true });
+    }
+
     render() {
         return (
             <Home
                 onOptionClick={this.onOptionClick}
                 isSelected={this.isSelected}
+                onClickBreakingNews={this.onBreakingNewsClick}
+                onClickBreakingNewsCollapse={this.onClickBreakingNewsCollapse}
+                breakingNewsClickCollapsed={this.state.breakingNewsClickCollapsed}
+                breakingNewsGameName={this.state.breakingNewsGameName}
+                breakingNewsGameId={this.state.breakingNewsGameId}
             />
         );
     }

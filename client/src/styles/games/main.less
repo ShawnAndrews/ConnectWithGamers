@@ -472,6 +472,30 @@
                 background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
             }
         }
+
+        .home {
+
+            .breaking-news {
+                background-color: #4CAF50;
+                width: 240px;
+                overflow: hidden;
+                max-height: 84px;
+                transition: all 0.5s ease-out;
+                opacity: 1;
+                flex-wrap: initial!important;
+                min-width: inherit!important;
+                max-width: inherit!important;
+
+                &.collapsed {
+                    max-height: 0px;
+                    opacity: 0;
+                }
+
+                &>div:last-child {
+                    padding: 0px 0px 0px 8px!important;
+                }
+            }
+        }
     }
 
     .sidenav {

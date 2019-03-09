@@ -310,6 +310,7 @@ export const CHATROOMS: ChatroomInfo[] = [
 ];
 
 export const AUTH_TOKEN_NAME = `authToken`;
+export const BREAKING_NEWS_TOKEN_NAME = `breakingNewsClosed`;
 
 export const CHAT_SERVER_PORT = 81;
 
