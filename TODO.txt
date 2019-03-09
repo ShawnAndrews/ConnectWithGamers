@@ -32,3 +32,4 @@ TODO:
 - (2 weeks?) Library
 - add twitch stream to game's page
 - currency changer in topbar
+- update invalid password popup into snackbar
