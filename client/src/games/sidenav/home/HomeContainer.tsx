@@ -12,6 +12,8 @@ interface IHomeContainerState {
     breakingNewsClickCollapsed: boolean;
     breakingNewsGameName: string;
     breakingNewsGameId: number;
+    genresExpanded: boolean;
+    vrExpanded: boolean;
 }
 
 class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerState> {
@@ -25,7 +27,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
         this.onClickBreakingNewsCollapse = this.onClickBreakingNewsCollapse.bind(this);
         
         const newsNewsGameId: number = 112870;
-        const newNewsGameName: string = `Spellbreak`;
+        const newNewsGameName: string = `Call Of The Void`;
         
         let newsClosed: boolean = false
         const cookieMatch: string[] = document.cookie.match(new RegExp(`${BREAKING_NEWS_TOKEN_NAME}=([^;]+)`));
@@ -40,7 +42,9 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             selectedOption: undefined,
             breakingNewsClickCollapsed: newsClosed,
             breakingNewsGameName: newNewsGameName,
-            breakingNewsGameId: newsNewsGameId
+            breakingNewsGameId: newsNewsGameId,
+            genresExpanded: false,
+            vrExpanded: false
         };
     }
 
@@ -57,7 +61,9 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
     onOptionClick(homeOptionEnum: HomeOptionsEnum): void {
 
         this.setState({
-            selectedOption: homeOptionEnum
+            selectedOption: homeOptionEnum,
+            genresExpanded: homeOptionEnum === HomeOptionsEnum.Genres ? !this.state.genresExpanded : this.state.genresExpanded,
+            vrExpanded: homeOptionEnum === HomeOptionsEnum.VRSupported ? !this.state.vrExpanded : this.state.vrExpanded,
         });
 
         this.goToOption(homeOptionEnum);
@@ -91,6 +97,8 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 breakingNewsClickCollapsed={this.state.breakingNewsClickCollapsed}
                 breakingNewsGameName={this.state.breakingNewsGameName}
                 breakingNewsGameId={this.state.breakingNewsGameId}
+                genresExpanded={this.state.genresExpanded}
+                vrExpanded={this.state.vrExpanded}
             />
         );
     }

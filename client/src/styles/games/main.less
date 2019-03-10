@@ -467,16 +467,20 @@
         overflow-x: hidden;
 
         .option {
-            
+
             &.selected {
                 background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            }
+
+            .arrow {
+                color: #424141;
             }
         }
 
         .home {
 
             .breaking-news {
-                background-color: #4CAF50;
+                background-color: #de9310;
                 width: 240px;
                 overflow: hidden;
                 max-height: 84px;
@@ -494,6 +498,10 @@
                 &>div:last-child {
                     padding: 0px 0px 0px 8px!important;
                 }
+            }
+
+            svg {
+                width: 20px;
             }
         }
     }

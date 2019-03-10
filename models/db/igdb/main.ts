@@ -258,7 +258,6 @@ class IGDBModel extends DatabaseBase {
 
                         })
                         .catch((error: string) => {
-                            console.log(error);
                             return resolve();
                         });
 
@@ -1804,9 +1803,9 @@ class IGDBModel extends DatabaseBase {
                         if (videoLenMs) {
                             const captureStartTimeMs: number = videoLenMs < MAX_VIDEO_CAPTURE_LEN_MS + 3000 ? 0 : videoLenMs - MAX_VIDEO_CAPTURE_LEN_MS;
                             const writable: Writable = fs.createWriteStream(outputPath);
-                            const readable: any = ytdl(video, { filter: (format: any) => format.container === "mp4", begin: captureStartTimeMs }).pipe(writable);
+                            const readable: any = ytdl(video, { filter: (format: any) => format.container === "mp4", begin: captureStartTimeMs });
 
-                            readable
+                            writable
                             .on(`close`, () => {
                                 fs.chmodSync(outputPath, "777");
 
@@ -1822,13 +1821,16 @@ class IGDBModel extends DatabaseBase {
                                         readable.destroy();
                                         return reject(`Failure updating video_preview! ${err}`);
                                     });
-                            })
-                            .on(`error`, (err: string) => {
+                            });
+
+                            readable.on(`error`, (err: string) => {
                                 console.log(`2 YTDL FATAL ERROR CAUGHT: ${err}`);
                                 writable.end();
                                 readable.destroy();
                                 return resolve(false);
                             });
+
+                            readable.pipe(writable);
 
                         } else {
                             return reject(`Failure getting video length! ${videoLenMs}`);
