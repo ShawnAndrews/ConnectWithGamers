@@ -20,16 +20,14 @@ TODO:
 - (X) IGDB login oauth
 - (X) Expand similar games, load all games data not just meta, onHover include name/genres/platform + 1.1 zoom + dark filter
 - (X) Make video and image service worker caching file-by-file instead of for all game. Remove image_cached and video_cached flag in . Make sure to only process 1 video preview at a time, and check if video link is being processed because adding it to the queue.
-- (8 hrs) Add component to game page above summary
-    - Multi-player (via IGDB "Multiplayer Mode" endpoint)
-    - Achievements (Steam-tier: Regular, xBox: Regular, Playstation: Bronze/Silver/Gold/Platinum) (for each platform: Top 10 acheivements in a tooltip containing info like name + points awarded)
+- (X) Currency changer in topbar
+
+- Convert following items to Snackbar: Incorrect password popup, Login To Vote For Game.
+- (2 hr) global snackbar call(via redux)
+
 - (?) SQL job to remove expired db records
 
 - (12 hrs) Chatroom roles functionality: Add images for chatroom roles and functionality (mod=delete messages + emotes + ban?), add .deleted flag to chatroom_messages. Clean up code.
-
-- (2 hr) global snackbar call(via redux)
-- (?) Notifications: (Friend add from chatroom, Follow games and notify users of price updates)
 - (2 weeks?) Library
+- (?) Notifications: (Friend add from chatroom, Follow games and notify users of price updates)
 - add twitch stream to game's page
-- currency changer in topbar
-- update invalid password popup into snackbar
