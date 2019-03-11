@@ -6,8 +6,10 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { NAV_PAGE } from '../app/app';
 import Navbar from './Navbar';
 import { httpGetPublicAccountInfo } from '../service/account/main';
-import { AccountInfoResponse } from '../../client-server-common/common';
+import { AccountInfoResponse, CurrencyType } from '../../client-server-common/common';
 import { GlobalReduxState } from '../reducers/main';
+import { changeCurrency } from '../actions/main';
+import { getCurrencyByCookie, getCurrencyRate } from '../util/main';
 
 interface INavbarContainerProps extends RouteComponentProps<any> { } 
 
@@ -16,14 +18,16 @@ interface INavbarContainerState {
     searchQuery: string;
     profileImage: string;
     profileName: string;
+    currencyAnchorEl: HTMLElement;
 }
 
 interface ReduxStateProps {
     loggedIn: boolean;
+    currencyType: CurrencyType;
 }
 
 interface ReduxDispatchProps {
-    
+    changeCurrency: (newCurrencyType: CurrencyType, currencyRate: number) => void;
 }
 
 type Props = INavbarContainerProps & ReduxStateProps & ReduxDispatchProps;
@@ -38,18 +42,26 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         this.onSearchQueryChanged = this.onSearchQueryChanged.bind(this);
         this.loadPublicAccountInfo = this.loadPublicAccountInfo.bind(this);
         this.onRedirect = this.onRedirect.bind(this);
+        this.onCurrencyClick = this.onCurrencyClick.bind(this);
+        this.onCurrencyClose = this.onCurrencyClose.bind(this);
+        this.onCurrencyChange = this.onCurrencyChange.bind(this);
+        this.setNewCurrency = this.setNewCurrency.bind(this);
 
         const onLoginScreen: boolean = props.history.location.pathname.startsWith(NAV_PAGE.ACCOUNT);
+        const newCurrencyType: CurrencyType = getCurrencyByCookie();
 
         if (this.props.loggedIn) {
             this.loadPublicAccountInfo();
         }
 
+        this.setNewCurrency(newCurrencyType);
+
         this.state = {
             index: onLoginScreen ? 3 : undefined,
             searchQuery: '',
             profileImage: undefined,
-            profileName: undefined
+            profileName: undefined,
+            currencyAnchorEl: null
         };
     }
 
@@ -119,6 +131,35 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         this.props.history.push(URL);
     }
 
+    onCurrencyClick(e: React.MouseEvent<HTMLElement>): void {
+        this.setState({ currencyAnchorEl: e.currentTarget });
+    }
+
+    onCurrencyClose(): void {
+        this.setState({ currencyAnchorEl: null });
+    }
+
+    onCurrencyChange(newCurrencyType: CurrencyType): void {
+
+        if (this.props.currencyType !== newCurrencyType) {
+            this.setNewCurrency(newCurrencyType);
+            this.onCurrencyClose();
+        }
+
+    }
+
+    setNewCurrency(newCurrencyType: CurrencyType): void {
+
+        getCurrencyRate(newCurrencyType)
+            .then((newCurrencyRate: number) => {
+                this.props.changeCurrency(newCurrencyType, newCurrencyRate);
+            })
+            .catch((error: string) => {
+                console.log(`Error retreiving currency rate information: ${error}`);
+            });
+
+    }
+
     render() {
         return (
             <Navbar
@@ -130,6 +171,11 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
                 onRedirect={this.onRedirect}
                 profileImage={this.state.profileImage}
                 profileName={this.state.profileName}
+                currencyAnchorEl={this.state.currencyAnchorEl}
+                onCurrencyClick={this.onCurrencyClick}
+                onCurrencyClose={this.onCurrencyClose}
+                onCurrencyChange={this.onCurrencyChange}
+                currencyType={this.props.currencyType}
             />
         );
     }
@@ -138,13 +184,15 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
 
 const mapStateToProps = (state: any, ownProps: INavbarContainerProps): ReduxStateProps => {
     const globalModalReduxState: GlobalReduxState = state;
+
     return {
-        loggedIn: globalModalReduxState.topnav.loggedIn
+        loggedIn: globalModalReduxState.topnav.loggedIn,
+        currencyType: globalModalReduxState.topnav.currencyType
     };
 };
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: INavbarContainerProps): ReduxDispatchProps => ({
-    
+    changeCurrency: (newCurrencyType: CurrencyType, newCurrencyRate: number) => { dispatch(changeCurrency(newCurrencyType, newCurrencyRate)); },
 });
 
 export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, INavbarContainerProps>

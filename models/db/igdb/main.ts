@@ -1824,7 +1824,7 @@ class IGDBModel extends DatabaseBase {
                             });
 
                             readable.on(`error`, (err: string) => {
-                                console.log(`2 YTDL FATAL ERROR CAUGHT: ${err}`);
+                                console.log(`YTDL error caught for game id#${gameId}: ${err}`);
                                 writable.end();
                                 readable.destroy();
                                 return resolve(false);

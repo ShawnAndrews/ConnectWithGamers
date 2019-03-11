@@ -15,8 +15,10 @@ class MainContainer extends React.Component<IMainContainerProps, IMainContainerS
         super(props);
         this.onSidenavItemClick = this.onSidenavItemClick.bind(this);
 
+        const width: number = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+
         this.state = {
-            sidebarActiveEnum: SidenavEnums.home
+            sidebarActiveEnum: width > 800 ? SidenavEnums.home : undefined
         };
     }
 

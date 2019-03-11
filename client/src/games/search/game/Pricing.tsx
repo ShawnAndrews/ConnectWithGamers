@@ -9,6 +9,7 @@ interface IPricingProps {
     basePrice: number;
     externalCategoryEnum: IGDBExternalCategoryEnum;
     onPricingClick: (externalCategoryEnum: IGDBExternalCategoryEnum) => void;
+    getConvertedPrice: (price: number, skipCurrencyType: boolean) => string;
 }
 
 const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
@@ -47,7 +48,7 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
                     ?
                     ` Free`
                     :
-                    priceInfo.discount_percent ? ` $${priceInfo.price} ${priceInfo.discount_percent ? ` (-${priceInfo.discount_percent}%)`: ``}` : ` $${priceInfo.price}`}
+                    priceInfo.discount_percent ? ` ${props.getConvertedPrice(priceInfo.price, false)} ${priceInfo.discount_percent ? ` (-${priceInfo.discount_percent}%)`: ``}` : ` ${props.getConvertedPrice(priceInfo.price, false)}`}
                 </div>
             ));
     };
@@ -97,8 +98,8 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
                             <div>Free</div>
                             : 
                             <div className="price-container">
-                                {props.isDiscounted && <del className="pr-1">${props.basePrice}</del>}
-                                ${mainGame.price}
+                                {props.isDiscounted && <del className="pr-1">{props.getConvertedPrice(props.basePrice, true)}</del>}
+                                {props.getConvertedPrice(mainGame.price, true)}
                             </div>}
                     </div>
                 </Tooltip>

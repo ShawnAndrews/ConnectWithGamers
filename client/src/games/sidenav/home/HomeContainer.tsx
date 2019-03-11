@@ -27,7 +27,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
         this.onClickBreakingNewsCollapse = this.onClickBreakingNewsCollapse.bind(this);
         
         const newsNewsGameId: number = 112870;
-        const newNewsGameName: string = `Call Of The Void`;
+        const newNewsGameName: string = `Spellbreak`;
         
         let newsClosed: boolean = false
         const cookieMatch: string[] = document.cookie.match(new RegExp(`${BREAKING_NEWS_TOKEN_NAME}=([^;]+)`));

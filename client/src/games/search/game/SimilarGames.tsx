@@ -12,6 +12,7 @@ interface ISimilarGamesProps {
     onSimilarGamesMouseUp: (event: React.MouseEvent<HTMLDivElement>) => void;
     onSimilarGamesMouseOver: (index: number) => void;
     onSimilarGamesMouseLeave: () => void;
+    getConvertedPrice: (price: number, skipCurrencyType: boolean) => string;
 }
 
 const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) => {
@@ -102,7 +103,7 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
                                             ?
                                             `Visit`
                                             :
-                                            bestPrice ? `$${bestPrice} USD` : 'Free'}
+                                            bestPrice ? props.getConvertedPrice(bestPrice, false) : 'Free'}
                                     </Button>
                                 </div>
                             </div>

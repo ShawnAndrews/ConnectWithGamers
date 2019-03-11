@@ -37,6 +37,7 @@ interface IGameProps {
     onNotificationsClick: () => void;
     onPricingClick: (externalCategoryEnum: IGDBExternalCategoryEnum) => void;
     hoveredSimilarGameIndex: number;
+    getConvertedPrice: (price: number, skipCurrencyType: boolean) => string;
 }
 
 const Game: React.SFC<IGameProps> = (props: IGameProps) => {
@@ -184,6 +185,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 basePrice={steamBasePrice}
                                 externalCategoryEnum={IGDBExternalCategoryEnum.steam}
                                 onPricingClick={props.onPricingClick}
+                                getConvertedPrice={props.getConvertedPrice}
                             />}
                         {gogMainGame && 
                             <Pricing
@@ -193,6 +195,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 basePrice={gogBasePrice}
                                 externalCategoryEnum={IGDBExternalCategoryEnum.gog}
                                 onPricingClick={props.onPricingClick}
+                                getConvertedPrice={props.getConvertedPrice}
                             />}
                         {microsoftMainGame && 
                             <Pricing
@@ -202,6 +205,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 basePrice={microsoftBasePrice}
                                 externalCategoryEnum={IGDBExternalCategoryEnum.microsoft}
                                 onPricingClick={props.onPricingClick}
+                                getConvertedPrice={props.getConvertedPrice}
                             />}
                         {appleMainGame && 
                             <Pricing
@@ -211,6 +215,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 basePrice={appleBasePrice}
                                 externalCategoryEnum={IGDBExternalCategoryEnum.apple}
                                 onPricingClick={props.onPricingClick}
+                                getConvertedPrice={props.getConvertedPrice}
                             />}
                         {androidMainGame && 
                             <Pricing
@@ -220,6 +225,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 basePrice={androidBasePrice}
                                 externalCategoryEnum={IGDBExternalCategoryEnum.android}
                                 onPricingClick={props.onPricingClick}
+                                getConvertedPrice={props.getConvertedPrice}
                             />}
                         {props.game.platforms && 
                             <Platforms
@@ -273,6 +279,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     onSimilarGamesMouseMove={props.onSimilarGamesMouseMove}
                     onSimilarGamesMouseOver={props.onSimilarGamesMouseOver}
                     onSimilarGamesMouseLeave={props.onSimilarGamesMouseLeave}
+                    getConvertedPrice={props.getConvertedPrice}
                 />
             </div>
             <Snackbar

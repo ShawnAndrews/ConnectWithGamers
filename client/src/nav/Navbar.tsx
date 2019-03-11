@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { Avatar } from '@material-ui/core';
+import { Avatar, Menu, MenuItem, Button } from '@material-ui/core';
+import { CurrencyType } from '../../client-server-common/common';
+import { getFAFromCurrency } from '../util/main';
 
 interface INavbarProps {
     index: number;
@@ -10,10 +12,15 @@ interface INavbarProps {
     onRedirect: (URL: string) => void;
     profileImage: string;
     profileName: string;
+    currencyAnchorEl: HTMLElement;
+    onCurrencyClick: (e: React.MouseEvent<HTMLElement>) => void;
+    onCurrencyClose: () => void;
+    onCurrencyChange: (newCurrencyType: CurrencyType) => void;
+    currencyType: CurrencyType;
 }
 
 const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
-    
+
     return (
         <div className="brand-navbar navbar py-0">
             <a className="logo navbar-brand" href="/">
@@ -55,6 +62,37 @@ const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
                 </li>
             </ul>
             <form className="search-form form-inline my-1" onSubmit={props.onSubmitSearch}>
+                <Button className="currency d-inline-block py-1 px-2 mr-4 cursor-pointer" variant="contained" onClick={props.onCurrencyClick}>
+                    <i className={`currency-icon fas ${getFAFromCurrency(props.currencyType)} mr-1`}/>
+                    <span className="currency-type">{props.currencyType}</span>
+                </Button>
+                <Menu
+                    id="currency-menu"
+                    anchorEl={props.currencyAnchorEl}
+                    open={Boolean(props.currencyAnchorEl)}
+                    onClose={props.onCurrencyClose}
+                >
+                    <MenuItem onClick={() => props.onCurrencyChange(CurrencyType.USD)}>
+                        <i className={`fas ${getFAFromCurrency(CurrencyType.USD)} mr-1`}/>
+                        {CurrencyType.USD}
+                    </MenuItem>
+                    <MenuItem onClick={() => props.onCurrencyChange(CurrencyType.EUR)}>
+                        <i className={`fas ${getFAFromCurrency(CurrencyType.EUR)} mr-1`}/>
+                        {CurrencyType.EUR}
+                    </MenuItem>
+                    <MenuItem onClick={() => props.onCurrencyChange(CurrencyType.GBP)}>
+                        <i className={`fas ${getFAFromCurrency(CurrencyType.GBP)} mr-1`}/>
+                        {CurrencyType.GBP}
+                    </MenuItem>
+                    <MenuItem onClick={() => props.onCurrencyChange(CurrencyType.CAD)}>
+                        <i className={`fas ${getFAFromCurrency(CurrencyType.CAD)} mr-1`}/>
+                        {CurrencyType.CAD}
+                    </MenuItem>
+                    <MenuItem onClick={() => props.onCurrencyChange(CurrencyType.AUD)}>
+                        <i className={`fas ${getFAFromCurrency(CurrencyType.AUD)} mr-1`}/>
+                        {CurrencyType.AUD}
+                    </MenuItem>
+                </Menu>
                 <div className="searchbar d-inline-block has-search mr-2">
                     <span className="fa fa-search form-control-feedback"/>
                     <input type="text" className="form-control" placeholder="Search games" onChange={props.onSearchQueryChanged}/>

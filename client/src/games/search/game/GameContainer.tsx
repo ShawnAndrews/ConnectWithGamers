@@ -1,10 +1,14 @@
 const popupS = require('popups');
+import * as Redux from 'redux';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Game from './Game';
-import { SingleGameResponse, GameResponse, IGDBExternalCategoryEnum } from '../../../../../client/client-server-common/common';
+import { SingleGameResponse, GameResponse, IGDBExternalCategoryEnum, CurrencyType } from '../../../../../client/client-server-common/common';
 import { loggedIn } from '../../../service/account/main';
+import { GlobalReduxState } from '../../../reducers/main';
+import { getPriceInUserCurrency } from '../../../util/main';
 
 interface IGameContainerProps extends RouteComponentProps<any> { }
 
@@ -23,9 +27,20 @@ interface IGameContainerState {
     hoveredSimilarGameIndex: number;
 }
 
-class GameContainer extends React.PureComponent<IGameContainerProps, IGameContainerState> {
+interface ReduxStateProps {
+    currencyType: CurrencyType;
+    currencyRate: number;
+}
 
-    constructor(props: IGameContainerProps) {
+interface ReduxDispatchProps {
+
+}
+
+type Props = IGameContainerProps & ReduxStateProps & ReduxDispatchProps;
+
+class GameContainer extends React.PureComponent<Props, IGameContainerState> {
+
+    constructor(props: Props) {
         super(props);
         this.state = {
             isLoading: false,
@@ -56,6 +71,7 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
         this.onSimilarGamesMouseLeave = this.onSimilarGamesMouseLeave.bind(this);
         this.onNotificationsClick = this.onNotificationsClick.bind(this);
         this.onPricingClick = this.onPricingClick.bind(this);
+        this.getConvertedPrice = this.getConvertedPrice.bind(this);
     }
 
     componentWillMount(): void {
@@ -216,6 +232,10 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
         window.open(link, "_blank");
     }
 
+    getConvertedPrice(price: number, skipCurrencyType: boolean): string {
+        return getPriceInUserCurrency(price, this.props.currencyType, this.props.currencyRate, skipCurrencyType);
+    }
+
     render() {
         return (
             <Game
@@ -242,10 +262,25 @@ class GameContainer extends React.PureComponent<IGameContainerProps, IGameContai
                 onNotificationsClick={this.onNotificationsClick}
                 onPricingClick={this.onPricingClick}
                 hoveredSimilarGameIndex={this.state.hoveredSimilarGameIndex}
+                getConvertedPrice={this.getConvertedPrice}
             />
         );
     }
 
 }
 
-export default withRouter(GameContainer);
+const mapStateToProps = (state: any, ownProps: IGameContainerProps): ReduxStateProps => {
+    const globalModalReduxState: GlobalReduxState = state;
+
+    return {
+        currencyType: globalModalReduxState.topnav.currencyType,
+        currencyRate: globalModalReduxState.topnav.currencyRate
+    };
+};
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: IGameContainerProps): ReduxDispatchProps => ({
+
+});
+
+export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, IGameContainerProps>
+    (mapStateToProps, mapDispatchToProps)(GameContainer));

@@ -17,6 +17,8 @@ interface IFullsizeGameProps {
     goToGame: () => void;
     onVideoPreviewEnded: () => void;
     videoPreviewEnded: boolean;
+    
+    getConvertedPrice: (price: number) => string;
 }
 
 const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) => {
@@ -91,9 +93,9 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                             {bestPricing.discount_percent && 
                                 <>
                                     <div className="discount d-inline-block px-1">-{bestPricing.discount_percent}%</div>
-                                    <div className="base-price d-inline-block px-1"><del>${bestPricingBasePrice} USD</del></div>
+                                    <div className="base-price d-inline-block px-1"><del>{props.getConvertedPrice(bestPricingBasePrice)}</del></div>
                                 </>}
-                            <div className="text d-inline-block px-1">${bestPricing.price} USD</div>
+                            <div className="text d-inline-block px-1">{props.getConvertedPrice(bestPricing.price)}</div>
                         </div>
                         :
                         <>

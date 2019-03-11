@@ -68,6 +68,14 @@ export const GamesPresets = {
     popular: `?required=cover,screenshots&popularity=15&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&sort=popularity:desc`,
 };
 
+export enum CurrencyType {
+    USD = "USD",
+    EUR = "EUR",
+    GBP = "GBP",
+    CAD = "CAD",
+    AUD = "AUD"
+}
+
 export enum SidenavEnums {
     home,
     search,
@@ -311,6 +319,7 @@ export const CHATROOMS: ChatroomInfo[] = [
 
 export const AUTH_TOKEN_NAME = `authToken`;
 export const BREAKING_NEWS_TOKEN_NAME = `breakingNewsClosed`;
+export const CURRENCY_TOKEN_NAME = `currency`;
 
 export const CHAT_SERVER_PORT = 81;
 

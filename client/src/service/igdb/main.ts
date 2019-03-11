@@ -1,11 +1,13 @@
 import axios from 'axios';
 
 /**
- * Generic HTTP request to get templated response data.
+ * Generic HTTP request to get templated IGDB response data.
  */
-export function httpGenericGetData<T>(query: string): Promise<T> {
+export function httpGenericGetData<T>(query: string, getRequest: boolean = false): Promise<T> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post(query)
+        const axiosCall: any = getRequest ? axios.get : axios.post;
+
+        axiosCall(query)
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);

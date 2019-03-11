@@ -1,8 +1,12 @@
 const $ = require('jquery');
+import * as Redux from 'redux';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { GameResponse, steamAppUrl } from '../../../../client-server-common/common';
+import { GameResponse, CurrencyType } from '../../../../client-server-common/common';
 import FullsizeGame from './FullsizeGame';
+import { GlobalReduxState } from '../../../reducers/main';
+import { getPriceInUserCurrency } from '../../../util/main';
 
 interface IFullsizeGameContainerProps extends RouteComponentProps<any> {
     index: number;
@@ -10,7 +14,7 @@ interface IFullsizeGameContainerProps extends RouteComponentProps<any> {
     isEditorsChoiceGame: boolean;
     isFeatureGame: boolean;
     isSubFeatureGame: boolean;
-} 
+}
 
 interface IFullsizeGameContainerState {
     hoveredTimeout: number;
@@ -19,15 +23,27 @@ interface IFullsizeGameContainerState {
     videoPreviewEnded: boolean;
 }
 
-class FullsizeGameContainer extends React.Component<IFullsizeGameContainerProps, IFullsizeGameContainerState> {
+interface ReduxStateProps {
+    currencyType: CurrencyType;
+    currencyRate: number;
+}
 
-    constructor(props: IFullsizeGameContainerProps) {
+interface ReduxDispatchProps {
+
+}
+
+type Props = IFullsizeGameContainerProps & ReduxStateProps & ReduxDispatchProps;
+
+class FullsizeGameContainer extends React.Component<Props, IFullsizeGameContainerState> {
+
+    constructor(props: Props) {
         super(props);
         this.goToGame = this.goToGame.bind(this);
         this.onHoverGame = this.onHoverGame.bind(this);
         this.onHoverOutGame = this.onHoverOutGame.bind(this);
         this.nextScreenshotIndex = this.nextScreenshotIndex.bind(this);
         this.onVideoPreviewEnded = this.onVideoPreviewEnded.bind(this);
+        this.getConvertedPrice = this.getConvertedPrice.bind(this);
 
         this.state = {
             hoveredTimeout: undefined,
@@ -75,6 +91,10 @@ class FullsizeGameContainer extends React.Component<IFullsizeGameContainerProps,
         });
     }
 
+    getConvertedPrice(price: number): string {
+        return getPriceInUserCurrency(price, this.props.currencyType, this.props.currencyRate);
+    }
+
     render() {
         return (
             <FullsizeGame
@@ -89,10 +109,25 @@ class FullsizeGameContainer extends React.Component<IFullsizeGameContainerProps,
                 goToGame={this.goToGame}
                 onVideoPreviewEnded={this.onVideoPreviewEnded}
                 videoPreviewEnded={this.state.videoPreviewEnded}
+                getConvertedPrice={this.getConvertedPrice}
             />
         );
     }
 
 }
 
-export default withRouter(FullsizeGameContainer);
+const mapStateToProps = (state: any, ownProps: IFullsizeGameContainerProps): ReduxStateProps => {
+    const globalModalReduxState: GlobalReduxState = state;
+
+    return {
+        currencyType: globalModalReduxState.topnav.currencyType,
+        currencyRate: globalModalReduxState.topnav.currencyRate
+    };
+};
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: IFullsizeGameContainerProps): ReduxDispatchProps => ({
+
+});
+
+export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, IFullsizeGameContainerProps>
+    (mapStateToProps, mapDispatchToProps)(FullsizeGameContainer));

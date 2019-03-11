@@ -1,4 +1,7 @@
-import { PriceInfoResponse, PricingsEnum } from "../../client-server-common/common";
+import { PriceInfoResponse, PricingsEnum, CurrencyType, CURRENCY_TOKEN_NAME } from "../../client-server-common/common";
+import * as IGDBService from '../service/igdb/main';
+import { resolve } from "dns";
+import { ReactElement } from "react";
 
 /**
  * Convert Date->MM-DD-YYYY/Today at/Yesterday at/<day_of_week> at.
@@ -85,4 +88,74 @@ export function getGameBestPricingStatus(pricings: PriceInfoResponse[]): PriceIn
 
     const priceInfo: PriceInfoResponse = { title: undefined, coming_soon: comingSoon, preorder: preorder, price: lowestPrice, discount_percent: lowestDiscountPercent, externalEnum: undefined, pricingEnum: PricingsEnum.main_game, igdbGamesSysKeyId: undefined, expires_dt: undefined };
     return priceInfo;
+}
+
+/**
+ * Get Font Awesome icon string to display for a given currency.
+ */
+export function getFAFromCurrency(currencyType: CurrencyType): string {
+
+    if (currencyType === CurrencyType.EUR) {
+        return "fa-euro-sign"
+    } else if (currencyType === CurrencyType.GBP) {
+        return "fa-pound-sign"
+    }
+
+    return "fa-dollar-sign";
+}
+
+/**
+ *  Get user saved currency from cookies. Default to USD if none saved.
+ */
+export function getCurrencyByCookie(): CurrencyType {
+
+    const cookieMatch: string[] = document.cookie.match(new RegExp(`${CURRENCY_TOKEN_NAME}=([^;]+)`));
+    if (cookieMatch) {
+        const currencyType: CurrencyType = CurrencyType[cookieMatch[1]];
+        return currencyType;
+    }
+
+    return CurrencyType.USD;
+}
+
+/**
+ *  Set user saved currency from cookies.
+ */
+export function setCurrencyCookie(newCurrencyType: CurrencyType): void {
+    document.cookie = `${CURRENCY_TOKEN_NAME}=${newCurrencyType}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/;`;
+}
+
+/**
+ *  Get up-to-date currency rate for a given currency.
+ */
+export function getCurrencyRate(currencyType: CurrencyType): Promise<number> {
+
+    return new Promise((resolve: any, reject: any) => {
+        IGDBService.httpGenericGetData<void>(`https://api.exchangeratesapi.io/latest?base=USD`, true)
+            .then( (response: any) => {
+                const currencyRate: number = response.rates[currencyType];
+                return resolve(currencyRate);
+            })
+            .catch( (error: string) => {
+                return reject(error);
+            });
+    });
+
+}
+
+/**
+ *  Get price converted to user currency in string form.
+ */
+export function getPriceInUserCurrency(price: number, currencyType: CurrencyType, currencyRate: number, skipCurrencyType: boolean = false): string {
+    let currencySymbol: string = undefined;
+
+    if (currencyType === CurrencyType.USD || currencyType === CurrencyType.CAD || currencyType === CurrencyType.AUD) {
+        currencySymbol = `$`;
+    } else if (currencyType === CurrencyType.GBP) {
+        currencySymbol = `£`;
+    } else if (currencyType === CurrencyType.EUR) {
+        currencySymbol = `€`;
+    }
+
+    return `${currencySymbol} ${(currencyRate * price).toFixed(2)}${!skipCurrencyType ? ` ${currencyType}` : ``}`;
 }
