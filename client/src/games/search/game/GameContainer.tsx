@@ -15,7 +15,6 @@ interface IGameContainerProps extends RouteComponentProps<any> { }
 interface IGameContainerState {
     isLoading: boolean;
     game: GameResponse;
-    similar_games: GameResponse[];
     summaryExpanded: boolean;
     genre_ids: number[];
     gameid: number;
@@ -45,7 +44,6 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
         this.state = {
             isLoading: false,
             game: undefined,
-            similar_games: undefined,
             summaryExpanded: undefined,
             genre_ids: undefined,
             gameid: undefined,
@@ -97,27 +95,7 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
             .then( (gameResponse: SingleGameResponse) => {
                 const game: GameResponse = gameResponse.data;
 
-                if (game.similar_games && game.similar_games.length > 0) {
-
-                    const similarGamePromises: Promise<SingleGameResponse>[] = [];
-
-                    game.similar_games.forEach((similarGameId: number) => {
-                        similarGamePromises.push(IGDBService.httpGenericGetData<SingleGameResponse>(`/igdb/game/${similarGameId}`));
-                    });
-    
-                    Promise.all(similarGamePromises)
-                        .then((vals: SingleGameResponse[]) => {
-                            const similar_games: GameResponse[] = vals.map((similarGameResponse: SingleGameResponse) => similarGameResponse.data);
-                            this.setState({ isLoading: false, game: game, similar_games: similar_games, gameid: id });
-                        })
-                        .catch((err: string) => {
-                            console.log(`Failed to load similar games. ${err}`);
-                        });
-
-                } else {
-                    this.setState({ isLoading: false, game: game, similar_games: undefined, gameid: id });
-                }
-
+                this.setState({ isLoading: false, game: game, gameid: id });
             })
             .catch( (error: string) => {
                 this.setState({ isLoading: false, game: undefined });
@@ -242,7 +220,6 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
                 isLoading={this.state.isLoading}
                 gameId={this.state.gameid}
                 game={this.state.game}
-                similar_games={this.state.similar_games}
                 summaryExpanded={this.state.summaryExpanded}
                 gameRatedSnackbarOpen={this.state.gameRatedSnackbarOpen}
                 notifcationsEnabled={this.state.notifcationsEnabled}

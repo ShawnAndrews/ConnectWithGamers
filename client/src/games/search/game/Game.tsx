@@ -11,13 +11,12 @@ import Pricing from './Pricing';
 import Cover from './Cover';
 import Background from './Background';
 import Snackbar from '@material-ui/core/Snackbar';
-import SimilarGames from './SimilarGames';
+import SimilarGamesContainer from './SimilarGamesContainer';
 
 interface IGameProps {
     isLoading: boolean;
     gameId: number;
     game: GameResponse;
-    similar_games: GameResponse[];
     summaryExpanded: boolean;
     gameRatedSnackbarOpen: boolean;
     notifcationsEnabled: boolean;
@@ -270,8 +269,8 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                         />
                     </div>
                 </div>
-                <SimilarGames
-                    similarGames={props.similar_games}
+                <SimilarGamesContainer
+                    similarGames={props.game.similar_games}
                     hoveredSimilarGameIndex={props.hoveredSimilarGameIndex}
                     goToGame={props.goToGame}
                     onSimilarGamesMouseDown={props.onSimilarGamesMouseDown}

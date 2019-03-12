@@ -2,8 +2,10 @@ import * as React from 'react';
 import { getIGDBImage, IGDBImageSizeEnums, GameResponse, PriceInfoResponse, PricingsEnum, getCachedIGDBImage } from '../../../../client-server-common/common';
 import Slider from "react-slick";
 import { Button } from '@material-ui/core';
+import Spinner from '../../../spinner/main';
 
 interface ISimilarGamesProps {
+    isLoading: boolean;
     similarGames: GameResponse[];
     hoveredSimilarGameIndex: number;
     goToGame: (id: number) => void;
@@ -16,10 +18,6 @@ interface ISimilarGamesProps {
 }
 
 const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) => {
-
-    if (!props.similarGames) {
-        return null;
-    }
 
     function NextArrow(props) {
         const { className, style, onClick } = props;
@@ -64,53 +62,59 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
                 <a className="mr-2">Similar Games</a>
                 <i className="fas fa-chevron-right"/>
             </div>
-            <Slider {...settings}>
-                {props.similarGames.filter((similarGame: GameResponse) => similarGame.cover).map((similarGame: GameResponse, index: number) => {
-                        const pricingExists: boolean = similarGame.pricings && similarGame.pricings.length > 0; 
-                        let bestPrice: number = Number.MAX_SAFE_INTEGER;
+            {props.isLoading
+                ?
+                <div className="menu-center">
+                    <Spinner className="text-center mt-5 pt-5" loadingMsg="Loading similar games..." />
+                </div>
+                :
+                <Slider {...settings}>
+                    {props.similarGames.filter((similarGame: GameResponse) => similarGame.cover).map((similarGame: GameResponse, index: number) => {
+                            const pricingExists: boolean = similarGame.pricings && similarGame.pricings.length > 0; 
+                            let bestPrice: number = Number.MAX_SAFE_INTEGER;
 
-                        if (pricingExists) {
-                            similarGame.pricings.forEach((pricing: PriceInfoResponse) => {
-                                if (bestPrice) {
-                                    if (pricing.pricingEnum === PricingsEnum.main_game) {
-                                        if (!pricing.price) {
-                                            bestPrice = undefined;
-                                        } else {
-                                            if (pricing.price < bestPrice) {
-                                                bestPrice = pricing.price
+                            if (pricingExists) {
+                                similarGame.pricings.forEach((pricing: PriceInfoResponse) => {
+                                    if (bestPrice) {
+                                        if (pricing.pricingEnum === PricingsEnum.main_game) {
+                                            if (!pricing.price) {
+                                                bestPrice = undefined;
+                                            } else {
+                                                if (pricing.price < bestPrice) {
+                                                    bestPrice = pricing.price
+                                                }
                                             }
-                                        }
-                                    }   
-                                }
-                            });
-                        }
+                                        }   
+                                    }
+                                });
+                            }
 
-                        return (
-                            <div key={similarGame.id} className="similar-game" onMouseEnter={() => props.onSimilarGamesMouseOver(index)} onMouseLeave={props.onSimilarGamesMouseLeave}>
-                                <img 
-                                    className={`cursor-pointer ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`}
-                                    src={similarGame.image_cover_big_cached ? getCachedIGDBImage(similarGame.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(similarGame.cover.image_id, IGDBImageSizeEnums.cover_big)}
-                                    onClick={() => props.goToGame(similarGame.id)}
-                                    onMouseDown={props.onSimilarGamesMouseDown}
-                                    onMouseMove={props.onSimilarGamesMouseMove}
-                                    onMouseUp={props.onSimilarGamesMouseUp}
-                                />
-                                <div className={`overlay ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`} />
-                                <div className={`text-container text-center w-100 ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`}>
-                                    <div className="name mb-1">{similarGame.name}</div>
-                                    <Button variant="contained" color="primary" onClick={() => props.goToGame(similarGame.id)}>
-                                        {!pricingExists
-                                            ?
-                                            `Visit`
-                                            :
-                                            bestPrice ? props.getConvertedPrice(bestPrice, false) : 'Free'}
-                                    </Button>
+                            return (
+                                <div key={similarGame.id} className="similar-game" onMouseEnter={() => props.onSimilarGamesMouseOver(index)} onMouseLeave={props.onSimilarGamesMouseLeave}>
+                                    <img 
+                                        className={`cursor-pointer ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`}
+                                        src={similarGame.image_cover_big_cached ? getCachedIGDBImage(similarGame.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(similarGame.cover.image_id, IGDBImageSizeEnums.cover_big)}
+                                        onClick={() => props.goToGame(similarGame.id)}
+                                        onMouseDown={props.onSimilarGamesMouseDown}
+                                        onMouseMove={props.onSimilarGamesMouseMove}
+                                        onMouseUp={props.onSimilarGamesMouseUp}
+                                    />
+                                    <div className={`overlay ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`} />
+                                    <div className={`text-container text-center w-100 ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`}>
+                                        <div className="name mb-1">{similarGame.name}</div>
+                                        <Button variant="contained" color="primary" onClick={() => props.goToGame(similarGame.id)}>
+                                            {!pricingExists
+                                                ?
+                                                `Visit`
+                                                :
+                                                bestPrice ? props.getConvertedPrice(bestPrice, false) : 'Free'}
+                                        </Button>
+                                    </div>
                                 </div>
-                            </div>
-                        );
+                            );
 
-                    })}
-            </Slider>
+                        })}
+                </Slider>}
         </div>
     );
 
