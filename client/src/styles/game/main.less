@@ -1,13 +1,12 @@
 @game-details-highlight-color: #484b50;
-@game-details-screenshot-height: 400px;
+@game-details-video-preview-height: 500px;
 @game-details-price-height: 32px;
-@game-details-media-height: 400px;
 @similar-games-carousel-height: 200px;
 
 .game-details {
 
     .background-container {
-        height: @game-details-screenshot-height;
+        height: @game-details-video-preview-height;
 
         .filter {
             position: absolute;
@@ -15,7 +14,7 @@
             left: 0;
             content: "";
             width: calc(100% + 1px);
-            height: @game-details-screenshot-height;
+            height: @game-details-video-preview-height;
             background: linear-gradient(to top, #171a21 10%, transparent 40%);
         }
     }
