@@ -31,3 +31,5 @@ TODO:
 - (2 weeks?) Library
 - (?) Notifications: (Friend add from chatroom, Follow games and notify users of price updates)
 - add twitch stream to game's page
+
+- deals from https://www.gog.com/ or https://store.steampowered.com/news/?feed=steam_announce&headlines=1
