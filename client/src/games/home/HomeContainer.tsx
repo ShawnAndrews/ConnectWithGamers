@@ -45,7 +45,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
                 .filter((game: GameResponse) => game.screenshots);
 
-            return IGDBService.httpGenericGetData<GenericModelResponse>(`/igdb/game/112870`);
+            return IGDBService.httpGenericGetData<GenericModelResponse>(`/igdb/game/22778`);
         })
         .then((gamesResponse: GenericModelResponse) => {
             bigGame = gamesResponse.data;

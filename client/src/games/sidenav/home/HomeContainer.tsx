@@ -26,10 +26,10 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
         this.onBreakingNewsClick = this.onBreakingNewsClick.bind(this);
         this.onClickBreakingNewsCollapse = this.onClickBreakingNewsCollapse.bind(this);
         
-        const newsNewsGameId: number = 112870;
-        const newNewsGameName: string = `Spellbreak`;
+        const newsNewsGameId: number = 22778;
+        const newNewsGameName: string = `Outward`;
         
-        let newsClosed: boolean = false
+        let newsClosed: boolean = false;
         const cookieMatch: string[] = document.cookie.match(new RegExp(`${BREAKING_NEWS_TOKEN_NAME}=([^;]+)`));
         if (cookieMatch) {
             const oldNewsGameName: string = decodeURIComponent(cookieMatch[1]);

@@ -79,9 +79,9 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                         <Button
                             className="price-btn mt-3" 
                             variant="raised"
-                            onClick={() => window.open('https://playspellbreak.com/#pre-alpha-section', '_blank')}
+                            onClick={() => window.open('https://store.steampowered.com/app/794260/Outward/', '_blank')}
                         >
-                            Sign up for alpha
+                            Available March 26ᵗʰ
                         </Button>
                     </>}
             </div>
