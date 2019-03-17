@@ -22,8 +22,7 @@ TODO:
 - (X) Make video and image service worker caching file-by-file instead of for all game. Remove image_cached and video_cached flag in . Make sure to only process 1 video preview at a time, and check if video link is being processed because adding it to the queue.
 - (X) Currency changer in topbar
 
-- Convert following items to Snackbar: Incorrect password popup, Login To Vote For Game.
-- (2 hr) global snackbar call(via redux)
+- (2 hr) global snackbar call(via redux) (Incorrect password popup, Login To Vote For Game)
 
 - (?) SQL job to remove expired db records
 
