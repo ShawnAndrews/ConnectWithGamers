@@ -8,6 +8,101 @@
 .games {
     height: -webkit-fill-available;
 
+    .editors-games-carousel {
+        height: 35vw;
+
+        .item {
+            position: relative;
+
+            .video-preview {
+                object-fit: fill; 
+            }
+
+            .highlighted-table-text {
+                position: absolute;
+                top: 47%;
+                left: 50%;
+                transform: translate(-50%, -70%);
+                text-align: center;
+
+                .name {
+                    position: initial;
+                    width: 25vw;
+                    height: 46px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                
+                    > div {
+                        color: #90d793;
+                        font-weight: bold;
+                    }
+                }
+    
+                .genres {
+                    color: white;
+                    opacity: 0.8;
+                    font-size: 0.8rem;
+                }
+    
+                .platforms {
+                    color: white;
+                    opacity: 0.8;
+                    font-size: 1.3rem;
+                }
+
+                .price-btn {
+                    min-width: unset!important;
+                    min-height: unset!important;
+                    background-color: #4c6b22 !important;
+                    color: white!important;
+                    font-size: 0.7rem;
+                    margin-bottom: 4px;
+                    pointer-events: all;
+                    
+                    &:hover {
+                        background-color: #699230!important
+                    }
+                }
+
+            }
+        }
+
+        .slick-list {
+            height: inherit;
+        }
+
+        .slick-slide > div {
+            height: inherit;
+        }
+
+        .slick-slider {
+            margin-bottom: 0px!important;
+        }
+
+        .slick-dots {
+            position: relative!important;
+            bottom: 5px!important;
+
+            li {
+                margin: 5px 8px!important;
+                width: 40px!important;
+                height: 40px!important;
+            }
+
+            .slick-active {
+                img {
+                    border: 2px solid @tertiary-color;
+                }
+            }
+        }
+
+        .slick-track, img {
+            height: inherit!important;
+        }
+
+    }
+
     .fullsize-results {
         display: grid;
         grid-gap: 17px;

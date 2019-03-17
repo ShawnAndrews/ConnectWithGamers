@@ -42,6 +42,10 @@ export function getGogPricings(igdb_games_sys_key_id: number, gog_link: string):
                     pricingEnum = PricingsEnum.main_game;
                 }
 
+                if (isNaN(price)) {
+                    return reject();
+                }
+
                 const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                 pricings.push(pricing);
 

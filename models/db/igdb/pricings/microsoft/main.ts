@@ -54,10 +54,9 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                             const coming_soon: boolean = undefined;
                             const preorder: boolean = undefined;
                             const title: string = $(element).find(`h3`).text();
-                            const isGold: boolean = $(element).find(`span:contains('Gold')`).length > 0;
-                            const isPass: boolean = $(element).find(`span:contains('Pass')`).length > 0;
-                            const pricingEnum: PricingsEnum = isGold ? PricingsEnum.free_or_discounted_with_xbox_live_gold : (isPass ? PricingsEnum.free_or_discounted_with_xbox_game_pass : (i === 0 ? PricingsEnum.main_game : PricingsEnum.bundles));
-                            const price: number = Number.parseFloat($(element).find(`[itemprop='price']`).text().replace(`$`, ``));
+                            const isPass: boolean = $(element).find(`[itemprop='price']`).text().trim() === "Included";
+                            const pricingEnum: PricingsEnum = isPass ? PricingsEnum.free_or_discounted_with_xbox_game_pass : PricingsEnum.bundles;
+                            const price: number = !isPass ? Number.parseFloat($(element).find(`[itemprop='price']`).text().replace(`$`, ``)) : undefined;
                             const discountPercent: number = undefined;
 
                             const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };

@@ -155,7 +155,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     videoCached={props.game.video_cached}
                     imageScreenshotBigCached={props.game.image_screenshot_big_cached}
                 />}
-            <div className="position-relative mx-5" style={getCoverContainerStyle()}>
+            <div className="position-relative mx-5 mb-2" style={getCoverContainerStyle()}>
                 <div className="d-inline-block" style={getCoverGameInfoStyle()}>
                     {props.game.cover &&
                         <Cover
@@ -269,17 +269,18 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                         />
                     </div>
                 </div>
-                <SimilarGamesContainer
-                    similarGames={props.game.similar_games}
-                    hoveredSimilarGameIndex={props.hoveredSimilarGameIndex}
-                    goToGame={props.goToGame}
-                    onSimilarGamesMouseDown={props.onSimilarGamesMouseDown}
-                    onSimilarGamesMouseUp={props.onSimilarGamesMouseUp}
-                    onSimilarGamesMouseMove={props.onSimilarGamesMouseMove}
-                    onSimilarGamesMouseOver={props.onSimilarGamesMouseOver}
-                    onSimilarGamesMouseLeave={props.onSimilarGamesMouseLeave}
-                    getConvertedPrice={props.getConvertedPrice}
-                />
+                {props.game.similar_games && 
+                    <SimilarGamesContainer
+                        similarGames={props.game.similar_games}
+                        hoveredSimilarGameIndex={props.hoveredSimilarGameIndex}
+                        goToGame={props.goToGame}
+                        onSimilarGamesMouseDown={props.onSimilarGamesMouseDown}
+                        onSimilarGamesMouseUp={props.onSimilarGamesMouseUp}
+                        onSimilarGamesMouseMove={props.onSimilarGamesMouseMove}
+                        onSimilarGamesMouseOver={props.onSimilarGamesMouseOver}
+                        onSimilarGamesMouseLeave={props.onSimilarGamesMouseLeave}
+                        getConvertedPrice={props.getConvertedPrice}
+                    />}
             </div>
             <Snackbar
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

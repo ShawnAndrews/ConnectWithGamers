@@ -1228,14 +1228,6 @@ class IGDBModel extends DatabaseBase {
      */
     getImageCoverCached(gameId: number, size: IGDBImageSizeEnums): Promise<boolean> {
 
-        let imageCachedIndex: number;
-
-        if (size === IGDBImageSizeEnums.micro) {
-            imageCachedIndex = 9;
-        } else if (size === IGDBImageSizeEnums.cover_big) {
-            imageCachedIndex = 10;
-        }
-
         return new Promise((resolve: any, reject: any) => {
 
             this.select(
@@ -1337,11 +1329,13 @@ class IGDBModel extends DatabaseBase {
                                             });
                                     })
                                     .catch((err: string) => {
-                                        return reject(err);
+                                        console.log(`Cover err: ${JSON.stringify(err)}`);
+                                        return resolve(false);
                                     });
 
                             })
                             .catch((err: string) => {
+                                console.log(`Cover err2: ${JSON.stringify(err)}`);
                                 return reject(err);
                             });
 
@@ -1533,8 +1527,11 @@ class IGDBModel extends DatabaseBase {
             .catch((err: AxiosError) => {
 
                 if (err && err.response && err.response.status === 200) {
-                    pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(err); });
+                    pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(); });
                 } else if (err && err.response && err.response.status.toString().startsWith("50")) {
+                    if (inputPath.startsWith("https://images.igdb.com")) {
+                        return reject(`IGDB problem getting image: ${inputPath}`);
+                    }
                     return resolve();
                 } else {
 
@@ -1546,7 +1543,7 @@ class IGDBModel extends DatabaseBase {
                     .catch((err: AxiosError) => {
 
                         if (err && err.response && err.response.status === 200) {
-                            pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(err); });
+                            pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(); });
                         } else {
 
                             Axios(inputPath, { method: "GET", responseType: "stream" })
@@ -1557,7 +1554,7 @@ class IGDBModel extends DatabaseBase {
                             .catch((err: AxiosError) => {
 
                                 if (err && err.response && err.response.status === 200) {
-                                    pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(err); });
+                                    pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(); });
                                 } else {
 
                                     Axios(inputPath, { method: "GET", responseType: "stream" })
@@ -1568,7 +1565,7 @@ class IGDBModel extends DatabaseBase {
                                     .catch((err: AxiosError) => {
 
                                         if (err && err.response && err.response.status === 200) {
-                                            pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(err); });
+                                            pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(); });
                                         } else {
 
                                             Axios(inputPath, { method: "GET", responseType: "stream" })
@@ -1579,7 +1576,7 @@ class IGDBModel extends DatabaseBase {
                                             .catch((err: AxiosError) => {
 
                                                 if (err && err.response && err.response.status === 200) {
-                                                    pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(err); });
+                                                    pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(); });
                                                 } else {
                                                     console.log(`Maxmium retries exceeded for ${inputPath}.`);
                                                     return reject(`Maxmium retries exceeded.`);

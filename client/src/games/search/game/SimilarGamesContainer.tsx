@@ -27,7 +27,9 @@ class SimilarGamesContainer extends React.PureComponent<ISimilarGamesContainerPr
         super(props);
         this.loadSimilarGames = this.loadSimilarGames.bind(this);
 
-        this.loadSimilarGames();
+        if (this.props.similarGames) {
+            this.loadSimilarGames();   
+        }
 
         this.state = {
             isLoading: true,

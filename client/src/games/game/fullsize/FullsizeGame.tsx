@@ -35,7 +35,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                     <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_screenshot_big_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
                 </div>}
             {props.isEditorsChoiceGame &&
-                (!props.videoPreviewEnded
+                !props.videoPreviewEnded
                     ?
                     <video className="video-preview in-grid w-100 h-100" muted={true} autoPlay={true} loop={true} onEnded={props.onVideoPreviewEnded} playsInline={true} onClick={props.goToGame}>
                         <source src={`/cache/video-previews/${props.game.id}.mp4`} type="Video/mp4"/>
@@ -44,7 +44,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                     :
                     <>
                         {<img className="screenshot w-100 h-100" src={props.game.image_screenshot_big_cached ? getCachedIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(props.game.screenshots[0].image_id, IGDBImageSizeEnums.screenshot_big)} />}
-                    </>)}
+                    </>}
             <div className='overlay'/>
             {!props.isEditorsChoiceGame && <div className='text-overlay'/>}
             {props.isEditorsChoiceGame &&

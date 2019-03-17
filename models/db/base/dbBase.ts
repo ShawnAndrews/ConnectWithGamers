@@ -107,7 +107,7 @@ export default class DatabaseBase {
 
                 // execute query
                 this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
-                    if (error) {
+                    if (error && error.code !== `ER_DUP_ENTRY`) {
                         console.log(`CUSTOM error: ${JSON.stringify(error)}`);
                         return reject(error);
                     }
@@ -116,7 +116,6 @@ export default class DatabaseBase {
                 });
 
             });
-
     }
 
     /**
