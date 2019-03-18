@@ -1804,7 +1804,9 @@ class IGDBModel extends DatabaseBase {
 
                             writable
                             .on(`close`, () => {
-                                fs.chmodSync(outputPath, "777");
+                                if (fs.existsSync(outputPath)) {
+                                    fs.chmodSync(outputPath, "777");
+                                }
 
                                 this.updateVideoCached(gameId, true)
                                     .then(() => {

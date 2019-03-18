@@ -1,21 +1,23 @@
 import * as React from 'react';
-import { GameResponse, GenreEnums } from '../../../client-server-common/common';
+import { GameResponse, GenreEnums, NewsArticle } from '../../../client-server-common/common';
 import Spinner from '../../spinner/main';
 import Slider from "react-slick";
 import FullsizeGameContainer from '../game/fullsize/FullsizeGameContainer';
 import Footer from '../../footer/footer';
 import { Textfit } from 'react-textfit';
 import { Button } from '@material-ui/core';
-import { EditorsChoiceGameInfo } from './HomeContainer';
+import { BigGameInfo } from './HomeContainer';
+import FullsizeNewsContainer from '../game/fullsize/FullsizeNewsContainer';
 
 interface IHomeProps {
     isLoading: boolean;
     loadingMsg: string;
     games: GameResponse[];
-    editorsChoiceGamesInfo: EditorsChoiceGameInfo[];
+    bigGamesInfo: BigGameInfo[];
     editorsGamesIndicies: number[];
     featureGamesIndicies: number[];
     subFeatureGamesIndicies: number[];
+    news: NewsArticle[];
 }
 
 const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
@@ -38,11 +40,11 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
     return (
         <>
             <Slider {...settings} >
-                {props.editorsChoiceGamesInfo && 
-                    props.editorsChoiceGamesInfo.map((gameInfo: EditorsChoiceGameInfo) => (
+                {props.bigGamesInfo && 
+                    props.bigGamesInfo.map((gameInfo: BigGameInfo) => (
                         <div className="item">
                             <video className="video-preview w-100 h-100" muted={true} autoPlay={true} loop={true} onEnded={() => {}} playsInline={true} onClick={() => {}}>
-                                <source src={`/cache/video-previews/${gameInfo.gameId}.mp4`} type="Video/mp4"/>
+                                <source src={gameInfo.vidLink} type="Video/mp4"/>
                                 <span>Your browser does not support the video tag.</span>
                             </video>
                             <div className="highlighted-table-text">
@@ -66,7 +68,11 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                         </div>
                     ))}
             </Slider>
-            <div className="fullsize-results pb-4">
+            <h5 className="color-tertiary mb-3">
+                <i className="far fa-star d-inline-block mr-2"/>
+                <div className="d-inline-block">Featured</div>
+            </h5>
+            <div className="fullsize-results games pb-5">
                 {props.games && props.games
                     .map((game: GameResponse, index: number) => {
                         const isEditorsChoiceGame: boolean = props.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
@@ -83,6 +89,18 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                             />
                         );
                     })}
+            </div>
+            <h5 className="color-tertiary mb-3">
+                <i className="far fa-newspaper d-inline-block mr-2"/>
+                <div className="d-inline-block">News</div>
+            </h5>
+            <div className="fullsize-results news pb-4">
+                {props.news && props.news
+                    .map((news: NewsArticle) => (
+                        <FullsizeNewsContainer
+                            news={news}
+                        />
+                    ))}
             </div>
             <Footer/>
         </>

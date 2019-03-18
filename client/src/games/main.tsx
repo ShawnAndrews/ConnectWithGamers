@@ -15,7 +15,7 @@ interface IMainProps {
 const Main: React.SFC<IMainProps> = (props: IMainProps) => {
 
     return (
-        <div className="games position-relative">
+        <div className="games-page position-relative">
             <SidenavContainer
                 onSidenavItemClick={props.onSidenavItemClick}
                 sidebarActiveEnum={props.sidebarActiveEnum}

@@ -5,7 +5,7 @@
 @games-sidebar-content-width: 300px;
 @games-sidebar-color: #111215;
 
-.games {
+.games-page {
     height: -webkit-fill-available;
 
     .editors-games-carousel {
@@ -106,15 +106,47 @@
     .fullsize-results {
         display: grid;
         grid-gap: 17px;
-        grid-template-columns: auto auto auto auto;
-        grid-auto-rows: minmax(125px, 17vh);
-    
-        @media @lg {
-            grid-template-columns: auto auto auto;
+
+        &.games {
+            grid-template-columns: auto auto auto auto;
+            grid-auto-rows: minmax(125px, 25vh);
         }
 
-        @media @md {
-            grid-template-columns: auto auto;
+        &.news {
+            grid-template-columns: auto auto auto auto;
+            grid-auto-rows: auto;
+
+            &>div {
+                background: transparent;
+            }
+
+            img {
+                min-height: 150px;
+            }
+
+            .title {
+                position: relative;
+                overflow: hidden;
+                color: #90d794d8;
+                font-size: .8em;
+            }
+        
+            .author {
+                color: hsla(0,0%,100%,.5);
+                font-size: .6em;
+                height: 1.4em;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        
+            .date {
+                color: orange;
+                font-size: .8em;
+                text-align: right;
+                overflow: hidden;
+                height: 1.4em;
+            }
         }
 
         [class*="game"] {

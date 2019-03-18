@@ -137,6 +137,7 @@ export function getCurrencyRate(currencyType: CurrencyType): Promise<number> {
                 return resolve(currencyRate);
             })
             .catch( (error: string) => {
+                console.log(error);
                 return reject(error);
             });
     });
