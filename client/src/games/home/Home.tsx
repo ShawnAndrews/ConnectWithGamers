@@ -44,7 +44,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                     props.bigGamesInfo.map((gameInfo: BigGameInfo) => (
                         <div className="item">
                             <video className="video-preview w-100 h-100" muted={true} autoPlay={true} loop={true} onEnded={() => {}} playsInline={true} onClick={() => {}}>
-                                <source src={gameInfo.vidLink} type="Video/mp4"/>
+                                <source src={`/cache/video-previews/${gameInfo.gameId}.mp4`} type="Video/mp4"/>
                                 <span>Your browser does not support the video tag.</span>
                             </video>
                             <div className="highlighted-table-text">

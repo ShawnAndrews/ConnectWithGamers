@@ -9,7 +9,6 @@ export interface BigGameInfo {
     gameId: number;
     btnLink: string;
     btnText: string;
-    vidLink: string;
     game?: GameResponse;
 }
 
@@ -37,10 +36,10 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             games: undefined,
             news: undefined,
             bigGamesInfo: [
-                { gameId: 22778, btnText: `Available March 26ᵗʰ`, btnLink: `https://store.steampowered.com/app/794260/Outward/`, vidLink: `https://cdn2.unrealengine.com/Diesel%2Fproduct%2Fviola%2Fhome%2FOutward_Epic-GamePageClip-12da38d3a4e0874b793c49221b50f7b2ea276eed.mp4` },
-                { gameId: 27804, btnText: `Pre-order $39.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Fphoenix-point%2Fhome%3FpurchaseIntentId%3D75e9feab76fc46bb8ce6f3d7dadae3c8&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true`, vidLink: `https://cdn2.unrealengine.com/Diesel%2Fproduct%2Firis%2Fhome%2FGame-page-promo-video-3e9eec32c5858e036e623c294d6595d535e124ca.mp4` },
-                { gameId: 113212, btnText: `Buy it now $29.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Foperencia%2Fhome%3FpurchaseIntentId%3D7d1d766667ef423bbd636ee6f054f755&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true`, vidLink: `https://cdn2.unrealengine.com/Diesel%2Fproduct%2Flily%2Fhome%2FOperencia_Epic_Store_Preview-81f84d330547739e0cd61ff3dc8f1ff8ce555f9c.mp4` },
-                { gameId: 26166, btnText: `Coming soon`, btnLink: `https://www.epicgames.com/store/en-US/product/dauntless/home`, vidLink: `https://cdn2.unrealengine.com/Diesel%2Fproduct%2Fdauntless%2Fhome%2FEGs_Dauntless_P1-41901f8bb92a2083263c4ba964d48732e93f9d92.mp4` },
+                { gameId: 22778, btnText: `Available March 26ᵗʰ`, btnLink: `https://store.steampowered.com/app/794260/Outward/` },
+                { gameId: 27804, btnText: `Pre-order $39.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Fphoenix-point%2Fhome%3FpurchaseIntentId%3D75e9feab76fc46bb8ce6f3d7dadae3c8&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
+                { gameId: 113212, btnText: `Buy it now $29.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Foperencia%2Fhome%3FpurchaseIntentId%3D7d1d766667ef423bbd636ee6f054f755&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
+                { gameId: 26166, btnText: `Coming soon`, btnLink: `https://www.epicgames.com/store/en-US/product/dauntless/home`},
             ],
             editorsGamesIndicies: [],
             featureGamesIndicies: [41],
