@@ -32,3 +32,5 @@ TODO:
 - add twitch stream to game's page
 
 - deals from https://www.gog.com/ or https://store.steampowered.com/news/?feed=steam_announce&headlines=1
+
+- add config option -> light/dark theme cookie
