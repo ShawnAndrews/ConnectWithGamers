@@ -262,11 +262,8 @@ This will start running the HTTP/HTTPS web and chat server. You may now access t
 ### Why is it called Connect With Gamers?
 This website was designed to provide information, pricing and notifications abut all the games you love, and give you an opportunity in the chatroom to talk with fellow gamers about them.
 
-### Do you have other projects i can check out?
-Of course! You can check them out on my portfolio website at [saportfolio.ca](http://www.saportfolio.ca)
-
 ### Where can i get a copy of the database?
-Ask the admin (Shawn Andrews) for a copy of the latest database schema.
+Ask the admin (Shawn Andrews) for a copy of the latest database.
 
 ### How was this project developed?
 Using React, Bootstrap, Redux, NodeJS, Mocha, MySQL, and SocketIO.
