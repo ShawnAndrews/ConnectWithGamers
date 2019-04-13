@@ -55,7 +55,7 @@ class IGDBModel extends DatabaseBase {
     setGame(game: GameResponse): Promise<void> {
 
         return new Promise((resolve, reject) => {
-            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, game.summary, game.first_release_date, game.video, game.video_cached, game.image_micro_cached, game.image_cover_big_cached, game.image_screenshot_med_cached, game.image_screenshot_big_cached, game.steam_link, game.gog_link, game.microsoft_link, game.apple_link, game.android_link, game.multiplayer_enabled];
+            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, game.summary, game.first_release_date, game.video, game.video_cached, game.image_cover_micro_cached, game.image_cover_big_cached, game.image_screenshot_med_cached, game.image_screenshot_big_cached, game.steam_link, game.gog_link, game.microsoft_link, game.apple_link, game.android_link, game.multiplayer_enabled];
 
             this.insert(
                 DbTables.igdb_games,
@@ -139,7 +139,7 @@ class IGDBModel extends DatabaseBase {
             let pricings: PriceInfoResponse[] = undefined;
             let similar_games: number[] = undefined;
             let video_cached: boolean = undefined;
-            let image_micro_cached: boolean = undefined;
+            let image_cover_micro_cached: boolean = undefined;
             let image_cover_big_cached: boolean = undefined;
             let image_screenshot_med_cached: boolean = undefined;
             let image_screenshot_big_cached: boolean = undefined;
@@ -154,7 +154,7 @@ class IGDBModel extends DatabaseBase {
                     genres = vals[5];
                     similar_games = vals[6];
                     video_cached = vals[7];
-                    image_micro_cached = vals[8];
+                    image_cover_micro_cached = vals[8];
                     image_cover_big_cached = vals[9];
                     image_screenshot_med_cached = vals[10];
                     image_screenshot_big_cached = vals[11];
@@ -183,7 +183,7 @@ class IGDBModel extends DatabaseBase {
                                     genres: genres,
                                     platforms: platforms,
                                     video_cached: video_cached,
-                                    image_micro_cached: image_micro_cached,
+                                    image_cover_micro_cached: image_cover_micro_cached,
                                     image_cover_big_cached: image_cover_big_cached,
                                     image_screenshot_med_cached: image_screenshot_med_cached,
                                     image_screenshot_big_cached: image_screenshot_big_cached,
@@ -1329,13 +1329,11 @@ class IGDBModel extends DatabaseBase {
                                             });
                                     })
                                     .catch((err: string) => {
-                                        console.log(`Cover err: ${JSON.stringify(err)}`);
                                         return resolve(false);
                                     });
 
                             })
                             .catch((err: string) => {
-                                console.log(`Cover err2: ${JSON.stringify(err)}`);
                                 return reject(err);
                             });
 
@@ -1469,7 +1467,6 @@ class IGDBModel extends DatabaseBase {
                                             });
                                     })
                                     .catch((err: string) => {
-                                        console.log(err);
                                         return resolve(false);
                                     });
 
@@ -1519,83 +1516,19 @@ class IGDBModel extends DatabaseBase {
             const successError: AxiosError = { response: { status: 200, data: undefined, statusText: undefined, headers: undefined, config: undefined }, config: undefined, name: undefined, message: undefined };
             let successfulImageStream: any;
 
-            Axios(inputPath, { method: "GET", responseType: "stream" })
+            Axios(inputPath, { method: "GET", responseType: "stream", timeout: 2000 })
             .then((response: AxiosResponse) => {
                 successfulImageStream = response.data;
                 throw(successError);
             })
             .catch((err: AxiosError) => {
-
                 if (err && err.response && err.response.status === 200) {
                     pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(); });
-                } else if (err && err.response && err.response.status.toString().startsWith("50")) {
+                } else {
                     if (inputPath.startsWith("https://images.igdb.com")) {
                         return reject(`IGDB problem getting image: ${inputPath}`);
                     }
                     return resolve();
-                } else {
-
-                    Axios(inputPath, { method: "GET", responseType: "stream" })
-                    .then((response: AxiosResponse) => {
-                        successfulImageStream = response.data;
-                        throw(successError);
-                    })
-                    .catch((err: AxiosError) => {
-
-                        if (err && err.response && err.response.status === 200) {
-                            pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(); });
-                        } else {
-
-                            Axios(inputPath, { method: "GET", responseType: "stream" })
-                            .then((response: AxiosResponse) => {
-                                successfulImageStream = response.data;
-                                throw(successError);
-                            })
-                            .catch((err: AxiosError) => {
-
-                                if (err && err.response && err.response.status === 200) {
-                                    pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(); });
-                                } else {
-
-                                    Axios(inputPath, { method: "GET", responseType: "stream" })
-                                    .then((response: AxiosResponse) => {
-                                        successfulImageStream = response.data;
-                                        throw(successError);
-                                    })
-                                    .catch((err: AxiosError) => {
-
-                                        if (err && err.response && err.response.status === 200) {
-                                            pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(); });
-                                        } else {
-
-                                            Axios(inputPath, { method: "GET", responseType: "stream" })
-                                            .then((response: AxiosResponse) => {
-                                                successfulImageStream = response.data;
-                                                throw(successError);
-                                            })
-                                            .catch((err: AxiosError) => {
-
-                                                if (err && err.response && err.response.status === 200) {
-                                                    pipePromise(successfulImageStream).then(() => { return resolve(); }).catch((err: string) => { return reject(); });
-                                                } else {
-                                                    console.log(`Maxmium retries exceeded for ${inputPath}.`);
-                                                    return reject(`Maxmium retries exceeded.`);
-                                                }
-
-                                            });
-
-                                        }
-
-                                    });
-
-                                }
-
-                            });
-
-                        }
-
-                    });
-
                 }
 
             });
@@ -1633,7 +1566,6 @@ class IGDBModel extends DatabaseBase {
                                         const similarGameId: number = x[DbTableSimilarGamesFields[2]];
                                         similar_games.push(similarGameId);
                                     });
-
                                     return resolve(similar_games);
                                 } else {
                                     return resolve(undefined);

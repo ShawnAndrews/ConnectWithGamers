@@ -1,9 +1,9 @@
 import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IGDBReleaseDate, IGDBImage, IGDBMultiplayerMode, GameFields, buildIGDBRequestBody, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, IGDBExternalCategoryEnum, IGDBExternalGame } from "../../../client/client-server-common/common";
 import { ArrayClean } from "../../../util/main";
 import config from "../../../config";
+import { cachePreloadedGame } from "./game/main";
 import axios, { AxiosResponse } from "axios";
-import { cachePreloadedGame, gameKeyExists, getCachedGame, cacheGame } from "./game/main";
-import { igdbModel } from "../../../models/db/igdb/main";
+import * as cheerio from "cheerio";
 
 export function getGamesBySteamIds(steamIds: number[], requiredMedia?: boolean): Promise<GameResponse[]> {
     const filters: string[] = [`external_games.uid = (${steamIds.join()})`];
@@ -211,7 +211,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 screenshots: screenshots,
                 video: video,
                 video_cached: false,
-                image_micro_cached: false,
+                image_cover_micro_cached: false,
                 image_cover_big_cached: false,
                 image_screenshot_med_cached: false,
                 image_screenshot_big_cached: false,
@@ -263,4 +263,82 @@ export function parseSteamIds(webpage: string): number[] {
     }
 
     return steamIds;
+}
+
+export function parseSteamIdsFromQuery(webpage: string, excludeFreeGames: boolean = false): Promise<GameResponse[]> {
+
+    const getPageSuffix = (page: number): string => `&page=${page}`;
+    const getSteamIdsByPage = (page: number): Promise<number[]> => {
+        return new Promise((resolve, reject) => {
+            axios({
+                method: "get",
+                url: webpage.concat(getPageSuffix(page)),
+                headers: {
+                    "birthtime": 28801
+                },
+                maxRedirects: 5
+            })
+            .then((response: AxiosResponse) => {
+                const $: CheerioStatic = cheerio.load(response.data);
+                const steamIds: number[] = [];
+
+                $("#search_result_container > div:nth-child(2) a").each((i: number, element: CheerioElement) => {
+
+                    const isGameFree: boolean = excludeFreeGames && ($(element).find(".search_price").text().trim().toLowerCase() === "free to play");
+
+                    if (isGameFree) {
+                        console.log(`Added! #${steamIds.length}`);
+                        steamIds.push(Number.parseInt(element.attribs["data-ds-appid"]));
+                    } else {
+                        console.log(`Not added! #${steamIds.length}`);
+                    }
+                });
+
+                return resolve(steamIds);
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
+        });
+    };
+
+    return new Promise((resolve, reject) => {
+
+        const steamIdsPromises: Promise<number[]>[] = [];
+
+        steamIdsPromises.push(getSteamIdsByPage(1));
+        steamIdsPromises.push(getSteamIdsByPage(2));
+        steamIdsPromises.push(getSteamIdsByPage(3));
+        steamIdsPromises.push(getSteamIdsByPage(4));
+        steamIdsPromises.push(getSteamIdsByPage(5));
+        steamIdsPromises.push(getSteamIdsByPage(6));
+        steamIdsPromises.push(getSteamIdsByPage(7));
+        steamIdsPromises.push(getSteamIdsByPage(8));
+
+        Promise.all(steamIdsPromises)
+            .then((partialSteamIds: number[][]) => {
+
+                const steamIds: number[] = [];
+
+                for (let x = 0; x < partialSteamIds.length; x++) {
+                    for (let y = 0; y < partialSteamIds[x].length; y++) {
+                        steamIds.push(partialSteamIds[x][y]);
+                    }
+                }
+
+                getGamesBySteamIds(steamIds, true)
+                    .then((gameResponses: GameResponse[]) => {
+                        return resolve(gameResponses);
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
+
+    });
+
 }

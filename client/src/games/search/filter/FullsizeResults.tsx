@@ -37,7 +37,7 @@ const FullsizeResults: React.SFC<IFullsizeResultsProps> = (props: IFullsizeResul
     }
 
     return (
-        <div className="fullsize-results">
+        <div className="fullsize-results games">
             {props.games && props.games
                 .map((game: GameResponse, index: number) => {
                     const isEditorsChoiceGame: boolean = props.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1;

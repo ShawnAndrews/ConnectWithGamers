@@ -1,6 +1,5 @@
 import config from "../../../../config";
-import {
-    GameResponse, GameFields, RawGame, buildIGDBRequestBody } from "../../../../client/client-server-common/common";
+import { GameResponse, GameFields, RawGame, buildIGDBRequestBody } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import { convertRawGame } from "../util";
 import { igdbModel } from "../../../../models/db/igdb/main";
@@ -32,6 +31,7 @@ export function getCachedGame(gameId: number): Promise<GameResponse> {
     return new Promise((resolve: any, reject: any) => {
         igdbModel.getGame(gameId)
             .then((game: GameResponse) => {
+                console.log(`Completed game id #${gameId}`);
                 return resolve(game);
             })
             .catch((error: string) => {
