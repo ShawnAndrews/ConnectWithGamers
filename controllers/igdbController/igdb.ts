@@ -34,6 +34,9 @@ import { steamPuzzleExists, getSteamPuzzleGames, cacheSteamPuzzleGames } from ".
 import { steamShooterExists, getSteamShooterGames, cacheSteamShooterGames } from "./cache/steam/genres/shooter/main";
 import { steamRtsExists, getSteamRtsGames, cacheSteamRtsGames } from "./cache/steam/genres/rts/main";
 import { steamTowerDefenceExists, getSteamTowerDefenceGames, cacheSteamTowerDefenceGames } from "./cache/steam/genres/towerdefence/main";
+import { steamUpcomingExists, getSteamUpcomingGames, cacheSteamUpcomingGames } from "./cache/steam/upcoming/main";
+import { steamPopularExists, getSteamPopularGames, cacheSteamPopularGames } from "./cache/steam/popular/main";
+import { steamRecentExists, getSteamRecentGames, cacheSteamRecentGames } from "./cache/steam/recent/main";
 
 export const routes = new routeModel();
 
@@ -51,6 +54,7 @@ routes.addRoute("steammoba", "/steam/moba");
 routes.addRoute("steamvrhtc", "/steam/vrhtc");
 routes.addRoute("steamvrvive", "/steam/vrvive");
 routes.addRoute("steamvrwindows", "/steam/vrwindows");
+routes.addRoute("steamvrall", "/steam/vrall");
 routes.addRoute("steamgenreaction", "/steam/genre/action");
 routes.addRoute("steamgenreadventure", "/steam/genre/adventure");
 routes.addRoute("steamgenrecasual", "/steam/genre/casual");
@@ -64,7 +68,9 @@ routes.addRoute("steamgenrepuzzle", "/steam/genre/puzzle");
 routes.addRoute("steamgenreshooter", "/steam/genre/shooter");
 routes.addRoute("steamgenrerts", "/steam/genre/rts");
 routes.addRoute("steamgenretowerdefence", "/steam/genre/towerdefence");
-
+routes.addRoute("steamupcoming", "/steam/upcoming");
+routes.addRoute("steampopular", "/steam/popular");
+routes.addRoute("steamrecent", "/steam/recent");
 
 type CachedRouteTypes = GameResponse[] | GameResponse[] | NewsArticle[] | GameResponse;
 
@@ -520,6 +526,51 @@ router.post(routes.getRoute("steamgenretowerdefence"), (req: Request, res: Respo
 
     const genericResponse: GenericModelResponse = { error: undefined };
     GenericCachedRoute<GameResponse[]>(steamTowerDefenceExists, getSteamTowerDefenceGames, cacheSteamTowerDefenceGames)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* tower defence games */
+router.post(routes.getRoute("steamupcoming"), (req: Request, res: Response) => {
+
+    const genericResponse: GenericModelResponse = { error: undefined };
+    GenericCachedRoute<GameResponse[]>(steamUpcomingExists, getSteamUpcomingGames, cacheSteamUpcomingGames)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* tower defence games */
+router.post(routes.getRoute("steampopular"), (req: Request, res: Response) => {
+
+    const genericResponse: GenericModelResponse = { error: undefined };
+    GenericCachedRoute<GameResponse[]>(steamPopularExists, getSteamPopularGames, cacheSteamPopularGames)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* tower defence games */
+router.post(routes.getRoute("steamrecent"), (req: Request, res: Response) => {
+
+    const genericResponse: GenericModelResponse = { error: undefined };
+    GenericCachedRoute<GameResponse[]>(steamRecentExists, getSteamRecentGames, cacheSteamRecentGames)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);

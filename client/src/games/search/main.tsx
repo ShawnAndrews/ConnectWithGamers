@@ -11,8 +11,7 @@ const SearchRouter: React.SFC<any> = () => {
         <Switch>
             <Route path="/search/filter/:required?/:platforms?/:genres?/:categories?/:date?/:sort?" component={ResultsContainer}/>
             <Route path="/search/game/:id" component={GameContainer} />
-            <Route path="/search/:type" component={FullsizeResultsContainer} />
-            <Route path="/search" component={GameContainer} />
+            <Route path="/search" component={FullsizeResultsContainer} />
             <Route component={NotFoundPageContainer}/>
         </Switch>
     );

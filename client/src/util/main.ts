@@ -64,7 +64,7 @@ export function getGameBestPricingStatus(pricings: PriceInfoResponse[]): PriceIn
     let comingSoon: boolean = false;
     let preorder: boolean = false;
 
-    pricings.forEach((pricing: PriceInfoResponse) => {
+    pricings && pricings.forEach((pricing: PriceInfoResponse) => {
         if (pricing.pricingEnum === PricingsEnum.main_game) {
             if (!pricing.coming_soon && !pricing.preorder) {
                 if (pricing.coming_soon) {

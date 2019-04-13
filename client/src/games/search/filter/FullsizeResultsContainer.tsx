@@ -3,7 +3,7 @@ const loadImage = require('image-promise');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { GameResponse, MultiGameResponse, GamesPresets, ExcludedGameIds, getIGDBImage, IGDBImageSizeEnums, IGDBImage } from '../../../../client-server-common/common';
+import { GameResponse, MultiGameResponse, ExcludedGameIds, getIGDBImage, IGDBImageSizeEnums, IGDBImage } from '../../../../client-server-common/common';
 import FullsizeResults from './FullsizeResults';
 
 interface IFullsizeResultsContainerProps extends RouteComponentProps<any> {
@@ -13,7 +13,6 @@ interface IFullsizeResultsContainerProps extends RouteComponentProps<any> {
 interface IFullsizeResultsContainerState {
     isLoading: boolean;
     loadingMsg: string;
-    ResultsEnum: string;
     games: GameResponse[];
     retry: boolean;
     editorsGamesIndicies: number[];
@@ -33,7 +32,6 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
         this.state = {
             isLoading: true,
             loadingMsg: "Loading games...",
-            ResultsEnum: props.match.params.type,
             games: undefined,
             retry: false,
             editorsGamesIndicies: [],
@@ -43,35 +41,78 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
     }
 
     componentWillReceiveProps(newProps: IFullsizeResultsContainerProps): void {
-        const newResultsEnum: string = newProps.match.params.type;
+        const pathChanged: boolean = newProps.location.pathname !== this.props.location.pathname;
 
-        if (this.state.ResultsEnum !== newResultsEnum) {
+        if (pathChanged) {
             this.loadGames(newProps);
 
             this.setState({
-                isLoading: true,
-                ResultsEnum: newResultsEnum
+                isLoading: true
             });
         }
     }
 
     loadGames(someProps: IFullsizeResultsContainerProps): void {
-        const type: string = someProps.match.params.type;
-        let query: string = "";
+        const clientPath: string = someProps.location.pathname;
+        let serverPath: string;
 
-        if (type === "popular") {
-            query = GamesPresets.popular;
-        } else if (type === "recent") {
-            query = GamesPresets.recentlyReleased;
-        } else if (type === "upcoming") {
-            query = GamesPresets.upcoming;
-        } else if (type === "ios-coming-soon") {
-            query = GamesPresets.ioscomingsoon;
-        } else if (type === "android-coming-soon") {
-            query = GamesPresets.androidcomingsoon;
+        if (clientPath.startsWith("/search/steam/popular")) {
+            serverPath = "/igdb/steam/popular";
+        } else if (clientPath.startsWith("/search/steam/recent")) {
+            serverPath = "/igdb/steam/recent";
+        } else if (clientPath.startsWith("/search/steam/upcoming")) {
+            serverPath = "/igdb/steam/upcoming";
+        } else if (clientPath.startsWith("/search/steam/genre/action")) {
+            serverPath = "/igdb/steam/genre/action";
+        } else if (clientPath.startsWith("/search/steam/genre/adventure")) {
+            serverPath = "/igdb/steam/genre/adventure";
+        } else if (clientPath.startsWith("/search/steam/genre/casual")) {
+            serverPath = "/igdb/steam/genre/casual";
+        } else if (clientPath.startsWith("/search/steam/genre/strategy")) {
+            serverPath = "/igdb/steam/genre/strategy";
+        } else if (clientPath.startsWith("/search/steam/genre/racing")) {
+            serverPath = "/igdb/steam/genre/racing";
+        } else if (clientPath.startsWith("/search/steam/genre/simulation")) {
+            serverPath = "/igdb/steam/genre/simulation";
+        } else if (clientPath.startsWith("/search/steam/genre/sports")) {
+            serverPath = "/igdb/steam/genre/sports";
+        } else if (clientPath.startsWith("/search/steam/genre/indie")) {
+            serverPath = "/igdb/steam/genre/indie";
+        } else if (clientPath.startsWith("/search/steam/genre/2d")) {
+            serverPath = "/igdb/steam/genre/2d";
+        } else if (clientPath.startsWith("/search/steam/genre/puzzle")) {
+            serverPath = "/igdb/steam/genre/puzzle";
+        } else if (clientPath.startsWith("/search/steam/genre/shooter")) {
+            serverPath = "/igdb/steam/genre/shooter";
+        } else if (clientPath.startsWith("/search/steam/genre/rts")) {
+            serverPath = "/igdb/steam/genre/rts";
+        } else if (clientPath.startsWith("/search/steam/genre/towerdefence")) {
+            serverPath = "/igdb/steam/genre/towerdefence";
+        } else if (clientPath.startsWith("/search/steam/weeklydeals")) {
+            serverPath = "/igdb/steam/weeklydeals";
+        } else if (clientPath.startsWith("/search/steam/compmulti")) {
+            serverPath = "/igdb/steam/compmulti";
+        } else if (clientPath.startsWith("/search/steam/freeonlinemulti")) {
+            serverPath = "/igdb/steam/freeonlinemulti";
+        } else if (clientPath.startsWith("/search/steam/paidonlinemulti")) {
+            serverPath = "/igdb/steam/paidonlinemulti";
+        } else if (clientPath.startsWith("/search/steam/mostdifficult")) {
+            serverPath = "/igdb/steam/mostdifficult";
+        } else if (clientPath.startsWith("/search/steam/horror")) {
+            serverPath = "/igdb/steam/horror";
+        } else if (clientPath.startsWith("/search/steam/mobo")) {
+            serverPath = "/igdb/steam/moba";
+        } else if (clientPath.startsWith("/search/steam/vrhtc")) {
+            serverPath = "/igdb/steam/vrhtc";
+        } else if (clientPath.startsWith("/search/steam/vrvive")) {
+            serverPath = "/igdb/steam/vrvive";
+        } else if (clientPath.startsWith("/search/steam/vrwindows")) {
+            serverPath = "/igdb/steam/vrwindows";
+        } else if (clientPath.startsWith("/search/steam/vrall")) {
+            serverPath = "/igdb/steam/vrall";
         }
 
-        IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${query}`)
+        IGDBService.httpGenericGetData<MultiGameResponse>(serverPath)
         .then( (response: MultiGameResponse) => {
             const games: GameResponse[] = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
 

@@ -54,7 +54,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 
             />
             <div className="px-3 my-3">
-                <div className="title mb-2">Browse all platforms</div>
+                <div className="title mb-2">Browse Steam</div>
                 <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.MostPopular) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.MostPopular)}>
                     <i className="fas fa-fire mr-3"/>
                     Most Popular
@@ -67,7 +67,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                     <i className="far fa-clock mr-3"/>
                     Upcoming
                 </div>
-                <div className="title mb-2">Browse Steam</div>
+                <div className="title mb-2">Categories</div>
                 <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.Genres) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.Genres)}>
                     <i className="fas fa-align-justify mr-3"/>
                     <span>Genres</span>

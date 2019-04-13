@@ -2,7 +2,7 @@ const popupS = require('popups');
 import * as React from 'react';
 import Home from './Home';
 import * as IGDBService from '../../service/igdb/main';
-import { MultiGameResponse, GameResponse, GamesPresets, ExcludedGameIds, GenericModelResponse, NewsArticle, MultiNewsResponse } from '../../../client-server-common/common';
+import { MultiGameResponse, GameResponse, ExcludedGameIds, GenericModelResponse, NewsArticle, MultiNewsResponse } from '../../../client-server-common/common';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 export interface BigGameInfo {
@@ -51,46 +51,46 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
     componentDidMount(): void {
         let games: GameResponse[] = undefined;
 
-        IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.highlighted}`)
-        .then((gamesResponse: MultiGameResponse) => {
-            games = gamesResponse.data
-                .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
-                .filter((game: GameResponse) => game.screenshots)
-                .slice(0, 9);
+        // IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.highlighted}`)
+        // .then((gamesResponse: MultiGameResponse) => {
+        //     games = gamesResponse.data
+        //         .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
+        //         .filter((game: GameResponse) => game.screenshots)
+        //         .slice(0, 9);
 
-            const editorsChoicePromises: Promise<GenericModelResponse>[] = [];
+        //     const editorsChoicePromises: Promise<GenericModelResponse>[] = [];
     
-            this.state.bigGamesInfo.forEach((x: BigGameInfo) => {
-                editorsChoicePromises.push(IGDBService.httpGenericGetData<GenericModelResponse>(`/igdb/game/${x.gameId}`));
-            });
+        //     this.state.bigGamesInfo.forEach((x: BigGameInfo) => {
+        //         editorsChoicePromises.push(IGDBService.httpGenericGetData<GenericModelResponse>(`/igdb/game/${x.gameId}`));
+        //     });
 
-            return Promise.all(editorsChoicePromises);
-        })
-        .then((gamesResponse: GenericModelResponse[]) => {
+        //     return Promise.all(editorsChoicePromises);
+        // })
+        // .then((gamesResponse: GenericModelResponse[]) => {
 
-            gamesResponse.forEach((x: GenericModelResponse) => {
-                const game: GameResponse = x.data;
-                this.state.bigGamesInfo.forEach((x: BigGameInfo) => {
-                    if (game.id === x.gameId) {
-                        x.game = game;
-                    }
-                });
-            });
+        //     gamesResponse.forEach((x: GenericModelResponse) => {
+        //         const game: GameResponse = x.data;
+        //         this.state.bigGamesInfo.forEach((x: BigGameInfo) => {
+        //             if (game.id === x.gameId) {
+        //                 x.game = game;
+        //             }
+        //         });
+        //     });
 
-            return IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`);
-        })
-        .then( (response: MultiNewsResponse) => {
-            const news: NewsArticle[] = response.data.slice(0, 12);
+        //     return IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`);
+        // })
+        // .then( (response: MultiNewsResponse) => {
+        //     const news: NewsArticle[] = response.data.slice(0, 12);
 
-            this.setState({
-                isLoading: false,
-                games: games,
-                news: news
-            });
-        })
-        .catch((error: string) => {
-            popupS.modal({ content: `<div>• Error loading homepage games. ${error}</div>` });
-        });
+        //     this.setState({
+        //         isLoading: false,
+        //         games: games,
+        //         news: news
+        //     });
+        // })
+        // .catch((error: string) => {
+        //     popupS.modal({ content: `<div>• Error loading homepage games. ${error}</div>` });
+        // });
 
     }
 

@@ -59,14 +59,14 @@ export function getTodayUnixTimestampInSeconds(): number {
 const CURRENT_UNIX_TIME_S: number = getTodayUnixTimestampInSeconds();
 const THREE_MONTH_AGO_UNIX_TIME_S: number = getTodayUnixTimestampInSeconds() - (60 * 60 * 24 * 30 * 3);
 
-export const GamesPresets = {
-    highlighted: `?required=cover,screenshots&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&popularity=55&platforms=6&sort=popularity:desc`,
-    ioscomingsoon: `?required=cover,screenshots&platforms=39&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
-    androidcomingsoon: `?required=cover,screenshots&platforms=34&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
-    upcoming: `?required=cover,screenshots&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
-    recentlyReleased: `?required=cover,screenshots&popularity=5&released_before=${CURRENT_UNIX_TIME_S}&sort=release_date:desc`,
-    popular: `?required=cover,screenshots&popularity=15&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&sort=popularity:desc`,
-};
+// export const GamesPresets = {
+//     highlighted: `?required=cover,screenshots&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&popularity=55&platforms=6&sort=popularity:desc`,
+//     ioscomingsoon: `?required=cover,screenshots&platforms=39&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
+//     androidcomingsoon: `?required=cover,screenshots&platforms=34&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
+//     upcoming: `?required=cover,screenshots&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
+//     recentlyReleased: `?required=cover,screenshots&popularity=5&released_before=${CURRENT_UNIX_TIME_S}&sort=release_date:desc`,
+//     popular: `?required=cover,screenshots&popularity=15&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&sort=popularity:desc`,
+// };
 
 export enum CurrencyType {
     USD = "USD",
@@ -270,7 +270,7 @@ export interface PlatformOption {
 }
 
 export enum ResultsEnum {
-    SearchResults = 1,
+    Search = 1,
     SteamWeeklyDeals = 2,
     SteamCompMulti = 3,
     SteamFreeOnlineMulti = 4,
@@ -295,6 +295,9 @@ export enum ResultsEnum {
     SteamGenreShooter = 23,
     SteamGenreRts = 24,
     SteamGenreTowerDefence = 25,
+    SteamUpcoming = 26,
+    SteamPopular = 27,
+    SteamRecent = 28
 }
 
 export interface UserLog {

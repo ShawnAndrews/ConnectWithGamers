@@ -6,10 +6,10 @@ import { parseSteamIdsFromQuery } from "../../util";
 /**
  * Check if games exists.
  */
-export function steamWeeklyDealsKeyExists(): Promise<boolean> {
+export function steamPopularExists(): Promise<boolean> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.resultsExists(ResultsEnum.SteamWeeklyDeals)
+        igdbModel.resultsExists(ResultsEnum.SteamPopular)
             .then((exists: boolean) => {
                 return resolve(exists);
             })
@@ -24,10 +24,10 @@ export function steamWeeklyDealsKeyExists(): Promise<boolean> {
 /**
  * Get cached games.
  */
-export function getSteamWeeklyDealsGames(): Promise<GameResponse[]> {
+export function getSteamPopularGames(): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.getResults(ResultsEnum.SteamWeeklyDeals)
+        igdbModel.getResults(ResultsEnum.SteamPopular)
             .then((gameIds: number[]) => {
 
                 const gamePromises: Promise<GameResponse>[] = gameIds.map((id: number) => getCachedGame(id));
@@ -52,17 +52,16 @@ export function getSteamWeeklyDealsGames(): Promise<GameResponse[]> {
 /**
  * Cache games.
  */
-export function cacheSteamWeeklyDealsGames(): Promise<GameResponse[]> {
+export function cacheSteamPopularGames(): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
 
-        const URL: string = `https://store.steampowered.com/search/?sort_by=Released_DESC&category1=998&filter=weeklongdeals`;
+        const URL: string = `https://store.steampowered.com/search/?category1=998`;
 
-        parseSteamIdsFromQuery(URL)
+        parseSteamIdsFromQuery(URL, true)
             .then((gamesResponse: GameResponse[]) => {
                 const ids: number[] = gamesResponse.map((x: GameResponse) => x.id);
-
-                igdbModel.setResults(ids, ResultsEnum.SteamWeeklyDeals)
+                igdbModel.setResults(ids, ResultsEnum.SteamPopular)
                     .then(() => {
                         return resolve(gamesResponse);
                     })

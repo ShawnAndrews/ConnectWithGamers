@@ -283,14 +283,10 @@ export function parseSteamIdsFromQuery(webpage: string, excludeFreeGames: boolea
                 const steamIds: number[] = [];
 
                 $("#search_result_container > div:nth-child(2) a").each((i: number, element: CheerioElement) => {
+                    const isExcluded: boolean = excludeFreeGames && ($(element).find(".search_price").text().trim().toLowerCase() === "free to play");
 
-                    const isGameFree: boolean = excludeFreeGames && ($(element).find(".search_price").text().trim().toLowerCase() === "free to play");
-
-                    if (isGameFree) {
-                        console.log(`Added! #${steamIds.length}`);
+                    if (!isExcluded) {
                         steamIds.push(Number.parseInt(element.attribs["data-ds-appid"]));
-                    } else {
-                        console.log(`Not added! #${steamIds.length}`);
                     }
                 });
 

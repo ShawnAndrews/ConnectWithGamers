@@ -2,7 +2,7 @@ const popupS = require('popups');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { GameResponse, MultiGameResponse, ResultsEnum, GamesPresets } from '../../../../client-server-common/common';
+import { GameResponse, MultiGameResponse } from '../../../../client-server-common/common';
 import Results from './Results';
 import { SortingOptionEnum } from '../../sidenav/filter/FilterContainer';
 

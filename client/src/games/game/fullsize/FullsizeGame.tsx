@@ -22,7 +22,6 @@ interface IFullsizeGameProps {
 }
 
 const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) => {
-
     const bestPricing: PriceInfoResponse = getGameBestPricingStatus(props.game.pricings);
     const bestPricingBasePrice: number = bestPricing.price && bestPricing.discount_percent && + (bestPricing.price / ((100 - bestPricing.discount_percent) / 100)).toFixed(2);
     const numericalStatus: boolean = !!bestPricing.price;

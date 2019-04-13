@@ -50,11 +50,59 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
 
     goToOption(homeOptionEnum: HomeOptionsEnum): void {
         if (homeOptionEnum === HomeOptionsEnum.MostPopular) {
-            this.props.history.push(`/search/popular`);
+            this.props.history.push(`/search/steam/popular`);
         } else if (homeOptionEnum === HomeOptionsEnum.RecentlyReleased) {
-            this.props.history.push(`/search/recent`);
+            this.props.history.push(`/search/steam/recent`);
         } else if (homeOptionEnum === HomeOptionsEnum.Upcoming) {
-            this.props.history.push(`/search/upcoming`);
+            this.props.history.push(`/search/steam/upcoming`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenreAction) {
+            this.props.history.push(`/search/steam/genre/action`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenreAdventure) {
+            this.props.history.push(`/search/steam/genre/adventure`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenreCasual) {
+            this.props.history.push(`/search/steam/genre/casual`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenreStrategy) {
+            this.props.history.push(`/search/steam/genre/strategy`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenreRacing) {
+            this.props.history.push(`/search/steam/genre/racing`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenreSimulation) {
+            this.props.history.push(`/search/steam/genre/simulation`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenreSports) {
+            this.props.history.push(`/search/steam/genre/sports`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenreIndie) {
+            this.props.history.push(`/search/steam/genre/indie`);
+        } else if (homeOptionEnum == HomeOptionsEnum.Genre2D) {
+            this.props.history.push(`/search/steam/genre/2d`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenrePuzzle) {
+            this.props.history.push(`/search/steam/genre/puzzle`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenreShooter) {
+            this.props.history.push(`/search/steam/genre/shooter`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenreRTS) {
+            this.props.history.push(`/search/steam/genre/rts`);
+        } else if (homeOptionEnum == HomeOptionsEnum.GenreTowerDefence) {
+            this.props.history.push(`/search/steam/genre/towerdefence`);
+        } else if (homeOptionEnum == HomeOptionsEnum.WeeklyDeals) {
+            this.props.history.push(`/search/steam/weeklydeals`);
+        } else if (homeOptionEnum == HomeOptionsEnum.CompetitiveMultiplayer) {
+            this.props.history.push(`/search/steam/compmulti`);
+        } else if (homeOptionEnum == HomeOptionsEnum.FreeMultiplayer) {
+            this.props.history.push(`/search/steam/freeonlinemulti`);
+        } else if (homeOptionEnum == HomeOptionsEnum.PaidMultiplayer) {
+            this.props.history.push(`/search/steam/paidonlinemulti`);
+        } else if (homeOptionEnum == HomeOptionsEnum.MostDifficult) {
+            this.props.history.push(`/search/steam/mostdifficult`);
+        } else if (homeOptionEnum == HomeOptionsEnum.Horror) {
+            this.props.history.push(`/search/steam/horror`);
+        } else if (homeOptionEnum == HomeOptionsEnum.VRHTC) {
+            this.props.history.push(`/search/steam/vrhtc`);
+        } else if (homeOptionEnum == HomeOptionsEnum.VROculus) {
+            this.props.history.push(`/search/steam/vrvive`);
+        } else if (homeOptionEnum == HomeOptionsEnum.VRWindows) {
+            this.props.history.push(`/search/steam/vrwindows`);
+        } else if (homeOptionEnum == HomeOptionsEnum.VRAll) {
+            this.props.history.push(`/search/steam/vrall`);
+        } else if (homeOptionEnum == HomeOptionsEnum.MOBO) {
+            this.props.history.push(`/search/steam/mobo`);
         }
     }
 
