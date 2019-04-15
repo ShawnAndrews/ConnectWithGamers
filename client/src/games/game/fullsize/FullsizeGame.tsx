@@ -9,15 +9,13 @@ interface IFullsizeGameProps {
     index: number;
     game: GameResponse;
     isEditorsChoiceGame: boolean;
-    isFeatureGame: boolean;
-    isSubFeatureGame: boolean;
+    isBigGame: boolean;
     onHoverGame: () => void;
     onHoverOutGame: () => void;
     hoveredScreenshotIndex: number;
     goToGame: () => void;
     onVideoPreviewEnded: () => void;
     videoPreviewEnded: boolean;
-    
     getConvertedPrice: (price: number) => string;
 }
 
@@ -28,7 +26,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
     const noBestPricingExists: boolean = bestPricing && bestPricing.price === Number.MAX_SAFE_INTEGER;
 
     return (
-        <Card className={`game-${props.index} ${props.isFeatureGame ? 'feature' : ''} ${props.isSubFeatureGame ? 'sub-feature' : ''} ${props.isEditorsChoiceGame ? 'editor-feature overflow-visible' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
+        <Card className={`game-${props.index} ${props.isBigGame ? 'big-game' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
             {!props.isEditorsChoiceGame &&
                 <div className="screenshot w-100 h-100" onClick={props.goToGame}>
                     <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_screenshot_big_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />

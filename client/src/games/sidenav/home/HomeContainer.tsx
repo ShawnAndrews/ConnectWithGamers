@@ -103,6 +103,18 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             this.props.history.push(`/search/steam/vrall`);
         } else if (homeOptionEnum == HomeOptionsEnum.MOBO) {
             this.props.history.push(`/search/steam/mobo`);
+        } else if (homeOptionEnum == HomeOptionsEnum.EarlyAccess) {
+            this.props.history.push(`/search/steam/earlyaccess`);
+        } else if (homeOptionEnum == HomeOptionsEnum.OpenWorld) {
+            this.props.history.push(`/search/steam/openworld`);
+        } else if (homeOptionEnum == HomeOptionsEnum.FPS) {
+            this.props.history.push(`/search/steam/fps`);
+        } else if (homeOptionEnum == HomeOptionsEnum.Cards) {
+            this.props.history.push(`/search/steam/cards`);
+        } else if (homeOptionEnum == HomeOptionsEnum.MMORPG) {
+            this.props.history.push(`/search/steam/mmorpg`);
+        } else if (homeOptionEnum == HomeOptionsEnum.Survival) {
+            this.props.history.push(`/search/steam/survival`);
         }
     }
 

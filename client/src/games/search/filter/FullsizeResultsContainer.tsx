@@ -16,8 +16,7 @@ interface IFullsizeResultsContainerState {
     games: GameResponse[];
     retry: boolean;
     editorsGamesIndicies: number[];
-    featureGamesIndicies: number[];
-    subFeatureGamesIndicies: number[];
+    bigGamesIndicies: number[];
 }
 
 class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainerProps, IFullsizeResultsContainerState> {
@@ -35,8 +34,7 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
             games: undefined,
             retry: false,
             editorsGamesIndicies: [],
-            featureGamesIndicies: [7,22],
-            subFeatureGamesIndicies: [2,16,28,33]
+            bigGamesIndicies: [2,17,28,33]
         };
     }
 
@@ -110,6 +108,18 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
             serverPath = "/igdb/steam/vrwindows";
         } else if (clientPath.startsWith("/search/steam/vrall")) {
             serverPath = "/igdb/steam/vrall";
+        } else if (clientPath.startsWith("/search/steam/earlyaccess")) {
+            serverPath = "/igdb/steam/earlyaccess";
+        } else if (clientPath.startsWith("/search/steam/openworld")) {
+            serverPath = "/igdb/steam/openworld";
+        } else if (clientPath.startsWith("/search/steam/fps")) {
+            serverPath = "/igdb/steam/fps";
+        } else if (clientPath.startsWith("/search/steam/cards")) {
+            serverPath = "/igdb/steam/cards";
+        } else if (clientPath.startsWith("/search/steam/mmorpg")) {
+            serverPath = "/igdb/steam/mmorpg";
+        } else if (clientPath.startsWith("/search/steam/survival")) {
+            serverPath = "/igdb/steam/survival";
         }
 
         IGDBService.httpGenericGetData<MultiGameResponse>(serverPath)
@@ -156,8 +166,7 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
                 retry={this.state.retry}
                 onRetryClick={this.onRetryClick}
                 editorsGamesIndicies={this.state.editorsGamesIndicies}
-                featureGamesIndicies={this.state.featureGamesIndicies}
-                subFeatureGamesIndicies={this.state.subFeatureGamesIndicies}
+                bigGamesIndicies={this.state.bigGamesIndicies}
             />
         );
     }

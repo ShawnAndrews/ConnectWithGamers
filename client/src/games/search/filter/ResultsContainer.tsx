@@ -34,7 +34,7 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
             searchQuery: searchQuery,
             games: undefined,
             retry: false,
-            sortingSelection: SortingOptionEnum.None
+            sortingSelection: SortingOptionEnum.ReleaseDateDesc
         };
     }
 

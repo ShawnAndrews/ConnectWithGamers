@@ -16,6 +16,12 @@ export enum HomeOptionsEnum {
     VRSupported,
     VRHTC, VROculus, VRWindows, VRAll,
     MOBO,
+    EarlyAccess,
+    OpenWorld,
+    FPS,
+    Cards,
+    MMORPG,
+    Survival
 }
 
 interface IHomeProps {
@@ -66,6 +72,10 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.Upcoming) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.Upcoming)}>
                     <i className="far fa-clock mr-3"/>
                     Upcoming
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.EarlyAccess) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.EarlyAccess)}>
+                    <i className="fab fa-earlybirds mr-3"/>
+                    Early Access
                 </div>
                 <div className="title mb-2">Categories</div>
                 <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.Genres) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.Genres)}>
@@ -179,6 +189,26 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.MOBO) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.MOBO)}>
                     <i className="fas fa-dungeon mr-3"/>
                     MOBA
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.OpenWorld) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.OpenWorld)}>
+                    <i className="fas fa-globe-americas mr-3"/>
+                    Open World
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.FPS) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.FPS)}>
+                    <i className="fas fa-gamepad mr-3"/>
+                    FPS
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.Cards) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.Cards)}>
+                    <i className="fas fa-id-badge mr-3"/>
+                    Card games
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.MMORPG) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.MMORPG)}>
+                    <i className="fas fa-users mr-3"/>
+                    MMORPG
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.Survival) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.Survival)}>
+                    <i className="fas fa-user-injured mr-3"/>
+                    Survival
                 </div>
             </div>
         </div>

@@ -12,8 +12,7 @@ interface IFullsizeGameContainerProps extends RouteComponentProps<any> {
     index: number;
     game: GameResponse;
     isEditorsChoiceGame: boolean;
-    isFeatureGame: boolean;
-    isSubFeatureGame: boolean;
+    isBigGame: boolean;
 }
 
 interface IFullsizeGameContainerState {
@@ -101,8 +100,7 @@ class FullsizeGameContainer extends React.Component<Props, IFullsizeGameContaine
                 index={this.props.index}
                 game={this.props.game}
                 isEditorsChoiceGame={this.props.isEditorsChoiceGame}
-                isFeatureGame={this.props.isFeatureGame}
-                isSubFeatureGame={this.props.isSubFeatureGame}
+                isBigGame={this.props.isBigGame}
                 onHoverGame={this.onHoverGame}
                 onHoverOutGame={this.onHoverOutGame}
                 hoveredScreenshotIndex={this.state.hoveredScreenshotIndex}

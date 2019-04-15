@@ -207,12 +207,31 @@
     }
 }
 
+.filter-wrapper {
+    margin-left: calc(100% - 205px);
+    
+    .title {
+        display: inline-block;
+        line-height: 43px;
+        vertical-align: bottom;
+    }
+
+    .filter-select {
+        display: inline-block;
+        vertical-align: text-bottom;
+    }
+}
+
 .filter-select {
-    border: 1px solid @games-filter-color;
     color: @games-filter-color!important;
 
+    &.short {
+        border-bottom: 1px solid @tertiary-color;
+        margin: 0px;
+    }
+
     &:hover::before, &::after {
-        border-bottom: none!important;
+        border-bottom: 1px solid @tertiary-color!important;
     }
 
     svg {

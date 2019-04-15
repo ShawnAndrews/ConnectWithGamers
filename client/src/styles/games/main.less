@@ -153,29 +153,8 @@
             background-color: rgba(white,0.03);
             border-radius: 5px;
             overflow: visible;
-
-            &.editor-feature {
-                grid-row: span 3;
-                grid-column: span 3;
     
-                @media @md {
-                    grid-row: span 1;
-                    grid-column: span 2;
-                }
-                
-            }
-
-            &.feature {
-                grid-row: span 2;
-                grid-column: span 3;
-    
-                @media @md {
-                    grid-row: span 1;
-                    grid-column: span 2;
-                }
-            }
-    
-            &.sub-feature {
+            &.big-game {
                 grid-row: span 2;
                 grid-column: span 2;
     
@@ -259,40 +238,6 @@
 
                 .platforms {
                     font-size: 1.3rem;
-                }
-
-                &.editors-choice {
-                    position: absolute;
-                    top: 50%;
-                    transform: translateY(-50%);
-                    height: min-content;
-                    text-align: center;
-                    pointer-events: none;  
-
-                    .name {
-                        height: 40px;
-                        text-transform: uppercase;
-                        text-align: center;
-                        margin: 0 auto;
-
-                        > div {
-                            color: white;
-                        }
-                    }
-
-                    .price-btn {
-                        min-width: unset!important;
-                        min-height: unset!important;
-                        background-color: #4c6b22 !important;
-                        color: white!important;
-                        font-size: 0.7rem;
-                        margin-bottom: 4px;
-                        pointer-events: all;
-                        
-                        &:hover {
-                            background-color: #699230!important
-                        }
-                    }
                 }
 
                 * {

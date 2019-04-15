@@ -20,8 +20,7 @@ interface IHomeContainerState {
     games: GameResponse[];
     bigGamesInfo: BigGameInfo[];
     editorsGamesIndicies: number[];
-    featureGamesIndicies: number[];
-    subFeatureGamesIndicies: number[];
+    bigGamesIndicies: number[];
     news: NewsArticle[];
 }
 
@@ -42,8 +41,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 { gameId: 26166, btnText: `Coming soon`, btnLink: `https://www.epicgames.com/store/en-US/product/dauntless/home`},
             ],
             editorsGamesIndicies: [],
-            featureGamesIndicies: [41],
-            subFeatureGamesIndicies: [4,14,28,33]
+            bigGamesIndicies: [4,14,28,33]
         };
 
     }
@@ -51,46 +49,46 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
     componentDidMount(): void {
         let games: GameResponse[] = undefined;
 
-        // IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${GamesPresets.highlighted}`)
-        // .then((gamesResponse: MultiGameResponse) => {
-        //     games = gamesResponse.data
-        //         .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
-        //         .filter((game: GameResponse) => game.screenshots)
-        //         .slice(0, 9);
+        IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/steam/popular`)
+        .then((gamesResponse: MultiGameResponse) => {
+            games = gamesResponse.data
+                .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
+                .filter((game: GameResponse) => game.screenshots)
+                .slice(0, 9);
 
-        //     const editorsChoicePromises: Promise<GenericModelResponse>[] = [];
+            const editorsChoicePromises: Promise<GenericModelResponse>[] = [];
     
-        //     this.state.bigGamesInfo.forEach((x: BigGameInfo) => {
-        //         editorsChoicePromises.push(IGDBService.httpGenericGetData<GenericModelResponse>(`/igdb/game/${x.gameId}`));
-        //     });
+            this.state.bigGamesInfo.forEach((x: BigGameInfo) => {
+                editorsChoicePromises.push(IGDBService.httpGenericGetData<GenericModelResponse>(`/igdb/game/${x.gameId}`));
+            });
 
-        //     return Promise.all(editorsChoicePromises);
-        // })
-        // .then((gamesResponse: GenericModelResponse[]) => {
+            return Promise.all(editorsChoicePromises);
+        })
+        .then((gamesResponse: GenericModelResponse[]) => {
 
-        //     gamesResponse.forEach((x: GenericModelResponse) => {
-        //         const game: GameResponse = x.data;
-        //         this.state.bigGamesInfo.forEach((x: BigGameInfo) => {
-        //             if (game.id === x.gameId) {
-        //                 x.game = game;
-        //             }
-        //         });
-        //     });
+            gamesResponse.forEach((x: GenericModelResponse) => {
+                const game: GameResponse = x.data;
+                this.state.bigGamesInfo.forEach((x: BigGameInfo) => {
+                    if (game.id === x.gameId) {
+                        x.game = game;
+                    }
+                });
+            });
 
-        //     return IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`);
-        // })
-        // .then( (response: MultiNewsResponse) => {
-        //     const news: NewsArticle[] = response.data.slice(0, 12);
+            return IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`);
+        })
+        .then( (response: MultiNewsResponse) => {
+            const news: NewsArticle[] = response.data.slice(0, 12);
 
-        //     this.setState({
-        //         isLoading: false,
-        //         games: games,
-        //         news: news
-        //     });
-        // })
-        // .catch((error: string) => {
-        //     popupS.modal({ content: `<div>• Error loading homepage games. ${error}</div>` });
-        // });
+            this.setState({
+                isLoading: false,
+                games: games,
+                news: news
+            });
+        })
+        .catch((error: string) => {
+            popupS.modal({ content: `<div>• Error loading homepage games. ${error}</div>` });
+        });
 
     }
 
@@ -102,8 +100,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 games={this.state.games}
                 bigGamesInfo={this.state.bigGamesInfo}
                 editorsGamesIndicies={this.state.editorsGamesIndicies}
-                featureGamesIndicies={this.state.featureGamesIndicies}
-                subFeatureGamesIndicies={this.state.subFeatureGamesIndicies}
+                bigGamesIndicies={this.state.bigGamesIndicies}
                 news={this.state.news}
             />
         );

@@ -15,8 +15,7 @@ interface IHomeProps {
     games: GameResponse[];
     bigGamesInfo: BigGameInfo[];
     editorsGamesIndicies: number[];
-    featureGamesIndicies: number[];
-    subFeatureGamesIndicies: number[];
+    bigGamesIndicies: number[];
     news: NewsArticle[];
 }
 
@@ -76,16 +75,14 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 {props.games && props.games
                     .map((game: GameResponse, index: number) => {
                         const isEditorsChoiceGame: boolean = props.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
-                        const isFeatureGame: boolean = props.featureGamesIndicies.findIndex((x: number) => x === index) !== -1;
-                        const isSubFeatureGame: boolean = props.subFeatureGamesIndicies.findIndex((x: number) => x === index) !== -1;
+                        const isBigGame: boolean = props.bigGamesIndicies.findIndex((x: number) => x === index) !== -1;
 
                         return (
                             <FullsizeGameContainer
                                 index={index}
                                 game={game}
                                 isEditorsChoiceGame={isEditorsChoiceGame}
-                                isFeatureGame={isFeatureGame}
-                                isSubFeatureGame={isSubFeatureGame}
+                                isBigGame={isBigGame}
                             />
                         );
                     })}

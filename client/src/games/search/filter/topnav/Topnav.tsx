@@ -18,15 +18,20 @@ const Topnav: React.SFC<ITopnavProps> = (props: ITopnavProps) => {
             <div className="text-center color-tertiary mb-3 mt-2">
                 {props.title}
             </div>
-            <Select
-                className="filter-select text-center w-100 mb-2"
-                value={props.sortingSelection}
-                onChange={props.onSortingSelectionChange}
-            >
-                {props.sortingOptions && 
-                    props.sortingOptions.map((x: IdNamePair) => 
-                        <MenuItem value={x.id}>{x.name}</MenuItem>)}
-            </Select>
+            <hr/>
+            <div className="filter-wrapper">
+                <div className="title color-tertiary mr-2">Sort by</div>
+                <Select
+                    className="filter-select text-center short"
+                    value={props.sortingSelection}
+                    onChange={props.onSortingSelectionChange}
+                >
+                    {props.sortingOptions && 
+                        props.sortingOptions.map((x: IdNamePair) => 
+                            <MenuItem value={x.id}>{x.name}</MenuItem>)}
+                </Select>
+            </div>
+            <hr/>
         </div>
     );
 

@@ -297,7 +297,13 @@ export enum ResultsEnum {
     SteamGenreTowerDefence = 25,
     SteamUpcoming = 26,
     SteamPopular = 27,
-    SteamRecent = 28
+    SteamRecent = 28,
+    SteamEarlyAccess = 29,
+    SteamOpenWorld = 30,
+    SteamFPS = 31,
+    SteamCards = 32,
+    SteamMMORPG = 33,
+    SteamSurvival = 34
 }
 
 export interface UserLog {
