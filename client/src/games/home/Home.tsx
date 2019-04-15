@@ -36,6 +36,28 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
         arrows: false
     };
 
+    const nextDayAndTime = (dayOfWeek: number, hour: number, minute: number): Date => {
+        const now: Date = new Date();
+        const result: Date = new Date(
+            now.getFullYear(),
+            now.getMonth(),
+            now.getDate() + (7 + dayOfWeek - now.getDay()) % 7,
+            hour,
+            minute);
+
+        if (result < now) {
+            result.setDate(result.getDate() + 7);
+        }
+
+        return result;
+    }
+
+    const timeToNextMondayMs: number = (nextDayAndTime(1, 12, 0).getTime() - new Date().getTime()) / 1000;
+    const days: number = Math.floor(timeToNextMondayMs / 86400);
+    const hours: number = Math.floor(timeToNextMondayMs / 3600) % 24;
+    const minutes: number = Math.floor(timeToNextMondayMs / 60) % 60;
+    const seconds: number = Math.trunc(timeToNextMondayMs % 60);
+    
     return (
         <>
             <Slider {...settings} >
@@ -87,6 +109,10 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                         );
                     })}
             </div>
+            <h5 className="color-tertiary mb-3">
+                <i className="far fa-clock d-inline-block mr-2"/>
+                <div className="d-inline-block">`Steam sales – ${days}d ${hours}h ${minutes}m ${seconds}s`</div>
+            </h5>
             <h5 className="color-tertiary mb-3">
                 <i className="far fa-newspaper d-inline-block mr-2"/>
                 <div className="d-inline-block">News</div>
