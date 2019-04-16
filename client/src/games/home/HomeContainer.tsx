@@ -17,10 +17,13 @@ interface IHomeContainerProps extends RouteComponentProps<any> { }
 interface IHomeContainerState {
     isLoading: boolean;
     loadingMsg: string;
-    games: GameResponse[];
     bigGamesInfo: BigGameInfo[];
-    editorsGamesIndicies: number[];
-    bigGamesIndicies: number[];
+    featuredGames: GameResponse[];
+    featuredEditorsGamesIndicies: number[];
+    featuredBigGamesIndicies: number[];
+    timedGames: GameResponse[];
+    timedEditorsGamesIndicies: number[];
+    timedBigGamesIndicies: number[];
     news: NewsArticle[];
 }
 
@@ -32,7 +35,8 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
         this.state = {
             isLoading: true,
             loadingMsg: 'Loading games...',
-            games: undefined,
+            featuredGames: undefined,
+            timedGames: undefined,
             news: undefined,
             bigGamesInfo: [
                 { gameId: 22778, btnText: `Available March 26ᵗʰ`, btnLink: `https://store.steampowered.com/app/794260/Outward/` },
@@ -40,18 +44,21 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 { gameId: 113212, btnText: `Buy it now $29.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Foperencia%2Fhome%3FpurchaseIntentId%3D7d1d766667ef423bbd636ee6f054f755&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
                 { gameId: 26166, btnText: `Coming soon`, btnLink: `https://www.epicgames.com/store/en-US/product/dauntless/home`},
             ],
-            editorsGamesIndicies: [],
-            bigGamesIndicies: [4,14,28,33]
+            featuredEditorsGamesIndicies: [],
+            featuredBigGamesIndicies: [4],
+            timedEditorsGamesIndicies: [],
+            timedBigGamesIndicies: [1]
         };
 
     }
 
     componentDidMount(): void {
-        let games: GameResponse[] = undefined;
+        let featuredGames: GameResponse[] = undefined;
+        let timedGames: GameResponse[] = undefined;
 
         IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/steam/popular`)
         .then((gamesResponse: MultiGameResponse) => {
-            games = gamesResponse.data
+            featuredGames = gamesResponse.data
                 .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
                 .filter((game: GameResponse) => game.screenshots)
                 .slice(0, 9);
@@ -75,6 +82,14 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 });
             });
 
+            return IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/steam/weeklydeals`);
+        })
+        .then((gamesResponse: MultiGameResponse) => {
+            timedGames = gamesResponse.data
+            .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
+            .filter((game: GameResponse) => game.screenshots)
+            .slice(0, 9);
+
             return IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`);
         })
         .then( (response: MultiNewsResponse) => {
@@ -82,7 +97,8 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
 
             this.setState({
                 isLoading: false,
-                games: games,
+                featuredGames: featuredGames,
+                timedGames: timedGames,
                 news: news
             });
         })
@@ -97,10 +113,13 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             <Home
                 isLoading={this.state.isLoading}
                 loadingMsg={this.state.loadingMsg}
-                games={this.state.games}
                 bigGamesInfo={this.state.bigGamesInfo}
-                editorsGamesIndicies={this.state.editorsGamesIndicies}
-                bigGamesIndicies={this.state.bigGamesIndicies}
+                featuredGames={this.state.featuredGames}
+                featuredEditorsGamesIndicies={this.state.featuredEditorsGamesIndicies}
+                featuredBigGamesIndicies={this.state.featuredBigGamesIndicies}
+                timedGames={this.state.timedGames}
+                timedEditorsGamesIndicies={this.state.timedEditorsGamesIndicies}
+                timedBigGamesIndicies={this.state.timedBigGamesIndicies}
                 news={this.state.news}
             />
         );

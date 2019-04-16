@@ -8,14 +8,18 @@ import { Textfit } from 'react-textfit';
 import { Button } from '@material-ui/core';
 import { BigGameInfo } from './HomeContainer';
 import FullsizeNewsContainer from '../game/fullsize/FullsizeNewsContainer';
+import SteamSalesTimerContainer from './SteamSalesTimerContainer';
 
 interface IHomeProps {
     isLoading: boolean;
     loadingMsg: string;
-    games: GameResponse[];
     bigGamesInfo: BigGameInfo[];
-    editorsGamesIndicies: number[];
-    bigGamesIndicies: number[];
+    featuredGames: GameResponse[];
+    featuredEditorsGamesIndicies: number[];
+    featuredBigGamesIndicies: number[];
+    timedGames: GameResponse[];
+    timedEditorsGamesIndicies: number[];
+    timedBigGamesIndicies: number[];
     news: NewsArticle[];
 }
 
@@ -94,10 +98,10 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 <div className="d-inline-block">Featured</div>
             </h5>
             <div className="fullsize-results games pb-5">
-                {props.games && props.games
+                {props.featuredGames && props.featuredGames
                     .map((game: GameResponse, index: number) => {
-                        const isEditorsChoiceGame: boolean = props.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
-                        const isBigGame: boolean = props.bigGamesIndicies.findIndex((x: number) => x === index) !== -1;
+                        const isEditorsChoiceGame: boolean = props.featuredEditorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
+                        const isBigGame: boolean = props.featuredBigGamesIndicies.findIndex((x: number) => x === index) !== -1;
 
                         return (
                             <FullsizeGameContainer
@@ -111,11 +115,29 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
             </div>
             <h5 className="color-tertiary mb-3">
                 <i className="far fa-clock d-inline-block mr-2"/>
-                <div className="d-inline-block">`Steam sales – ${days}d ${hours}h ${minutes}m ${seconds}s`</div>
+                <div className="d-inline-block">
+                    <SteamSalesTimerContainer/>
+                </div>
             </h5>
+            <div className="fullsize-results games pb-5">
+                {props.timedGames && props.timedGames
+                    .map((game: GameResponse, index: number) => {
+                        const isEditorsChoiceGame: boolean = props.timedEditorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
+                        const isBigGame: boolean = props.timedBigGamesIndicies.findIndex((x: number) => x === index) !== -1;
+
+                        return (
+                            <FullsizeGameContainer
+                                index={index}
+                                game={game}
+                                isEditorsChoiceGame={isEditorsChoiceGame}
+                                isBigGame={isBigGame}
+                            />
+                        );
+                    })}
+            </div>
             <h5 className="color-tertiary mb-3">
                 <i className="far fa-newspaper d-inline-block mr-2"/>
-                <div className="d-inline-block">News</div>
+                <div className="d-inline-block">News</div> 
             </h5>
             <div className="fullsize-results news pb-4">
                 {props.news && props.news
