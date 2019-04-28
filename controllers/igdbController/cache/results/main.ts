@@ -179,7 +179,6 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
         })
         .catch((error: AxiosError) => {
             if (error.response && error.response.status !== 200) {
-                console.log(`Error: ${JSON.stringify(error)}`);
                 return reject("Retry");
             }
             return reject(error);

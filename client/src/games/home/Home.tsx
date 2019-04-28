@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, GenreEnums, NewsArticle } from '../../../client-server-common/common';
+import { GameResponse, GenreEnums, NewsArticle, SidenavEnums } from '../../../client-server-common/common';
 import Spinner from '../../spinner/main';
 import Slider from "react-slick";
 import FullsizeGameContainer from '../game/fullsize/FullsizeGameContainer';
@@ -7,8 +7,10 @@ import Footer from '../../footer/footer';
 import { Textfit } from 'react-textfit';
 import { Button } from '@material-ui/core';
 import { BigGameInfo } from './HomeContainer';
-import FullsizeNewsContainer from '../game/fullsize/FullsizeNewsContainer';
-import SteamSalesTimerContainer from './SteamSalesTimerContainer';
+import SteamSalesTimerContainer from './steamsalesbanner/SteamSalesTimerContainer';
+import SteamSalesBannerContainer from './steamsalesbanner/SteamSalesBannerContainer';
+import NewsListContainer from '../news/NewsListContainer';
+import GameListContainer, { GameListType } from '../game/GameListContainer';
 
 interface IHomeProps {
     isLoading: boolean;
@@ -17,10 +19,10 @@ interface IHomeProps {
     featuredGames: GameResponse[];
     featuredEditorsGamesIndicies: number[];
     featuredBigGamesIndicies: number[];
-    timedGames: GameResponse[];
-    timedEditorsGamesIndicies: number[];
-    timedBigGamesIndicies: number[];
     news: NewsArticle[];
+    goToRedirect: (URL: string) => void;
+    sidebarActiveEnum: SidenavEnums;
+    weeklyGames: GameResponse[];
 }
 
 const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
@@ -55,12 +57,6 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
 
         return result;
     }
-
-    const timeToNextMondayMs: number = (nextDayAndTime(1, 12, 0).getTime() - new Date().getTime()) / 1000;
-    const days: number = Math.floor(timeToNextMondayMs / 86400);
-    const hours: number = Math.floor(timeToNextMondayMs / 3600) % 24;
-    const minutes: number = Math.floor(timeToNextMondayMs / 60) % 60;
-    const seconds: number = Math.trunc(timeToNextMondayMs % 60);
     
     return (
         <>
@@ -93,33 +89,41 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                         </div>
                     ))}
             </Slider>
-            <h5 className="color-tertiary mb-3">
+            <h5 className="header color-tertiary mb-3">
                 <i className="far fa-star d-inline-block mr-2"/>
-                <div className="d-inline-block">Featured</div>
+                <div className="d-inline-block title" onClick={() => props.goToRedirect(`/search/steam/popular`)}>Featured</div>
             </h5>
-            <div className="fullsize-results games pb-5">
+            <div className="grid-results games pb-5">
                 {props.featuredGames && props.featuredGames
                     .map((game: GameResponse, index: number) => {
                         const isEditorsChoiceGame: boolean = props.featuredEditorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
                         const isBigGame: boolean = props.featuredBigGamesIndicies.findIndex((x: number) => x === index) !== -1;
 
                         return (
-                            <FullsizeGameContainer
-                                index={index}
+                            <GameListContainer
+                                type={GameListType.Fullsize}
                                 game={game}
-                                isEditorsChoiceGame={isEditorsChoiceGame}
-                                isBigGame={isBigGame}
+                                fullsizeIndex={index}
+                                fullsizeIsBigGame={isBigGame}
+                                fullsizeIsEditorsChoiceGame={isEditorsChoiceGame}
                             />
                         );
                     })}
             </div>
-            <h5 className="color-tertiary mb-3">
+            <SteamSalesBannerContainer
+                goToRedirect={props.goToRedirect}
+                sidebarActiveEnum={props.sidebarActiveEnum}
+                games={props.weeklyGames}
+            />
+            {/* <h5 className="header color-tertiary mb-3">
                 <i className="far fa-clock d-inline-block mr-2"/>
                 <div className="d-inline-block">
-                    <SteamSalesTimerContainer/>
+                    <SteamSalesTimerContainer
+                        goToRedirect={props.goToRedirect}
+                    />
                 </div>
             </h5>
-            <div className="fullsize-results games pb-5">
+            <div className="grid-results games pb-5">
                 {props.timedGames && props.timedGames
                     .map((game: GameResponse, index: number) => {
                         const isEditorsChoiceGame: boolean = props.timedEditorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
@@ -134,18 +138,16 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                             />
                         );
                     })}
-            </div>
-            <h5 className="color-tertiary mb-3">
+            </div> */}
+            <h5 className="header color-tertiary mb-3">
                 <i className="far fa-newspaper d-inline-block mr-2"/>
-                <div className="d-inline-block">News</div> 
+                <div className="d-inline-block title" onClick={() => props.goToRedirect(`/news`)}>News</div> 
             </h5>
-            <div className="fullsize-results news pb-4">
-                {props.news && props.news
-                    .map((news: NewsArticle) => (
-                        <FullsizeNewsContainer
-                            news={news}
-                        />
-                    ))}
+            <div className="grid-results news pb-4">
+                {props.news && 
+                    <NewsListContainer
+                        news={props.news}
+                    />}
             </div>
             <Footer/>
         </>

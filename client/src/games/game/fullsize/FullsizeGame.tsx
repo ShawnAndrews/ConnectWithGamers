@@ -27,51 +27,29 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
 
     return (
         <Card className={`game-${props.index} ${props.isBigGame ? 'big-game' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
-            {!props.isEditorsChoiceGame &&
-                <div className="screenshot w-100 h-100" onClick={props.goToGame}>
-                    <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_screenshot_big_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
-                </div>}
+            <div className="screenshot w-100 h-100" onClick={props.goToGame}>
+                <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_screenshot_big_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
+            </div>
             <div className='overlay'/>
-            {!props.isEditorsChoiceGame && <div className='text-overlay'/>}
+            <div className='text-overlay'/>
             {props.isEditorsChoiceGame &&
                 <>
                     <div className="filter w-100 h-100" />
                     <img className="editor-banner" src="https://i.imgur.com/B57fSZj.png" />
                     <div className="editor-banner-text color-primary">Editor's Choice</div>
                 </>}
-            <div className={`highlighted-table-text ${props.isEditorsChoiceGame ? 'editors-choice' : ''}`}>
-                {!props.isEditorsChoiceGame
-                    ?
-                    <>
-                        <Textfit className='name' min={11} max={15}>
-                            {props.game.name}
-                        </Textfit>
-                        {props.game.genres &&
-                            <div className="genre">
-                                {GenreEnums[props.game.genres[0]]}
-                            </div>}
-                    </>
-                    :
-                    <>
-                        <Textfit className='name' min={18} max={30}>
-                            {props.game.name}
-                        </Textfit>
-                        <div className='genres'>
-                            {props.game.genres && props.game.genres.map((x: number) => GenreEnums[x]).join(', ')}
-                        </div>
-                        <div className='platforms'>
-                            {props.game.linkIcons && props.game.linkIcons.map((x: string) => <i className={`fab ${x} mx-2`}/>)}
-                        </div>
-                        <Button
-                            className="price-btn mt-3" 
-                            variant="raised"
-                            onClick={() => window.open('https://store.steampowered.com/app/794260/Outward/', '_blank')}
-                        >
-                            Available March 26ᵗʰ
-                        </Button>
-                    </>}
+            <div className="highlighted-table-text">
+                <>
+                    <Textfit className='name' min={11} max={15}>
+                        {props.game.name}
+                    </Textfit>
+                    {props.game.genres &&
+                        <div className="genre">
+                            {GenreEnums[props.game.genres[0]]}
+                        </div>}
+                </>
             </div>
-            {!props.isEditorsChoiceGame && !noBestPricingExists &&
+            {!noBestPricingExists &&
                 <>
                     {numericalStatus
                         ?

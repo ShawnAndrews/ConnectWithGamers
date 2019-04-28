@@ -12,9 +12,7 @@ const SteamSalesTimer: React.SFC<ISteamSalesTimerProps> = (props: ISteamSalesTim
     const seconds: number = Math.trunc(props.timeToNextMondayMs % 60);
 
     return (
-        <>
-            Steam sales – {days}d {hours}h {minutes}m {seconds}s
-        </>
+        <div className="timer h2 text-center">{days}d {hours}h {minutes}m {seconds}s</div>
     );
 
 };

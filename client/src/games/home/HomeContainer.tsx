@@ -2,7 +2,7 @@ const popupS = require('popups');
 import * as React from 'react';
 import Home from './Home';
 import * as IGDBService from '../../service/igdb/main';
-import { MultiGameResponse, GameResponse, ExcludedGameIds, GenericModelResponse, NewsArticle, MultiNewsResponse } from '../../../client-server-common/common';
+import { MultiGameResponse, GameResponse, ExcludedGameIds, GenericModelResponse, NewsArticle, MultiNewsResponse, SidenavEnums } from '../../../client-server-common/common';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 export interface BigGameInfo {
@@ -12,7 +12,9 @@ export interface BigGameInfo {
     game?: GameResponse;
 }
 
-interface IHomeContainerProps extends RouteComponentProps<any> { }
+interface IHomeContainerProps extends RouteComponentProps<any> {
+    sidebarActiveEnum: SidenavEnums;
+}
 
 interface IHomeContainerState {
     isLoading: boolean;
@@ -21,22 +23,21 @@ interface IHomeContainerState {
     featuredGames: GameResponse[];
     featuredEditorsGamesIndicies: number[];
     featuredBigGamesIndicies: number[];
-    timedGames: GameResponse[];
-    timedEditorsGamesIndicies: number[];
-    timedBigGamesIndicies: number[];
     news: NewsArticle[];
+    weeklyGames: GameResponse[];
 }
 
 class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerState> {
 
     constructor(props: IHomeContainerProps) {
         super(props);
+        this.goToRedirect = this.goToRedirect.bind(this);
 
         this.state = {
             isLoading: true,
             loadingMsg: 'Loading games...',
             featuredGames: undefined,
-            timedGames: undefined,
+            weeklyGames: undefined,
             news: undefined,
             bigGamesInfo: [
                 { gameId: 22778, btnText: `Available March 26ᵗʰ`, btnLink: `https://store.steampowered.com/app/794260/Outward/` },
@@ -44,17 +45,15 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 { gameId: 113212, btnText: `Buy it now $29.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Foperencia%2Fhome%3FpurchaseIntentId%3D7d1d766667ef423bbd636ee6f054f755&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
                 { gameId: 26166, btnText: `Coming soon`, btnLink: `https://www.epicgames.com/store/en-US/product/dauntless/home`},
             ],
-            featuredEditorsGamesIndicies: [],
-            featuredBigGamesIndicies: [4],
-            timedEditorsGamesIndicies: [],
-            timedBigGamesIndicies: [1]
+            featuredEditorsGamesIndicies: [4],
+            featuredBigGamesIndicies: [4]
         };
 
     }
 
     componentDidMount(): void {
         let featuredGames: GameResponse[] = undefined;
-        let timedGames: GameResponse[] = undefined;
+        let weeklyGames: GameResponse[] = undefined;
 
         IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/steam/popular`)
         .then((gamesResponse: MultiGameResponse) => {
@@ -85,10 +84,9 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             return IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/steam/weeklydeals`);
         })
         .then((gamesResponse: MultiGameResponse) => {
-            timedGames = gamesResponse.data
+            weeklyGames = gamesResponse.data
             .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
-            .filter((game: GameResponse) => game.screenshots)
-            .slice(0, 9);
+            .filter((game: GameResponse) => game.screenshots);
 
             return IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`);
         })
@@ -98,7 +96,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             this.setState({
                 isLoading: false,
                 featuredGames: featuredGames,
-                timedGames: timedGames,
+                weeklyGames: weeklyGames,
                 news: news
             });
         })
@@ -106,6 +104,10 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             popupS.modal({ content: `<div>• Error loading homepage games. ${error}</div>` });
         });
 
+    }
+
+    goToRedirect(URL: string): void {
+        this.props.history.push(URL);
     }
 
     render() {
@@ -117,10 +119,10 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 featuredGames={this.state.featuredGames}
                 featuredEditorsGamesIndicies={this.state.featuredEditorsGamesIndicies}
                 featuredBigGamesIndicies={this.state.featuredBigGamesIndicies}
-                timedGames={this.state.timedGames}
-                timedEditorsGamesIndicies={this.state.timedEditorsGamesIndicies}
-                timedBigGamesIndicies={this.state.timedBigGamesIndicies}
                 news={this.state.news}
+                goToRedirect={this.goToRedirect}
+                sidebarActiveEnum={this.props.sidebarActiveEnum}
+                weeklyGames={this.state.weeklyGames}
             />
         );
     }

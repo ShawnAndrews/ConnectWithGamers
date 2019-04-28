@@ -20,11 +20,11 @@ const Main: React.SFC<IMainProps> = (props: IMainProps) => {
                 onSidenavItemClick={props.onSidenavItemClick}
                 sidebarActiveEnum={props.sidebarActiveEnum}
             />
-            <div className={`content d-inline-block custom-scrollbar-slim px-5 pt-3 pb-0 mr-2 my-2 ${props.sidebarActiveEnum !== undefined ? 'active' : ''}`}>
+            <div className={`content d-inline-block custom-scrollbar-slim px-5 pt-3 pb-0 mr-2 my-2 ${props.sidebarActiveEnum !== undefined ? 'expanded' : ''}`}>
                 <Switch>
                     <Route path="/search" component={SearchRouter} />
                     <Route path="/news" component={NewsPageContainer} />
-                    <Route path="/" component={HomeContainer} />
+                    <Route path="/" render={() => <HomeContainer sidebarActiveEnum={props.sidebarActiveEnum} />} />
                     <Route component={NotFoundPageContainer}/>
                 </Switch>
             </div>

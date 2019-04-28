@@ -3,14 +3,14 @@ const loadImage = require('image-promise');
 import * as React from 'react';
 import * as IGDBService from '../../../service/igdb/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { GameResponse, MultiGameResponse, ExcludedGameIds, getIGDBImage, IGDBImageSizeEnums, IGDBImage } from '../../../../client-server-common/common';
-import FullsizeResults from './FullsizeResults';
+import { GameResponse, MultiGameResponse, ExcludedGameIds } from '../../../../client-server-common/common';
+import HomeMenu from './HomeMenu';
 
-interface IFullsizeResultsContainerProps extends RouteComponentProps<any> {
+interface IHomeMenuContainerProps extends RouteComponentProps<any> {
     
 }
 
-interface IFullsizeResultsContainerState {
+interface IHomeMenuContainerState {
     isLoading: boolean;
     loadingMsg: string;
     games: GameResponse[];
@@ -19,9 +19,9 @@ interface IFullsizeResultsContainerState {
     bigGamesIndicies: number[];
 }
 
-class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainerProps, IFullsizeResultsContainerState> {
+class FullsizeResultsContainer extends React.Component<IHomeMenuContainerProps, IHomeMenuContainerState> {
 
-    constructor(props: IFullsizeResultsContainerProps) {
+    constructor(props: IHomeMenuContainerProps) {
         super(props);
         this.loadGames = this.loadGames.bind(this);
         this.onRetryClick = this.onRetryClick.bind(this);
@@ -38,7 +38,7 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
         };
     }
 
-    componentWillReceiveProps(newProps: IFullsizeResultsContainerProps): void {
+    componentWillReceiveProps(newProps: IHomeMenuContainerProps): void {
         const pathChanged: boolean = newProps.location.pathname !== this.props.location.pathname;
 
         if (pathChanged) {
@@ -50,7 +50,7 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
         }
     }
 
-    loadGames(someProps: IFullsizeResultsContainerProps): void {
+    loadGames(someProps: IHomeMenuContainerProps): void {
         const clientPath: string = someProps.location.pathname;
         let serverPath: string;
 
@@ -159,7 +159,7 @@ class FullsizeResultsContainer extends React.Component<IFullsizeResultsContainer
 
     render() {
         return (
-            <FullsizeResults
+            <HomeMenu
                 isLoading={this.state.isLoading}
                 loadingMsg={this.state.loadingMsg}
                 games={this.state.games}

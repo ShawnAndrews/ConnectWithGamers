@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GameResponse } from '../../../../client-server-common/common';
-import RegularGame from './RegularGame';
+import SearchGame from './SearchGame';
 
-interface IRegularGameContainerProps extends RouteComponentProps<any> {
+interface ISearchGameContainerProps extends RouteComponentProps<any> {
     game: GameResponse;
 } 
 
-interface IRegularGameContainerState { }
+interface ISearchGameContainerState { }
 
-class RegularGameContainer extends React.Component<IRegularGameContainerProps, IRegularGameContainerState> {
+class SearchGameContainer extends React.Component<ISearchGameContainerProps, ISearchGameContainerState> {
 
-    constructor(props: IRegularGameContainerProps) {
+    constructor(props: ISearchGameContainerProps) {
         super(props);
         this.goToGame = this.goToGame.bind(this);
     }
@@ -22,7 +22,7 @@ class RegularGameContainer extends React.Component<IRegularGameContainerProps, I
 
     render() {
         return (
-            <RegularGame
+            <SearchGame
                 game={this.props.game}
                 goToGame={this.goToGame}
             />
@@ -31,4 +31,4 @@ class RegularGameContainer extends React.Component<IRegularGameContainerProps, I
 
 }
 
-export default withRouter(RegularGameContainer);
+export default withRouter(SearchGameContainer);

@@ -2,7 +2,9 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import SteamSalesTimer from './SteamSalesTimer';
 
-interface ISteamSalesTimerContainerProps extends RouteComponentProps<any> { }
+interface ISteamSalesTimerContainerProps extends RouteComponentProps<any> {
+
+}
 
 interface ISteamSalesTimerContainerState {
     timeToNextMondayMs: number;
@@ -43,9 +45,8 @@ class SteamSalesTimerContainer extends React.Component<ISteamSalesTimerContainer
     }
 
     getTimeToNextMondayMs(): number {
-        return (this.nextDayAndTime(1, 12, 0).getTime() - new Date().getTime()) / 1000;
+        return (this.nextDayAndTime(1, 11, 0).getTime() - new Date().getTime()) / 1000;
     }
-
     
     render() {
         return (

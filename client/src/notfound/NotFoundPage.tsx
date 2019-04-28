@@ -13,7 +13,7 @@ const NotFoundPage: React.SFC<INotFoundPageProps> = (props: INotFoundPageProps) 
             <div className="text-center color-secondary">Page not found!</div>
             <Button
                 variant="raised" 
-                className="color-primary bg-secondary mt-4"
+                className="color-primary bg-secondary-solid mt-4"
                 onClick={props.onClickHomeButton}
                 fullWidth={true}
             >

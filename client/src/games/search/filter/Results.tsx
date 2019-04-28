@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { GameResponse, ResultsEnum } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
-import RegularGameContainer from '../../game/regular/RegularGameContainer';
+import RegularGameContainer from '../../game/search/SearchGameContainer';
 import TopnavContainer from './topnav/TopnavContainer';
 import { Paper, Button } from '@material-ui/core';
 import { SortingOptionEnum } from '../../sidenav/filter/FilterContainer';
+import GameListContainer, { GameListType } from '../../game/GameListContainer';
 
 interface IResultsProps {
     isLoading: boolean;
@@ -78,8 +79,9 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
                     sortedGames
                         .map((game: GameResponse) => {
                             return (
-                                <RegularGameContainer
+                                <GameListContainer
                                     key={game.id}
+                                    type={GameListType.Search}
                                     game={game}
                                 />
                             );

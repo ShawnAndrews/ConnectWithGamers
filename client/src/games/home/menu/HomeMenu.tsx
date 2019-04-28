@@ -2,9 +2,9 @@ import * as React from 'react';
 import { GameResponse } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
 import { Paper, Button } from '@material-ui/core';
-import FullsizeGameContainer from '../../game/fullsize/FullsizeGameContainer';
+import GameListContainer, { GameListType } from '../../game/GameListContainer';
 
-interface IFullsizeResultsProps {
+interface IHomeMenusProps {
     isLoading: boolean;
     loadingMsg: string;
     games: GameResponse[];
@@ -14,7 +14,7 @@ interface IFullsizeResultsProps {
     bigGamesIndicies: number[];
 }
 
-const FullsizeResults: React.SFC<IFullsizeResultsProps> = (props: IFullsizeResultsProps) => {
+const HomeMenu: React.SFC<IHomeMenusProps> = (props: IHomeMenusProps) => {
 
     if (props.isLoading) {
         return (
@@ -36,18 +36,19 @@ const FullsizeResults: React.SFC<IFullsizeResultsProps> = (props: IFullsizeResul
     }
 
     return (
-        <div className="fullsize-results games">
+        <div className="grid-results games">
             {props.games && props.games
                 .map((game: GameResponse, index: number) => {
                     const isEditorsChoiceGame: boolean = props.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
                     const isBigGame: boolean = props.bigGamesIndicies.findIndex((x: number) => x === index) !== -1;
 
                     return (
-                        <FullsizeGameContainer
-                            index={index}
+                        <GameListContainer
+                            type={GameListType.Fullsize}
                             game={game}
-                            isEditorsChoiceGame={isEditorsChoiceGame}
-                            isBigGame={isBigGame}
+                            fullsizeIndex={index}
+                            fullsizeIsEditorsChoiceGame={isEditorsChoiceGame}
+                            fullsizeIsBigGame={isBigGame}
                         />
                     );
                 })}
@@ -56,4 +57,4 @@ const FullsizeResults: React.SFC<IFullsizeResultsProps> = (props: IFullsizeResul
 
 }; 
 
-export default FullsizeResults;
+export default HomeMenu;
