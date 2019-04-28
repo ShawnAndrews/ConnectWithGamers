@@ -71,7 +71,7 @@
 
 <p align="center">
   <br>
-  <img src="https://i.imgur.com/anDpba3.jpg" />
+  <img src="https://i.imgur.com/kIVXbcV.jpg" />
 </p>
 
 ## Updates
