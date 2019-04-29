@@ -53,13 +53,13 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                 <>
                     {numericalStatus
                         ?
-                        <div className={`price-container ${!bestPricing.price ? `no-price` : (!bestPricing.discount_percent ? 'no-discount': '')} mt-1`}>
+                        <div className={`price-container ${!bestPricing.price ? `no-price` : (!bestPricing.discount_percent ? 'no-discount': '')} ${props.isBigGame ? 'large' : ''} mt-1`}>
                             {bestPricing.discount_percent && 
                                 <>
                                     <div className="discount d-inline-block px-1">-{bestPricing.discount_percent}%</div>
                                     <div className="base-price d-inline-block px-1"><del>{props.getConvertedPrice(bestPricingBasePrice)}</del></div>
                                 </>}
-                            <div className="text d-inline-block px-1">{props.getConvertedPrice(bestPricing.price)}</div>
+                            <div className={`text d-inline-block ${props.isBigGame ? 'large' : ''} px-1`}>{props.getConvertedPrice(bestPricing.price)}</div>
                         </div>
                         :
                         <>
