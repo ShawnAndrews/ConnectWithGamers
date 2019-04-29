@@ -40,7 +40,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                 </>}
             <div className="highlighted-table-text">
                 <>
-                    <Textfit className='name' min={11} max={15}>
+                    <Textfit className='name' min={props.isBigGame ? 20 : 11} max={props.isBigGame ? 23 : 15}>
                         {props.game.name}
                     </Textfit>
                     {props.game.genres &&
