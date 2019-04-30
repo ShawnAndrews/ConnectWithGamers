@@ -25,7 +25,7 @@ const SteamSalesBanner: React.SFC<ISteamSalesBannerProps> = (props: ISteamSalesB
 
     return (
         <div className="steam-banner position-relative w-100 bg-primary overflow-hidden mb-5">
-            <img src="https://i.imgur.com/Pv0uPrG.jpg" />
+            <img src="https://i.imgur.com/77wnr4y.jpg" />
             <div className="filter-black" />
             <div className={`filter-steamsales ${props.sidebarActiveEnum === undefined ? 'expanded' : ''}`} />
             <div className={`filter-steamsales-gradient ${props.sidebarActiveEnum === undefined ? 'expanded' : ''}`} />
