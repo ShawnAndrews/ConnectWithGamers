@@ -24,9 +24,9 @@ const SteamSalesBanner: React.SFC<ISteamSalesBannerProps> = (props: ISteamSalesB
     };
 
     return (
-        <div className="steam-banner position-relative w-100 bg-primary overflow-hidden mb-5">
+        <div className="steam-banner position-relative w-100 overflow-hidden px-5 mb-5">
             <img src="https://i.imgur.com/77wnr4y.jpg" />
-            <div className="filter-black" />
+            <div className="filter-black mx-5" />
             <div className={`filter-steamsales ${props.sidebarActiveEnum === undefined ? 'expanded' : ''}`} />
             <div className={`filter-steamsales-gradient ${props.sidebarActiveEnum === undefined ? 'expanded' : ''}`} />
             <div className="description">
@@ -38,7 +38,7 @@ const SteamSalesBanner: React.SFC<ISteamSalesBannerProps> = (props: ISteamSalesB
                     </Button>
                 </div>
             </div>
-            <div className="steam-banner-games text-center mr-4">
+            <div className="steam-banner-games text-center">
                 <div className="grid-results h-100" style={gridStyle}>
                     {props.games && props.games
                         .filter((game: GameResponse) => game.cover)
