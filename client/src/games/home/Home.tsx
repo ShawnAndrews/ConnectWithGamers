@@ -115,30 +115,6 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 sidebarActiveEnum={props.sidebarActiveEnum}
                 games={props.weeklyGames}
             />
-            {/* <h5 className="header color-tertiary mb-3">
-                <i className="far fa-clock d-inline-block mr-2"/>
-                <div className="d-inline-block">
-                    <SteamSalesTimerContainer
-                        goToRedirect={props.goToRedirect}
-                    />
-                </div>
-            </h5>
-            <div className="grid-results games pb-5">
-                {props.timedGames && props.timedGames
-                    .map((game: GameResponse, index: number) => {
-                        const isEditorsChoiceGame: boolean = props.timedEditorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
-                        const isBigGame: boolean = props.timedBigGamesIndicies.findIndex((x: number) => x === index) !== -1;
-
-                        return (
-                            <FullsizeGameContainer
-                                index={index}
-                                game={game}
-                                isEditorsChoiceGame={isEditorsChoiceGame}
-                                isBigGame={isBigGame}
-                            />
-                        );
-                    })}
-            </div> */}
             <h5 className="header color-tertiary mb-3">
                 <i className="far fa-newspaper d-inline-block mr-2"/>
                 <div className="d-inline-block title" onClick={() => props.goToRedirect(`/news`)}>News</div> 
@@ -147,6 +123,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 {props.news && 
                     <NewsListContainer
                         news={props.news}
+                        limit={12}
                     />}
             </div>
             <Footer/>

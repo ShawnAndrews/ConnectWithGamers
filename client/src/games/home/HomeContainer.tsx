@@ -91,7 +91,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             return IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`);
         })
         .then( (response: MultiNewsResponse) => {
-            const news: NewsArticle[] = response.data.slice(0, 12);
+            const news: NewsArticle[] = response.data;
 
             this.setState({
                 isLoading: false,
