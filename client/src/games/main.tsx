@@ -20,7 +20,7 @@ const Main: React.SFC<IMainProps> = (props: IMainProps) => {
                 onSidenavItemClick={props.onSidenavItemClick}
                 sidebarActiveEnum={props.sidebarActiveEnum}
             />
-            <div className={`content d-inline-block custom-scrollbar-slim px-5 pt-3 pb-0 my-2 ${props.sidebarActiveEnum !== undefined ? 'expanded' : ''}`}>
+            <div className={`content d-inline-block custom-scrollbar-slim pb-0 mb-2 ${props.sidebarActiveEnum !== undefined ? 'expanded' : ''}`}>
                 <Switch>
                     <Route path="/search" component={SearchRouter} />
                     <Route path="/news" component={NewsPageContainer} />
