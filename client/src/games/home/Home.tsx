@@ -89,11 +89,11 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                         </div>
                     ))}
             </Slider>
-            <h5 className="header color-tertiary mb-3">
+            <h5 className="header color-tertiary px-5 mb-3">
                 <i className="far fa-star d-inline-block mr-2"/>
                 <div className="d-inline-block title" onClick={() => props.goToRedirect(`/search/steam/popular`)}>Featured</div>
             </h5>
-            <div className="grid-results games pb-5">
+            <div className="grid-results games px-5 pb-5">
                 {props.featuredGames && props.featuredGames
                     .map((game: GameResponse, index: number) => {
                         const isEditorsChoiceGame: boolean = props.featuredEditorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
@@ -115,35 +115,11 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 sidebarActiveEnum={props.sidebarActiveEnum}
                 games={props.weeklyGames}
             />
-            {/* <h5 className="header color-tertiary mb-3">
-                <i className="far fa-clock d-inline-block mr-2"/>
-                <div className="d-inline-block">
-                    <SteamSalesTimerContainer
-                        goToRedirect={props.goToRedirect}
-                    />
-                </div>
-            </h5>
-            <div className="grid-results games pb-5">
-                {props.timedGames && props.timedGames
-                    .map((game: GameResponse, index: number) => {
-                        const isEditorsChoiceGame: boolean = props.timedEditorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
-                        const isBigGame: boolean = props.timedBigGamesIndicies.findIndex((x: number) => x === index) !== -1;
-
-                        return (
-                            <FullsizeGameContainer
-                                index={index}
-                                game={game}
-                                isEditorsChoiceGame={isEditorsChoiceGame}
-                                isBigGame={isBigGame}
-                            />
-                        );
-                    })}
-            </div> */}
-            <h5 className="header color-tertiary mb-3">
+            <h5 className="header color-tertiary px-5 mb-3">
                 <i className="far fa-newspaper d-inline-block mr-2"/>
                 <div className="d-inline-block title" onClick={() => props.goToRedirect(`/news`)}>News</div> 
             </h5>
-            <div className="grid-results news pb-4">
+            <div className="grid-results news px-5 pb-4">
                 {props.news && 
                     <NewsListContainer
                         news={props.news}
