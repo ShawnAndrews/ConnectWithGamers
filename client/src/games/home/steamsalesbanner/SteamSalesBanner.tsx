@@ -38,7 +38,7 @@ const SteamSalesBanner: React.SFC<ISteamSalesBannerProps> = (props: ISteamSalesB
                     </Button>
                 </div>
             </div>
-            <div className="steam-banner-games text-center mr-4">
+            <div className="steam-banner-games text-center">
                 <div className="grid-results h-100" style={gridStyle}>
                     {props.games && props.games
                         .filter((game: GameResponse) => game.cover)
