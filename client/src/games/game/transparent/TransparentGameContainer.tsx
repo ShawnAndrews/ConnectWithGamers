@@ -5,6 +5,7 @@ import TransparentGame from './TransparentGame';
 
 interface ITransparentGameContainerProps extends RouteComponentProps<any> {
     game: GameResponse;
+    transparentSmallCover: boolean;
 } 
 
 interface ITransparentGameContainerState { }
@@ -25,6 +26,7 @@ class TransparentGameContainer extends React.Component<ITransparentGameContainer
             <TransparentGame
                 game={this.props.game}
                 goToGame={this.goToGame}
+                transparentSmallCover={this.props.transparentSmallCover}
             />
         );
     }

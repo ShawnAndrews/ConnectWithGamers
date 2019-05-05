@@ -5,7 +5,7 @@ import { Textfit } from 'react-textfit';
 import Crossfade from '../crossfade/CrossfadeContainer';
 import { getGameBestPricingStatus } from '../../../util/main';
 
-interface IFullsizeGameProps {
+interface ICoverGameProps {
     index: number;
     game: GameResponse;
     isEditorsChoiceGame: boolean;
@@ -19,7 +19,7 @@ interface IFullsizeGameProps {
     getConvertedPrice: (price: number) => string;
 }
 
-const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) => {
+const CoverGame: React.SFC<ICoverGameProps> = (props: ICoverGameProps) => {
     const bestPricing: PriceInfoResponse = getGameBestPricingStatus(props.game.pricings);
     const bestPricingBasePrice: number = bestPricing.price && bestPricing.discount_percent && + (bestPricing.price / ((100 - bestPricing.discount_percent) / 100)).toFixed(2);
     const numericalStatus: boolean = !!bestPricing.price;
@@ -27,9 +27,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
 
     return (
         <Card className={`game-${props.index} ${props.isBigGame ? 'big-game' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
-            <div className="screenshot w-100 h-100" onClick={props.goToGame}>
-                <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_screenshot_big_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
-            </div>
+            <img className="cover w-100 h-100" onClick={props.goToGame} src={props.game.cover ? (props.game.image_cover_big_cached ? getCachedIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big)) : 'https://i.imgur.com/WcPkTiF.png'}/>
             <div className='overlay'/>
             <div className='text-overlay'/>
             {props.isEditorsChoiceGame &&
@@ -40,7 +38,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                 </>}
             <div className="highlighted-table-text">
                 <>
-                    <Textfit className={`name ${props.isBigGame ? 'large' : ''}`} min={props.isBigGame ? 15 : 11} max={props.isBigGame ? 23 : 15}>
+                    <Textfit className={`name ${props.isBigGame ? 'large' : ''}`} min={props.isBigGame ? 20 : 11} max={props.isBigGame ? 23 : 15}>
                         {props.game.name}
                     </Textfit>
                     {props.game.genres &&
@@ -72,4 +70,4 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
 
 };
 
-export default FullsizeGame;
+export default CoverGame;

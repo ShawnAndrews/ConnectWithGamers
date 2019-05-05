@@ -36,7 +36,7 @@ const HomeMenu: React.SFC<IHomeMenusProps> = (props: IHomeMenusProps) => {
     }
 
     return (
-        <div className="grid-results games">
+        <div className="grid-results games m-4">
             {props.games && props.games
                 .map((game: GameResponse, index: number) => {
                     const isEditorsChoiceGame: boolean = props.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
@@ -44,7 +44,7 @@ const HomeMenu: React.SFC<IHomeMenusProps> = (props: IHomeMenusProps) => {
 
                     return (
                         <GameListContainer
-                            type={GameListType.Fullsize}
+                            type={GameListType.FullsizeScreenshot}
                             game={game}
                             fullsizeIndex={index}
                             fullsizeIsEditorsChoiceGame={isEditorsChoiceGame}

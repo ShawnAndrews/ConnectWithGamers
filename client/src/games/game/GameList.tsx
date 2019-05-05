@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { GameResponse, GenreEnums, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage } from '../../../client-server-common/common';
-import { Paper } from '@material-ui/core';
-import { Textfit } from 'react-textfit';
+import { GameResponse } from '../../../client-server-common/common';
 import { GameListType } from './GameListContainer';
 import FullsizeGameContainer from './fullsize/FullsizeGameContainer';
 import SearchGameContainer from './search/SearchGameContainer';
 import TransparentGameContainer from './transparent/TransparentGameContainer';
+import TransparentTimeGameContainer from './transparenttime/TransparentTimeGameContainer';
+import CoverGameContainer from './cover/CoverGameContainer';
 
 interface IGameListProps {
     type: GameListType;
@@ -14,11 +14,12 @@ interface IGameListProps {
     fullsizeIndex?: number;
     fullsizeIsEditorsChoiceGame?: boolean;
     fullsizeIsBigGame?: boolean;
+    transparentSmallCover?: boolean;
 }
 
 const GameList: React.SFC<IGameListProps> = (props: IGameListProps) => {
 
-    if (props.type === GameListType.Fullsize) {
+    if (props.type === GameListType.FullsizeScreenshot) {
         return (
             <FullsizeGameContainer
                 game={props.game}
@@ -33,9 +34,25 @@ const GameList: React.SFC<IGameListProps> = (props: IGameListProps) => {
                 game={props.game}
             />
         );
-    } else {
+    } else if (props.type === GameListType.Transparent) {
         return (
             <TransparentGameContainer
+                game={props.game}
+                transparentSmallCover={props.transparentSmallCover}
+            />
+        );
+    } else if (props.type === GameListType.FullsizeCover) {
+        return (
+            <CoverGameContainer
+                game={props.game}
+                index={props.fullsizeIndex}
+                isEditorsChoiceGame={props.fullsizeIsEditorsChoiceGame}
+                isBigGame={props.fullsizeIsBigGame}
+            />
+        );
+    } else {
+        return (
+            <TransparentTimeGameContainer
                 game={props.game}
             />
         );

@@ -4,9 +4,11 @@ import { GameResponse } from '../../../client-server-common/common';
 import GameList from './GameList';
 
 export enum GameListType {
-    Fullsize,
+    FullsizeScreenshot,
     Search,
-    transparent
+    Transparent,
+    FullsizeCover,
+    TransparentTime
 }
 
 interface IGameListContainerProps extends RouteComponentProps<any> {
@@ -15,6 +17,7 @@ interface IGameListContainerProps extends RouteComponentProps<any> {
     fullsizeIndex?: number;
     fullsizeIsEditorsChoiceGame?: boolean;
     fullsizeIsBigGame?: boolean;
+    transparentSmallCover?: boolean;
 } 
 
 interface IGameListContainerState { }
@@ -39,6 +42,7 @@ class GameListContainer extends React.Component<IGameListContainerProps, IGameLi
                 fullsizeIndex={this.props.fullsizeIndex}
                 fullsizeIsEditorsChoiceGame={this.props.fullsizeIsEditorsChoiceGame}
                 fullsizeIsBigGame={this.props.fullsizeIsBigGame}
+                transparentSmallCover={this.props.transparentSmallCover}
             />
         );
     }

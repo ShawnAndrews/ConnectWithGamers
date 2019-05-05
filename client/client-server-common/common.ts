@@ -6,7 +6,7 @@ export const SALT_RNDS = 10;
 export const EMAIL_VERIFICATION_LEN = 15;
 export const ACCOUNT_RECOVERYID_LEN = 32;
 
-export const ExcludedGameIds: number[] = [111063, 111908, 114910, 59227, 25260, 27441];
+export const ExcludedGameIds: number[] = [76638, 7789, 55106, 19542, 11393, 1020];
 
 export enum SQLErrorCodes {
     DUPLICATE_ROW = 1062

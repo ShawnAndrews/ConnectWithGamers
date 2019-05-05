@@ -31,7 +31,6 @@ export function getCachedGame(gameId: number): Promise<GameResponse> {
     return new Promise((resolve: any, reject: any) => {
         igdbModel.getGame(gameId)
             .then((game: GameResponse) => {
-                console.log(`Completed game id #${gameId}`);
                 return resolve(game);
             })
             .catch((error: string) => {

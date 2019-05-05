@@ -6,6 +6,7 @@ import ReactStars from 'react-stars';
 interface ITransparentGameProps {
     game: GameResponse;
     goToGame: () => void;
+    transparentSmallCover: boolean;
 }
 
 const TransparentGame: React.SFC<ITransparentGameProps> = (props: ITransparentGameProps) => {
@@ -19,9 +20,9 @@ const TransparentGame: React.SFC<ITransparentGameProps> = (props: ITransparentGa
     };
 
     return (
-        <div className="horizontal-item">
+        <div className="price-item">
             <div onClick={props.goToGame}>
-                <img className="cover-img" src={props.game.cover ? (props.game.image_cover_big_cached ? getCachedIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big)) : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
+                <img className={`cover-img ${props.transparentSmallCover ? 'large' : ''}`} src={props.game.cover ? (props.game.image_cover_big_cached ? getCachedIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big)) : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                 <div className="name mt-2 mx-auto">
                     {props.game.name}
                 </div>

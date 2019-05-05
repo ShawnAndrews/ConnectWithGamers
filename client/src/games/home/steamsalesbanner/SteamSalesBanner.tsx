@@ -29,7 +29,7 @@ const SteamSalesBanner: React.SFC<ISteamSalesBannerProps> = (props: ISteamSalesB
             <div className="filter-black mx-5" />
             <div className={`filter-steamsales ${props.sidebarActiveEnum === undefined ? 'expanded' : ''}`} />
             <div className={`filter-steamsales-gradient ${props.sidebarActiveEnum === undefined ? 'expanded' : ''}`} />
-            <div className="description">
+            <div className="description ml-4">
                 <div className="h3 font-weight-bold">Weeklong Steam Deals</div>
                 <SteamSalesTimerContainer/>
                 <div className="text-center">
@@ -47,8 +47,9 @@ const SteamSalesBanner: React.SFC<ISteamSalesBannerProps> = (props: ISteamSalesB
                         .slice(0, props.weeklyGamesToDisplay)
                         .map((game: GameResponse) => 
                             <GameListContainer
-                                type={GameListType.transparent}
+                                type={GameListType.Transparent}
                                 game={game}
+                                transparentSmallCover={false}
                             />
                         )}
                 </div>

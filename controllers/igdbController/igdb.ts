@@ -147,12 +147,13 @@ export function GenericCachedWithDataRoute<T extends CachedRouteTypes, V> (keyEx
 }
 
 /* news articles */
-router.post(routes.getRoute("news"), (req: Request, res: Response) => {
+router.post(routes.getRoute("news"), (req: Request, res: Response, next: any) => {
     const genericResponse: GenericModelResponse = { error: undefined };
     GenericCachedRoute<NewsArticle[]>(newsKeyExists, getCachedNews, cacheNews)
         .then((data: NewsArticle[]) => {
             genericResponse.data = data;
-            return res.send(genericResponse);
+            res.locals = genericResponse;
+            next();
         })
         .catch((error: string) => {
             genericResponse.error = error;

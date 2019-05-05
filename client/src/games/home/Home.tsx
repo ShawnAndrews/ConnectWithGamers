@@ -6,15 +6,17 @@ import FullsizeGameContainer from '../game/fullsize/FullsizeGameContainer';
 import Footer from '../../footer/footer';
 import { Textfit } from 'react-textfit';
 import { Button } from '@material-ui/core';
-import { BigGameInfo } from './HomeContainer';
+import { BigGameInfo, TimeGamesOptions } from './HomeContainer';
 import SteamSalesTimerContainer from './steamsalesbanner/SteamSalesTimerContainer';
 import SteamSalesBannerContainer from './steamsalesbanner/SteamSalesBannerContainer';
 import NewsListContainer from '../news/NewsListContainer';
 import GameListContainer, { GameListType } from '../game/GameListContainer';
+import GenreBannerContainer from './genrebanner/GenreBannerContainer';
 
 interface IHomeProps {
     isLoading: boolean;
     loadingMsg: string;
+    bigGames: GameResponse[];
     bigGamesInfo: BigGameInfo[];
     featuredGames: GameResponse[];
     featuredEditorsGamesIndicies: number[];
@@ -23,6 +25,13 @@ interface IHomeProps {
     goToRedirect: (URL: string) => void;
     sidebarActiveEnum: SidenavEnums;
     weeklyGames: GameResponse[];
+    timeGamesOption: TimeGamesOptions;
+    changeTimeGamesOption: (timeGamesOption: TimeGamesOptions) => void;
+    goToOption: () => void;
+    upcomingGames: GameResponse[];
+    recentGames: GameResponse[];
+    earlyGames: GameResponse[];
+    horrorGames: GameResponse[];
 }
 
 const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
@@ -41,28 +50,17 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
         variableWidth: false,
         arrows: false
     };
+    const timeGames: GameResponse[] = props.timeGamesOption === TimeGamesOptions.Upcoming ? props.upcomingGames : (props.timeGamesOption === TimeGamesOptions.Recent ? props.recentGames : props.earlyGames);
 
-    const nextDayAndTime = (dayOfWeek: number, hour: number, minute: number): Date => {
-        const now: Date = new Date();
-        const result: Date = new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate() + (7 + dayOfWeek - now.getDay()) % 7,
-            hour,
-            minute);
-
-        if (result < now) {
-            result.setDate(result.getDate() + 7);
-        }
-
-        return result;
+    for (let i = 0; i < timeGames.length; i++) {
+        console.log(`${timeGames[i].name}: ${timeGames[i].first_release_date}`);
     }
-    
+
     return (
         <>
             <Slider {...settings} >
                 {props.bigGamesInfo && 
-                    props.bigGamesInfo.map((gameInfo: BigGameInfo) => (
+                    props.bigGamesInfo.map((gameInfo: BigGameInfo, index: number) => (
                         <div className="item">
                             <video className="video-preview w-100 h-100" muted={true} autoPlay={true} loop={true} onEnded={() => {}} playsInline={true} onClick={() => {}}>
                                 <source src={`/cache/video-previews/${gameInfo.gameId}.mp4`} type="Video/mp4"/>
@@ -70,13 +68,13 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                             </video>
                             <div className="highlighted-table-text">
                                 <Textfit className='name' min={18} max={30}>
-                                    {gameInfo.game.name}
+                                    {props.bigGames[index].name}
                                 </Textfit>
                                 <div className='genres'>
-                                    {gameInfo.game.genres && gameInfo.game.genres.map((x: number) => GenreEnums[x]).join(', ')}
+                                    {props.bigGames[index].genres && props.bigGames[index].genres.map((x: number) => GenreEnums[x]).join(', ')}
                                 </div>
                                 <div className='platforms my-1'>
-                                    {gameInfo.game.linkIcons && gameInfo.game.linkIcons.map((x: string) => <i className={`fab ${x} mx-2`}/>)}
+                                    {props.bigGames[index].linkIcons && props.bigGames[index].linkIcons.map((x: string) => <i className={`fab ${x} mx-2`}/>)}
                                 </div>
                                 <Button
                                     className="price-btn mt-1" 
@@ -93,7 +91,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 <i className="far fa-star d-inline-block mr-2"/>
                 <div className="d-inline-block title" onClick={() => props.goToRedirect(`/search/steam/popular`)}>Featured</div>
             </h5>
-            <div className="grid-results games px-5 pb-5">
+            <div className="grid-results featured-games px-5 pb-5">
                 {props.featuredGames && props.featuredGames
                     .map((game: GameResponse, index: number) => {
                         const isEditorsChoiceGame: boolean = props.featuredEditorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
@@ -101,7 +99,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
 
                         return (
                             <GameListContainer
-                                type={GameListType.Fullsize}
+                                type={GameListType.FullsizeCover}
                                 game={game}
                                 fullsizeIndex={index}
                                 fullsizeIsBigGame={isBigGame}
@@ -115,6 +113,31 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 sidebarActiveEnum={props.sidebarActiveEnum}
                 games={props.weeklyGames}
             />
+            <div className="px-5">
+                <div className="time-games align-top d-inline-block mb-4">
+                    <div className="upcoming cursor-pointer" onClick={() => props.changeTimeGamesOption(TimeGamesOptions.Upcoming)}>Upcoming</div>
+                    <div className="recent cursor-pointer" onClick={() => props.changeTimeGamesOption(TimeGamesOptions.Recent)}>Recent</div>
+                    <div className="early cursor-pointer" onClick={() => props.changeTimeGamesOption(TimeGamesOptions.Early)}>Early Access</div>
+                    <div className="show cursor-pointer" onClick={props.goToOption}>Show All<i className="fas fa-chevron-right ml-1"/></div>
+                    <div className="underline w-100"/>
+                    <div className={`underline-slider ${props.timeGamesOption === TimeGamesOptions.Upcoming ? 'upcoming' : ''} ${props.timeGamesOption === TimeGamesOptions.Recent ? 'recent' : ''} ${props.timeGamesOption === TimeGamesOptions.Early ? 'early' : ''}`}/>
+                    <div className="time-games-grid custom-scrollbar-slim">
+                        <div className="grid-results h-100">
+                            {timeGames && timeGames
+                                .map((game: GameResponse) => 
+                                    <GameListContainer
+                                        type={GameListType.TransparentTime}
+                                        game={game}
+                                    />
+                                )}
+                        </div>
+                    </div>
+                </div>
+                <GenreBannerContainer
+                    goToRedirect={props.goToRedirect}
+                    games={props.horrorGames}
+                />
+            </div>
             <h5 className="header color-tertiary px-5 mb-3">
                 <i className="far fa-newspaper d-inline-block mr-2"/>
                 <div className="d-inline-block title" onClick={() => props.goToRedirect(`/news`)}>News</div> 

@@ -25,14 +25,16 @@ export function getFormattedDate(dateParam: Date) {
 }
 
 /**
- * Convert Unix Timestamp -> X mins ago / X hrs ago / X days ago.
+ * Convert Unix Timestamp -> (in) X mins (ago) / (in) X hrs (ago) / (in) X days (ago).
  */
-export function formatDate(date: number, dateBeforeCurrent): string {
+export function formatDate(date: number): string {
+    const now: Date = new Date();
+    const dateBeforeCurrent: boolean = date < Math.floor(now.getTime() / 1000);
     const CURRENT_UNIX_TIME_MS: number = parseInt(new Date().getTime().toString().slice(0, -3));
     const TARGET_UNIX_TIME_MS: number = new Date(date).getTime();
     let difference: number = dateBeforeCurrent ? CURRENT_UNIX_TIME_MS - TARGET_UNIX_TIME_MS : TARGET_UNIX_TIME_MS - CURRENT_UNIX_TIME_MS;
     let hoursDifference: number = Math.floor(difference / 60 / 60);
-    const textWrap = (num: number, unit: string): string => { return dateBeforeCurrent ? `${num} ${unit} ago` : `in ${num} ${unit}`}
+    const textWrap = (num: number, unit: string): string => { return dateBeforeCurrent ? `${num} ${unit} ago` : `In ${num} ${unit}`}
 
     if (hoursDifference <= 0) {
         return "now";

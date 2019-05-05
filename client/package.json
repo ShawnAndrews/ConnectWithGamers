@@ -19,7 +19,7 @@
     "hoek": "^6.1.2",
     "html-webpack-plugin": "^3.2.0",
     "image-promise": "^5.0.1",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.1",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "popups": "^1.1.3",

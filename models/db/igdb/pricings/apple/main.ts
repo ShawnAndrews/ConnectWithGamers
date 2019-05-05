@@ -45,7 +45,8 @@ export function getApplePricings(igdb_games_sys_key_id: number, apple_link: stri
 
                         title = $(element).find(`.truncate-single-line`).text();
                         pricingEnum = PricingsEnum.dlc;
-                        price = Number.parseFloat($(element).find(`.list-with-numbers__item__price`).text().replace(`$`, ``));
+                        const priceText: string = $(element).find(`.list-with-numbers__item__price`).text().replace(`$`, ``);
+                        price = Number.parseFloat(priceText === "Free" ? "0.00" : priceText);
 
                         pricing = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                         pricings.push(pricing);

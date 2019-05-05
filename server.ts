@@ -54,7 +54,7 @@ app.use("/chatroom", chatroomController);
 app.use("/account", accountController);
 
 /* igdb controller */
-app.use("/igdb", igdbController);
+app.use("/igdb", igdbController, (req: Request, res: Response) => { console.log("locals: ", JSON.stringify(res.locals.data).length); return res.send(res.locals); });
 
 /* common */
 app.get("/favicon.ico", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });
