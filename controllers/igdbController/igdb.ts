@@ -153,8 +153,7 @@ router.post(routes.getRoute("news"), (req: Request, res: Response, next: any) =>
     GenericCachedRoute<NewsArticle[]>(newsKeyExists, getCachedNews, cacheNews, path)
         .then((data: NewsArticle[]) => {
             genericResponse.data = data;
-            res.locals = genericResponse;
-            next();
+            return res.send(genericResponse);
         })
         .catch((error: string) => {
             genericResponse.error = error;
