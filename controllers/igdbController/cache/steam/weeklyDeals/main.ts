@@ -1,15 +1,14 @@
-import { GameResponse, ResultsEnum } from "../../../../../client/client-server-common/common";
+import { GameResponse } from "../../../../../client/client-server-common/common";
 import { igdbModel } from "../../../../../models/db/igdb/main";
-import { getCachedGame } from "../../game/main";
 import { parseSteamIdsFromQuery } from "../../util";
 
 /**
  * Check if games exists.
  */
-export function steamWeeklyDealsKeyExists(): Promise<boolean> {
+export function steamWeeklyDealsKeyExists(path: string): Promise<boolean> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.resultsExists(ResultsEnum.SteamWeeklyDeals)
+        igdbModel.routeCacheExists(path)
             .then((exists: boolean) => {
                 return resolve(exists);
             })
@@ -24,22 +23,12 @@ export function steamWeeklyDealsKeyExists(): Promise<boolean> {
 /**
  * Get cached games.
  */
-export function getSteamWeeklyDealsGames(): Promise<GameResponse[]> {
+export function getSteamWeeklyDealsGames(path: string): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.getResults(ResultsEnum.SteamWeeklyDeals)
-            .then((gameIds: number[]) => {
-
-                const gamePromises: Promise<GameResponse>[] = gameIds.map((id: number) => getCachedGame(id));
-
-                Promise.all(gamePromises)
-                .then((gameResponses: GameResponse[]) => {
-                    return resolve(gameResponses);
-                })
-                .catch((error: string) => {
-                    return reject(error);
-                });
-
+        igdbModel.getRouteCache(path)
+            .then((gamesResponse: GameResponse[]) => {
+                return resolve(gamesResponse);
             })
             .catch((error: string) => {
                 return reject(error);
@@ -52,7 +41,7 @@ export function getSteamWeeklyDealsGames(): Promise<GameResponse[]> {
 /**
  * Cache games.
  */
-export function cacheSteamWeeklyDealsGames(): Promise<GameResponse[]> {
+export function cacheSteamWeeklyDealsGames(path: string): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -60,9 +49,8 @@ export function cacheSteamWeeklyDealsGames(): Promise<GameResponse[]> {
 
         parseSteamIdsFromQuery(URL)
             .then((gamesResponse: GameResponse[]) => {
-                const ids: number[] = gamesResponse.map((x: GameResponse) => x.id);
 
-                igdbModel.setResults(ids, ResultsEnum.SteamWeeklyDeals)
+                igdbModel.setRouteCache(gamesResponse, path)
                     .then(() => {
                         return resolve(gamesResponse);
                     })

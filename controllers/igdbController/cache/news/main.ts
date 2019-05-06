@@ -7,10 +7,10 @@ import { igdbModel } from "../../../../models/db/igdb/main";
 /**
  * Check if news exists.
  */
-export function newsKeyExists(): Promise<boolean> {
+export function newsKeyExists(path: string): Promise<boolean> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.newsExists()
+        igdbModel.newsExists(path)
         .then((exists: boolean) => {
             return resolve(exists);
         })
@@ -24,11 +24,11 @@ export function newsKeyExists(): Promise<boolean> {
 /**
  * Get news.
  */
-export function getCachedNews(): Promise<NewsArticle[]> {
+export function getCachedNews(path: string): Promise<NewsArticle[]> {
 
     return new Promise((resolve: any, reject: any) => {
 
-        igdbModel.getNews()
+        igdbModel.getNews(path)
         .then((newsArticles: NewsArticle[]) => {
             return resolve(newsArticles);
         })
@@ -43,7 +43,7 @@ export function getCachedNews(): Promise<NewsArticle[]> {
 /**
  * Cache news.
  */
-export function cacheNews(): Promise<NewsArticle[]> {
+export function cacheNews(path: string): Promise<NewsArticle[]> {
     const CURRENT_UNIX_TIME_S: number = getTodayUnixTimestampInSeconds();
 
     return new Promise((resolve: any, reject: any) => {
@@ -86,7 +86,7 @@ export function cacheNews(): Promise<NewsArticle[]> {
                 newsArticles.push(NewsArticle);
             });
 
-            igdbModel.setNews(newsArticles)
+            igdbModel.setNews(newsArticles, path)
             .then(() => {
                 return resolve(newsArticles);
             })

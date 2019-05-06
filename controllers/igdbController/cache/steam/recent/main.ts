@@ -1,4 +1,4 @@
-import { GameResponse, ResultsEnum, buildIGDBRequestBody, GameFields, RawGame } from "../../../../../client/client-server-common/common";
+import { GameResponse, buildIGDBRequestBody, GameFields, RawGame } from "../../../../../client/client-server-common/common";
 import { igdbModel } from "../../../../../models/db/igdb/main";
 import { getCachedGame, cachePreloadedGame } from "../../game/main";
 import config from "../../../../../config";
@@ -7,10 +7,10 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 /**
  * Check if games exists.
  */
-export function steamRecentExists(): Promise<boolean> {
+export function steamRecentExists(path: string): Promise<boolean> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.resultsExists(ResultsEnum.SteamRecent)
+        igdbModel.routeCacheExists(path)
             .then((exists: boolean) => {
                 return resolve(exists);
             })
@@ -25,22 +25,12 @@ export function steamRecentExists(): Promise<boolean> {
 /**
  * Get cached games.
  */
-export function getSteamRecentGames(): Promise<GameResponse[]> {
+export function getSteamRecentGames(path: string): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.getResults(ResultsEnum.SteamRecent)
-            .then((gameIds: number[]) => {
-
-                const gamePromises: Promise<GameResponse>[] = gameIds.map((id: number) => getCachedGame(id));
-
-                Promise.all(gamePromises)
-                .then((gameResponses: GameResponse[]) => {
-                    return resolve(gameResponses);
-                })
-                .catch((error: string) => {
-                    return reject(error);
-                });
-
+        igdbModel.getRouteCache(path)
+            .then((gamesResponse: GameResponse[]) => {
+                return resolve(gamesResponse);
             })
             .catch((error: string) => {
                 return reject(error);
@@ -53,7 +43,7 @@ export function getSteamRecentGames(): Promise<GameResponse[]> {
 /**
  * Cache games.
  */
-export function cacheSteamRecentGames(): Promise<GameResponse[]> {
+export function cacheSteamRecentGames(path: string): Promise<GameResponse[]> {
     const now: number = Math.floor(new Date().getTime() / 1000);
     const filters: string[] = [`external_games.category = 1`, `first_release_date != null`, `first_release_date < ${now}`];
     const URL: string = `${config.igdb.apiURL}/games`;
@@ -77,15 +67,14 @@ export function cacheSteamRecentGames(): Promise<GameResponse[]> {
         })
         .then( (response: AxiosResponse) => {
             const rawGamesResponses: RawGame[] = response.data;
-            const ids: number[] = rawGamesResponses.map((RawGame: RawGame) => RawGame.id);
-            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((RawGame: RawGame) => cachePreloadedGame(RawGame));
+            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((RawGame: RawGame) => cachePreloadedGame(RawGame, `/game/${RawGame.id}`));
 
             Promise.all(gamePromises)
-            .then((gameResponses: GameResponse[]) => {
+            .then((gamesResponse: GameResponse[]) => {
 
-                igdbModel.setResults(ids, ResultsEnum.SteamRecent)
+                igdbModel.setRouteCache(gamesResponse, path)
                     .then(() => {
-                        return resolve(gameResponses);
+                        return resolve(gamesResponse);
                     })
                     .catch((error: string) => {
                         return reject(error);

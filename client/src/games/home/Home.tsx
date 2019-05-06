@@ -79,7 +79,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                                 <Button
                                     className="price-btn mt-1" 
                                     variant="raised"
-                                    onClick={() => window.open(`${gameInfo.btnText.link}`)}
+                                    onClick={() => window.open(gameInfo.btnLink)}
                                 >
                                     {gameInfo.btnText}
                                 </Button>

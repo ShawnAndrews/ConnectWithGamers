@@ -1,15 +1,14 @@
-import { GameResponse, ResultsEnum } from "../../../../../client/client-server-common/common";
+import { GameResponse } from "../../../../../client/client-server-common/common";
 import { igdbModel } from "../../../../../models/db/igdb/main";
-import { getCachedGame } from "../../game/main";
 import { parseSteamIdsFromQuery } from "../../util";
 
 /**
  * Check if games exists.
  */
-export function steamVrViveKeyExists(): Promise<boolean> {
+export function steamVrViveKeyExists(path: string): Promise<boolean> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.resultsExists(ResultsEnum.SteamVrVive)
+        igdbModel.routeCacheExists(path)
             .then((exists: boolean) => {
                 return resolve(exists);
             })
@@ -24,22 +23,12 @@ export function steamVrViveKeyExists(): Promise<boolean> {
 /**
  * Get cached games.
  */
-export function getSteamVrViveGames(): Promise<GameResponse[]> {
+export function getSteamVrViveGames(path: string): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.getResults(ResultsEnum.SteamVrVive)
-            .then((gameIds: number[]) => {
-
-                const gamePromises: Promise<GameResponse>[] = gameIds.map((id: number) => getCachedGame(id));
-
-                Promise.all(gamePromises)
-                .then((gameResponses: GameResponse[]) => {
-                    return resolve(gameResponses);
-                })
-                .catch((error: string) => {
-                    return reject(error);
-                });
-
+        igdbModel.getRouteCache(path)
+            .then((gamesResponse: GameResponse[]) => {
+                return resolve(gamesResponse);
             })
             .catch((error: string) => {
                 return reject(error);
@@ -52,7 +41,7 @@ export function getSteamVrViveGames(): Promise<GameResponse[]> {
 /**
  * Cache games.
  */
-export function cacheSteamVrViveGames(): Promise<GameResponse[]> {
+export function cacheSteamVrViveGames(path: string): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -60,9 +49,8 @@ export function cacheSteamVrViveGames(): Promise<GameResponse[]> {
 
         parseSteamIdsFromQuery(URL)
             .then((gamesResponse: GameResponse[]) => {
-                const ids: number[] = gamesResponse.map((x: GameResponse) => x.id);
 
-                igdbModel.setResults(ids, ResultsEnum.SteamVrVive)
+                igdbModel.setRouteCache(gamesResponse, path)
                     .then(() => {
                         return resolve(gamesResponse);
                     })

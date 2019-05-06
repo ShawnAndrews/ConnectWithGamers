@@ -1,6 +1,6 @@
 const fs = require("fs");
 import DatabaseBase from "./../base/dbBase";
-import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, DbTablePricingsFields, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableResultsFields, ResultsEnum, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, NewsArticle, DbTableIGDBNewsFields, IGDBImageSizeEnums, IGDBImageUploadPath } from "../../../client/client-server-common/common";
+import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, DbTablePricingsFields, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, NewsArticle, DbTableIGDBNewsFields, IGDBImageSizeEnums, IGDBImageUploadPath, DbTableRouteCacheFields, RouteCache } from "../../../client/client-server-common/common";
 import { MysqlError } from "mysql";
 import config from "../../../config";
 import { isArray } from "util";
@@ -25,13 +25,13 @@ class IGDBModel extends DatabaseBase {
     /**
      * Check if game already exists.
      */
-    gameExists(igdbId: number): Promise<boolean> {
+    gameExists(path: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
             this.select(
-                DbTables.igdb_games,
-                DbTableIGDBGamesFields,
-                `${DbTableIGDBGamesFields[1]}=?`,
-                [igdbId])
+                DbTables.route_cache,
+                DbTableRouteCacheFields,
+                `${DbTableRouteCacheFields[0]}=?`,
+                [path])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data.length > 0) {
@@ -52,7 +52,7 @@ class IGDBModel extends DatabaseBase {
     /**
      * Save game to database.
      */
-    setGame(game: GameResponse): Promise<void> {
+    setGame(game: GameResponse, path: string): Promise<void> {
 
         return new Promise((resolve, reject) => {
             const filteredSummary: string = game.summary && game.summary.replace(/[^\x00-\x7F]/g, ""); // remove non-ascii
@@ -102,10 +102,25 @@ class IGDBModel extends DatabaseBase {
 
                     Promise.all(gamePromises)
                         .then(() => {
-                            return resolve();
+                            const expiresDate = new Date();
+                            expiresDate.setDate(expiresDate.getDate() + 30);
+                            const routeCache: RouteCache = { data: game };
+                            const columnValues: any[] = [path, JSON.stringify(routeCache), expiresDate];
+
+                            // insert route
+                            this.custom(
+                                `INSERT INTO ${DbTables.route_cache} (${DbTableRouteCacheFields})
+                                VALUES (${DbTableRouteCacheFields.map(() => "?").join()})`,
+                                columnValues)
+                                .then(() => {
+                                    return resolve();
+                                })
+                                .catch((err: MysqlError) => {
+                                    return reject(err);
+                                });
+
                         })
                         .catch((err: MysqlError) => {
-                            console.log(`22 error: ${err}`);
                             if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
                                 return reject(err);
                             } else {
@@ -128,90 +143,29 @@ class IGDBModel extends DatabaseBase {
     /**
      * Get game from database.
      */
-    getGame(gameId: number): Promise <GameResponse> {
+    getGame(path: string): Promise <GameResponse> {
 
         return new Promise((resolve, reject) => {
-            const gamePromises: Promise<any>[] = [this.getGameCover(gameId), this.getGameScreenshots(gameId), this.getGameIcons(gameId), this.getGameReleaseDates(gameId), this.getGamePlatforms(gameId), this.getGameGenres(gameId), this.getGameSimilarGames(gameId), this.getGameVideoPreview(gameId), this.getImageCoverCached(gameId, IGDBImageSizeEnums.micro), this.getImageCoverCached(gameId, IGDBImageSizeEnums.cover_big), this.getImageScreenshotsCached(gameId, IGDBImageSizeEnums.screenshot_med), this.getImageScreenshotsCached(gameId, IGDBImageSizeEnums.screenshot_big), this.getGamePricings(gameId)];
-            let cover: IGDBImage = undefined;
-            let screenshots: IGDBImage[] = undefined;
-            let linkIcons: string[] = undefined;
-            let releaseDates: number[] = undefined;
-            let platforms: number[] = undefined;
-            let genres: number[] = undefined;
-            let pricings: PriceInfoResponse[] = undefined;
-            let similar_games: number[] = undefined;
-            let video_cached: boolean = undefined;
-            let image_cover_micro_cached: boolean = undefined;
-            let image_cover_big_cached: boolean = undefined;
-            let image_screenshot_med_cached: boolean = undefined;
-            let image_screenshot_big_cached: boolean = undefined;
 
-            Promise.all(gamePromises)
-                .then((vals: any) => {
-                    cover = vals[0];
-                    screenshots = vals[1];
-                    linkIcons = vals[2];
-                    releaseDates = vals[3];
-                    platforms = vals[4];
-                    genres = vals[5];
-                    similar_games = vals[6];
-                    video_cached = vals[7];
-                    image_cover_micro_cached = vals[8];
-                    image_cover_big_cached = vals[9];
-                    image_screenshot_med_cached = vals[10];
-                    image_screenshot_big_cached = vals[11];
-                    pricings = vals[12];
+            // get game
+            this.select(
+                DbTables.route_cache,
+                DbTableRouteCacheFields,
+                `route = ?`,
+                [path])
+                .then((dbResponse: GenericModelResponse) => {
 
-                    // get game
-                    this.select(
-                        DbTables.igdb_games,
-                        DbTableIGDBGamesFields,
-                        `${DbTableIGDBGamesFields[1]}=?`,
-                        [gameId])
-                        .then((dbResponse: GenericModelResponse) => {
-                            if (dbResponse.data.length > 0) {
-                                const game: GameResponse = {
-                                    id: dbResponse.data[0].id,
-                                    name: dbResponse.data[0].name,
-                                    aggregated_rating: dbResponse.data[0].aggregated_rating,
-                                    total_rating_count: dbResponse.data[0].total_rating_count,
-                                    summary: dbResponse.data[0].summary,
-                                    first_release_date: Number(dbResponse.data[0].first_release_date),
-                                    video: dbResponse.data[0].video,
-                                    cover: cover,
-                                    linkIcons: linkIcons,
-                                    release_dates: releaseDates,
-                                    screenshots: screenshots,
-                                    genres: genres,
-                                    platforms: platforms,
-                                    video_cached: video_cached,
-                                    image_cover_micro_cached: image_cover_micro_cached,
-                                    image_cover_big_cached: image_cover_big_cached,
-                                    image_screenshot_med_cached: image_screenshot_med_cached,
-                                    image_screenshot_big_cached: image_screenshot_big_cached,
-                                    steam_link: dbResponse.data[0].steam_link,
-                                    gog_link: dbResponse.data[0].gog_link,
-                                    microsoft_link: dbResponse.data[0].microsoft_link,
-                                    apple_link: dbResponse.data[0].apple_link,
-                                    android_link: dbResponse.data[0].android_link,
-                                    pricings: pricings,
-                                    multiplayer_enabled: dbResponse.data[0].multiplayer_enabled,
-                                    similar_games: similar_games
-                                };
+                    if (dbResponse.data.length > 0) {
+                        const game: GameResponse = JSON.parse(dbResponse.data[0].response).data;
 
-                                return resolve(game);
-
-                            } else {
-                                return reject(`Game not found in database with id #${gameId}`);
-                            }
-                        })
-                        .catch((error: string) => {
-                            return reject(error);
-                        });
+                        return resolve(game);
+                    } else {
+                        return reject("Database error.");
+                    }
 
                 })
-                .catch((error: string) => {
-                    return reject(error);
+                .catch((err: string) => {
+                    return reject(err);
                 });
 
         });
@@ -1005,16 +959,14 @@ class IGDBModel extends DatabaseBase {
     }
 
     /**
-     * Check if results already exists.
+     * Check if route cache already exists.
      */
-    resultsExists(resultsEnum: ResultsEnum, param?: string): Promise<boolean> {
+    routeCacheExists(path: string): Promise<boolean> {
 
         return new Promise((resolve, reject) => {
             this.custom(
-                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.results} rs
-                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = rs.${DbTableResultsFields[2]}
-                WHERE rs.${DbTableResultsFields[1]}=? AND rs.${DbTableResultsFields[3]}${!param ? " IS " : "="}?`,
-                [resultsEnum, param])
+                `SELECT COUNT(*) FROM ${DbTables.route_cache} WHERE route = ?`,
+                [path])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data[0][`COUNT(*)`] !== 0) {
@@ -1033,23 +985,21 @@ class IGDBModel extends DatabaseBase {
     }
 
     /**
-     * Get results from database.
+     * Get route cache from database.
      */
-    getResults(resultsEnum: ResultsEnum, param?: string): Promise <number[]> {
+    getRouteCache(path: string): Promise <GameResponse[]> {
 
         return new Promise((resolve, reject) => {
 
             // getting results
             this.custom(
-                `SELECT ig.${DbTableIGDBGamesFields[1]} FROM ${config.mysql.database}.${DbTables.results} rs
-                JOIN ${DbTables.igdb_games} ig ON ig.${DbTableIGDBGamesFields[0]} = rs.${DbTableResultsFields[2]}
-                WHERE rs.${DbTableResultsFields[1]}=? AND rs.${DbTableResultsFields[3]}${!param ? " IS " : "="}?`,
-                [resultsEnum, param])
+                `SELECT * FROM ${DbTables.route_cache} WHERE route = ?`,
+                [path])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data.length > 0) {
-                        const gameIds: number[] = dbResponse.data.map((result: any) => result.id);
-                        return resolve(gameIds);
+                        const games: GameResponse[] = JSON.parse(dbResponse.data[0].response).data;
+                        return resolve(games);
                     } else {
                         return resolve(undefined);
                     }
@@ -1063,30 +1013,30 @@ class IGDBModel extends DatabaseBase {
     }
 
     /**
-     * Set game results in database if does not exist.
+     * Set games route cache in database if does not exist.
      */
-    setResults(gameIds: number[], resultsEnum: ResultsEnum, param?: string): Promise <void> {
+    setRouteCache(games: GameResponse[], path: string): Promise <void> {
         const datePlus7Days: Date = new Date();
         datePlus7Days.setDate(datePlus7Days.getDate() + 7);
 
         return new Promise((resolve, reject) => {
 
-            // cacheing results
-            gameIds.forEach((gameId: number) => {
-                const columnValues: any[] = [resultsEnum, gameId, param, datePlus7Days];
+            const expiresDate = new Date();
+            expiresDate.setDate(expiresDate.getDate() + 7);
+            const routeCache: RouteCache = { data: games };
+            const columnValuesInner: any[] = [path, JSON.stringify(routeCache), expiresDate];
 
-                // insert result
-                this.custom(
-                    `INSERT INTO ${DbTables.results} (${DbTableResultsFields.slice(1)}) VALUES (?, (SELECT ig.${DbTableIGDBGamesFields[0]} FROM ${DbTables.igdb_games} ig WHERE ig.${DbTableIGDBGamesFields[1]}=?), ?, ?)`,
-                    columnValues)
-                    .catch((err: MysqlError) => {
-                        if (err.errno !== SQLErrorCodes.DUPLICATE_ROW) {
-                            return reject(err);
-                        }
-                    });
-            });
-
-            return resolve();
+            // insert route
+            this.custom(
+                `INSERT INTO ${DbTables.route_cache} (${DbTableRouteCacheFields})
+                VALUES (${DbTableRouteCacheFields.map(() => "?").join()})`,
+                columnValuesInner)
+                .then(() => {
+                    return resolve();
+                })
+                .catch((err: MysqlError) => {
+                    return reject(err);
+                });
 
         });
 
@@ -1095,12 +1045,12 @@ class IGDBModel extends DatabaseBase {
     /**
      * Check if news exists.
      */
-    newsExists(): Promise<boolean> {
+    newsExists(path: string): Promise<boolean> {
 
         return new Promise((resolve, reject) => {
             this.custom(
-                `SELECT COUNT(*) FROM ${config.mysql.database}.${DbTables.igdb_news}`,
-                [])
+                `SELECT COUNT(*) FROM ${DbTables.route_cache} WHERE route=?`,
+                [path])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data[0][`COUNT(*)`] !== 0) {
@@ -1121,26 +1071,26 @@ class IGDBModel extends DatabaseBase {
     /**
      * Get news articles.
      */
-    getNews(): Promise <NewsArticle[]> {
+    getNews(path: string): Promise <NewsArticle[]> {
 
         return new Promise((resolve, reject) => {
 
             // get news
             this.select(
-                DbTables.igdb_news,
-                DbTableIGDBNewsFields,
-                undefined,
-                [])
+                DbTables.route_cache,
+                DbTableRouteCacheFields,
+                `route = ?`,
+                [path])
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data.length > 0) {
+                        const rawNewsArticles: any[] = JSON.parse(dbResponse.data[0].response).data;
                         const newsArticles: NewsArticle[] = [];
 
-                        dbResponse.data.forEach((rawNewsArticle: any) => {
+                        rawNewsArticles.forEach((rawNewsArticle: any) => {
                             const newsArticle: NewsArticle = { title: rawNewsArticle.title, author: rawNewsArticle.author, image: rawNewsArticle.image, url: rawNewsArticle.url, created_dt: rawNewsArticle.created_dt, org: rawNewsArticle.org, expires_dt: rawNewsArticle.expires_dt };
                             newsArticles.push(newsArticle);
                         });
-
                         return resolve(newsArticles);
                     } else {
                         return reject("Database error.");
@@ -1158,7 +1108,7 @@ class IGDBModel extends DatabaseBase {
     /**
      * Set news articles.
      */
-    setNews(newsArticles: NewsArticle[]): Promise <void> {
+    setNews(newsArticles: NewsArticle[], path: string): Promise <void> {
         const columnValues: any[] = [];
 
         newsArticles.forEach((newsArticle: any) => {
@@ -1182,7 +1132,23 @@ class IGDBModel extends DatabaseBase {
                         VALUES ${newsArticles.map(() => `(${DbTableIGDBNewsFields.slice(1).map(() => "?").join()})`).join()}`,
                         columnValues)
                         .then(() => {
-                            return resolve();
+                            const expiresDate = new Date();
+                            expiresDate.setDate(expiresDate.getDate() + 7);
+                            const routeCache: RouteCache = { data: newsArticles };
+                            const columnValuesInner: any[] = [path, JSON.stringify(routeCache), expiresDate];
+
+                            // insert route
+                            this.custom(
+                                `INSERT INTO ${DbTables.route_cache} (${DbTableRouteCacheFields})
+                                VALUES (${DbTableRouteCacheFields.map(() => "?").join()})`,
+                                columnValuesInner)
+                                .then(() => {
+                                    return resolve();
+                                })
+                                .catch((err: MysqlError) => {
+                                    return reject(err);
+                                });
+
                         })
                         .catch((err: MysqlError) => {
                             return reject(err);

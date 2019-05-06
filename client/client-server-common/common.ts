@@ -210,6 +210,10 @@ export const steamAppUrl: string = `https://store.steampowered.com/app`;
 
 export const androidAppUrl: string = `https://play.google.com/store/apps/details?id=`;
 
+export interface RouteCache {
+    data: any;
+}
+
 export interface Config {
     useStrictlyHttps: boolean;
     httpPort: number;
@@ -267,43 +271,6 @@ export interface Config {
 export interface PlatformOption {
     id: number;
     name: string;
-}
-
-export enum ResultsEnum {
-    Search = 1,
-    SteamWeeklyDeals = 2,
-    SteamCompMulti = 3,
-    SteamFreeOnlineMulti = 4,
-    SteamPaidOnlineMulti = 5,
-    SteamMostDifficult = 6,
-    SteamHorror = 7,
-    SteamMoba = 8,
-    SteamVrHtc = 9,
-    SteamVrVive = 10,
-    SteamVrWindows = 11,
-    SteamVrAll = 12,
-    SteamGenreAction = 13,
-    SteamGenreAdventure = 14,
-    SteamGenreCasual = 15,
-    SteamGenreStrategy = 16,
-    SteamGenreRacing = 17,
-    SteamGenreSimulation = 18,
-    SteamGenreSports = 19,
-    SteamGenreIndie = 20,
-    SteamGenre2d = 21,
-    SteamGenrePuzzle = 22,
-    SteamGenreShooter = 23,
-    SteamGenreRts = 24,
-    SteamGenreTowerDefence = 25,
-    SteamUpcoming = 26,
-    SteamPopular = 27,
-    SteamRecent = 28,
-    SteamEarlyAccess = 29,
-    SteamOpenWorld = 30,
-    SteamFPS = 31,
-    SteamCards = 32,
-    SteamMMORPG = 33,
-    SteamSurvival = 34
 }
 
 export interface UserLog {
@@ -877,11 +844,10 @@ export enum DbTables {
     pricings_enum = "pricings_enum",
     ratings = "ratings",
     release_dates = "release_dates",
-    results = "results",
-    results_enum = "results_enum",
     screenshots = "screenshots",
     similar_games = "similar_games",
     tokens = "tokens",
+    route_cache = "route_cache"
 }
 
 export const DbTableAccountsFields: string[] = [`accounts_sys_key_id`, `accounts_type_enum_sys_key_id`, `username`, `email`, `password_hash`, `salt`, `log_dt`, `discord`, `steam`, `twitch`, `email_verification_code`, `recovery_verification_code`, `profile`, `profile_file_extension`, `igdb_account_id`];
@@ -903,10 +869,9 @@ export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `igdb_ext
 export const DbTablePricingsEnumFields: string[] = [`pricings_enum_sys_key_id`, `name`];
 export const DbTableRatingsFields: string[] = [`ratings_sys_key_id`, `igdb_games_sys_key_id`, `accounts_sys_key_id`, `rating`, `log_dt`];
 export const DbTableReleaseDatesFields: string[] = [`release_dates_sys_key_id`, `release_date_ts`, `igdb_games_sys_key_id`];
-export const DbTableResultsFields: string[] = [`results_sys_key_id`, `results_enum_sys_key_id`, `igdb_games_sys_key_id`, `param`, `expires_dt`];
-export const DbTableResultsEnumFields: string[] = [`results_enum_sys_key_id`, `name`];
 export const DbTableScreenshotsFields: string[] = [`screenshots_sys_key_id`, `igdb_images_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `igdb_games_sys_key_id`, `similar_to_igdb_games_id`];
 export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `accounts_type_enum_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];
 export const DbTableAccountsTypeEnumFields: string[] = [`accounts_type_enum_sys_key_id`, `name`];
 export const DbTableIGDBNewsFields: string[] = [`igdb_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];
+export const DbTableRouteCacheFields: string[] = [`route`, `response`, `expires_dt`];

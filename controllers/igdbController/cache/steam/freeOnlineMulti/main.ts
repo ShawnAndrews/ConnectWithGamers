@@ -1,4 +1,4 @@
-import { GameResponse, ResultsEnum } from "../../../../../client/client-server-common/common";
+import { GameResponse } from "../../../../../client/client-server-common/common";
 import { igdbModel } from "../../../../../models/db/igdb/main";
 import { getCachedGame } from "../../game/main";
 import { parseSteamIdsFromQuery } from "../../util";
@@ -6,10 +6,10 @@ import { parseSteamIdsFromQuery } from "../../util";
 /**
  * Check if games exists.
  */
-export function steamFreeOnlineMultiKeyExists(): Promise<boolean> {
+export function steamFreeOnlineMultiKeyExists(path: string): Promise<boolean> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.resultsExists(ResultsEnum.SteamFreeOnlineMulti)
+        igdbModel.routeCacheExists(path)
             .then((exists: boolean) => {
                 return resolve(exists);
             })
@@ -24,22 +24,12 @@ export function steamFreeOnlineMultiKeyExists(): Promise<boolean> {
 /**
  * Get cached games.
  */
-export function getSteamFreeOnlineMultiGames(): Promise<GameResponse[]> {
+export function getSteamFreeOnlineMultiGames(path: string): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.getResults(ResultsEnum.SteamFreeOnlineMulti)
-            .then((gameIds: number[]) => {
-
-                const gamePromises: Promise<GameResponse>[] = gameIds.map((id: number) => getCachedGame(id));
-
-                Promise.all(gamePromises)
-                .then((gameResponses: GameResponse[]) => {
-                    return resolve(gameResponses);
-                })
-                .catch((error: string) => {
-                    return reject(error);
-                });
-
+        igdbModel.getRouteCache(path)
+            .then((gamesResponse: GameResponse[]) => {
+                return resolve(gamesResponse);
             })
             .catch((error: string) => {
                 return reject(error);
@@ -52,7 +42,7 @@ export function getSteamFreeOnlineMultiGames(): Promise<GameResponse[]> {
 /**
  * Cache games.
  */
-export function cacheSteamFreeOnlineMultiGames(): Promise<GameResponse[]> {
+export function cacheSteamFreeOnlineMultiGames(path: string): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -60,9 +50,8 @@ export function cacheSteamFreeOnlineMultiGames(): Promise<GameResponse[]> {
 
         parseSteamIdsFromQuery(URL)
             .then((gamesResponse: GameResponse[]) => {
-                const ids: number[] = gamesResponse.map((x: GameResponse) => x.id);
 
-                igdbModel.setResults(ids, ResultsEnum.SteamFreeOnlineMulti)
+                igdbModel.setRouteCache(gamesResponse, path)
                     .then(() => {
                         return resolve(gamesResponse);
                     })

@@ -7,11 +7,11 @@ import { igdbModel } from "../../../../models/db/igdb/main";
 /**
  * Check if game key exists.
  */
-export function gameKeyExists(gameId: number): Promise<boolean> {
+export function gameKeyExists(path: string): Promise<boolean> {
 
     return new Promise((resolve: any, reject: any) => {
 
-        igdbModel.gameExists(gameId)
+        igdbModel.gameExists(path)
             .then((exists: boolean) => {
                 return resolve(exists);
             })
@@ -26,10 +26,10 @@ export function gameKeyExists(gameId: number): Promise<boolean> {
 /**
  * Get cached game.
  */
-export function getCachedGame(gameId: number): Promise<GameResponse> {
+export function getCachedGame(path: string): Promise<GameResponse> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.getGame(gameId)
+        igdbModel.getGame(path)
             .then((game: GameResponse) => {
                 return resolve(game);
             })
@@ -43,7 +43,7 @@ export function getCachedGame(gameId: number): Promise<GameResponse> {
 /**
  * Cache game.
  */
-export function cacheGame(gameId: number): Promise<GameResponse> {
+export function cacheGame(gameId: number, path: string): Promise<GameResponse> {
 
     return new Promise((resolve: any, reject: any) => {
 
@@ -68,7 +68,7 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
         .then( (response: AxiosResponse) => {
             const RawGame: RawGame = response.data[0];
 
-            convertAndInsertGame(RawGame)
+            convertAndInsertGame(RawGame, path)
                 .then((game: GameResponse) => {
                     return resolve(game);
                 })
@@ -87,16 +87,15 @@ export function cacheGame(gameId: number): Promise<GameResponse> {
 /**
  * Cache preloaded game.
  */
-export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
-    const gameId: number = RawGame.id;
+export function cachePreloadedGame(rawGame: RawGame, path: string): Promise<GameResponse> {
 
     return new Promise((resolve: any, reject: any) => {
-        gameKeyExists(gameId)
+        gameKeyExists(path)
         .then((exists: boolean) => {
 
             if (exists) {
 
-                getCachedGame(gameId)
+                getCachedGame(path)
                     .then((game: GameResponse) => {
                         return resolve(game);
                     })
@@ -106,7 +105,7 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
 
             } else {
 
-                convertAndInsertGame(RawGame)
+                convertAndInsertGame(rawGame, path)
                     .then((game: GameResponse) => {
                         return resolve(game);
                     })
@@ -127,23 +126,16 @@ export function cachePreloadedGame(RawGame: RawGame): Promise<GameResponse> {
 /**
  * Convert game and insert to db.
  */
-function convertAndInsertGame(RawGame: RawGame): Promise<GameResponse> {
-    const gameId: number = RawGame.id;
+function convertAndInsertGame(RawGame: RawGame, path: string): Promise<GameResponse> {
 
     return new Promise((resolve: any, reject: any) => {
 
         convertRawGame([RawGame])
             .then((gameResponses: GameResponse[]) => {
                 const convertedGame: GameResponse = gameResponses[0];
-                igdbModel.setGame(convertedGame)
+                igdbModel.setGame(convertedGame, path)
                     .then(() => {
-                        getCachedGame(gameId)
-                            .then((game: GameResponse) => {
-                                return resolve(game);
-                            })
-                            .catch((error: string) => {
-                                return reject(error);
-                            });
+                        return resolve(convertedGame);
                     })
                     .catch((error: string) => {
                         return reject(error);

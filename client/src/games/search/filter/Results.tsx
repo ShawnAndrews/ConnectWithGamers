@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, ResultsEnum } from '../../../../client-server-common/common';
+import { GameResponse } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
 import RegularGameContainer from '../../game/search/SearchGameContainer';
 import TopnavContainer from './topnav/TopnavContainer';

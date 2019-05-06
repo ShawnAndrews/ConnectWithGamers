@@ -84,15 +84,15 @@ routes.addRoute("steamcards", "/steam/cards");
 routes.addRoute("steammmorpg", "/steam/mmorpg");
 routes.addRoute("steamsurvival", "/steam/survival");
 
-type CachedRouteTypes = GameResponse[] | GameResponse[] | NewsArticle[] | GameResponse;
+type CachedRouteTypes = GameResponse[] | GameResponse | NewsArticle[];
 
-export function GenericCachedRoute<T extends CachedRouteTypes> (keyExists: () => Promise<boolean>, getCachedData: () => Promise<T>, cacheData: () => Promise<T>): Promise<T> {
+export function GenericCachedRoute<T extends CachedRouteTypes> (keyExists: (path: string) => Promise<boolean>, getCachedData: (path: string) => Promise<T>, cacheData: (path: string) => Promise<T>, path: string): Promise<T> {
 
     return new Promise((resolve: any, reject: any) => {
-        keyExists()
+        keyExists(path)
             .then((exists: boolean) => {
                 if (exists) {
-                    getCachedData()
+                    getCachedData(path)
                     .then((listItems: T) => {
                         return resolve(listItems);
                     })
@@ -100,7 +100,7 @@ export function GenericCachedRoute<T extends CachedRouteTypes> (keyExists: () =>
                         return reject(error);
                     });
                 } else {
-                    cacheData()
+                    cacheData(path)
                     .then((listItems: T) => {
                         return resolve(listItems);
                     })
@@ -116,13 +116,13 @@ export function GenericCachedRoute<T extends CachedRouteTypes> (keyExists: () =>
 
 }
 
-export function GenericCachedWithDataRoute<T extends CachedRouteTypes, V> (keyExists: (key: V) => Promise<boolean>, getCachedData: (key: V) => Promise<T>, cacheData: (key: V) => Promise<T>, param: V): Promise<T> {
+export function GenericCachedWithDataRoute<T extends CachedRouteTypes, V> (keyExists: (path: string) => Promise<boolean>, getCachedData: (path: string) => Promise<T>, cacheData: (key: V, path: string) => Promise<T>, param: V, path: string): Promise<T> {
 
     return new Promise((resolve: any, reject: any) => {
-        keyExists(param)
+        keyExists(path)
             .then((exists: boolean) => {
                 if (exists) {
-                    getCachedData(param)
+                    getCachedData(path)
                     .then((listItems: T) => {
                         return resolve(listItems);
                     })
@@ -130,7 +130,7 @@ export function GenericCachedWithDataRoute<T extends CachedRouteTypes, V> (keyEx
                         return reject(error);
                     });
                 } else {
-                    cacheData(param)
+                    cacheData(param, path)
                     .then((listItems: T) => {
                         return resolve(listItems);
                     })
@@ -149,7 +149,8 @@ export function GenericCachedWithDataRoute<T extends CachedRouteTypes, V> (keyEx
 /* news articles */
 router.post(routes.getRoute("news"), (req: Request, res: Response, next: any) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<NewsArticle[]>(newsKeyExists, getCachedNews, cacheNews)
+    const path: string = req.path;
+    GenericCachedRoute<NewsArticle[]>(newsKeyExists, getCachedNews, cacheNews, path)
         .then((data: NewsArticle[]) => {
             genericResponse.data = data;
             res.locals = genericResponse;
@@ -164,7 +165,8 @@ router.post(routes.getRoute("news"), (req: Request, res: Response, next: any) =>
 /* results games */
 router.post(routes.getRoute("resultsgames"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedWithDataRoute<GameResponse[], string>(resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames, JSON.stringify(req.query))
+    const path: string = req.path;
+    GenericCachedWithDataRoute<GameResponse[], string>(resultsGamesKeyExists, getCachedResultsGames, cacheResultsGames, JSON.stringify(req.query), path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -178,7 +180,8 @@ router.post(routes.getRoute("resultsgames"), (req: Request, res: Response) => {
 /* individual games */
 router.post(routes.getRoute("game"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedWithDataRoute<GameResponse, number>(gameKeyExists, getCachedGame, cacheGame, req.params.id)
+    const path: string = req.path;
+    GenericCachedWithDataRoute<GameResponse, number>(gameKeyExists, getCachedGame, cacheGame, req.params.id, path)
         .then((data: GameResponse) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -191,9 +194,9 @@ router.post(routes.getRoute("game"), (req: Request, res: Response) => {
 
 /* weekly deals games */
 router.post(routes.getRoute("steamweeklydeals"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamWeeklyDealsKeyExists, getSteamWeeklyDealsGames, cacheSteamWeeklyDealsGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamWeeklyDealsKeyExists, getSteamWeeklyDealsGames, cacheSteamWeeklyDealsGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -206,9 +209,9 @@ router.post(routes.getRoute("steamweeklydeals"), (req: Request, res: Response) =
 
 /* competitive multiplayer games */
 router.post(routes.getRoute("steamcompmulti"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamCompMultiExists, getSteamCompMultiGames, cacheSteamCompMultiGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamCompMultiExists, getSteamCompMultiGames, cacheSteamCompMultiGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -221,9 +224,9 @@ router.post(routes.getRoute("steamcompmulti"), (req: Request, res: Response) => 
 
 /* free online multiplayer games */
 router.post(routes.getRoute("steamfreeonlinemulti"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamFreeOnlineMultiKeyExists, getSteamFreeOnlineMultiGames, cacheSteamFreeOnlineMultiGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamFreeOnlineMultiKeyExists, getSteamFreeOnlineMultiGames, cacheSteamFreeOnlineMultiGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -236,9 +239,9 @@ router.post(routes.getRoute("steamfreeonlinemulti"), (req: Request, res: Respons
 
 /* paid online multiplayer games */
 router.post(routes.getRoute("steampaidonlinemulti"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamPaidOnlineMultiExists, getSteamPaidOnlineMultiGames, cacheSteamPaidOnlineMultiGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamPaidOnlineMultiExists, getSteamPaidOnlineMultiGames, cacheSteamPaidOnlineMultiGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -251,9 +254,9 @@ router.post(routes.getRoute("steampaidonlinemulti"), (req: Request, res: Respons
 
 /* most difficult games */
 router.post(routes.getRoute("steammostdifficult"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamMostDifficultExists, getSteamMostDifficultGames, cacheSteamMostDifficultGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamMostDifficultExists, getSteamMostDifficultGames, cacheSteamMostDifficultGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -266,9 +269,9 @@ router.post(routes.getRoute("steammostdifficult"), (req: Request, res: Response)
 
 /* horror games */
 router.post(routes.getRoute("steamhorror"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamHorrorExists, getSteamHorrorGames, cacheSteamHorrorGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamHorrorExists, getSteamHorrorGames, cacheSteamHorrorGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -281,9 +284,9 @@ router.post(routes.getRoute("steamhorror"), (req: Request, res: Response) => {
 
 /* moba games */
 router.post(routes.getRoute("steammoba"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamMobaKeyExists, getSteamMobaGames, cacheSteamMobaGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamMobaKeyExists, getSteamMobaGames, cacheSteamMobaGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -296,9 +299,9 @@ router.post(routes.getRoute("steammoba"), (req: Request, res: Response) => {
 
 /* vr htc games */
 router.post(routes.getRoute("steamvrhtc"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamVrHtcKeyExists, getSteamVrHtcGames, cacheSteamVrHtcGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamVrHtcKeyExists, getSteamVrHtcGames, cacheSteamVrHtcGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -311,9 +314,9 @@ router.post(routes.getRoute("steamvrhtc"), (req: Request, res: Response) => {
 
 /* vr vive games */
 router.post(routes.getRoute("steamvrvive"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamVrViveKeyExists, getSteamVrViveGames, cacheSteamVrViveGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamVrViveKeyExists, getSteamVrViveGames, cacheSteamVrViveGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -326,9 +329,9 @@ router.post(routes.getRoute("steamvrvive"), (req: Request, res: Response) => {
 
 /* vr windows games */
 router.post(routes.getRoute("steamvrwindows"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamVrWindowsKeyExists, getSteamVrWindowsGames, cacheSteamVrWindowsGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamVrWindowsKeyExists, getSteamVrWindowsGames, cacheSteamVrWindowsGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -341,9 +344,9 @@ router.post(routes.getRoute("steamvrwindows"), (req: Request, res: Response) => 
 
 /* vr all games */
 router.post(routes.getRoute("steamvrall"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamVrAllExists, getSteamVrAllGames, cacheSteamVrAllGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamVrAllExists, getSteamVrAllGames, cacheSteamVrAllGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -356,9 +359,9 @@ router.post(routes.getRoute("steamvrall"), (req: Request, res: Response) => {
 
 /* action games */
 router.post(routes.getRoute("steamgenreaction"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamActionExists, getSteamActionGames, cacheSteamActionGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamActionExists, getSteamActionGames, cacheSteamActionGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -371,9 +374,9 @@ router.post(routes.getRoute("steamgenreaction"), (req: Request, res: Response) =
 
 /* adventure games */
 router.post(routes.getRoute("steamgenreadventure"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamAdventureExists, getSteamAdventureGames, cacheSteamAdventureGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamAdventureExists, getSteamAdventureGames, cacheSteamAdventureGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -386,9 +389,9 @@ router.post(routes.getRoute("steamgenreadventure"), (req: Request, res: Response
 
 /* casual games */
 router.post(routes.getRoute("steamgenrecasual"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamCasualExists, getSteamCasualGames, cacheSteamCasualGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamCasualExists, getSteamCasualGames, cacheSteamCasualGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -401,9 +404,9 @@ router.post(routes.getRoute("steamgenrecasual"), (req: Request, res: Response) =
 
 /* strategy games */
 router.post(routes.getRoute("steamgenrestrategy"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamStrategyExists, getSteamStrategyGames, cacheSteamStrategyGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamStrategyExists, getSteamStrategyGames, cacheSteamStrategyGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -416,9 +419,9 @@ router.post(routes.getRoute("steamgenrestrategy"), (req: Request, res: Response)
 
 /* racing games */
 router.post(routes.getRoute("steamgenreracing"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamRacingExists, getSteamRacingGames, cacheSteamRacingGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamRacingExists, getSteamRacingGames, cacheSteamRacingGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -431,9 +434,9 @@ router.post(routes.getRoute("steamgenreracing"), (req: Request, res: Response) =
 
 /* simulation games */
 router.post(routes.getRoute("steamgenresimulation"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamSimulationExists, getSteamSimulationGames, cacheSteamSimulationGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamSimulationExists, getSteamSimulationGames, cacheSteamSimulationGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -446,9 +449,9 @@ router.post(routes.getRoute("steamgenresimulation"), (req: Request, res: Respons
 
 /* sports games */
 router.post(routes.getRoute("steamgenresports"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamSportsExists, getSteamSportsGames, cacheSteamSportsGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamSportsExists, getSteamSportsGames, cacheSteamSportsGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -461,9 +464,9 @@ router.post(routes.getRoute("steamgenresports"), (req: Request, res: Response) =
 
 /* indie games */
 router.post(routes.getRoute("steamgenreindie"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamIndieExists, getSteamIndieGames, cacheSteamIndieGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamIndieExists, getSteamIndieGames, cacheSteamIndieGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -476,9 +479,9 @@ router.post(routes.getRoute("steamgenreindie"), (req: Request, res: Response) =>
 
 /* 2d games */
 router.post(routes.getRoute("steamgenre2d"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steam2dExists, getSteam2dGames, cacheSteam2dGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steam2dExists, getSteam2dGames, cacheSteam2dGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -491,9 +494,9 @@ router.post(routes.getRoute("steamgenre2d"), (req: Request, res: Response) => {
 
 /* puzzle games */
 router.post(routes.getRoute("steamgenrepuzzle"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamPuzzleExists, getSteamPuzzleGames, cacheSteamPuzzleGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamPuzzleExists, getSteamPuzzleGames, cacheSteamPuzzleGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -506,9 +509,9 @@ router.post(routes.getRoute("steamgenrepuzzle"), (req: Request, res: Response) =
 
 /* shooter games */
 router.post(routes.getRoute("steamgenreshooter"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamShooterExists, getSteamShooterGames, cacheSteamShooterGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamShooterExists, getSteamShooterGames, cacheSteamShooterGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -521,9 +524,9 @@ router.post(routes.getRoute("steamgenreshooter"), (req: Request, res: Response) 
 
 /* rts games */
 router.post(routes.getRoute("steamgenrerts"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamRtsExists, getSteamRtsGames, cacheSteamRtsGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamRtsExists, getSteamRtsGames, cacheSteamRtsGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -536,9 +539,9 @@ router.post(routes.getRoute("steamgenrerts"), (req: Request, res: Response) => {
 
 /* tower defence games */
 router.post(routes.getRoute("steamgenretowerdefence"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamTowerDefenceExists, getSteamTowerDefenceGames, cacheSteamTowerDefenceGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamTowerDefenceExists, getSteamTowerDefenceGames, cacheSteamTowerDefenceGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -551,9 +554,9 @@ router.post(routes.getRoute("steamgenretowerdefence"), (req: Request, res: Respo
 
 /* upcoming games */
 router.post(routes.getRoute("steamupcoming"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamUpcomingExists, getSteamUpcomingGames, cacheSteamUpcomingGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamUpcomingExists, getSteamUpcomingGames, cacheSteamUpcomingGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -566,9 +569,9 @@ router.post(routes.getRoute("steamupcoming"), (req: Request, res: Response) => {
 
 /* popular games */
 router.post(routes.getRoute("steampopular"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamPopularExists, getSteamPopularGames, cacheSteamPopularGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamPopularExists, getSteamPopularGames, cacheSteamPopularGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -581,9 +584,9 @@ router.post(routes.getRoute("steampopular"), (req: Request, res: Response) => {
 
 /* recent games */
 router.post(routes.getRoute("steamrecent"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamRecentExists, getSteamRecentGames, cacheSteamRecentGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamRecentExists, getSteamRecentGames, cacheSteamRecentGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -596,14 +599,15 @@ router.post(routes.getRoute("steamrecent"), (req: Request, res: Response) => {
 
 /* early access games */
 router.post(routes.getRoute("steamearlyaccess"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamEarlyAccessExists, getSteamEarlyAccessGames, cacheSteamEarlyAccessGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamEarlyAccessExists, getSteamEarlyAccessGames, cacheSteamEarlyAccessGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
         })
         .catch((error: string) => {
+            console.log(`er1: ${error}`);
             genericResponse.error = error;
             return res.send(genericResponse);
         });
@@ -611,9 +615,9 @@ router.post(routes.getRoute("steamearlyaccess"), (req: Request, res: Response) =
 
 /* open world games */
 router.post(routes.getRoute("steamopenworld"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamOpenWorldExists, getSteamOpenWorldGames, cacheSteamOpenWorldGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamOpenWorldExists, getSteamOpenWorldGames, cacheSteamOpenWorldGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -626,9 +630,9 @@ router.post(routes.getRoute("steamopenworld"), (req: Request, res: Response) => 
 
 /* fps games */
 router.post(routes.getRoute("steamfps"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamFPSExists, getSteamFPSGames, cacheSteamFPSGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamFPSExists, getSteamFPSGames, cacheSteamFPSGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -641,9 +645,9 @@ router.post(routes.getRoute("steamfps"), (req: Request, res: Response) => {
 
 /* cards games */
 router.post(routes.getRoute("steamcards"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamCardsExists, getSteamCardsGames, cacheSteamCardsGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamCardsExists, getSteamCardsGames, cacheSteamCardsGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -656,9 +660,9 @@ router.post(routes.getRoute("steamcards"), (req: Request, res: Response) => {
 
 /* mmorpg games */
 router.post(routes.getRoute("steammmorpg"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamMMORPGExists, getSteamMMORPGGames, cacheSteamMMORPGGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamMMORPGExists, getSteamMMORPGGames, cacheSteamMMORPGGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -671,9 +675,9 @@ router.post(routes.getRoute("steammmorpg"), (req: Request, res: Response) => {
 
 /* survival games */
 router.post(routes.getRoute("steamsurvival"), (req: Request, res: Response) => {
-
     const genericResponse: GenericModelResponse = { error: undefined };
-    GenericCachedRoute<GameResponse[]>(steamSurvivalExists, getSteamSurvivalGames, cacheSteamSurvivalGames)
+    const path: string = req.path;
+    GenericCachedRoute<GameResponse[]>(steamSurvivalExists, getSteamSurvivalGames, cacheSteamSurvivalGames, path)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);

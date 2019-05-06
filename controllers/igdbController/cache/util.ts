@@ -34,7 +34,7 @@ export function getGamesBySteamIds(steamIds: number[], requiredMedia?: boolean):
         .then((response: AxiosResponse) => {
 
             const rawGamesResponses: RawGame[] = response.data;
-            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((RawGame: RawGame) => cachePreloadedGame(RawGame));
+            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((RawGame: RawGame) => cachePreloadedGame(RawGame, `/game/${RawGame.id}`));
 
             Promise.all(gamePromises)
             .then((gameResponses: GameResponse[]) => {

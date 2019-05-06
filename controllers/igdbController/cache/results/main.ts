@@ -1,6 +1,6 @@
 import config from "../../../../config";
 import {
-    GameResponse, RawGame, GameFields, buildIGDBRequestBody, ResultsEnum } from "../../../../client/client-server-common/common";
+    GameResponse, RawGame, GameFields, buildIGDBRequestBody } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { cachePreloadedGame, getCachedGame } from "../game/main";
 import { igdbModel } from "../../../../models/db/igdb/main";
@@ -8,10 +8,10 @@ import { igdbModel } from "../../../../models/db/igdb/main";
 /**
  * Check if results key exists.
  */
-export function resultsGamesKeyExists(queryString: string): Promise<boolean> {
+export function resultsGamesKeyExists(path: string): Promise<boolean> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.resultsExists(ResultsEnum.Search, queryString)
+        igdbModel.routeCacheExists(path)
             .then((exists: boolean) => {
                 return resolve(exists);
             })
@@ -26,21 +26,12 @@ export function resultsGamesKeyExists(queryString: string): Promise<boolean> {
 /**
  * Get cached results.
  */
-export function getCachedResultsGames(queryString: string): Promise<GameResponse[]> {
+export function getCachedResultsGames(path: string): Promise<GameResponse[]> {
 
     return new Promise((resolve: any, reject: any) => {
-        igdbModel.getResults(ResultsEnum.Search, queryString)
-            .then((gameIds: number[]) => {
-                const gamePromises: Promise<GameResponse>[] = gameIds.map((id: number) => getCachedGame(id));
-
-                Promise.all(gamePromises)
-                .then((gameResponses: GameResponse[]) => {
-                    return resolve(gameResponses);
-                })
-                .catch((error: string) => {
-                    return reject(error);
-                });
-
+        igdbModel.getRouteCache(path)
+            .then((gamesResponse: GameResponse[]) => {
+                return resolve(gamesResponse);
             })
             .catch((error: string) => {
                 return reject(error);
@@ -52,7 +43,7 @@ export function getCachedResultsGames(queryString: string): Promise<GameResponse
 /**
  * Cache results.
  */
-export function cacheResultsGames(queryString: string): Promise<GameResponse[]> {
+export function cacheResultsGames(queryString: string, path: string): Promise<GameResponse[]> {
     const queryStringObj: any = JSON.parse(queryString);
     const whereFilters: string[] = [];
     let sortFilter: string = undefined;
@@ -158,14 +149,14 @@ export function cacheResultsGames(queryString: string): Promise<GameResponse[]> 
         .then( (response: AxiosResponse) => {
             const rawGamesResponses: RawGame[] = response.data;
             const ids: number[] = rawGamesResponses.map((RawGame: RawGame) => RawGame.id);
-            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((RawGame: RawGame) => cachePreloadedGame(RawGame));
+            const gamePromises: Promise<GameResponse>[] = rawGamesResponses.map((RawGame: RawGame) => cachePreloadedGame(RawGame, path));
 
             Promise.all(gamePromises)
-            .then((gameResponses: GameResponse[]) => {
+            .then((gamesResponse: GameResponse[]) => {
 
-                igdbModel.setResults(ids, ResultsEnum.Search, queryString)
+                igdbModel.setRouteCache(gamesResponse, path)
                     .then(() => {
-                        return resolve(gameResponses);
+                        return resolve(gamesResponse);
                     })
                     .catch((error: string) => {
                         return reject(error);
