@@ -10,7 +10,7 @@ interface INewsArticleProps {
 const NewsArticle: React.SFC<INewsArticleProps> = (props: INewsArticleProps) => {
 
     return (
-        <Card className='news cursor-pointer' onClick={() => { const win = window.open(props.news.url, '_blank'); win.focus(); }}>
+        <Card className='cursor-pointer' onClick={() => { const win = window.open(props.news.url, '_blank'); win.focus(); }}>
             {props.news.image &&
                 <img className='w-100' src={props.news.image} onError={onImgError} />}
             <>
