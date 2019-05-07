@@ -12,7 +12,7 @@ const TransparentTimeGame: React.SFC<ITransparentTimeGameProps> = (props: ITrans
 
     return (
         <div className="time-item ml-2">
-            <div onClick={props.goToGame}>
+            <div className="mr-3" onClick={props.goToGame}>
                 <img className="cover-img" src={props.game.cover ? (props.game.image_cover_big_cached ? getCachedIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big)) : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                 <div className="left-text ml-2 align-top d-inline-block">
                     <div className="name">
