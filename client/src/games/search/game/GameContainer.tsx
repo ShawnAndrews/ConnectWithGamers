@@ -42,7 +42,7 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            isLoading: false,
+            isLoading: true,
             game: undefined,
             summaryExpanded: undefined,
             genre_ids: undefined,

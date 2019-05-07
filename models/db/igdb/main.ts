@@ -67,15 +67,25 @@ class IGDBModel extends DatabaseBase {
                 .then((dbResponse: GenericModelResponse) => {
                     const inserted_igdb_games_sys_key_id: number = dbResponse.data.insertId;
                     const gamePromises: Promise<any>[] = [];
+                    let pricingsIndex: number = -1;
+                    let coverMicroIndex: number = -1;
+                    let coverBigIndex: number = -1;
+                    let screenshotMedIndex: number = -1;
+                    let screenshotBigIndex: number = -1;
+                    let videoIndex: number = -1;
 
                     if (game.cover) {
                         gamePromises.push(this.setGameCover(inserted_igdb_games_sys_key_id, game.cover));
+                        coverMicroIndex = gamePromises.length;
                         gamePromises.push(this.setImageCoverCached(inserted_igdb_games_sys_key_id, IGDBImageSizeEnums.micro));
+                        coverBigIndex = gamePromises.length;
                         gamePromises.push(this.setImageCoverCached(inserted_igdb_games_sys_key_id, IGDBImageSizeEnums.cover_big));
                     }
                     if (game.screenshots) {
                         gamePromises.push(this.setGameScreenshots(inserted_igdb_games_sys_key_id, game.screenshots));
+                        screenshotMedIndex = gamePromises.length;
                         gamePromises.push(this.setImageScreenshotsCached(inserted_igdb_games_sys_key_id, IGDBImageSizeEnums.screenshot_med));
+                        screenshotBigIndex = gamePromises.length;
                         gamePromises.push(this.setImageScreenshotsCached(inserted_igdb_games_sys_key_id, IGDBImageSizeEnums.screenshot_big));
                     }
                     if (game.linkIcons) {
@@ -94,14 +104,35 @@ class IGDBModel extends DatabaseBase {
                         gamePromises.push(this.setGameSimilarGames(game.id, game.similar_games));
                     }
                     if (game.video) {
+                        videoIndex = gamePromises.length;
                         gamePromises.push(this.setGameVideoPreview(game.id, game.video));
                     }
                     if (game.steam_link || game.gog_link || game.microsoft_link || game.apple_link || game.android_link) {
+                        pricingsIndex = gamePromises.length;
                         gamePromises.push(this.setGamePricings(game.id, game.steam_link, game.gog_link, game.microsoft_link, game.apple_link, game.android_link));
                     }
 
                     Promise.all(gamePromises)
-                        .then(() => {
+                        .then((vals: any[]) => {
+                            if (coverMicroIndex !== -1) {
+                                game.image_cover_micro_cached = vals[coverMicroIndex];
+                            }
+                            if (coverBigIndex !== -1) {
+                                game.image_cover_big_cached = vals[coverBigIndex];
+                            }
+                            if (screenshotMedIndex !== -1) {
+                                game.image_screenshot_med_cached = vals[screenshotMedIndex];
+                            }
+                            if (screenshotBigIndex !== -1) {
+                                game.image_screenshot_big_cached = vals[screenshotBigIndex];
+                            }
+                            if (videoIndex !== -1) {
+                                game.video_cached = vals[videoIndex];
+                            }
+                            if (pricingsIndex !== -1) {
+                                game.pricings = vals[pricingsIndex];
+                            }
+
                             const expiresDate = new Date();
                             expiresDate.setDate(expiresDate.getDate() + 30);
                             const routeCache: RouteCache = { data: game };
@@ -1559,7 +1590,7 @@ class IGDBModel extends DatabaseBase {
     /**
      * Set similar game ids for given game id.
      */
-    setGameSimilarGames(gameId: number, similarGameIds: number[]): Promise<void> {
+    setGameSimilarGames(gameId: number, similarGameIds: number[]): Promise<number[]> {
 
         return new Promise((resolve: any, reject: any) => {
 
@@ -1590,7 +1621,7 @@ class IGDBModel extends DatabaseBase {
                             ${similarGameIds.map(() => `(${DbTableSimilarGamesFields.slice(1).map(() => "?").join()})`).join()}`,
                             columnVals)
                             .then(() => {
-                                return resolve();
+                                return resolve(similarGameIds);
                             })
                             .catch((error: string) => {
                                 return reject(error);
