@@ -34,7 +34,7 @@ export function getCachedGame(path: string): Promise<GameResponse> {
                 const imageIndicicesCached: number[] = [];
                 const imageSizesCached: IGDBImageSizeEnums[] = [];
 
-                if (!game.image_cover_micro_cached) {
+                if (!game.image_micro_cached) {
                     imageIndicicesCached.push(9);
                     imageSizesCached.push(IGDBImageSizeEnums.micro);
                 }
@@ -64,7 +64,7 @@ export function getCachedGame(path: string): Promise<GameResponse> {
 
                         sizesCached.forEach((size: IGDBImageSizeEnums) => {
                             if (size === IGDBImageSizeEnums.micro) {
-                                game.image_cover_micro_cached = true;
+                                game.image_micro_cached = true;
                             } else if (size === IGDBImageSizeEnums.cover_big) {
                                 game.image_cover_big_cached = true;
                             } else if (size === IGDBImageSizeEnums.screenshot_med) {

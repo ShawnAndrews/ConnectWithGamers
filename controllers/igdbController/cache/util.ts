@@ -211,7 +211,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 screenshots: screenshots,
                 video: video,
                 video_cached: false,
-                image_cover_micro_cached: false,
+                image_micro_cached: false,
                 image_cover_big_cached: false,
                 image_screenshot_med_cached: false,
                 image_screenshot_big_cached: false,

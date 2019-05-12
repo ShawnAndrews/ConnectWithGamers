@@ -627,7 +627,7 @@ export interface GameResponse {
     screenshots: IGDBImage[];
     video: string;
     video_cached: boolean;
-    image_cover_micro_cached: boolean;
+    image_micro_cached: boolean;
     image_cover_big_cached: boolean;
     image_screenshot_med_cached: boolean;
     image_screenshot_big_cached: boolean;
@@ -860,7 +860,7 @@ export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `igdb_genre_e
 export const DbTableIconsFields: string[] = [`icons_sys_key_id`, `icons_enum_sys_key_id`, `igdb_games_sys_key_id`];
 export const DbTableIconsEnumFields: string[] = [`icons_enum_sys_key_id`, `id`, `name`];
 export const DbTableIGDBExternalEnumFields: string[] = [`igdb_external_enum_sys_key_id`, `id`, `name`];
-export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`, `video_cached`, `image_cover_micro_cached`, `image_cover_big_cached`, `image_screenshot_med_cached`, `image_screenshot_big_cached`, `steam_link`, `gog_link`, `microsoft_link`, `apple_link`, `android_link`];
+export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`, `video_cached`, `image_micro_cached`, `image_cover_big_cached`, `image_screenshot_med_cached`, `image_screenshot_big_cached`, `steam_link`, `gog_link`, `microsoft_link`, `apple_link`, `android_link`];
 export const DbTableIGDBGenreEnumFields: string[] = [`igdb_genre_enum_sys_key_id`, `id`, `name`];
 export const DbTableIGDBImagesFields: string[] = [`igdb_images_sys_key_id`, `id`, `alpha_channel`, `animated`, `width`, `height`];
 export const DbTableIGDBPlatformEnumFields: string[] = [`igdb_platform_enum_sys_key_id`, `id`, `name`];
