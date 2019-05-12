@@ -1,5 +1,5 @@
 import config from "../../../../config";
-import { GameResponse, GameFields, RawGame, buildIGDBRequestBody } from "../../../../client/client-server-common/common";
+import { GameResponse, GameFields, RawGame, buildIGDBRequestBody, IGDBImageSizeEnums } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import { convertRawGame } from "../util";
 import { igdbModel } from "../../../../models/db/igdb/main";
@@ -31,7 +31,55 @@ export function getCachedGame(path: string): Promise<GameResponse> {
     return new Promise((resolve: any, reject: any) => {
         igdbModel.getGame(path)
             .then((game: GameResponse) => {
-                return resolve(game);
+                const imageIndicicesCached: number[] = [];
+                const imageSizesCached: IGDBImageSizeEnums[] = [];
+
+                if (!game.image_cover_micro_cached) {
+                    imageIndicicesCached.push(9);
+                    imageSizesCached.push(IGDBImageSizeEnums.micro);
+                }
+
+                if (!game.image_cover_big_cached) {
+                    imageIndicicesCached.push(10);
+                    imageSizesCached.push(IGDBImageSizeEnums.cover_big);
+                }
+
+                if (!game.image_screenshot_med_cached) {
+                    imageIndicicesCached.push(11);
+                    imageSizesCached.push(IGDBImageSizeEnums.screenshot_med);
+                }
+
+                if (!game.image_screenshot_big_cached) {
+                    imageIndicicesCached.push(12);
+                    imageSizesCached.push(IGDBImageSizeEnums.screenshot_big);
+                }
+
+                if (imageIndicicesCached.length === 0) {
+                    return resolve(game);
+                }
+
+                // reattempt images cache
+                igdbModel.attemptCacheGameImages(game.id, imageIndicicesCached, imageSizesCached)
+                    .then((sizesCached: IGDBImageSizeEnums[]) => {
+
+                        sizesCached.forEach((size: IGDBImageSizeEnums) => {
+                            if (size === IGDBImageSizeEnums.micro) {
+                                game.image_cover_micro_cached = true;
+                            } else if (size === IGDBImageSizeEnums.cover_big) {
+                                game.image_cover_big_cached = true;
+                            } else if (size === IGDBImageSizeEnums.screenshot_med) {
+                                game.image_screenshot_med_cached = true;
+                            } else if (size === IGDBImageSizeEnums.screenshot_big) {
+                                game.image_screenshot_big_cached = true;
+                            }
+                        });
+
+                        return resolve(game);
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+
             })
             .catch((error: string) => {
                 return reject(error);

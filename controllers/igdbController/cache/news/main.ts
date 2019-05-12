@@ -75,7 +75,7 @@ export function cacheNews(path: string): Promise<NewsArticle[]> {
 
             rawResponse.forEach((x: RawNewsArticle) => {
                 const title: string =  x.title;
-                const author: string = x.author.slice(0, 100);
+                const author: string = x.author ? x.author.slice(0, 100) : "";
                 const image: string = x.image;
                 const url: string = x.website && x.website.url;
                 const created_dt: Date = new Date(x.created_at * 1000);

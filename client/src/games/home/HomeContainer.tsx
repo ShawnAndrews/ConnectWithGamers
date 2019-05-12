@@ -92,7 +92,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
                     .filter((game: GameResponse) => game.cover)
                     .sort((a: GameResponse, b: GameResponse) => b.aggregated_rating - a.aggregated_rating)
-                    .slice(0, 9);
+                    .slice(0, 13);
                 const bigGamesData: GenericModelResponse[] = data.slice(1, 1 + this.state.bigGamesInfo.length);
                 const bigGames: GameResponse[] = [];
                 bigGamesData.forEach((x: GenericModelResponse) => {
@@ -106,6 +106,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 const weeklyGamesData: MultiGameResponse = data[1 + this.state.bigGamesInfo.length];
                 const weeklyGames: GameResponse[] = weeklyGamesData.data
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
+                    .filter((game: GameResponse) => getGameBestPricingStatus(game.pricings).discount_percent && getGameBestPricingStatus(game.pricings).discount_percent > 0)
                     .filter((game: GameResponse) => game.cover);
                 const newsData: MultiNewsResponse = data[2 + this.state.bigGamesInfo.length];
                 const news: NewsArticle[] = newsData.data;
@@ -114,6 +115,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                     .filter((game: GameResponse) => game.cover)
                     .filter((game: GameResponse) => (game.cover.width / game.cover.height) <= 0.8)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
+                    .filter((game: GameResponse) => new Date(game.first_release_date * 1000) > new Date())
                     .sort((a: GameResponse, b: GameResponse) => a.first_release_date - b.first_release_date)
                     .slice(0, 20);
                 const recentGamesData: MultiGameResponse = data[4 + this.state.bigGamesInfo.length];

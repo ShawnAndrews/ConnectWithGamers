@@ -68,25 +68,13 @@ class IGDBModel extends DatabaseBase {
                     const inserted_igdb_games_sys_key_id: number = dbResponse.data.insertId;
                     const gamePromises: Promise<any>[] = [];
                     let pricingsIndex: number = -1;
-                    let coverMicroIndex: number = -1;
-                    let coverBigIndex: number = -1;
-                    let screenshotMedIndex: number = -1;
-                    let screenshotBigIndex: number = -1;
                     let videoIndex: number = -1;
 
                     if (game.cover) {
                         gamePromises.push(this.setGameCover(inserted_igdb_games_sys_key_id, game.cover));
-                        coverMicroIndex = gamePromises.length;
-                        gamePromises.push(this.setImageCoverCached(inserted_igdb_games_sys_key_id, IGDBImageSizeEnums.micro));
-                        coverBigIndex = gamePromises.length;
-                        gamePromises.push(this.setImageCoverCached(inserted_igdb_games_sys_key_id, IGDBImageSizeEnums.cover_big));
                     }
                     if (game.screenshots) {
                         gamePromises.push(this.setGameScreenshots(inserted_igdb_games_sys_key_id, game.screenshots));
-                        screenshotMedIndex = gamePromises.length;
-                        gamePromises.push(this.setImageScreenshotsCached(inserted_igdb_games_sys_key_id, IGDBImageSizeEnums.screenshot_med));
-                        screenshotBigIndex = gamePromises.length;
-                        gamePromises.push(this.setImageScreenshotsCached(inserted_igdb_games_sys_key_id, IGDBImageSizeEnums.screenshot_big));
                     }
                     if (game.linkIcons) {
                         gamePromises.push(this.setGameIcons(inserted_igdb_games_sys_key_id, game.linkIcons));
@@ -114,18 +102,6 @@ class IGDBModel extends DatabaseBase {
 
                     Promise.all(gamePromises)
                         .then((vals: any[]) => {
-                            if (coverMicroIndex !== -1) {
-                                game.image_cover_micro_cached = vals[coverMicroIndex];
-                            }
-                            if (coverBigIndex !== -1) {
-                                game.image_cover_big_cached = vals[coverBigIndex];
-                            }
-                            if (screenshotMedIndex !== -1) {
-                                game.image_screenshot_med_cached = vals[screenshotMedIndex];
-                            }
-                            if (screenshotBigIndex !== -1) {
-                                game.image_screenshot_big_cached = vals[screenshotBigIndex];
-                            }
                             if (videoIndex !== -1) {
                                 game.video_cached = vals[videoIndex];
                             }
@@ -133,16 +109,33 @@ class IGDBModel extends DatabaseBase {
                                 game.pricings = vals[pricingsIndex];
                             }
 
-                            const expiresDate = new Date();
-                            expiresDate.setDate(expiresDate.getDate() + 30);
-                            const routeCache: RouteCache = { data: game };
-                            const columnValues: any[] = [path, JSON.stringify(routeCache), expiresDate];
+                            // attempt images cache
+                            this.attemptCacheGameImages(game.id)
+                                .then((sizesCached: IGDBImageSizeEnums[]) => {
 
-                            // insert route
-                            this.custom(
-                                `INSERT INTO ${DbTables.route_cache} (${DbTableRouteCacheFields})
-                                VALUES (${DbTableRouteCacheFields.map(() => "?").join()})`,
-                                columnValues)
+                                    sizesCached.forEach((size: IGDBImageSizeEnums) => {
+                                        if (size === IGDBImageSizeEnums.micro) {
+                                            game.image_cover_micro_cached = true;
+                                        } else if (size === IGDBImageSizeEnums.cover_big) {
+                                            game.image_cover_big_cached = true;
+                                        } else if (size === IGDBImageSizeEnums.screenshot_med) {
+                                            game.image_screenshot_med_cached = true;
+                                        } else if (size === IGDBImageSizeEnums.screenshot_big) {
+                                            game.image_screenshot_big_cached = true;
+                                        }
+                                    });
+
+                                    const expiresDate = new Date();
+                                    expiresDate.setDate(expiresDate.getDate() + 30);
+                                    const routeCache: RouteCache = { data: game };
+                                    const columnValues: any[] = [path, JSON.stringify(routeCache), expiresDate];
+
+                                    // insert route
+                                    return this.custom
+                                        (`INSERT INTO ${DbTables.route_cache} (${DbTableRouteCacheFields})
+                                        VALUES (${DbTableRouteCacheFields.map(() => "?").join()})`,
+                                        columnValues);
+                                })
                                 .then(() => {
                                     return resolve();
                                 })
@@ -426,7 +419,7 @@ class IGDBModel extends DatabaseBase {
     /**
      * Get game cover in database if exists.
      */
-    getGameCover(gameId: number): Promise <IGDBImage> {
+    getGameCover(gameId: number): Promise <IGDBImage[]> {
 
         return new Promise((resolve, reject) => {
 
@@ -447,7 +440,7 @@ class IGDBModel extends DatabaseBase {
                             width: dbResponse.data[0].width,
                             height: dbResponse.data[0].height,
                         };
-                        return resolve(cover);
+                        return resolve([cover]);
                     } else {
                         return resolve(undefined);
                     }
@@ -543,18 +536,23 @@ class IGDBModel extends DatabaseBase {
                 .then((dbResponse: GenericModelResponse) => {
                     const screenshots: IGDBImage[] = [];
 
-                    dbResponse.data.forEach((x: any) => {
+                    if (dbResponse.data.length > 0) {
 
-                        const screenshot: IGDBImage = {
-                            alpha_channel: x.alpha_channel[0],
-                            animated: x.animated[0],
-                            image_id: x.id,
-                            width: x.width,
-                            height: x.height,
-                        };
-                        screenshots.push(screenshot);
-                    });
-                    return resolve(screenshots);
+                        dbResponse.data.forEach((x: any) => {
+                            const screenshot: IGDBImage = {
+                                alpha_channel: x.alpha_channel[0],
+                                animated: x.animated[0],
+                                image_id: x.id,
+                                width: x.width,
+                                height: x.height,
+                            };
+                            screenshots.push(screenshot);
+                        });
+                        return resolve(screenshots);
+                    } else {
+                        return resolve(undefined);
+                    }
+
                 })
                 .catch((err: string) => {
                     return reject(err);
@@ -1238,21 +1236,7 @@ class IGDBModel extends DatabaseBase {
 
                     if (dbResponse.data.length > 0) {
                         const image_cached = dbResponse.data[0][`image_${size}_cached`];
-
-                        if (image_cached) {
-                            return resolve(image_cached);
-                        } else {
-
-                            this.setImageCoverCached(gameId, size)
-                            .then((cached: boolean) => {
-                                return resolve(cached);
-                            })
-                            .catch((err: string) => {
-                                return reject(err);
-                            });
-
-                        }
-
+                        return resolve(image_cached);
                     } else {
                         return reject(`Failed to get game.`);
                     }
@@ -1267,17 +1251,63 @@ class IGDBModel extends DatabaseBase {
     }
 
     /**
-     * Attempt to set and cache cover image.
+     * Attempt to cache a game's images, if not already cached. Optional parameters to skip cacheing already cached sizes.
      */
-    setImageCoverCached(gameId: number, size: IGDBImageSizeEnums): Promise <boolean> {
+    attemptCacheGameImages(gameId: number, imageIndicicesCached?: number[], imageSizesCached?: IGDBImageSizeEnums[]): Promise <IGDBImageSizeEnums[]> {
 
-        let imageCachedIndex: number;
+        const imageCachedTableIndices: number[] = imageIndicicesCached || [9, 10, 11, 12];
+        const imageCachedTableIndicesSizes: IGDBImageSizeEnums[] = imageSizesCached || [IGDBImageSizeEnums.micro, IGDBImageSizeEnums.cover_big, IGDBImageSizeEnums.screenshot_med, IGDBImageSizeEnums.screenshot_big];
 
-        if (size === IGDBImageSizeEnums.micro) {
-            imageCachedIndex = 9;
-        } else if (size === IGDBImageSizeEnums.cover_big) {
-            imageCachedIndex = 10;
-        }
+        const attemptImageSizeCache = (size: IGDBImageSizeEnums, imageTableIndex: number): Promise<boolean> => {
+
+            return new Promise((resolve, reject) => {
+                const getImages = (size === IGDBImageSizeEnums.micro || size === IGDBImageSizeEnums.cover_big) ? this.getGameCover.bind(this) : this.getGameScreenshots.bind(this);
+
+                getImages(gameId)
+                    .then((images: IGDBImage[]) => {
+                        const downloadPromises: Promise<void>[] = [];
+                        if (!images) {
+                            return resolve();
+                        }
+
+                        images.forEach((image: IGDBImage) => {
+                            const outputPath: string = `cache/image-cacheing/${size}/${image.image_id}.jpg`;
+                            const inputPath: string = `${IGDBImageUploadPath}/t_${size}/${image.image_id}.jpg`;
+                            downloadPromises.push(this.downloadAndSaveImage(inputPath, outputPath));
+                        });
+
+                        Promise.all(downloadPromises)
+                            .then(() => {
+                                this.update(
+                                    DbTables.igdb_games,
+                                    `${DbTableIGDBGamesFields[imageTableIndex]}=?`,
+                                    [true],
+                                    `${DbTableIGDBGamesFields[1]}=?`,
+                                    [gameId])
+                                    .then((dbResponse: GenericModelResponse) => {
+                                        if (dbResponse.data.affectedRows === 1) {
+                                            return resolve(true);
+                                        } else {
+                                            return reject(`Database error.`);
+                                        }
+                                    })
+                                    .catch((err: string) => {
+                                        return reject(`Failed to update image_cached for ${size} on #${gameId}: ${err}`);
+                                    });
+                            })
+                            .catch((err: string) => {
+                                // log err
+                                return resolve(false);
+                            });
+
+                    })
+                    .catch((err: string) => {
+                        return reject(err);
+                    });
+
+            });
+
+        };
 
         return new Promise((resolve, reject) => {
 
@@ -1289,46 +1319,69 @@ class IGDBModel extends DatabaseBase {
                 .then((dbResponse: GenericModelResponse) => {
 
                     if (dbResponse.data.length > 0) {
-                        const image_cached: boolean = dbResponse.data[0][`image_${size}_cached`];
-                        if (image_cached) {
-                            return resolve(true);
-                        }
+                        const imagePromises: Promise<boolean>[] = [];
+                        const attemptedSizesToCache: IGDBImageSizeEnums[] = [];
 
-                        this.getGameCover(gameId)
-                            .then((cover: IGDBImage) => {
+                        imageCachedTableIndicesSizes.forEach((size: IGDBImageSizeEnums, index: number) => {
+                            const imageSizeCached: boolean = dbResponse.data[0][`image_${imageCachedTableIndicesSizes[index]}_cached`];
+                            if (!imageSizeCached) {
+                                imagePromises.push(attemptImageSizeCache(imageCachedTableIndicesSizes[index], imageCachedTableIndices[index]));
+                                attemptedSizesToCache.push(imageCachedTableIndicesSizes[index]);
+                            }
+                        });
 
-                                if (!cover) {
-                                    return resolve(false);
-                                }
+                        Promise.all(imagePromises)
+                            .then((vals: boolean[]) => {
+                                const sizesCached: IGDBImageSizeEnums[] = [];
+                                vals.forEach((isCached: boolean, index: number) => {
+                                    if (isCached) {
+                                        sizesCached.push(attemptedSizesToCache[index]);
+                                    }
+                                });
 
-                                const downloadPromises: Promise<void>[] = [];
-                                const outputPath: string = `cache/image-cacheing/${size}/${cover.image_id}.jpg`;
-                                const inputPath: string = `${IGDBImageUploadPath}/t_${size}/${cover.image_id}.jpg`;
+                                // update cached image size flags
+                                this.custom(
+                                    `SELECT * FROM ${DbTables.route_cache}
+                                    WHERE route = ?`,
+                                    [`/game/${gameId}`])
+                                    .then((dbResponse: GenericModelResponse) => {
+                                        const game: GameResponse = JSON.parse(dbResponse.data[0].response).data;
 
-                                downloadPromises.push(this.downloadAndSaveImage(inputPath, outputPath));
+                                        if (dbResponse.data.length > 0) {
 
-                                Promise.all(downloadPromises)
-                                    .then(() => {
-
-                                        this.update(
-                                            DbTables.igdb_games,
-                                            `${DbTableIGDBGamesFields[imageCachedIndex]}=?`,
-                                            [true],
-                                            `${DbTableIGDBGamesFields[1]}=?`,
-                                            [gameId])
-                                            .then((dbResponse: GenericModelResponse) => {
-                                                if (dbResponse.data.affectedRows === 1) {
-                                                    return resolve(true);
-                                                } else {
-                                                    return reject(`Database error.`);
+                                            sizesCached.forEach((size: IGDBImageSizeEnums) => {
+                                                if (size === IGDBImageSizeEnums.micro) {
+                                                    game.image_cover_micro_cached = true;
+                                                } else if (size === IGDBImageSizeEnums.cover_big) {
+                                                    game.image_cover_big_cached = true;
+                                                } else if (size === IGDBImageSizeEnums.screenshot_med) {
+                                                    game.image_screenshot_med_cached = true;
+                                                } else if (size === IGDBImageSizeEnums.screenshot_big) {
+                                                    game.image_screenshot_big_cached = true;
                                                 }
-                                            })
-                                            .catch((err: string) => {
-                                                return reject(`Failed to update image_cached for ${size} on #${gameId}: ${err}`);
                                             });
+
+                                            const updatedRouteCache: RouteCache = { data: game };
+
+                                            this.custom(
+                                                `UPDATE ${DbTables.route_cache}
+                                                SET response = ?
+                                                WHERE route = ?`,
+                                                [JSON.stringify(updatedRouteCache), `/game/${gameId}`])
+                                                .then(() => {
+                                                    return resolve(sizesCached);
+                                                })
+                                                .catch((err: string) => {
+                                                    return reject(err);
+                                                });
+
+                                        } else {
+                                            return resolve(sizesCached);
+                                        }
+
                                     })
                                     .catch((err: string) => {
-                                        return resolve(false);
+                                        return reject(err);
                                     });
 
                             })
@@ -1337,7 +1390,7 @@ class IGDBModel extends DatabaseBase {
                             });
 
                     } else {
-                        return resolve(false);
+                        return reject();
                     }
 
                 })
@@ -1373,109 +1426,9 @@ class IGDBModel extends DatabaseBase {
 
                     if (dbResponse.data.length > 0) {
                         const image_cached = dbResponse.data[0][`image_${size}_cached`];
-
-                        if (image_cached) {
-                            return resolve(image_cached);
-                        } else {
-
-                            this.setImageScreenshotsCached(gameId, size)
-                            .then((cached: boolean) => {
-                                return resolve(cached);
-                            })
-                            .catch((err: string) => {
-                                return reject(err);
-                            });
-
-                        }
-
+                        return resolve(image_cached);
                     } else {
                         return reject(`Failed to get game.`);
-                    }
-
-                })
-                .catch((err: string) => {
-                    return reject(err);
-                });
-
-        });
-
-    }
-
-    /**
-     * Attempt to set and cache screenshot images.
-     */
-    setImageScreenshotsCached(gameId: number, size: IGDBImageSizeEnums): Promise <boolean> {
-
-        let imageCachedIndex: number;
-
-        if (size === IGDBImageSizeEnums.screenshot_med) {
-            imageCachedIndex = 11;
-        } else if (size === IGDBImageSizeEnums.screenshot_big) {
-            imageCachedIndex = 12;
-        }
-
-        return new Promise((resolve, reject) => {
-
-            this.select(
-                DbTables.igdb_games,
-                DbTableIGDBGamesFields,
-                `${DbTableIGDBGamesFields[1]}=?`,
-                [gameId])
-                .then((dbResponse: GenericModelResponse) => {
-
-                    if (dbResponse.data.length > 0) {
-                        const image_cached: boolean = dbResponse.data[0][`image_${size}_cached`];
-
-                        if (image_cached) {
-                            return resolve(true);
-                        }
-
-                        this.getGameScreenshots(gameId)
-                            .then((screenshots: IGDBImage[]) => {
-
-                                if (screenshots && screenshots.length === 0) {
-                                    return resolve(false);
-                                }
-
-                                const downloadPromises: Promise<void>[] = [];
-
-                                screenshots.forEach((screenshot: IGDBImage) => {
-                                    const outputPath: string = `cache/image-cacheing/${size}/${screenshot.image_id}.jpg`;
-                                    const inputPath: string = `${IGDBImageUploadPath}/t_${size}/${screenshot.image_id}.jpg`;
-                                    downloadPromises.push(this.downloadAndSaveImage(inputPath, outputPath));
-                                });
-
-                                Promise.all(downloadPromises)
-                                    .then(() => {
-
-                                        this.update(
-                                            DbTables.igdb_games,
-                                            `${DbTableIGDBGamesFields[imageCachedIndex]}=?`,
-                                            [true],
-                                            `${DbTableIGDBGamesFields[1]}=?`,
-                                            [gameId])
-                                            .then((dbResponse: GenericModelResponse) => {
-                                                if (dbResponse.data.affectedRows === 1) {
-                                                    return resolve(true);
-                                                } else {
-                                                    return reject(`Database error.`);
-                                                }
-                                            })
-                                            .catch((err: string) => {
-                                                return reject(`Failed to update image_cached for ${size} on #${gameId}: ${err}`);
-                                            });
-                                    })
-                                    .catch((err: string) => {
-                                        return resolve(false);
-                                    });
-
-                            })
-                            .catch((err: string) => {
-                                return reject(err);
-                            });
-
-                    } else {
-                        return resolve(false);
                     }
 
                 })
