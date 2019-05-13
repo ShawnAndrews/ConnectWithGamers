@@ -1,5 +1,5 @@
 import config from "../../../../config";
-import { GameResponse, GameFields, RawGame, buildIGDBRequestBody, IGDBImageSizeEnums } from "../../../../client/client-server-common/common";
+import { GameResponse, GameFields, RawGame, buildIGDBRequestBody, IGDBImageSizeEnums, PriceInfoResponse, IGDBExternalCategoryEnum, convertIGDBExternCateEnumToSysKeyId } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import { convertRawGame } from "../util";
 import { igdbModel } from "../../../../models/db/igdb/main";
@@ -31,8 +31,22 @@ export function getCachedGame(path: string): Promise<GameResponse> {
     return new Promise((resolve: any, reject: any) => {
         igdbModel.getGame(path)
             .then((game: GameResponse) => {
+                const cacheingPromises: Promise<any>[] = [];
                 const imageIndicicesCached: number[] = [];
                 const imageSizesCached: IGDBImageSizeEnums[] = [];
+                const steamNeedsPricing: boolean = game.steam_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.steam)) === undefined;
+                const gogNeedsPricing: boolean = game.gog_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.gog)) === undefined;
+                const appleNeedsPricing: boolean = game.apple_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.apple)) === undefined;
+                const androidNeedsPricing: boolean = game.android_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.android)) === undefined;
+                const microsoftNeedsPricing: boolean = game.microsoft_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.microsoft)) === undefined;
+                const pricingNeedsCacheing: boolean = steamNeedsPricing || gogNeedsPricing || appleNeedsPricing || androidNeedsPricing || microsoftNeedsPricing;
+                let imagesNeedCacheing: boolean;
+
+                console.log(`Steam needs pricing? ${steamNeedsPricing}`);
+                console.log(`Gog needs pricing? ${gogNeedsPricing}`);
+                console.log(`Apple needs pricing? ${appleNeedsPricing}`);
+                console.log(`Android needs pricing? ${androidNeedsPricing}`);
+                console.log(`Microsoft needs pricing? ${microsoftNeedsPricing}`);
 
                 if (!game.image_micro_cached) {
                     imageIndicicesCached.push(9);
@@ -54,25 +68,42 @@ export function getCachedGame(path: string): Promise<GameResponse> {
                     imageSizesCached.push(IGDBImageSizeEnums.screenshot_big);
                 }
 
-                if (imageIndicicesCached.length === 0) {
+                imagesNeedCacheing = imageIndicicesCached.length !== 0;
+
+                if (!imagesNeedCacheing && !pricingNeedsCacheing) {
                     return resolve(game);
+                } else {
+                    if (imagesNeedCacheing) {
+                        cacheingPromises.push(igdbModel.attemptCacheGameImages(game.id, imageIndicicesCached, imageSizesCached));
+                    }
+                    if (pricingNeedsCacheing) {
+                        cacheingPromises.push(igdbModel.attemptCachePricings(game.id, game.steam_link, game.gog_link, game.microsoft_link, game.apple_link, game.android_link));
+                    }
                 }
 
-                // reattempt images cache
-                igdbModel.attemptCacheGameImages(game.id, imageIndicicesCached, imageSizesCached)
-                    .then((sizesCached: IGDBImageSizeEnums[]) => {
+                // reattempt cacheing
+                Promise.all(cacheingPromises)
+                    .then((vals: any[]) => {
+                        const sizesCached: IGDBImageSizeEnums[] = vals[0];
+                        const pricings: PriceInfoResponse[] = vals[1];
 
-                        sizesCached.forEach((size: IGDBImageSizeEnums) => {
-                            if (size === IGDBImageSizeEnums.micro) {
-                                game.image_micro_cached = true;
-                            } else if (size === IGDBImageSizeEnums.cover_big) {
-                                game.image_cover_big_cached = true;
-                            } else if (size === IGDBImageSizeEnums.screenshot_med) {
-                                game.image_screenshot_med_cached = true;
-                            } else if (size === IGDBImageSizeEnums.screenshot_big) {
-                                game.image_screenshot_big_cached = true;
-                            }
-                        });
+                        if (sizesCached) {
+                            sizesCached.forEach((size: IGDBImageSizeEnums) => {
+                                if (size === IGDBImageSizeEnums.micro) {
+                                    game.image_micro_cached = true;
+                                } else if (size === IGDBImageSizeEnums.cover_big) {
+                                    game.image_cover_big_cached = true;
+                                } else if (size === IGDBImageSizeEnums.screenshot_med) {
+                                    game.image_screenshot_med_cached = true;
+                                } else if (size === IGDBImageSizeEnums.screenshot_big) {
+                                    game.image_screenshot_big_cached = true;
+                                }
+                            });
+                        }
+
+                        if (pricings) {
+                            game.pricings = pricings;
+                        }
 
                         return resolve(game);
                     })

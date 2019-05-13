@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Spinner from '../../../spinner/main';
-import { GameResponse, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage, PriceInfoResponse, IGDBExternalCategoryEnum, PricingsEnum } from '../../../../../client/client-server-common/common';
+import { GameResponse, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage, PriceInfoResponse, IGDBExternalCategoryEnum, PricingsEnum, convertIGDBExternCateEnumToSysKeyId } from '../../../../../client/client-server-common/common';
 import Summary from './Summary';
 import Platforms from './Platforms';
 import Genres from './Genres';
@@ -57,32 +57,32 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
         );
     }
     
-    let steamPricings: PriceInfoResponse[] = props.game.pricings && props.game.pricings.filter((priceInfo: PriceInfoResponse) => priceInfo.externalEnum === IGDBExternalCategoryEnum.steam);
-    let steamMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => (priceInfo.externalEnum === IGDBExternalCategoryEnum.steam) && priceInfo.pricingEnum === PricingsEnum.main_game);
+    let steamPricings: PriceInfoResponse[] = props.game.pricings && props.game.pricings.filter((priceInfo: PriceInfoResponse) => priceInfo.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.steam));
+    let steamMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => (priceInfo.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.steam)) && priceInfo.pricingEnum === PricingsEnum.main_game);
     let steamIsFree: boolean = steamMainGame && !steamMainGame.price;
     let steamIsDiscounted: boolean = steamMainGame && steamMainGame.price && !!steamMainGame.discount_percent;
     let steamBasePrice: number = steamIsDiscounted && + (steamMainGame.price / ((100 - steamMainGame.discount_percent) / 100)).toFixed(2);
 
-    let gogPricings: PriceInfoResponse[] = props.game.pricings && props.game.pricings.filter((priceInfo: PriceInfoResponse) => priceInfo.externalEnum === IGDBExternalCategoryEnum.gog);
-    let gogMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => (priceInfo.externalEnum === IGDBExternalCategoryEnum.gog) && priceInfo.pricingEnum === PricingsEnum.main_game);
+    let gogPricings: PriceInfoResponse[] = props.game.pricings && props.game.pricings.filter((priceInfo: PriceInfoResponse) => priceInfo.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.gog));
+    let gogMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => (priceInfo.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.gog)) && priceInfo.pricingEnum === PricingsEnum.main_game);
     let gogIsFree: boolean = gogMainGame && !gogMainGame.price;
     let gogIsDiscounted: boolean = gogMainGame && gogMainGame.price && !!gogMainGame.discount_percent;
     let gogBasePrice: number = gogIsDiscounted && + (gogMainGame.price / ((100 - gogMainGame.discount_percent) / 100)).toFixed(2);
 
-    let microsoftPricings: PriceInfoResponse[] = props.game.pricings && props.game.pricings.filter((priceInfo: PriceInfoResponse) => priceInfo.externalEnum === IGDBExternalCategoryEnum.microsoft);
-    let microsoftMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => (priceInfo.externalEnum === IGDBExternalCategoryEnum.microsoft) && priceInfo.pricingEnum === PricingsEnum.main_game);
+    let microsoftPricings: PriceInfoResponse[] = props.game.pricings && props.game.pricings.filter((priceInfo: PriceInfoResponse) => priceInfo.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.microsoft));
+    let microsoftMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => (priceInfo.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.microsoft)) && priceInfo.pricingEnum === PricingsEnum.main_game);
     let microsoftIsFree: boolean = microsoftMainGame && !microsoftMainGame.price;
     let microsoftIsDiscounted: boolean = microsoftMainGame && microsoftMainGame.price && !!microsoftMainGame.discount_percent;
     let microsoftBasePrice: number = microsoftIsDiscounted && + (microsoftMainGame.price / ((100 - microsoftMainGame.discount_percent) / 100)).toFixed(2);
 
-    let applePricings: PriceInfoResponse[] = props.game.pricings && props.game.pricings.filter((priceInfo: PriceInfoResponse) => priceInfo.externalEnum === IGDBExternalCategoryEnum.apple);
-    let appleMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => (priceInfo.externalEnum === IGDBExternalCategoryEnum.apple) && priceInfo.pricingEnum === PricingsEnum.main_game);
+    let applePricings: PriceInfoResponse[] = props.game.pricings && props.game.pricings.filter((priceInfo: PriceInfoResponse) => priceInfo.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.apple));
+    let appleMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => (priceInfo.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.apple)) && priceInfo.pricingEnum === PricingsEnum.main_game);
     let appleIsFree: boolean = appleMainGame && !appleMainGame.price;
     let appleIsDiscounted: boolean = appleMainGame && appleMainGame.price && !!appleMainGame.discount_percent;
     let appleBasePrice: number = appleIsDiscounted && + (appleMainGame.price / ((100 - appleMainGame.discount_percent) / 100)).toFixed(2);
 
-    let androidPricings: PriceInfoResponse[] = props.game.pricings && props.game.pricings.filter((priceInfo: PriceInfoResponse) => priceInfo.externalEnum === IGDBExternalCategoryEnum.android);
-    let androidMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => (priceInfo.externalEnum === IGDBExternalCategoryEnum.android) && priceInfo.pricingEnum === PricingsEnum.main_game);
+    let androidPricings: PriceInfoResponse[] = props.game.pricings && props.game.pricings.filter((priceInfo: PriceInfoResponse) => priceInfo.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.android));
+    let androidMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => (priceInfo.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.android)) && priceInfo.pricingEnum === PricingsEnum.main_game);
     let androidIsFree: boolean = androidMainGame && !androidMainGame.price;
     let androidIsDiscounted: boolean = androidMainGame && androidMainGame.price && !!androidMainGame.discount_percent;
     let androidBasePrice: number = androidIsDiscounted && + (androidMainGame.price / ((100 - androidMainGame.discount_percent) / 100)).toFixed(2);

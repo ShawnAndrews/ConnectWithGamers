@@ -1,6 +1,6 @@
 const fs = require("fs");
 import DatabaseBase from "./../base/dbBase";
-import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, DbTablePricingsFields, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, NewsArticle, DbTableIGDBNewsFields, IGDBImageSizeEnums, IGDBImageUploadPath, DbTableRouteCacheFields, RouteCache } from "../../../client/client-server-common/common";
+import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, DbTablePricingsFields, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, NewsArticle, DbTableIGDBNewsFields, IGDBImageSizeEnums, IGDBImageUploadPath, DbTableRouteCacheFields, RouteCache, IGDBExternalCategoryEnum, convertIGDBExternCateEnumToSysKeyId } from "../../../client/client-server-common/common";
 import { MysqlError } from "mysql";
 import config from "../../../config";
 import { isArray } from "util";
@@ -67,7 +67,6 @@ class IGDBModel extends DatabaseBase {
                 .then((dbResponse: GenericModelResponse) => {
                     const inserted_igdb_games_sys_key_id: number = dbResponse.data.insertId;
                     const gamePromises: Promise<any>[] = [];
-                    let pricingsIndex: number = -1;
                     let videoIndex: number = -1;
 
                     if (game.cover) {
@@ -95,18 +94,11 @@ class IGDBModel extends DatabaseBase {
                         videoIndex = gamePromises.length;
                         gamePromises.push(this.setGameVideoPreview(game.id, game.video));
                     }
-                    if (game.steam_link || game.gog_link || game.microsoft_link || game.apple_link || game.android_link) {
-                        pricingsIndex = gamePromises.length;
-                        gamePromises.push(this.setGamePricings(game.id, game.steam_link, game.gog_link, game.microsoft_link, game.apple_link, game.android_link));
-                    }
 
                     Promise.all(gamePromises)
                         .then((vals: any[]) => {
                             if (videoIndex !== -1) {
                                 game.video_cached = vals[videoIndex];
-                            }
-                            if (pricingsIndex !== -1) {
-                                game.pricings = vals[pricingsIndex];
                             }
 
                             // attempt images cache
@@ -124,6 +116,12 @@ class IGDBModel extends DatabaseBase {
                                             game.image_screenshot_big_cached = true;
                                         }
                                     });
+
+                                    return this.attemptCachePricings(game.id, game.steam_link, game.gog_link, game.microsoft_link, game.apple_link, game.android_link);
+                                })
+                                .then((pricings: PriceInfoResponse[]) => {
+
+                                    game.pricings = pricings;
 
                                     const expiresDate = new Date();
                                     expiresDate.setDate(expiresDate.getDate() + 30);
@@ -199,46 +197,157 @@ class IGDBModel extends DatabaseBase {
     /**
      * Set game's pricings.
      */
-    setGamePricings(gameId: number, steam_link: string, gog_link: string, microsoft_link: string, apple_link: string, android_link: string): Promise <PriceInfoResponse[]> {
+    attemptCachePricings(gameId: number, steam_link: string, gog_link: string, microsoft_link: string, apple_link: string, android_link: string): Promise <PriceInfoResponse[]> {
+
+        const updateGamePricing = (pricing: PriceInfoResponse): Promise<void> => {
+
+            return new Promise((resolve, reject) => {
+                console.log(`Updating pricing (${pricing.externalEnum}) ${pricing.title}`);
+                const pricingsVals: any[] = [pricing.externalEnum, pricing.pricingEnum, pricing.igdbGamesSysKeyId, pricing.title, pricing.price, pricing.discount_percent, pricing.coming_soon, pricing.preorder, pricing.expires_dt];
+
+                this.custom(
+                    `UPDATE ${DbTables.pricings}
+                    SET ${DbTablePricingsFields.slice(1).map((x: string) => `${x} = ?`).join()}
+                    WHERE ${DbTablePricingsFields[1]} = ? AND ${DbTablePricingsFields[2]} = ? AND ${DbTablePricingsFields[3]} = ? AND ${DbTablePricingsFields[4]} = ?`,
+                    pricingsVals.concat([pricing.externalEnum, pricing.pricingEnum, pricing.igdbGamesSysKeyId, pricing.title]))
+                    .then(() => {
+                        return resolve();
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+
+            });
+
+        };
+
+        const addGamePricing = (pricing: PriceInfoResponse): Promise<void> => {
+
+            return new Promise((resolve, reject) => {
+                console.log(`Adding pricing (${pricing.externalEnum}) ${pricing.title}`);
+                const pricingsVals: any[] = [pricing.externalEnum, pricing.pricingEnum, pricing.igdbGamesSysKeyId, pricing.title, pricing.price, pricing.discount_percent, pricing.coming_soon, pricing.preorder, pricing.expires_dt];
+
+                this.custom(
+                    `INSERT INTO ${DbTables.pricings}
+                    (${DbTablePricingsFields.slice(1).join()})
+                    VALUES
+                    (${DbTablePricingsFields.slice(1).map(() => "?").join()})`,
+                    pricingsVals)
+                    .then(() => {
+                        return resolve();
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+
+            });
+
+        };
 
         return new Promise((resolve, reject) => {
 
             this.getGameSysKey(gameId)
-                .then((sys_key_id: number) => {
-                    const igdb_games_sys_key_id: number = sys_key_id;
+                .then((igdb_games_sys_key_id: number) => {
                     const pricingPromises: Promise<PriceInfoResponse[]>[] = [];
 
-                    if (steam_link) {
-                        pricingPromises.push(getSteamPricings(igdb_games_sys_key_id, steam_link));
-                    }
-                    if (gog_link) {
-                        pricingPromises.push(getGogPricings(igdb_games_sys_key_id, gog_link));
-                    }
-                    if (microsoft_link) {
-                        pricingPromises.push(getMicrosoftPricings(igdb_games_sys_key_id, microsoft_link));
-                    }
-                    if (apple_link) {
-                        pricingPromises.push(getApplePricings(igdb_games_sys_key_id, apple_link));
-                    }
-                    if (android_link) {
-                        pricingPromises.push(getAndroidPricings(igdb_games_sys_key_id, android_link));
-                    }
+                    this.getGamePricings(gameId)
+                        .then((pricings: PriceInfoResponse[]) => {
+                            const steamPricingExists: boolean = !pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === IGDBExternalCategoryEnum.steam) ? false : true;
+                            const gogPricingExists: boolean = !pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === IGDBExternalCategoryEnum.gog) ? false : true;
+                            const applePricingExists: boolean = !pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === IGDBExternalCategoryEnum.apple) ? false : true;
+                            const androidPricingExists: boolean = !pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === IGDBExternalCategoryEnum.android) ? false : true;
+                            const microsoftPricingExists: boolean = !pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === IGDBExternalCategoryEnum.microsoft) ? false : true;
 
-                    Promise.all(pricingPromises)
-                        .then((vals: PriceInfoResponse[][]) => {
-                            const pricings: PriceInfoResponse[] = [].concat(...vals);
+                            if (steam_link) {
+                                pricingPromises.push(getSteamPricings(igdb_games_sys_key_id, steam_link));
+                            }
+                            if (gog_link) {
+                                pricingPromises.push(getGogPricings(igdb_games_sys_key_id, gog_link));
+                            }
+                            if (microsoft_link) {
+                                pricingPromises.push(getMicrosoftPricings(igdb_games_sys_key_id, microsoft_link));
+                            }
+                            if (apple_link) {
+                                pricingPromises.push(getApplePricings(igdb_games_sys_key_id, apple_link));
+                            }
+                            if (android_link) {
+                                pricingPromises.push(getAndroidPricings(igdb_games_sys_key_id, android_link));
+                            }
 
-                            this.addGamePricings(pricings)
-                                .then(() => {
-                                    return resolve(pricings);
+                            Promise.all(pricingPromises)
+                                .then((vals: PriceInfoResponse[][]) => {
+                                    const pricings: PriceInfoResponse[] = [].concat(...vals);
+                                    const addOrUpdatePricingsPromises: Promise<void>[] = [];
+                                    console.log(`Pricing titles: ${pricings.map((x: PriceInfoResponse) => `${x.title} (${x.externalEnum})`).join(`, `)}`);
+                                    pricings.forEach((pricing: PriceInfoResponse) => {
+                                        if (pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.steam)) {
+                                            addOrUpdatePricingsPromises.push(steamPricingExists ? updateGamePricing(pricing) : addGamePricing(pricing));
+                                        } else if (pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.gog)) {
+                                            addOrUpdatePricingsPromises.push(gogPricingExists ? updateGamePricing(pricing) : addGamePricing(pricing));
+                                        } else if (pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.apple)) {
+                                            addOrUpdatePricingsPromises.push(applePricingExists ? updateGamePricing(pricing) : addGamePricing(pricing));
+                                        } else if (pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.android)) {
+                                            addOrUpdatePricingsPromises.push(androidPricingExists ? updateGamePricing(pricing) : addGamePricing(pricing));
+                                        } else if (pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.microsoft)) {
+                                            addOrUpdatePricingsPromises.push(microsoftPricingExists ? updateGamePricing(pricing) : addGamePricing(pricing));
+                                        }
+                                    });
+
+                                    Promise.all(addOrUpdatePricingsPromises)
+                                        .then(() => {
+
+                                            // check if route already exists
+                                            return this.custom(
+                                                `SELECT * FROM ${DbTables.route_cache}
+                                                WHERE route = ?`,
+                                                [`/game/${gameId}`]);
+
+                                        })
+                                        .then((dbResponse: GenericModelResponse) => {
+
+                                            // update pricings in route cache
+                                            if (dbResponse.data.length > 0) {
+                                                const game: GameResponse = JSON.parse(dbResponse.data[0].response).data;
+
+                                                this.getGamePricings(gameId)
+                                                    .then((pricings: PriceInfoResponse[]) => {
+                                                        game.pricings = pricings;
+
+                                                        const updatedRouteCache: RouteCache = { data: game };
+
+                                                        this.custom(
+                                                            `UPDATE ${DbTables.route_cache}
+                                                            SET response = ?
+                                                            WHERE route = ?`,
+                                                            [JSON.stringify(updatedRouteCache), `/game/${gameId}`])
+                                                            .then(() => {
+                                                                return resolve(pricings);
+                                                            })
+                                                            .catch((err: string) => {
+                                                                return reject(err);
+                                                            });
+                                                    })
+                                                    .catch((err: string) => {
+                                                        return reject(err);
+                                                    });
+
+                                            } else {
+                                                return resolve(pricings);
+                                            }
+
+                                        })
+                                        .catch((error: string) => {
+                                            return reject(`Failed inserting new pricings for game id #${gameId}: ${error}`);
+                                        });
+
                                 })
                                 .catch((error: string) => {
-                                    return reject(`Failed inserting new pricings for game id #${gameId}: ${error}`);
+                                    return resolve();
                                 });
 
                         })
                         .catch((error: string) => {
-                            return resolve();
+                            return reject(error);
                         });
 
                 })
@@ -282,38 +391,7 @@ class IGDBModel extends DatabaseBase {
                             });
 
                     } else {
-
-                        this.select(
-                            DbTables.igdb_games,
-                            DbTableIGDBGamesFields,
-                            `${DbTableIGDBGamesFields[1]}=?`,
-                            [gameId])
-                            .then((dbResponse: GenericModelResponse) => {
-
-                                if (dbResponse.data.length > 0) {
-                                    const steam_link: string = dbResponse.data[0].steam_link;
-                                    const gog_link: string = dbResponse.data[0].gog_link;
-                                    const microsoft_link: string = dbResponse.data[0].microsoft_link;
-                                    const apple_link: string = dbResponse.data[0].apple_link;
-                                    const android_link: string = dbResponse.data[0].android_link;
-
-                                    this.setGamePricings(gameId, steam_link, gog_link, microsoft_link, apple_link, android_link)
-                                        .then((pricings: PriceInfoResponse[]) => {
-                                            return resolve(pricings);
-                                        })
-                                        .catch((err: string) => {
-                                            return reject(err);
-                                        });
-
-                                } else {
-                                    return reject(`Failed to get game.`);
-                                }
-
-                            })
-                            .catch((err: string) => {
-                                return reject(err);
-                            });
-
+                        return resolve([]);
                     }
 
                 })
@@ -589,46 +667,46 @@ class IGDBModel extends DatabaseBase {
 
     }
 
-    /**
-     * Check if game's pricing is expired.
-     */
-    addGamePricings(pricings: PriceInfoResponse[]): Promise<void> {
+    // /**
+    //  * Update game pricings. If its a new pricings insert it otherwise update record.
+    //  */
+    // updateGamePricings(pricings: PriceInfoResponse[]): Promise<void> {
 
-        return new Promise((resolve, reject) => {
+    //     return new Promise((resolve, reject) => {
 
-            if (isArray(pricings) && pricings.length === 0) {
-                return resolve();
-            }
-            const pricingsVals: any[] = [];
+    //         if (isArray(pricings) && pricings.length === 0) {
+    //             return resolve();
+    //         }
+    //         const pricingsVals: any[] = [];
 
-            for (let i = 0; i < pricings.length; i++) {
-                pricingsVals.push(pricings[i].externalEnum);
-                pricingsVals.push(pricings[i].pricingEnum);
-                pricingsVals.push(pricings[i].igdbGamesSysKeyId);
-                pricingsVals.push(pricings[i].title);
-                pricingsVals.push(pricings[i].price);
-                pricingsVals.push(pricings[i].discount_percent);
-                pricingsVals.push(pricings[i].coming_soon);
-                pricingsVals.push(pricings[i].preorder);
-                pricingsVals.push(pricings[i].expires_dt);
-            }
+    //         for (let i = 0; i < pricings.length; i++) {
+    //             pricingsVals.push(pricings[i].externalEnum);
+    //             pricingsVals.push(pricings[i].pricingEnum);
+    //             pricingsVals.push(pricings[i].igdbGamesSysKeyId);
+    //             pricingsVals.push(pricings[i].title);
+    //             pricingsVals.push(pricings[i].price);
+    //             pricingsVals.push(pricings[i].discount_percent);
+    //             pricingsVals.push(pricings[i].coming_soon);
+    //             pricingsVals.push(pricings[i].preorder);
+    //             pricingsVals.push(pricings[i].expires_dt);
+    //         }
 
-            this.custom(
-                `INSERT INTO ${DbTables.pricings}
-                (${DbTablePricingsFields.slice(1).join()})
-                VALUES
-                ${pricings.map(() => `(${DbTablePricingsFields.slice(1).map(() => "?").join()})`).join()}`,
-                pricingsVals)
-                .then(() => {
-                    return resolve();
-                })
-                .catch((error: string) => {
-                    return reject(error);
-                });
+    //         this.custom(
+    //             `INSERT INTO ${DbTables.pricings}
+    //             (${DbTablePricingsFields.slice(1).join()})
+    //             VALUES
+    //             ${pricings.map(() => `(${DbTablePricingsFields.slice(1).map(() => "?").join()})`).join()}`,
+    //             pricingsVals)
+    //             .then(() => {
+    //                 return resolve();
+    //             })
+    //             .catch((error: string) => {
+    //                 return reject(error);
+    //             });
 
-        });
+    //     });
 
-    }
+    // }
 
     /**
      * Set game icons in database if does not exist.
@@ -1345,6 +1423,7 @@ class IGDBModel extends DatabaseBase {
                                         sizesCached.push(attemptedSizesToCache[index]);
                                     }
                                 });
+
                                 // update cached image size flags, if available
                                 this.custom(
                                     `SELECT * FROM ${DbTables.route_cache}
