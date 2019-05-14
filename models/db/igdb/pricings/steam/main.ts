@@ -1,4 +1,4 @@
-import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum, convertIGDBExternCateEnumToSysKeyId } from "../../../../../client/client-server-common/common";
+import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum } from "../../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 const STEAM_RATE_LIMIT_MS: number = 1000;
@@ -19,7 +19,7 @@ export function getSteamPricings(igdb_games_sys_key_id: number, steam_link: stri
             })
             .then((response: AxiosResponse) => {
                 const $: CheerioStatic = cheerio.load(response.data);
-                const externalEnumSysKey: number = convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.steam);
+                const externalEnum: number = IGDBExternalCategoryEnum.steam;
                 const pricings: PriceInfoResponse[] = [];
                 const datePlus7Days: Date = new Date();
                 datePlus7Days.setDate(datePlus7Days.getDate() + 7);
@@ -35,7 +35,7 @@ export function getSteamPricings(igdb_games_sys_key_id: number, steam_link: stri
                     const pricingEnum: PricingsEnum = i === 0 ? PricingsEnum.main_game : PricingsEnum.bundles;
 
                     if ((rawPrice.includes(`Free`) && !price) || (!isNaN(Number.parseFloat(rawPrice)) && !isNaN(price))) {
-                        const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                        const pricing: PriceInfoResponse = { externalEnum: externalEnum, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                         pricings.push(pricing);
                     }
                 });
@@ -50,7 +50,7 @@ export function getSteamPricings(igdb_games_sys_key_id: number, steam_link: stri
                     const rawPrice: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`$`, ``) : $(element).find(`.game_area_dlc_price`).text().replace(`$`, ``).trim();
                     const price = (rawPrice === `N/A` || rawPrice === `Free`) ? undefined : Number.parseFloat(rawPrice);
 
-                    const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                    const pricing: PriceInfoResponse = { externalEnum: externalEnum, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                     pricings.push(pricing);
                 });
 

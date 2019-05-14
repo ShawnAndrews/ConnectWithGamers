@@ -1,5 +1,5 @@
 import config from "../../../../config";
-import { GameResponse, GameFields, RawGame, buildIGDBRequestBody, IGDBImageSizeEnums, PriceInfoResponse, IGDBExternalCategoryEnum, convertIGDBExternCateEnumToSysKeyId } from "../../../../client/client-server-common/common";
+import { GameResponse, GameFields, RawGame, buildIGDBRequestBody, IGDBImageSizeEnums, PriceInfoResponse, IGDBExternalCategoryEnum } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import { convertRawGame } from "../util";
 import { igdbModel } from "../../../../models/db/igdb/main";
@@ -34,11 +34,11 @@ export function getCachedGame(path: string): Promise<GameResponse> {
                 const cacheingPromises: Promise<any>[] = [];
                 const imageIndicicesCached: number[] = [];
                 const imageSizesCached: IGDBImageSizeEnums[] = [];
-                const steamNeedsPricing: boolean = game.steam_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.steam)) === undefined;
-                const gogNeedsPricing: boolean = game.gog_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.gog)) === undefined;
-                const appleNeedsPricing: boolean = game.apple_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.apple)) === undefined;
-                const androidNeedsPricing: boolean = game.android_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.android)) === undefined;
-                const microsoftNeedsPricing: boolean = game.microsoft_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.microsoft)) === undefined;
+                const steamNeedsPricing: boolean = game.steam_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === IGDBExternalCategoryEnum.steam) === undefined;
+                const gogNeedsPricing: boolean = game.gog_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === IGDBExternalCategoryEnum.gog) === undefined;
+                const appleNeedsPricing: boolean = game.apple_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === IGDBExternalCategoryEnum.apple) === undefined;
+                const androidNeedsPricing: boolean = game.android_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === IGDBExternalCategoryEnum.android) === undefined;
+                const microsoftNeedsPricing: boolean = game.microsoft_link !== undefined && game.pricings.find((pricing: PriceInfoResponse) => pricing.externalEnum === IGDBExternalCategoryEnum.microsoft) === undefined;
                 const pricingNeedsCacheing: boolean = steamNeedsPricing || gogNeedsPricing || appleNeedsPricing || androidNeedsPricing || microsoftNeedsPricing;
                 let imagesNeedCacheing: boolean;
 

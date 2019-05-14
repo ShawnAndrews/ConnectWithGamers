@@ -1,4 +1,4 @@
-import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum, convertIGDBExternCateEnumToSysKeyId } from "../../../../../client/client-server-common/common";
+import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum } from "../../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 const MICROSOFT_RATE_LIMIT_MS: number = 1000;
@@ -21,7 +21,7 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
             })
             .then((response: AxiosResponse) => {
                 const $: CheerioStatic = cheerio.load(response.data);
-                const externalEnumSysKey: number = convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.microsoft);
+                const externalEnum: number = IGDBExternalCategoryEnum.microsoft;
                 const pricings: PriceInfoResponse[] = [];
                 const datePlus7Days: Date = new Date();
                 let mainGameUnavailable: boolean = false;
@@ -40,7 +40,7 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                         const discountPercent: number = undefined;
                         const price: number = isFree ? undefined : Number.parseFloat($(element).find(`.ProductPrice`).text().replace(`$`, ``));
 
-                        const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                        const pricing: PriceInfoResponse = { externalEnum: externalEnum, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                         pricings.push(pricing);
                     });
 
@@ -59,7 +59,7 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                             const price: number = !isPass ? Number.parseFloat($(element).find(`[itemprop='price']`).text().replace(`$`, ``)) : undefined;
                             const discountPercent: number = undefined;
 
-                            const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                            const pricing: PriceInfoResponse = { externalEnum: externalEnum, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                             pricings.push(pricing);
                         });
 
@@ -74,7 +74,7 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                             const pricingEnum: PricingsEnum = PricingsEnum.free_or_discounted_with_xbox_game_pass;
                             const discountPercent: number = undefined;
                             const price: number = undefined;
-                            const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                            const pricing: PriceInfoResponse = { externalEnum: externalEnum, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                             pricings.push(pricing);
                         }
 
@@ -87,7 +87,7 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                             const discountPercent: number = undefined;
                             const pricingEnum: PricingsEnum = PricingsEnum.free_or_discounted_with_xbox_live_gold;
                             const price: number = Number.parseFloat($(`.remediation-cta-label`).text().replace(`with Xbox Live Gold`, ``).replace(`$`, ``).trim());
-                            const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                            const pricing: PriceInfoResponse = { externalEnum: externalEnum, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                             pricings.push(pricing);
                         }
 
@@ -105,7 +105,7 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                                 mainGameUnavailable = true;
                             }
 
-                            const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                            const pricing: PriceInfoResponse = { externalEnum: externalEnum, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                             pricings.push(pricing);
                         });
 
@@ -120,7 +120,7 @@ export function getMicrosoftPricings(igdb_games_sys_key_id: number, microsoft_li
                         const price: number = !isNaN(Number.parseFloat($(element).find(`[itemprop='price']`).text().replace(`$`, ``))) ? Number.parseFloat($(element).find(`[itemprop='price']`).text().replace(`$`, ``)) : undefined;
                         const pricingEnum: PricingsEnum = PricingsEnum.in_app_purchase;
 
-                        const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                        const pricing: PriceInfoResponse = { externalEnum: externalEnum, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                         pricings.push(pricing);
                     });
 

@@ -1,4 +1,4 @@
-import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum, convertIGDBExternCateEnumToSysKeyId } from "../../../../../client/client-server-common/common";
+import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum } from "../../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 const fs = require("fs");
@@ -20,7 +20,7 @@ export function getApplePricings(igdb_games_sys_key_id: number, apple_link: stri
             })
             .then((response: AxiosResponse) => {
                 const $: CheerioStatic = cheerio.load(response.data);
-                const externalEnumSysKey: number = convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.apple);
+                const externalEnum: number = IGDBExternalCategoryEnum.apple;
                 const pricings: PriceInfoResponse[] = [];
                 const datePlus7Days: Date = new Date();
                 datePlus7Days.setDate(datePlus7Days.getDate() + 7);
@@ -35,7 +35,7 @@ export function getApplePricings(igdb_games_sys_key_id: number, apple_link: stri
                 const discountPercent: number = undefined;
 
                 // free/main game
-                let pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                let pricing: PriceInfoResponse = { externalEnum: externalEnum, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                 pricings.push(pricing);
 
                 // in app purchases
@@ -48,7 +48,7 @@ export function getApplePricings(igdb_games_sys_key_id: number, apple_link: stri
                         const priceText: string = $(element).find(`.list-with-numbers__item__price`).text().replace(`$`, ``);
                         price = Number.parseFloat(priceText === "Free" ? "0.00" : priceText);
 
-                        pricing = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                        pricing = { externalEnum: externalEnum, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                         pricings.push(pricing);
                     });
 

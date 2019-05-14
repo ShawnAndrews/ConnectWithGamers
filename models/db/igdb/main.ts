@@ -1,6 +1,6 @@
 const fs = require("fs");
 import DatabaseBase from "./../base/dbBase";
-import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, DbTablePricingsFields, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, NewsArticle, DbTableIGDBNewsFields, IGDBImageSizeEnums, IGDBImageUploadPath, DbTableRouteCacheFields, RouteCache, IGDBExternalCategoryEnum, convertIGDBExternCateEnumToSysKeyId } from "../../../client/client-server-common/common";
+import { SQLErrorCodes, GenericModelResponse, GameResponse, IGDBImage, DbTableIGDBGamesFields, DbTableCoversFields, DbTableIGDBImagesFields, DbTableScreenshotsFields, DbTablePricingsFields, PriceInfoResponse, DbTableIconsFields, IconEnums, DbTableReleaseDatesFields, DbTablePlatformsFields, IdNamePair, DbTableGenresFields, DbTableSimilarGamesFields, DbTables, DbTableIGDBPlatformEnumFields, DbTableIGDBGenreEnumFields, DbTableIGDBExternalEnumFields, DbTableIconsEnumFields, NewsArticle, DbTableIGDBNewsFields, IGDBImageSizeEnums, IGDBImageUploadPath, DbTableRouteCacheFields, RouteCache, IGDBExternalCategoryEnum } from "../../../client/client-server-common/common";
 import { MysqlError } from "mysql";
 import config from "../../../config";
 import { isArray } from "util";
@@ -202,7 +202,6 @@ class IGDBModel extends DatabaseBase {
         const updateGamePricing = (pricing: PriceInfoResponse): Promise<void> => {
 
             return new Promise((resolve, reject) => {
-                console.log(`Updating pricing (${pricing.externalEnum}) ${pricing.title}`);
                 const pricingsVals: any[] = [pricing.externalEnum, pricing.pricingEnum, pricing.igdbGamesSysKeyId, pricing.title, pricing.price, pricing.discount_percent, pricing.coming_soon, pricing.preorder, pricing.expires_dt];
 
                 this.custom(
@@ -224,7 +223,6 @@ class IGDBModel extends DatabaseBase {
         const addGamePricing = (pricing: PriceInfoResponse): Promise<void> => {
 
             return new Promise((resolve, reject) => {
-                console.log(`Adding pricing (${pricing.externalEnum}) ${pricing.title}`);
                 const pricingsVals: any[] = [pricing.externalEnum, pricing.pricingEnum, pricing.igdbGamesSysKeyId, pricing.title, pricing.price, pricing.discount_percent, pricing.coming_soon, pricing.preorder, pricing.expires_dt];
 
                 this.custom(
@@ -278,17 +276,17 @@ class IGDBModel extends DatabaseBase {
                                 .then((vals: PriceInfoResponse[][]) => {
                                     const pricings: PriceInfoResponse[] = [].concat(...vals);
                                     const addOrUpdatePricingsPromises: Promise<void>[] = [];
-                                    console.log(`Pricing titles: ${pricings.map((x: PriceInfoResponse) => `${x.title} (${x.externalEnum})`).join(`, `)}`);
+
                                     pricings.forEach((pricing: PriceInfoResponse) => {
-                                        if (pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.steam)) {
+                                        if (pricing.externalEnum === IGDBExternalCategoryEnum.steam) {
                                             addOrUpdatePricingsPromises.push(steamPricingExists ? updateGamePricing(pricing) : addGamePricing(pricing));
-                                        } else if (pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.gog)) {
+                                        } else if (pricing.externalEnum === IGDBExternalCategoryEnum.gog) {
                                             addOrUpdatePricingsPromises.push(gogPricingExists ? updateGamePricing(pricing) : addGamePricing(pricing));
-                                        } else if (pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.apple)) {
+                                        } else if (pricing.externalEnum === IGDBExternalCategoryEnum.apple) {
                                             addOrUpdatePricingsPromises.push(applePricingExists ? updateGamePricing(pricing) : addGamePricing(pricing));
-                                        } else if (pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.android)) {
+                                        } else if (pricing.externalEnum === IGDBExternalCategoryEnum.android) {
                                             addOrUpdatePricingsPromises.push(androidPricingExists ? updateGamePricing(pricing) : addGamePricing(pricing));
-                                        } else if (pricing.externalEnum === convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.microsoft)) {
+                                        } else if (pricing.externalEnum === IGDBExternalCategoryEnum.microsoft) {
                                             addOrUpdatePricingsPromises.push(microsoftPricingExists ? updateGamePricing(pricing) : addGamePricing(pricing));
                                         }
                                     });
@@ -373,7 +371,7 @@ class IGDBModel extends DatabaseBase {
                     if (exists) {
 
                         this.custom(
-                            `SELECT ee.${DbTableIGDBExternalEnumFields[1]} as 'external_category_enum', pc.${DbTablePricingsFields[2]}, pc.${DbTablePricingsFields[4]}, pc.${DbTablePricingsFields[5]}, pc.${DbTablePricingsFields[6]}, pc.${DbTablePricingsFields[7]}, pc.${DbTablePricingsFields[8]} FROM ${DbTables.pricings} pc
+                            `SELECT ee.${DbTableIGDBExternalEnumFields[0]} as 'external_category_enum', pc.${DbTablePricingsFields[2]}, pc.${DbTablePricingsFields[4]}, pc.${DbTablePricingsFields[5]}, pc.${DbTablePricingsFields[6]}, pc.${DbTablePricingsFields[7]}, pc.${DbTablePricingsFields[8]} FROM ${DbTables.pricings} pc
                             JOIN ${DbTables.igdb_games} ig ON pc.${DbTablePricingsFields[3]} = ig.${DbTableIGDBGamesFields[0]}
                             JOIN ${DbTables.igdb_external_enum} ee ON pc.${DbTablePricingsFields[1]} = ee.${DbTableIGDBExternalEnumFields[0]}
                             WHERE ig.${DbTableIGDBGamesFields[1]}=?`,

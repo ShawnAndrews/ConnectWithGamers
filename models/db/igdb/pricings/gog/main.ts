@@ -1,4 +1,4 @@
-import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum, convertIGDBExternCateEnumToSysKeyId } from "../../../../../client/client-server-common/common";
+import { PriceInfoResponse, PricingsEnum, IGDBExternalCategoryEnum } from "../../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 const GOG_RATE_LIMIT_MS: number = 1000;
@@ -20,7 +20,7 @@ export function getGogPricings(igdb_games_sys_key_id: number, gog_link: string):
             })
             .then((response: AxiosResponse) => {
                 const $: CheerioStatic = cheerio.load(response.data);
-                const externalEnumSysKey: number = convertIGDBExternCateEnumToSysKeyId(IGDBExternalCategoryEnum.gog);
+                const externalEnum: number = IGDBExternalCategoryEnum.gog;
                 const pricings: PriceInfoResponse[] = [];
                 const datePlus7Days: Date = new Date();
                 datePlus7Days.setDate(datePlus7Days.getDate() + 7);
@@ -46,7 +46,7 @@ export function getGogPricings(igdb_games_sys_key_id: number, gog_link: string):
                     return reject();
                 }
 
-                const pricing: PriceInfoResponse = { externalEnum: externalEnumSysKey, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
+                const pricing: PriceInfoResponse = { externalEnum: externalEnum, pricingEnum: pricingEnum, igdbGamesSysKeyId: igdb_games_sys_key_id, title: title, price: price, coming_soon: coming_soon, preorder: preorder, discount_percent: discountPercent, expires_dt: datePlus7Days };
                 pricings.push(pricing);
 
                 return resolve(pricings);
