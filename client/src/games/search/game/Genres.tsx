@@ -1,6 +1,5 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
-import { IdNamePair, GenreEnums } from '../../../../client-server-common/common';
+import { GenreEnums } from '../../../../client-server-common/common';
 
 interface IGenresProps {
     genres: number[];
@@ -10,18 +9,24 @@ interface IGenresProps {
 const Genres: React.SFC<IGenresProps> = (props: IGenresProps) => {
 
     return (
-        <div className="genres color-secondary px-2 mt-2">
-            <div className="title my-1">Genres</div>
+        <div className="genres color-secondary mt-2">
+            <span className="title my-1">{`Genres: `}</span>
             {props.genres && props.genres
                 .map((x: number, index: number) => {
                     return (
                         <React.Fragment key={x}>
-                            <Button variant="raised" className="genre hover-tertiary-solid m-2 py-1 px-2" onClick={() => { props.handleGenreClick(index); }}>
+                            <span 
+                                className="genre cursor-pointer d-inline-block py-1" 
+                                onClick={() => { props.handleGenreClick(index); }}
+                            >
                                 {GenreEnums[x]}
-                            </Button>
+                            </span>
                         </React.Fragment>
                     );
-                })}
+                })
+                .reduce((accu: any, elem: any) => {
+                    return accu === null ? [elem] : [...accu, <span>{`, `}</span>, elem]
+                }, null)}
         </div>
     );
 

@@ -42,12 +42,6 @@ export function getCachedGame(path: string): Promise<GameResponse> {
                 const pricingNeedsCacheing: boolean = steamNeedsPricing || gogNeedsPricing || appleNeedsPricing || androidNeedsPricing || microsoftNeedsPricing;
                 let imagesNeedCacheing: boolean;
 
-                console.log(`Steam needs pricing? ${steamNeedsPricing}`);
-                console.log(`Gog needs pricing? ${gogNeedsPricing}`);
-                console.log(`Apple needs pricing? ${appleNeedsPricing}`);
-                console.log(`Android needs pricing? ${androidNeedsPricing}`);
-                console.log(`Microsoft needs pricing? ${microsoftNeedsPricing}`);
-
                 if (!game.image_micro_cached) {
                     imageIndicicesCached.push(9);
                     imageSizesCached.push(IGDBImageSizeEnums.micro);

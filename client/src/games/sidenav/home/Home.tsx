@@ -44,7 +44,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 className={`breaking-news ${props.breakingNewsClickCollapsed && `collapsed`} mx-auto px-3 py-1`}
                 message={
                     <span>
-                        Check out the recently released <u className="cursor-pointer" onClick={() => props.onClickBreakingNews(`search/game/${props.breakingNewsGameId}`)}>{props.breakingNewsGameName}</u> now!
+                        Check out the new steam game <u className="cursor-pointer" onClick={() => props.onClickBreakingNews(`search/game/${props.breakingNewsGameId}`)}>{props.breakingNewsGameName}</u> releasing this summer!
                     </span>
                 }
                 action={[

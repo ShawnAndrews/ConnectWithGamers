@@ -35,9 +35,9 @@ const TransparentGame: React.SFC<ITransparentGameProps> = (props: ITransparentGa
                     />
                 </div>
                 <div className="pricing position-relative mx-auto" style={gameContainer}>
-                    <div className="original-price d-inline-block">${bestPriceOriginal}</div>
+                    {bestPrice.discount_percent && <div className="original-price d-inline-block">${bestPriceOriginal}</div>}
                     <div className="price d-inline-block">${bestPrice.price}</div>
-                    <div className="discount d-inline-block ml-2">-{bestPrice.discount_percent}%</div>
+                    <div className="discount d-inline-block ml-2">{bestPrice.discount_percent && `-${bestPrice.discount_percent}%`}</div>
                 </div>
             </div>
         </div>

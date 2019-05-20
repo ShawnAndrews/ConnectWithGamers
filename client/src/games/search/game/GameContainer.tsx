@@ -46,7 +46,7 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
             game: undefined,
             summaryExpanded: undefined,
             genre_ids: undefined,
-            gameid: undefined,
+            gameid: props.match.params.id,
             gameRatedSnackbarOpen: false,
             mediaCarouselElement: undefined,
             mouseDragged: false,

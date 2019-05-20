@@ -1,4 +1,4 @@
-import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IGDBReleaseDate, IGDBImage, IGDBMultiplayerMode, GameFields, buildIGDBRequestBody, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, IGDBExternalCategoryEnum, IGDBExternalGame } from "../../../client/client-server-common/common";
+import { RawGame, GameResponse, IGDBVideo, IGDBPlatform, IGDBReleaseDate, IGDBImage, IGDBGameMode, GameFields, buildIGDBRequestBody, IconEnums, GenreEnums, IGDBGenre, PlatformEnums, IGDBExternalCategoryEnum, IGDBExternalGame } from "../../../client/client-server-common/common";
 import { ArrayClean } from "../../../util/main";
 import config from "../../../config";
 import { cachePreloadedGame } from "./game/main";
@@ -78,8 +78,8 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             let microsoft_link: string = undefined;
             let apple_link: string = undefined;
             let android_link: string = undefined;
-            let multiplayer_enabled: boolean = false;
             let similar_games: number[] = undefined;
+            let game_modes: number[] = undefined;
 
             // id
             id = RawGame.id;
@@ -150,13 +150,9 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 return releaseDate || 0;
             });
 
-            // multiplayer enabled
-            if (RawGame.multiplayer_modes) {
-                RawGame.multiplayer_modes.forEach((multiplayerMode: IGDBMultiplayerMode) => {
-                    if (multiplayerMode.onlinemax) {
-                        multiplayer_enabled = true;
-                    }
-                });
+            // game modes
+            if (RawGame.game_modes) {
+                game_modes = RawGame.game_modes.map((x: IGDBGameMode) => x.id);
             }
 
             // screenshots
@@ -221,7 +217,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
                 apple_link: apple_link,
                 android_link: android_link,
                 pricings: undefined,
-                multiplayer_enabled: multiplayer_enabled,
+                game_modes: game_modes,
                 similar_games: similar_games
             };
 
@@ -310,6 +306,10 @@ export function parseSteamIdsFromQuery(webpage: string, excludeFreeGames: boolea
         steamIdsPromises.push(getSteamIdsByPage(6));
         steamIdsPromises.push(getSteamIdsByPage(7));
         steamIdsPromises.push(getSteamIdsByPage(8));
+        steamIdsPromises.push(getSteamIdsByPage(9));
+        steamIdsPromises.push(getSteamIdsByPage(10));
+        steamIdsPromises.push(getSteamIdsByPage(11));
+        steamIdsPromises.push(getSteamIdsByPage(12));
 
         Promise.all(steamIdsPromises)
             .then((partialSteamIds: number[][]) => {

@@ -476,10 +476,10 @@ export interface RawGame {
     videos: IGDBVideo[];
     external_games: IGDBExternalGame[];
     similar_games: number[];
-    multiplayer_modes: IGDBMultiplayerMode[];
+    game_modes: IGDBGameMode[];
 }
 
-export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`, `similar_games`, `multiplayer_modes.*`];
+export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`, `similar_games`, `game_modes.*`];
 
 export interface Genre {
     name: string;
@@ -637,7 +637,7 @@ export interface GameResponse {
     apple_link: string;
     android_link: string;
     pricings: PriceInfoResponse[];
-    multiplayer_enabled: boolean;
+    game_modes: number[];
     similar_games: number[];
 }
 
@@ -748,21 +748,13 @@ export interface IGDBReleaseDate {
     y: number;
 }
 
-export interface IGDBMultiplayerMode {
+export interface IGDBGameMode {
     id: number;
-    campaigncoop: boolean;
-    dropin: boolean;
-    game: number;
-    lancoop: boolean;
-    offlinecoop: boolean;
-    offlinecoopmax: number;
-    offlinemax: number;
-    onlinecoop: boolean;
-    onlinecoopmax: number;
-    onlinemax: number;
-    platform: number;
-    splitscreen: boolean;
-    splitscreenonline: boolean;
+    created_at: number;
+    name: string;
+    slug: string;
+    updated_at: number;
+    url: string;
 }
 
 export interface IGDBImage {
@@ -803,6 +795,14 @@ export enum PricingsEnum {
     bundles = 4,
     dlc = 5,
     in_app_purchase = 6,
+}
+
+export enum GameModesEnum {
+    "Single Player" = 1,
+    "Multiplayer" = 2,
+    "Co-op" = 3,
+    "Split Screen" = 4,
+    "MMO" = 5
 }
 
 /* Database tables */
@@ -859,3 +859,5 @@ export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys
 export const DbTableAccountsTypeEnumFields: string[] = [`accounts_type_enum_sys_key_id`, `name`];
 export const DbTableIGDBNewsFields: string[] = [`igdb_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];
 export const DbTableRouteCacheFields: string[] = [`route`, `response`, `expires_dt`];
+export const DbTableIGDBModesEnumFields: string[] = [`igdb_modes_enum_sys_key_id`, `name`];
+export const DbTableModesFields: string[] = [`modes_sys_key_id`, `igdb_modes_enum_sys_key_id`, `igdb_games_sys_key_id`];

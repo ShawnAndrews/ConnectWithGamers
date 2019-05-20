@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Spinner from '../../../spinner/main';
-import { GameResponse, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage, PriceInfoResponse, IGDBExternalCategoryEnum, PricingsEnum } from '../../../../../client/client-server-common/common';
+import { GameResponse, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage, PriceInfoResponse, IGDBExternalCategoryEnum, PricingsEnum, GameModesEnum } from '../../../../../client/client-server-common/common';
 import Summary from './Summary';
 import Platforms from './Platforms';
 import Genres from './Genres';
@@ -12,6 +12,7 @@ import Cover from './Cover';
 import Background from './Background';
 import Snackbar from '@material-ui/core/Snackbar';
 import SimilarGamesContainer from './SimilarGamesContainer';
+import ReleaseDate from './ReleaseDate';
 
 interface IGameProps {
     isLoading: boolean;
@@ -237,11 +238,21 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 genres={props.game.genres}
                                 handleGenreClick={props.handleGenreClick}
                             />}
-                        {props.game.multiplayer_enabled && 
-                            <div className="multiplayer text-center mt-3">
-                                <i className="fas fa-users mr-2"/>
-                                Online Multiplayer
-                            </div>}
+                        {props.game.first_release_date && 
+                            <ReleaseDate 
+                                firstReleaseDate={props.game.first_release_date}
+                            />}
+                        {props.game.game_modes && 
+                            props.game.game_modes.map((mode: number) => (
+                                <div className="game_mode text-center mt-3">
+                                    {mode === 1 && <i className="fas fa-user mr-2"/>}
+                                    {mode === 2 && <i className="fas fa-users mr-2"/>}
+                                    {mode === 3 && <i className="fas fa-users mr-2"/>}
+                                    {mode === 4 && <i className="fas fa-desktop mr-2"/>}
+                                    {mode === 5 && <i className="fas fa-users mr-2"/>}
+                                    {GameModesEnum[mode]}
+                                </div>
+                            ))}
                     </div>
                 </div>
                 <div className="d-inline-block align-top pl-4 h-100 w-md-100" style={getCoverTitleContainerStyle()}>

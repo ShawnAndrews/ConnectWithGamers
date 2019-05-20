@@ -56,7 +56,7 @@ class IGDBModel extends DatabaseBase {
 
         return new Promise((resolve, reject) => {
             const filteredSummary: string = game.summary && game.summary.replace(/[^\x00-\x7F]/g, ""); // remove non-ascii
-            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, filteredSummary, game.first_release_date, game.video, game.video_cached, game.image_micro_cached, game.image_cover_big_cached, game.image_screenshot_med_cached, game.image_screenshot_big_cached, game.steam_link, game.gog_link, game.microsoft_link, game.apple_link, game.android_link, game.multiplayer_enabled];
+            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, filteredSummary, game.first_release_date, game.video, game.video_cached, game.image_micro_cached, game.image_cover_big_cached, game.image_screenshot_med_cached, game.image_screenshot_big_cached, game.steam_link, game.gog_link, game.microsoft_link, game.apple_link, game.android_link];
 
             this.insert(
                 DbTables.igdb_games,

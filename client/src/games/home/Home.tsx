@@ -52,10 +52,6 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
     };
     const timeGames: GameResponse[] = props.timeGamesOption === TimeGamesOptions.Upcoming ? props.upcomingGames : (props.timeGamesOption === TimeGamesOptions.Recent ? props.recentGames : props.earlyGames);
 
-    for (let i = 0; i < timeGames.length; i++) {
-        console.log(`${timeGames[i].name}: ${timeGames[i].first_release_date}`);
-    }
-
     return (
         <>
             <Slider {...settings} >

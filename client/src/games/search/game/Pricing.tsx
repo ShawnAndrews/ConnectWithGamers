@@ -25,15 +25,15 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
     let imgSrc: string = undefined;
 
     if (props.externalCategoryEnum === IGDBExternalCategoryEnum.steam) {
-        imgSrc = 'https://i.imgur.com/gs7QHLe.jpg';
+        imgSrc = 'https://i.imgur.com/sIw8aIf.png';
     } else if (props.externalCategoryEnum === IGDBExternalCategoryEnum.gog) {
-        imgSrc = 'https://i.imgur.com/JwlrTYJ.jpg';
+        imgSrc = 'https://i.imgur.com/qZ7FcqN.png';
     } else if (props.externalCategoryEnum === IGDBExternalCategoryEnum.microsoft) {
-        imgSrc = 'https://i.imgur.com/UT2dYkq.jpg';
+        imgSrc = 'https://i.imgur.com/NDQKKuQ.png';
     } else if (props.externalCategoryEnum === IGDBExternalCategoryEnum.apple) {
-        imgSrc = 'https://i.imgur.com/RXPYHhm.jpg';
+        imgSrc = 'https://i.imgur.com/In4Ygyo.png';
     } else if (props.externalCategoryEnum === IGDBExternalCategoryEnum.android) {
-        imgSrc = 'https://i.imgur.com/FmAy8k0.jpg';
+        imgSrc = 'https://i.imgur.com/FhNZDwY.png';
     }
 
     const getEntriesByPricingsEnum = (pricingEnum: PricingsEnum): any[] => {

@@ -60,7 +60,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             news: undefined,
             timeGamesOption: TimeGamesOptions.Upcoming,
             bigGamesInfo: [
-                { gameId: 22778, btnText: `Available March 26ᵗʰ`, btnLink: `https://store.steampowered.com/app/794260/Outward/` },
+                { gameId: 118610, btnText: `Available Summer 2019`, btnLink: `https://store.steampowered.com/app/1060100/Call_of_the_Void/` },
                 { gameId: 27804, btnText: `Pre-order $39.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Fphoenix-point%2Fhome%3FpurchaseIntentId%3D75e9feab76fc46bb8ce6f3d7dadae3c8&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
                 { gameId: 113212, btnText: `Buy it now $29.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Foperencia%2Fhome%3FpurchaseIntentId%3D7d1d766667ef423bbd636ee6f054f755&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
                 { gameId: 26166, btnText: `Coming soon`, btnLink: `https://www.epicgames.com/store/en-US/product/dauntless/home`},
@@ -136,12 +136,11 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 const horrorGames: GameResponse[] = horrorGamesData.data
                     .filter((game: GameResponse) => game.cover)
                     .filter((game: GameResponse) => (game.cover.width / game.cover.height) <= 0.8)
-                    .filter((game: GameResponse) => getGameBestPricingStatus(game.pricings).discount_percent && getGameBestPricingStatus(game.pricings).discount_percent > 0)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
                     .sort((a: GameResponse, b: GameResponse) => {
-                        const bestPriceA: PriceInfoResponse = getGameBestPricingStatus(a.pricings);
-                        const bestPriceB: PriceInfoResponse = getGameBestPricingStatus(b.pricings);
-                        return bestPriceB.discount_percent - bestPriceA.discount_percent;
+                        const bestPriceDiscountPercentA: number = getGameBestPricingStatus(a.pricings).discount_percent || 0;
+                        const bestPriceDiscountPercentB: number = getGameBestPricingStatus(b.pricings).discount_percent || 0;
+                        return bestPriceDiscountPercentB - bestPriceDiscountPercentA;
                     })
                     .slice(0, 4);
 

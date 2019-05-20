@@ -1,7 +1,7 @@
 @game-details-highlight-color: #484b50;
 @game-details-video-preview-height: 500px;
 @game-details-price-height: 32px;
-@similar-games-carousel-height: 200px;
+@similar-games-carousel-height: 130px;
 
 .game-details {
 
@@ -51,7 +51,7 @@
         .pricing {
             position: relative;
             height: 50px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             
             .price {
                 position: absolute;
@@ -59,16 +59,12 @@
                 right: 25px;
                 width: 100px;
                 border-radius: 0px;
-                background-color: #308420;
+                background-color: #308320;
                 text-align: center;
                 vertical-align: middle;
                 line-height: 36px;
                 font-weight: bold;
-                color: rgba(white,0.7);
-
-                .price-container {
-                    font-size: 0.8rem;
-                }
+                color: white;
 
                 del {
                     opacity: 0.5;
@@ -78,23 +74,26 @@
 
             img {
                 object-fit: cover;
-                outline: 2px solid rgb(48, 132, 32);
+                outline: 2px solid #308420;
             }
          }
     
-        .platforms, .genres {
+        .platforms, .genres, .release-date {
     
-            .platform, .genre {
-                color: rgba(white, 0.6);
-                font-size: 0.65rem;
-                min-width: unset!important;
-                min-height: unset!important;
-                background-color: @game-details-highlight-color;
-                color: white!important;
+            > .title {
+                color: rgba(white, 0.5)!important;
+            }
+
+            .platform, .genre, .date {
+                font-size: 0.8rem;
+            }
+
+            * {
+                color: white;
             }
         }
         
-        .multiplayer {
+        .game_mode {
             cursor: default;
             line-height: 40px;
             border-radius: 10px;
@@ -232,6 +231,7 @@
                     button {
                         color: white!important;
                         background-color: #308420!important;
+                        padding: 0 4px!important;
 
                         &:hover {
                             background-color: #3c982a!important;
