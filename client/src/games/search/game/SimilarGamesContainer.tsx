@@ -51,7 +51,7 @@ class SimilarGamesContainer extends React.PureComponent<ISimilarGamesContainerPr
                 this.setState({ similarGames: similarGames, isLoading: false });
             })
             .catch((err: string) => {
-                console.log(`Failed to load similar games. ${err}`);
+                console.log(`Failed to load similar games. ${JSON.stringify(err)}`);
             });
 
     }
