@@ -2,7 +2,7 @@ const express = require("express");
 const RateLimit = require("express-rate-limit");
 import { Request, Response, Router } from "express";
 const router: Router = express.Router();
-import { AUTH_TOKEN_NAME, validateCredentials, RecoveryEmailInfo, EmailRecoveryVerifyResponse, DatalessResponse, EmailVerifiedFlagResponse, AccountImageResponse, AccountInfo, AuthenticationInfo, TokenInfo, TwitchIdResponse, SteamIdResponse, SteamFriendsResponse, DiscordLinkResponse, TwitchFollowersResponse, AccountInfoResponse, AccountsInfo, SteamFriend, TwitchUser, GameRating, GenericModelResponse } from "../../client/client-server-common/common";
+import { AUTH_TOKEN_NAME, validateCredentials, GameRating, RecoveryEmailInfo, EmailRecoveryVerifyResponse, DatalessResponse, EmailVerifiedFlagResponse, AccountImageResponse, AccountInfo, AuthenticationInfo, TokenInfo, AccountInfoResponse, AccountsInfo, GenericModelResponse } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { accountModel } from "../../models/db/account/main";
 import { securityModel } from "../../models/db/security/main";
@@ -14,7 +14,6 @@ export const routes = new routeModel();
 /* routes */
 routes.addRoute("signup", "/signup");
 routes.addRoute("login", "/login");
-routes.addRoute("login/igdb", "/login/igdb");
 routes.addRoute("public/info", "/public/info");
 routes.addRoute("settings", "/settings");
 routes.addRoute("settings/change", "/settings/change");
@@ -60,30 +59,6 @@ router.post(routes.getRoute("signup"), (req: Request, res: Response) => {
             .send(datalessResponse);
         })
         .catch((error: string) => {
-            datalessResponse.error = error;
-            return res
-            .send(datalessResponse);
-        });
-
-});
-
-router.post(routes.getRoute("login/igdb"), (req: Request, res: Response) => {
-
-    const datalessResponse: DatalessResponse = { error: undefined };
-    const igdbAuthCode: string = req.body.igdbAuthCode;
-
-    // authenticate
-    securityModel.IGDBAuthenticate(igdbAuthCode)
-        .then((response: TokenInfo) => {
-            // token success
-            const newToken: string = response.token;
-            const newTokenExpiration: Date = response.tokenExpiration;
-            return res
-            .cookie(AUTH_TOKEN_NAME, newToken, { expires: newTokenExpiration })
-            .send(datalessResponse);
-        })
-        .catch((error: string) => {
-            // authentication or token failure
             datalessResponse.error = error;
             return res
             .send(datalessResponse);
@@ -400,7 +375,6 @@ router.post(routes.getRoute("game/rate"), (req: Request, res: Response) => {
     securityModel.authorize(req.headers.cookie)
         .then((accountId: number) => {
             const gameRating: GameRating = {
-                igdb_id: req.query.id,
                 account_id: accountId,
                 rating: Number.parseFloat(req.query.rating),
                 date: Date.now() / 1000

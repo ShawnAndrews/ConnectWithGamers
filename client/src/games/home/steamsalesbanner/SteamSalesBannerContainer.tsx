@@ -3,7 +3,7 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import SteamSalesBanner from './SteamSalesBanner';
 import { SidenavEnums, GameResponse, MultiGameResponse, ExcludedGameIds } from '../../../../client-server-common/common';
-import * as IGDBService from '../../../service/igdb/main';
+import * as SteamService from '../../../service/steam/main';
 
 interface ISteamSalesBannerContainerProps extends RouteComponentProps<any> {
     goToRedirect: (URL: string) => void;

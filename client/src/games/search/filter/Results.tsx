@@ -28,7 +28,7 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
         return (
             <Paper className="retry color-secondary bg-tertiary p-3 mx-auto my-4">
                 <div className="text-center">
-                    Failed to connect to IGDB database. Please retry.
+                    Failed to connect to database. Please retry.
                 </div>
                 <Button className="color-primary bg-secondary-solid hover-secondary-solid mt-3" onClick={props.onRetryClick} variant="contained" color="primary" fullWidth={true}>
                     Retry

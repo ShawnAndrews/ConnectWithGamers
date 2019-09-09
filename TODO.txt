@@ -4,7 +4,7 @@ TODO:
 - (X) Test worker.online() for better queue processing
 - (X) mobile - tap and hold left/right still horizontally scrolling
 - (X) Bug fix - if file after upload === 0 bytes, delete it and dont update video_preview flag + test
-- (X) Get rid of IGDBImage.id, not needed
+- (X) Get rid of string.id, not needed
 - (X) coming soon/free/preorder banners
 - (X) Add Image Cacheing Service worker (Covers/Thumbs/Screenshots)
 - (X) Rating a game recently broke

@@ -40,7 +40,6 @@ class SettingsModel extends DatabaseBase {
                     const emailVerified = dbResponse.data[0].email_verification_code === null;
                     const accountInfo: AccountInfo = {
                         accountid: accountId,
-                        accountType: accountType,
                         profile: profile,
                         profile_file_extension: profileFileExtension,
                         username: username,

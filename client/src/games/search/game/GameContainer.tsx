@@ -2,10 +2,10 @@ const popupS = require('popups');
 import * as Redux from 'redux';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as IGDBService from '../../../service/igdb/main';
+import * as SteamService from '../../../service/steam/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Game from './Game';
-import { SingleGameResponse, GameResponse, IGDBExternalCategoryEnum, CurrencyType } from '../../../../../client/client-server-common/common';
+import { SingleGameResponse, GameResponse, CurrencyType } from '../../../../../client/client-server-common/common';
 import { loggedIn } from '../../../service/account/main';
 import { GlobalReduxState } from '../../../reducers/main';
 import { getPriceInUserCurrency } from '../../../util/main';
@@ -91,7 +91,7 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
     }
 
     loadGame(id: number): void {
-        IGDBService.httpGenericGetData<SingleGameResponse>(`/igdb/game/${id}`)
+        SteamService.httpGenericGetData<SingleGameResponse>(`/steam/game/${id}`)
             .then( (gameResponse: SingleGameResponse) => {
                 const game: GameResponse = gameResponse.data;
 
@@ -122,7 +122,7 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
         
         if (loggedIn()) {
 
-            IGDBService.httpGenericGetData<void>(`/account/game/rate/?id=${this.state.gameid}&rating=${rating}`)
+            SteamService.httpGenericGetData<void>(`/account/game/rate/?id=${this.state.gameid}&rating=${rating}`)
             .then( (response: void) => {
                 this.setState({
                     gameRatedSnackbarOpen: true
@@ -192,20 +192,8 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
         });
     };
 
-    onPricingClick(externalCategoryEnum: IGDBExternalCategoryEnum): void {
-        let link: string = undefined;
-
-        if (externalCategoryEnum === IGDBExternalCategoryEnum.steam) {
-            link = this.state.game.steam_link;
-        } else if (externalCategoryEnum === IGDBExternalCategoryEnum.gog) {
-            link = this.state.game.gog_link;
-        } else if (externalCategoryEnum === IGDBExternalCategoryEnum.microsoft) {
-            link = this.state.game.microsoft_link;
-        } else if (externalCategoryEnum === IGDBExternalCategoryEnum.apple) {
-            link = this.state.game.apple_link;
-        } else if (externalCategoryEnum === IGDBExternalCategoryEnum.android) {
-            link = this.state.game.android_link;
-        }
+    onPricingClick(): void {
+        const link: string = ""// steam link -> this.state.game.steam_link;
 
         window.open(link, "_blank");
     }

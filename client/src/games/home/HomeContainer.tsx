@@ -1,8 +1,8 @@
 const popupS = require('popups');
 import * as React from 'react';
 import Home from './Home';
-import * as IGDBService from '../../service/igdb/main';
-import { MultiGameResponse, GameResponse, ExcludedGameIds, GenericModelResponse, NewsArticle, MultiNewsResponse, SidenavEnums, PriceInfoResponse } from '../../../client-server-common/common';
+import * as SteamService from '../../service/steam/main';
+import { MultiGameResponse, GameResponse, ExcludedGameIds, GenericModelResponse, NewsArticle, MultiNewsResponse, SidenavEnums } from '../../../client-server-common/common';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { getGameBestPricingStatus } from '../../util/main';
 
@@ -74,16 +74,16 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
     componentDidMount(): void {
         let promises: Promise<any>[] = [];
 
-        promises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/steam/popular`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/popular`));
         this.state.bigGamesInfo.forEach((x: BigGameInfo) => {
-            promises.push(IGDBService.httpGenericGetData<GenericModelResponse>(`/igdb/game/${x.gameId}`));
+            promises.push(SteamService.httpGenericGetData<GenericModelResponse>(`/steam/game/${x.gameId}`));
         });
-        promises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/steam/weeklydeals`));
-        promises.push(IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`));
-        promises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/steam/upcoming`));
-        promises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/steam/recent`));
-        promises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/steam/earlyaccess`));
-        promises.push(IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/steam/horror`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/weeklydeals`));
+        promises.push(SteamService.httpGenericGetData<MultiNewsResponse>(`/steam/games/news`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/upcoming`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/recent`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/earlyaccess`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/horror`));
 
         Promise.all(promises)
             .then((data: any[]) => {
@@ -113,7 +113,6 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 const upcomingGamesData: MultiGameResponse = data[3 + this.state.bigGamesInfo.length];
                 const upcomingGames: GameResponse[] = upcomingGamesData.data
                     .filter((game: GameResponse) => game.cover)
-                    .filter((game: GameResponse) => (game.cover.width / game.cover.height) <= 0.8)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
                     .filter((game: GameResponse) => new Date(game.first_release_date * 1000) > new Date())
                     .sort((a: GameResponse, b: GameResponse) => a.first_release_date - b.first_release_date)
@@ -121,21 +120,18 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 const recentGamesData: MultiGameResponse = data[4 + this.state.bigGamesInfo.length];
                 const recentGames: GameResponse[] = recentGamesData.data
                     .filter((game: GameResponse) => game.cover)
-                    .filter((game: GameResponse) => (game.cover.width / game.cover.height) <= 0.8)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
                     .sort((a: GameResponse, b: GameResponse) => b.first_release_date - a.first_release_date)
                     .slice(0, 20);
                 const earlyGamesData: MultiGameResponse = data[5 + this.state.bigGamesInfo.length];
                 const earlyGames: GameResponse[] = earlyGamesData.data
                     .filter((game: GameResponse) => game.cover)
-                    .filter((game: GameResponse) => (game.cover.width / game.cover.height) <= 0.8)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
                     .sort((a: GameResponse, b: GameResponse) => a.first_release_date - b.first_release_date)
                     .slice(0, 20);
                 const horrorGamesData: MultiGameResponse = data[6 + this.state.bigGamesInfo.length];
                 const horrorGames: GameResponse[] = horrorGamesData.data
                     .filter((game: GameResponse) => game.cover)
-                    .filter((game: GameResponse) => (game.cover.width / game.cover.height) <= 0.8)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
                     .sort((a: GameResponse, b: GameResponse) => {
                         const bestPriceDiscountPercentA: number = getGameBestPricingStatus(a.pricings).discount_percent || 0;

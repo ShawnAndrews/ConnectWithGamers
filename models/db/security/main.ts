@@ -10,7 +10,6 @@ import {
     DbTables,
     DbTableAccountsFields,
     DbTableTokensFields,
-    AccountTypeEnums,
     EMAIL_VERIFICATION_LEN, ACCOUNT_RECOVERYID_LEN } from "../../../client/client-server-common/common";
 import Axios, { AxiosResponse } from "axios";
 
@@ -24,144 +23,6 @@ class SecurityModel extends DatabaseBase {
 
     constructor() {
         super();
-    }
-
-    /**
-     * Authenticate IGDB account authorization code.
-     */
-    IGDBAuthenticate(igdbAuthCode: string): Promise<TokenInfo> {
-
-        const insertIGDBTokenPromise = (dbAccountid: number, accessToken: string, expiresIn: Date): Promise<void> => {
-
-            return new Promise( (resolve, reject) => {
-                const tokenEnum: AccountTypeEnums = AccountTypeEnums.IGDB;
-
-                this.insert(
-                    DbTables.tokens,
-                    DbTableTokensFields.slice(1),
-                    [dbAccountid, tokenEnum, accessToken, Date.now() / 1000, expiresIn.getTime() / 1000],
-                    "?, ?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?)")
-                    .then((dbResponse: GenericModelResponse) => {
-                        if (dbResponse.error) {
-                            return reject(dbResponse.error);
-                        } else {
-                            return resolve();
-                        }
-                    });
-
-            });
-
-        };
-
-        return new Promise((resolve, reject) => {
-
-            // get access token from auth code
-            Axios.post(`${config.igdb.token_url}?client_secret=${config.igdb.client_secret}&code=${igdbAuthCode}&redirect_uri=${config.igdb.redirect_uri}&grant_type=${config.igdb.grant_type}&client_id=${config.igdb.client_id}`)
-                .then((response: AxiosResponse) => {
-                    const igdbAccessToken: string = response.data.access_token;
-                    const expiresIn: Date = new Date();
-                    expiresIn.setSeconds(expiresIn.getSeconds() + response.data.expires_in);
-
-                    // get IGDB user info
-                    Axios({
-                            method: "get",
-                            url: `https://api-v3.igdb.com/private/me`,
-                            headers: {
-                                "user-key": config.igdb.key,
-                                "Authorization": `Bearer ${igdbAccessToken}`
-                            }
-                        })
-                        .then((response: AxiosResponse) => {
-                            const igdbAccountId: number = response.data.id;
-                            const igdbAccountUsername: string = response.data.username;
-
-                            // get account id
-                            this.getAccountIdByIGDBAccountId(igdbAccountId, igdbAccountUsername)
-                                .then((accountId: number) => {
-
-                                    // insert token code
-                                    insertIGDBTokenPromise(accountId, igdbAccessToken, expiresIn)
-                                        .then(() => {
-                                            const tokenInfo: TokenInfo = { token: igdbAccessToken, tokenExpiration: expiresIn };
-
-                                            return resolve(tokenInfo);
-                                        })
-                                        .catch(() => {
-                                            return reject(`Failed to insert IGDB token.`);
-                                        });
-
-                                })
-                                .catch(() => {
-                                    return reject(`Failed to get account id from IGDB id.`);
-                                });
-
-                        })
-                        .catch((err: string) => {
-                            return reject(`Invalid token code.`);
-                        });
-                })
-                .catch((err: string) => {
-                    return reject(`Invalid auth code.`);
-                });
-
-        });
-
-    }
-
-    /**
-     * Get account id by IGDB account id. If does not exist, create account.
-     */
-    getAccountIdByIGDBAccountId(igdbAccountId: number, igdbUsername: string): Promise<number> {
-
-        return new Promise((resolve, reject) => {
-
-            // check if igdb account exists
-            this.select(
-                DbTables.accounts,
-                DbTableAccountsFields,
-                `${DbTableAccountsFields[14]} = ?`,
-                [igdbAccountId])
-                .then((dbResponse: GenericModelResponse) => {
-
-                    if (dbResponse.data.length > 0) {
-                        const accountId: number = dbResponse.data[0].accounts_sys_key_id;
-
-                        return resolve(accountId);
-                    } else {
-
-                        this.getUnusedAccountUsername(igdbUsername)
-                            .then((uniqueUsername: string) => {
-
-                                const columnValues: any[] = [AccountTypeEnums.IGDB, uniqueUsername, undefined, undefined, undefined, Date.now() / 1000, undefined, undefined, undefined, genRandStr(EMAIL_VERIFICATION_LEN), genRandStr(ACCOUNT_RECOVERYID_LEN), false, undefined, igdbAccountId];
-
-                                // create IGDB-linked account
-                                this.insert(
-                                    DbTables.accounts,
-                                    DbTableAccountsFields.slice(1),
-                                    columnValues,
-                                    `?, ?, ?, ?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?`)
-                                    .then((response: GenericModelResponse) => {
-                                        const accountId: number = response.data.insertId;
-                                        return resolve(accountId);
-                                    })
-                                    .catch((error: string) => {
-                                        return reject(`Failed to create IGDB-linked account.`);
-                                    });
-
-                            })
-                            .catch(() => {
-                                return reject(`Failed to generate unique username.`);
-                            });
-
-                    }
-
-                })
-                .catch((err: string) => {
-                    return reject(`Database error: ${err}`);
-                });
-
-        });
-
     }
 
     /**
@@ -326,12 +187,11 @@ class SecurityModel extends DatabaseBase {
                 const response: GenericModelResponse = {error: undefined, data: undefined};
                 const authToken: string = genRandStr(config.token_length);
                 const authTokenExpiration: number = remember ? Date.now() + config.token_remember_expiration : Date.now() + config.token_expiration;
-                const tokenEnum: AccountTypeEnums = AccountTypeEnums.CWG;
 
                 this.insert(
                     DbTables.tokens,
                     DbTableTokensFields.slice(1),
-                    [dbAccountid, tokenEnum, authToken, Date.now() / 1000, authTokenExpiration / 1000],
+                    [dbAccountid, authToken, Date.now() / 1000, authTokenExpiration / 1000],
                     "?, ?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?)")
                     .then((dbResponse: GenericModelResponse) => {
                         if (dbResponse.error) {

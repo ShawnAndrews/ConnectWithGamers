@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, IGDBImage, GenreEnums, IGDBImageSizeEnums, getIGDBImage, getCachedIGDBImage, PriceInfoResponse } from '../../../../client-server-common/common';
+import { GameResponse, PriceInfoResponse } from '../../../../client-server-common/common';
 import { Card, Button } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 import Crossfade from '../crossfade/CrossfadeContainer';
@@ -28,7 +28,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
     return (
         <Card className={`game-${props.index} ${props.isBigGame ? 'big-game' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
             <div className="screenshot w-100 h-100" onClick={props.goToGame}>
-                <Crossfade src={props.game.screenshots.map((x: IGDBImage) => props.game.image_screenshot_big_cached ? getCachedIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big) : getIGDBImage(x.image_id, IGDBImageSizeEnums.screenshot_big))} index={props.hoveredScreenshotIndex} />
+                <Crossfade src={props.game.screenshots} index={props.hoveredScreenshotIndex} />
             </div>
             <div className='overlay'/>
             <div className='text-overlay'/>
@@ -45,7 +45,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                     </Textfit>
                     {props.game.genres &&
                         <div className={`genre ${props.isBigGame ? 'large' : ''}`}>
-                            {GenreEnums[props.game.genres[0]]}
+                            {props.game.genres[0]}
                         </div>}
                 </>
             </div>
@@ -64,7 +64,7 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
                         :
                         <>
                             <img className="banner" src="https://i.imgur.com/tHFxgQt.png" />
-                            <div className={`banner-text ${bestPricing.preorder && 'long-text'} color-primary`}>{bestPricing.coming_soon ? `Soon` : (bestPricing.preorder ? `Preorder` : `Free`)}</div>
+                            {/* <div className={`banner-text ${bestPricing.preorder && 'long-text'} color-primary`}>{bestPricing.coming_soon ? `Soon` : (bestPricing.preorder ? `Preorder` : `Free`)}</div> */}
                         </>}
                 </>}
         </Card>

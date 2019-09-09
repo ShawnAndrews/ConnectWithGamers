@@ -1,7 +1,7 @@
 const popupS = require('popups');
 const loadImage = require('image-promise');
 import * as React from 'react';
-import * as IGDBService from '../../../service/igdb/main';
+import * as SteamService from '../../../service/steam/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GameResponse, MultiGameResponse, ExcludedGameIds } from '../../../../client-server-common/common';
 import HomeMenu from './HomeMenu';
@@ -55,74 +55,74 @@ class FullsizeResultsContainer extends React.Component<IHomeMenuContainerProps, 
         let serverPath: string;
 
         if (clientPath.startsWith("/search/steam/popular")) {
-            serverPath = "/igdb/steam/popular";
+            serverPath = "/steam/steam/popular";
         } else if (clientPath.startsWith("/search/steam/recent")) {
-            serverPath = "/igdb/steam/recent";
+            serverPath = "/steam/steam/recent";
         } else if (clientPath.startsWith("/search/steam/upcoming")) {
-            serverPath = "/igdb/steam/upcoming";
+            serverPath = "/steam/steam/upcoming";
         } else if (clientPath.startsWith("/search/steam/genre/action")) {
-            serverPath = "/igdb/steam/genre/action";
+            serverPath = "/steam/steam/genre/action";
         } else if (clientPath.startsWith("/search/steam/genre/adventure")) {
-            serverPath = "/igdb/steam/genre/adventure";
+            serverPath = "/steam/steam/genre/adventure";
         } else if (clientPath.startsWith("/search/steam/genre/casual")) {
-            serverPath = "/igdb/steam/genre/casual";
+            serverPath = "/steam/steam/genre/casual";
         } else if (clientPath.startsWith("/search/steam/genre/strategy")) {
-            serverPath = "/igdb/steam/genre/strategy";
+            serverPath = "/steam/steam/genre/strategy";
         } else if (clientPath.startsWith("/search/steam/genre/racing")) {
-            serverPath = "/igdb/steam/genre/racing";
+            serverPath = "/steam/steam/genre/racing";
         } else if (clientPath.startsWith("/search/steam/genre/simulation")) {
-            serverPath = "/igdb/steam/genre/simulation";
+            serverPath = "/steam/steam/genre/simulation";
         } else if (clientPath.startsWith("/search/steam/genre/sports")) {
-            serverPath = "/igdb/steam/genre/sports";
+            serverPath = "/steam/steam/genre/sports";
         } else if (clientPath.startsWith("/search/steam/genre/indie")) {
-            serverPath = "/igdb/steam/genre/indie";
+            serverPath = "/steam/steam/genre/indie";
         } else if (clientPath.startsWith("/search/steam/genre/2d")) {
-            serverPath = "/igdb/steam/genre/2d";
+            serverPath = "/steam/steam/genre/2d";
         } else if (clientPath.startsWith("/search/steam/genre/puzzle")) {
-            serverPath = "/igdb/steam/genre/puzzle";
+            serverPath = "/steam/steam/genre/puzzle";
         } else if (clientPath.startsWith("/search/steam/genre/shooter")) {
-            serverPath = "/igdb/steam/genre/shooter";
+            serverPath = "/steam/steam/genre/shooter";
         } else if (clientPath.startsWith("/search/steam/genre/rts")) {
-            serverPath = "/igdb/steam/genre/rts";
+            serverPath = "/steam/steam/genre/rts";
         } else if (clientPath.startsWith("/search/steam/genre/towerdefence")) {
-            serverPath = "/igdb/steam/genre/towerdefence";
+            serverPath = "/steam/steam/genre/towerdefence";
         } else if (clientPath.startsWith("/search/steam/weeklydeals")) {
-            serverPath = "/igdb/steam/weeklydeals";
+            serverPath = "/steam/steam/weeklydeals";
         } else if (clientPath.startsWith("/search/steam/compmulti")) {
-            serverPath = "/igdb/steam/compmulti";
+            serverPath = "/steam/steam/compmulti";
         } else if (clientPath.startsWith("/search/steam/freeonlinemulti")) {
-            serverPath = "/igdb/steam/freeonlinemulti";
+            serverPath = "/steam/steam/freeonlinemulti";
         } else if (clientPath.startsWith("/search/steam/paidonlinemulti")) {
-            serverPath = "/igdb/steam/paidonlinemulti";
+            serverPath = "/steam/steam/paidonlinemulti";
         } else if (clientPath.startsWith("/search/steam/mostdifficult")) {
-            serverPath = "/igdb/steam/mostdifficult";
+            serverPath = "/steam/steam/mostdifficult";
         } else if (clientPath.startsWith("/search/steam/horror")) {
-            serverPath = "/igdb/steam/horror";
+            serverPath = "/steam/steam/horror";
         } else if (clientPath.startsWith("/search/steam/mobo")) {
-            serverPath = "/igdb/steam/moba";
+            serverPath = "/steam/steam/moba";
         } else if (clientPath.startsWith("/search/steam/vrhtc")) {
-            serverPath = "/igdb/steam/vrhtc";
+            serverPath = "/steam/steam/vrhtc";
         } else if (clientPath.startsWith("/search/steam/vrvive")) {
-            serverPath = "/igdb/steam/vrvive";
+            serverPath = "/steam/steam/vrvive";
         } else if (clientPath.startsWith("/search/steam/vrwindows")) {
-            serverPath = "/igdb/steam/vrwindows";
+            serverPath = "/steam/steam/vrwindows";
         } else if (clientPath.startsWith("/search/steam/vrall")) {
-            serverPath = "/igdb/steam/vrall";
+            serverPath = "/steam/steam/vrall";
         } else if (clientPath.startsWith("/search/steam/earlyaccess")) {
-            serverPath = "/igdb/steam/earlyaccess";
+            serverPath = "/steam/steam/earlyaccess";
         } else if (clientPath.startsWith("/search/steam/openworld")) {
-            serverPath = "/igdb/steam/openworld";
+            serverPath = "/steam/steam/openworld";
         } else if (clientPath.startsWith("/search/steam/fps")) {
-            serverPath = "/igdb/steam/fps";
+            serverPath = "/steam/steam/fps";
         } else if (clientPath.startsWith("/search/steam/cards")) {
-            serverPath = "/igdb/steam/cards";
+            serverPath = "/steam/steam/cards";
         } else if (clientPath.startsWith("/search/steam/mmorpg")) {
-            serverPath = "/igdb/steam/mmorpg";
+            serverPath = "/steam/steam/mmorpg";
         } else if (clientPath.startsWith("/search/steam/survival")) {
-            serverPath = "/igdb/steam/survival";
+            serverPath = "/steam/steam/survival";
         }
 
-        IGDBService.httpGenericGetData<MultiGameResponse>(serverPath)
+        SteamService.httpGenericGetData<MultiGameResponse>(serverPath)
         .then( (response: MultiGameResponse) => {
             const games: GameResponse[] = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
 

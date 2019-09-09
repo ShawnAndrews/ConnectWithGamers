@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, getCachedIGDBImage, IGDBImageSizeEnums, getIGDBImage, PriceInfoResponse } from '../../../../client-server-common/common';
+import { GameResponse, PriceInfoResponse } from '../../../../client-server-common/common';
 import { getGameBestPricingStatus } from '../../../util/main';
 import ReactStars from 'react-stars';
 
@@ -13,7 +13,7 @@ const TransparentGame: React.SFC<ITransparentGameProps> = (props: ITransparentGa
     const bestPrice: PriceInfoResponse = getGameBestPricingStatus(props.game.pricings);
     const bestPriceOriginal: number = bestPrice.discount_percent && + (bestPrice.price / ((100 - bestPrice.discount_percent) / 100)).toFixed(2);
 
-    const pricingContainerWidth: number = (120 / props.game.cover.height) * props.game.cover.width;
+    const pricingContainerWidth: number = 200; // (120 / props.game.cover.height) * props.game.cover.width;
 
     const gameContainer = {
         width: pricingContainerWidth
@@ -22,7 +22,7 @@ const TransparentGame: React.SFC<ITransparentGameProps> = (props: ITransparentGa
     return (
         <div className="price-item">
             <div onClick={props.goToGame}>
-                <img className={`cover-img ${props.transparentSmallCover ? 'large' : ''}`} src={props.game.cover ? (props.game.image_cover_big_cached ? getCachedIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(props.game.cover.image_id, IGDBImageSizeEnums.cover_big)) : 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
+                <img className={`cover-img ${props.transparentSmallCover ? 'large' : ''}`} src={props.game.cover || 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                 <div className="name mt-2 mx-auto">
                     {props.game.name}
                 </div>

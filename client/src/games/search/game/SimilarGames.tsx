@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getIGDBImage, IGDBImageSizeEnums, GameResponse, PriceInfoResponse, PricingsEnum, getCachedIGDBImage } from '../../../../client-server-common/common';
+import { GameResponse, PriceInfoResponse, PricingsEnum } from '../../../../client-server-common/common';
 import Slider from "react-slick";
 import { Button } from '@material-ui/core';
 import Spinner from '../../../spinner/main';
@@ -93,7 +93,7 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
                                 <div key={similarGame.id} className="similar-game" onMouseEnter={() => props.onSimilarGamesMouseOver(index)} onMouseLeave={props.onSimilarGamesMouseLeave}>
                                     <img 
                                         className={`cursor-pointer ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`}
-                                        src={similarGame.image_cover_big_cached ? getCachedIGDBImage(similarGame.cover.image_id, IGDBImageSizeEnums.cover_big) : getIGDBImage(similarGame.cover.image_id, IGDBImageSizeEnums.cover_big)}
+                                        src={similarGame.cover}
                                         onClick={() => props.goToGame(similarGame.id)}
                                         onMouseDown={props.onSimilarGamesMouseDown}
                                         onMouseMove={props.onSimilarGamesMouseMove}

@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { Tooltip } from '@material-ui/core';
-import { PriceInfoResponse, IGDBExternalCategoryEnum, PricingsEnum } from '../../../../client-server-common/common';
+import { PriceInfoResponse, PricingsEnum } from '../../../../client-server-common/common';
 
 interface IPricingProps {
     pricings: PriceInfoResponse[];
     isFree: boolean;
     isDiscounted: boolean;
     basePrice: number;
-    externalCategoryEnum: IGDBExternalCategoryEnum;
-    onPricingClick: (externalCategoryEnum: IGDBExternalCategoryEnum) => void;
+    onPricingClick: () => void;
     getConvertedPrice: (price: number, skipCurrencyType: boolean) => string;
 }
 
@@ -21,20 +20,7 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
     const inAppPurchasePricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.in_app_purchase) !== -1;
     const bundlesPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.bundles) !== -1;
     const noAdditonalPricingsExist: boolean = !xboxPassPricingsExist && !xboxGoldPricingsExist && !dlcPricingsExist && !inAppPurchasePricingsExist && !bundlesPricingsExist && !bundlesPricingsExist;
-
-    let imgSrc: string = undefined;
-
-    if (props.externalCategoryEnum === IGDBExternalCategoryEnum.steam) {
-        imgSrc = 'https://i.imgur.com/sIw8aIf.png';
-    } else if (props.externalCategoryEnum === IGDBExternalCategoryEnum.gog) {
-        imgSrc = 'https://i.imgur.com/qZ7FcqN.png';
-    } else if (props.externalCategoryEnum === IGDBExternalCategoryEnum.microsoft) {
-        imgSrc = 'https://i.imgur.com/NDQKKuQ.png';
-    } else if (props.externalCategoryEnum === IGDBExternalCategoryEnum.apple) {
-        imgSrc = 'https://i.imgur.com/In4Ygyo.png';
-    } else if (props.externalCategoryEnum === IGDBExternalCategoryEnum.android) {
-        imgSrc = 'https://i.imgur.com/FhNZDwY.png';
-    }
+    const imgSrc: string = 'https://i.imgur.com/sIw8aIf.png';
 
     const getEntriesByPricingsEnum = (pricingEnum: PricingsEnum): any[] => {
         return props.pricings
@@ -92,7 +78,7 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
                     }
                     placement="right"
                 >
-                    <div onClick={() => props.onPricingClick(props.externalCategoryEnum)}>
+                    <div onClick={() => props.onPricingClick()}>
                         {props.isFree 
                             ? 
                             <div>Free</div>

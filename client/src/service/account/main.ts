@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GenericModelResponse, AccountImageResponse, EmailVerifiedFlagResponse, TwitchIdResponse, SteamIdResponse, EmailRecoveryVerifyResponse, SteamFriendsResponse, TwitchFollowersResponse, AccountInfoResponse, DatalessResponse } from '../../../../client/client-server-common/common';
+import { GenericModelResponse, AccountImageResponse, EmailVerifiedFlagResponse, EmailRecoveryVerifyResponse, AccountInfoResponse, DatalessResponse } from '../../../../client/client-server-common/common';
 import { AUTH_TOKEN_NAME } from '../../../client-server-common/common';
 import { SettingsData } from '../../../src/account/settings/SettingsFormsContainer';
 
@@ -72,27 +72,6 @@ export function httpAccountSettings(): Promise<AccountInfoResponse> {
                 return reject(`Failed to retrieve account settings. ${result.data.error}`);
             } else {
                 return resolve(result.data);
-            }
-        })
-        .catch((err: string) => {
-            return reject(`HTTP error: ${err}.`);
-        });
-    }); 
-}
-
-/**
- * HTTP request to verify login credentials.
- */
-export function httpIGDBLogin (igdbAuthCode): Promise<null> {
-    return new Promise((resolve: any, reject: any) => {
-        axios.post('/account/login/igdb', {
-            igdbAuthCode: igdbAuthCode
-        })
-        .then((result) => {
-            if (result.data.error) {
-                return reject(result.data.error);
-            } else {
-                return resolve();
             }
         })
         .catch((err: string) => {

@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { GameResponse, GenreEnums, NewsArticle, SidenavEnums } from '../../../client-server-common/common';
+import { GameResponse, SteamGenreEnums, NewsArticle, SidenavEnums } from '../../../client-server-common/common';
 import Spinner from '../../spinner/main';
 import Slider from "react-slick";
 import FullsizeGameContainer from '../game/fullsize/FullsizeGameContainer';
-import Footer from '../../footer/footer';
 import { Textfit } from 'react-textfit';
 import { Button } from '@material-ui/core';
 import { BigGameInfo, TimeGamesOptions } from './HomeContainer';
@@ -67,7 +66,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                                     {props.bigGames[index].name}
                                 </Textfit>
                                 <div className='genres'>
-                                    {props.bigGames[index].genres && props.bigGames[index].genres.map((x: number) => GenreEnums[x]).join(', ')}
+                                    {props.bigGames[index].genres && props.bigGames[index].genres.map((x: number) => SteamGenreEnums[x]).join(', ')}
                                 </div>
                                 <div className='platforms my-1'>
                                     {props.bigGames[index].linkIcons && props.bigGames[index].linkIcons.map((x: string) => <i className={`fab ${x} mx-2`}/>)}
@@ -145,7 +144,6 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                         limit={12}
                     />}
             </div>
-            <Footer/>
         </>
     );
 

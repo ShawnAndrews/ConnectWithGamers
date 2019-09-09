@@ -1,6 +1,6 @@
 const popupS = require('popups');
 import * as React from 'react';
-import * as IGDBService from '../../../service/igdb/main';
+import * as SteamService from '../../../service/steam/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { NewsArticle, MultiNewsResponse } from '../../../../client-server-common/common';
 import NewsPage from './NewsPage';
@@ -27,7 +27,7 @@ class NewsPageContainer extends React.Component<INewsPageContainerProps, INewsPa
     }
 
     loadNews(): void {
-        IGDBService.httpGenericGetData<MultiNewsResponse>(`/igdb/games/news`)
+        SteamService.httpGenericGetData<MultiNewsResponse>(`/steam/games/news`)
             .then( (response: MultiNewsResponse) => {
                 const news: NewsArticle[] = response.data;
                 this.setState({ isLoading: false, news: news });

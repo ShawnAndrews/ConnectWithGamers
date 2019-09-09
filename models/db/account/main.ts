@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 import DatabaseBase from "../base/dbBase";
 import { genRandStr } from "../../../util/main";
 import { sendVerificationEmail } from "../../../util/nodemailer";
-import { GenericModelResponse, RecoveryEmailInfo, AccountsInfo, AccountInfo, GameRating, DbTableAccountsFields, DbTables, DbTableRatingsFields, DbTableIGDBGamesFields, SALT_RNDS, ACCOUNT_RECOVERYID_LEN, EMAIL_VERIFICATION_LEN, AccountTypeEnums } from "../../../client/client-server-common/common";
+import { GenericModelResponse, RecoveryEmailInfo, AccountsInfo, AccountInfo, GameRating, DbTableAccountsFields, DbTables, DbTableRatingsFields, DbTableSteamGamesFields, SALT_RNDS, ACCOUNT_RECOVERYID_LEN, EMAIL_VERIFICATION_LEN } from "../../../client/client-server-common/common";
 
 class AccountModel extends DatabaseBase {
 
@@ -19,7 +19,7 @@ class AccountModel extends DatabaseBase {
         const hash = bcrypt.hashSync(password, salt);
         const emailVerification = genRandStr(EMAIL_VERIFICATION_LEN);
 
-        const columnValues: any[] = [AccountTypeEnums.CWG, username, email, hash, salt, Date.now() / 1000, undefined, undefined, undefined, emailVerification, genRandStr(ACCOUNT_RECOVERYID_LEN), false, undefined, undefined];
+        const columnValues: any[] = [ username, email, hash, salt, Date.now() / 1000, undefined, undefined, undefined, emailVerification, genRandStr(ACCOUNT_RECOVERYID_LEN), false, undefined, undefined];
 
         return new Promise( (resolve, reject) => {
 
@@ -316,19 +316,19 @@ class AccountModel extends DatabaseBase {
         return new Promise( (resolve, reject) => {
 
             this.select(
-                DbTables.igdb_games,
-                DbTableIGDBGamesFields,
-                `${DbTableIGDBGamesFields[1]}=?`,
-                [gameRating.igdb_id])
+                DbTables.steam_games,
+                DbTableSteamGamesFields,
+                `${DbTableSteamGamesFields[1]}=?`,
+                [gameRating.account_id])
                 .then((dbResponse: GenericModelResponse) => {
-                    const igdb_game_sys_key_id: number = dbResponse.data[0][DbTableIGDBGamesFields[0]];
-                    const columnValues: any[] = [igdb_game_sys_key_id, gameRating.account_id, gameRating.rating, gameRating.date];
+                    const steam_game_sys_key_id: number = dbResponse.data[0][DbTableSteamGamesFields[0]];
+                    const columnValues: any[] = [steam_game_sys_key_id, gameRating.account_id, gameRating.rating, gameRating.date];
 
                     this.select(
                         DbTables.ratings,
                         DbTableRatingsFields,
                         `${DbTableRatingsFields[1]}=? AND ${DbTableRatingsFields[2]}=?`,
-                        [igdb_game_sys_key_id, gameRating.account_id])
+                        [steam_game_sys_key_id, gameRating.account_id])
                         .then((dbResponse: GenericModelResponse) => {
 
                             if (dbResponse.data.length > 0) {
@@ -339,7 +339,7 @@ class AccountModel extends DatabaseBase {
                                     `${DbTableRatingsFields[3]}=?`,
                                     [gameRating.rating],
                                     `${DbTableRatingsFields[1]}=? AND ${DbTableRatingsFields[2]}=?`,
-                                    [igdb_game_sys_key_id, gameRating.account_id])
+                                    [steam_game_sys_key_id, gameRating.account_id])
                                     .then(() => {
                                         return resolve();
                                     })

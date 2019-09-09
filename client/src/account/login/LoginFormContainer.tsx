@@ -37,24 +37,15 @@ class LoginFormContainer extends React.Component<Props, ILoginFormContainerState
         this.passwordChanged = this.passwordChanged.bind(this);
         this.remembermeChanged = this.remembermeChanged.bind(this);
         this.onClickLogin = this.onClickLogin.bind(this);
-        this.onClickIGDB = this.onClickIGDB.bind(this);
         this.onClickNotAMember = this.onClickNotAMember.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
-        this.onIGDBAuthenticate = this.onIGDBAuthenticate.bind(this);
-        
-        const attemptingIGDBLogin: boolean = this.props.history.location.search !== "";
-
-        if (attemptingIGDBLogin) {
-            const igdbAuthCode: string = this.props.history.location.search.substr(this.props.history.location.search.indexOf(`code=`) + 5)
-            this.onIGDBAuthenticate(igdbAuthCode);
-        }
 
         this.state = {
             username: '',
             password: '',
             email: undefined,
             rememberme: false,
-            isLoading: attemptingIGDBLogin
+            isLoading: false
         };
     }
 
@@ -68,18 +59,6 @@ class LoginFormContainer extends React.Component<Props, ILoginFormContainerState
 
     remembermeChanged(event: React.ChangeEvent<HTMLInputElement>, checked: boolean) {
         this.setState({rememberme: checked});
-    }
-    
-    onIGDBAuthenticate(igdbAuthCode: string): void {
-        AccountService.httpIGDBLogin(igdbAuthCode)
-            .then( () => {
-                this.props.history.push('/account');
-                this.props.setLoggedIn(true);
-            })
-            .catch( (error: string) => {
-                this.setState({ email: '', rememberme: false, isLoading: false });
-                popupS.modal({ content: `Failed to authorize IGDB login. ${error}` });
-            });
     }
 
     onClickLogin(event?: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLFormElement>): void {
@@ -124,10 +103,6 @@ class LoginFormContainer extends React.Component<Props, ILoginFormContainerState
 
     }
 
-    onClickIGDB(event?: React.MouseEvent<HTMLElement> | React.FormEvent<HTMLFormElement>): void {
-        this.props.history.push('https://www.igdb.com/oauth/authorize?client_id=422b90f896025d511c612a77a64b3bed34ea71d8509f1b314ca2e982bd6d9624&redirect_uri=http%3A%2F%2Flocalhost/igdb/callback&scope=read_user&response_type=code');
-    }
-
     onClickNotAMember(event: React.MouseEvent<HTMLElement>): void {
         this.props.history.push('/account/signup');
     }
@@ -146,7 +121,6 @@ class LoginFormContainer extends React.Component<Props, ILoginFormContainerState
                 rememberme={this.state.rememberme}
                 isLoading={this.state.isLoading}
                 onClickLogin={this.onClickLogin}
-                onClickIGDB={this.onClickIGDB}
                 onClickNotAMember={this.onClickNotAMember}
                 usernameChanged={this.usernameChanged}
                 passwordChanged={this.passwordChanged}

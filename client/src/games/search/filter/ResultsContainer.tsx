@@ -1,6 +1,6 @@
 const popupS = require('popups');
 import * as React from 'react';
-import * as IGDBService from '../../../service/igdb/main';
+import * as SteamService from '../../../service/steam/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GameResponse, MultiGameResponse } from '../../../../client-server-common/common';
 import Results from './Results';
@@ -74,7 +74,7 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
 
     loadSearchGames(queryString: string): void {
         
-        IGDBService.httpGenericGetData<MultiGameResponse>(`/igdb/games/results/${queryString}`)
+        SteamService.httpGenericGetData<MultiGameResponse>(`/steam/games/results/${queryString}`)
             .then( (response: MultiGameResponse) => {
                 const games: GameResponse[] = response.data;
                 const localSort: string = this.getLocalSortType(queryString);

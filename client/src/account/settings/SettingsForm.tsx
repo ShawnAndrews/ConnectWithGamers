@@ -2,13 +2,11 @@ import * as React from 'react';
 import Spinner from '../../spinner/main';
 import Avatar from '@material-ui/core/Avatar';
 import { TextField, Button, FormControlLabel, Switch } from '@material-ui/core';
-import { AccountTypeEnums } from '../../../client-server-common/common';
 
 interface ISettingsFormProps {
     isLoading: boolean;
     loadingMsg: string;
     showLinks: boolean;
-    accountType: AccountTypeEnums;
     image: string;
     username: string;
     password: string;
@@ -55,8 +53,6 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
         );
     }
     
-    const isIGDBAccount: boolean = props.accountType === AccountTypeEnums.IGDB;
-
     return (
         <div className="settings p-4 mx-auto mt-5 position-relative">
             <div className="chip-container position-relative">
@@ -84,25 +80,24 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
             <div className="email row mx-auto">
                 <div className={`${props.emailVerified ? 'col-12' : 'col-9'} p-0`}>
                     <TextField
-                        className={`custom-account-form-group ${isIGDBAccount ? 'disabled' : ''}`}
+                        className="custom-account-form-group"
                         label={!props.emailVerified ? "Email (Unverified)" : "Email"}
                         value={props.newEmail}
                         onChange={props.onEmailChanged}
                         margin="normal"
                         fullWidth={true}
-                        disabled={isIGDBAccount}
                     />
                 </div>
                 {!props.emailVerified &&
                     <div className="col-3 pr-0">
-                        <Button className={`resend-btn color-primary ${isIGDBAccount ? 'disabled' : ''}`} onClick={props.resend} variant="contained" fullWidth={true} disabled={isIGDBAccount}>
+                        <Button className="resend-btn color-primary" onClick={props.resend} variant="contained" fullWidth={true}>
                             Resend
                         </Button>
                     </div>}
             </div>
             <div className="password mx-auto">
                 <TextField
-                    className={`custom-account-form-group ${isIGDBAccount ? 'disabled' : ''}`}
+                    className="custom-account-form-group"
                     label="New password"
                     value={props.newPassword}
                     defaultValue={props.password}
@@ -110,7 +105,6 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
                     type="password"
                     margin="normal"
                     fullWidth={true}
-                    disabled={isIGDBAccount}
                 />
             </div>
             <FormControlLabel

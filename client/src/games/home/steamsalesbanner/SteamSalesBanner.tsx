@@ -42,7 +42,6 @@ const SteamSalesBanner: React.SFC<ISteamSalesBannerProps> = (props: ISteamSalesB
                 <div className="grid-results h-100" style={gridStyle}>
                     {props.games && props.games
                         .filter((game: GameResponse) => game.cover)
-                        .filter((game: GameResponse) => (game.cover.width / game.cover.height) <= 0.8)
                         .sort((a: GameResponse, b: GameResponse) => (b.aggregated_rating - a.aggregated_rating))
                         .slice(0, props.weeklyGamesToDisplay)
                         .map((game: GameResponse) => 

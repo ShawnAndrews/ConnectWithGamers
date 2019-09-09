@@ -12,52 +12,12 @@ export enum SQLErrorCodes {
     DUPLICATE_ROW = 1062
 }
 
-export const IGDBImageUploadPath: string = `https://images.igdb.com/igdb/image/upload`;
-
-export function getIGDBImage(uid: string, size: IGDBImageSizeEnums): string {
-    return `https://images.igdb.com/igdb/image/upload/t_${size}/${uid}.jpg`;
-}
-
-export function getCachedIGDBImage(uid: string, size: IGDBImageSizeEnums): string {
-    return `/cache/image-cacheing/${size}/${uid}.jpg`;
-}
-
-export function buildIGDBRequestBody(filters: string[], fields: string, limit: number, sort?: string, search?: string): string {
-    let body: string = "";
-
-    // process search
-    if (search) {
-        body = body.concat(`search "${search}";`);
-    }
-
-    // process fields
-    body = body.concat(`fields ${fields || "*"};`);
-
-    // process filters
-    if (filters.length > 0) {
-        body = body.concat(`where ${filters.join(" & ")};`);
-    }
-
-    // process sort
-    if (sort) {
-        body = body.concat(`${sort};`);
-    }
-
-    // process limit
-    body = body.concat(`limit ${limit || config.igdb.pageLimit};`);
-
-    return body;
-}
-
 export function getTodayUnixTimestampInSeconds(): number {
     const now: Date = new Date();
     const startOfDay: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const timestamp: number = (startOfDay.getTime() / 1000);
     return timestamp;
 }
-
-const CURRENT_UNIX_TIME_S: number = getTodayUnixTimestampInSeconds();
-const THREE_MONTH_AGO_UNIX_TIME_S: number = getTodayUnixTimestampInSeconds() - (60 * 60 * 24 * 30 * 3);
 
 // export const GamesPresets = {
 //     highlighted: `?required=cover,screenshots&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&popularity=55&platforms=6&sort=popularity:desc`,
@@ -89,7 +49,7 @@ export enum SidenavEnums {
     cog,
 }
 
-export enum IGDBGenreEnums {
+export enum SteamGenreEnums {
     action = 14,
     adventure = 31,
     shooter = 5,
@@ -100,7 +60,7 @@ export enum IGDBGenreEnums {
     strategy = 15
 }
 
-export enum IGDBPlatformEnums {
+export enum SteamPlatformEnums {
     pc = 6,
     vr = 162,
     ps4 = 48,
@@ -110,7 +70,7 @@ export enum IGDBPlatformEnums {
     mac = 14
 }
 
-export enum IGDBCategoryEnums {
+export enum SteamCategoryEnums {
     maingame = 0,
     dlc = 1,
     expansion = 2,
@@ -118,97 +78,11 @@ export enum IGDBCategoryEnums {
     standaloneexpansion = 4
 }
 
-export enum IGDBImageSizeEnums {
-    micro = "micro",
-    thumb = "thumb",
-    cover_small = "cover_small",
-    logo_med = "logo_med",
-    cover_big = "cover_big",
-    screenshot_med = "screenshot_med",
-    screenshot_big = "screenshot_big",
-    "720p" = "720p",
-    "1080p" = "1080p"
-}
-
-export enum IconEnums {
-    "fab fa-playstation" = 45,
-    "fab fa-android" = 34,
-    "fab fa-windows" = 6,
-    "fab fa-apple" = 14,
-    "fab fa-linux" = 3,
-    "fab fa-steam" = 92,
-    "fab fa-xbox" = 49,
-    "fab fa-nintendo-switch" = 130
-}
-
-export enum PlatformEnums {
-    Linux = 3,
-    Windows = 6,
-    Mac = 14,
-    "Playstation 4" = 48,
-    "Xbox One" = 49,
-    "Nintendo Switch" = 130,
-    "Oculus VR" = 162,
-    Browser = 82,
-    "Playstation 3" = 9,
-    Arcade = 52,
-    "Playstation Network" = 45,
-    "Nintendo 3DS" = 37,
-    SNES = 19,
-    GameCube = 21,
-    "Xbox 360" = 12,
-    Android = 34,
-    N64 = 4,
-    "Playstation 1" = 131,
-    "Virtual Boy" = 87,
-    "Steam OS" = 92,
-    "Playstation VR" = 165,
-    "Nintendo DS" = 20,
-    Wii = 5,
-    "Game Boy Color" = 22,
-    NES = 18,
-    "Playstation Vita" = 47,
-    "Wii U" = 41,
-    "Playstation 5" = 167,
-    "Steam VR" = 163,
-    "Playstation 2" = 8
-}
-
-export enum GenreEnums {
-    Shooter = 5,
-    Puzzle = 9,
-    Racing = 10,
-    RPG = 12,
-    Simulator = 13,
-    Strategy = 15,
-    Adventure = 31,
-    Fighting = 4,
-    "Point and click" = 2,
-    Tactical = 24,
-    Trivia = 26,
-    RTS = 11,
-    Platformer = 8,
-    Music = 7,
-    "Hack and slash" = 25,
-    Pinball = 30,
-    Arcade = 33,
-    Indie = 32,
-    "Turn-based Strategy" = 16,
-    Sports = 14
-}
-
-export enum AccountTypeEnums {
-    CWG = 1,
-    IGDB = 2
-}
-
 export enum Breakpoints {
     md = 768
 }
 
 export const steamAppUrl: string = `https://store.steampowered.com/app`;
-
-export const androidAppUrl: string = `https://play.google.com/store/apps/details?id=`;
 
 export interface RouteCache {
     data: any;
@@ -227,17 +101,6 @@ export interface Config {
     token_expiration: number; // 15m
     token_remember_expiration: number; // 1day
     token_length: number; // 32characters
-    igdb: {
-        apiURL: string,
-        key: string,
-        pageLimit: number,
-        client_id: string,
-        client_secret: string,
-        redirect_uri: string,
-        grant_type: string,
-        token_url: string,
-        auth_url: string
-    };
     steam: {
         dbURL: string,
         apiURL: string,
@@ -405,7 +268,6 @@ export function validateCredentials(username: string, password: string, email?: 
 
 export interface AccountInfo {
     accountid?: number;
-    accountType?: AccountTypeEnums;
     last_active?: number;
     username: string;
     email?: string;
@@ -465,29 +327,16 @@ export interface RawGame {
     id: number;
     name: string;
     first_release_date: number;
-    release_dates: IGDBReleaseDate[];
-    cover: IGDBImage;
+    cover: string;
     aggregated_rating: number;
     total_rating_count: number;
     summary: string;
-    genres: IGDBGenre[];
-    platforms: IGDBPlatform[];
-    screenshots: IGDBImage[];
-    videos: IGDBVideo[];
-    external_games: IGDBExternalGame[];
+    genres: number[];
+    platforms: number[];
+    screenshots: string[];
+    videos: string[];
     similar_games: number[];
-    game_modes: IGDBGameMode[];
-}
-
-export const GameFields: string[] = [`id`, `name`, `genres.*`, `platforms.*`, `first_release_date`, `aggregated_rating`, `cover.*`, `release_dates.*`, `total_rating_count`, `summary`, `screenshots.*`, `videos.*`, `external_games.*`, `similar_games`, `game_modes.*`];
-
-export interface Genre {
-    name: string;
-}
-
-export interface Platform {
-    id: number;
-    name: string;
+    game_modes: string[];
 }
 
 export interface RawNewsArticle {
@@ -495,7 +344,7 @@ export interface RawNewsArticle {
     title: string;
     author: string;
     image: string;
-    website: IGDBWebsite;
+    website: string;
     created_at: number;
     pulse_source: {
         name: string
@@ -503,7 +352,6 @@ export interface RawNewsArticle {
 }
 
 export interface GameRating {
-    igdb_id: number;
     account_id: number;
     rating: number;
     date: number;
@@ -517,45 +365,6 @@ export interface NewsArticle {
     created_dt: Date;
     org: string;
     expires_dt: Date;
-}
-
-export const NewsArticleFields: string[] = [`id`, `title`, `author`, `image`, `website.*`, `created_at`, `pulse_source.*`];
-
-export interface SteamFriend {
-    id: number;
-    name: string;
-    online: boolean;
-    lastOnline?: string;
-    profilePicture: string;
-    profileLink: string;
-    recentlyPlayedName?: string;
-    recentlyPlayedImageLink?: string;
-    countryFlagLink?: string;
-}
-
-export interface TwitchUser {
-    id: string;
-    name: string;
-    viewerCount: number;
-    gameName: string;
-    profilePicLink: string;
-    profileLink: string;
-    streamPreviewLink: string;
-    cheerEmotes: TwitchEmote[];
-    subEmotes: TwitchEmote[];
-    badgeEmotes: TwitchEmote[];
-    partnered: boolean;
-    streamTitle: string;
-}
-
-export interface TwitchPair {
-    id: number;
-    name: string;
-}
-
-export interface TwitchEmote {
-    name: string;
-    link: string;
 }
 
 /**
@@ -617,27 +426,16 @@ export interface GameResponse {
     name: string;
     aggregated_rating: number;
     total_rating_count: number;
-    cover: IGDBImage;
+    cover: string;
     summary: string;
     linkIcons: string[];
     genres: number[];
     platforms: number[];
-    release_dates: number[];
     first_release_date: number;
-    screenshots: IGDBImage[];
+    screenshots: string[];
     video: string;
-    video_cached: boolean;
-    image_micro_cached: boolean;
-    image_cover_big_cached: boolean;
-    image_screenshot_med_cached: boolean;
-    image_screenshot_big_cached: boolean;
-    steam_link: string;
-    gog_link: string;
-    microsoft_link: string;
-    apple_link: string;
-    android_link: string;
     pricings: PriceInfoResponse[];
-    game_modes: number[];
+    game_modes: string[];
     similar_games: number[];
 }
 
@@ -651,141 +449,18 @@ export interface SingleGameResponse {
     data?: GameResponse;
 }
 
-export interface TwitchFollowersResponse {
-    error: string;
-    data?: TwitchUser[];
-}
-
-export interface TwitchIdResponse {
-    error: string;
-    data?: number;
-}
-
-export interface SteamIdResponse {
-    error: string;
-    data?: number;
-}
-
-export interface SteamFriendsResponse {
-    error: string;
-    data?: SteamFriend[];
-}
-
-export interface DiscordLinkResponse {
-    error: string;
-    data?: string;
-}
-
 export interface MultiNewsResponse {
     error: string;
     data?: NewsArticle[];
 }
 
 export interface PriceInfoResponse {
-    externalEnum: IGDBExternalCategoryEnum;
+    steamGamesSysKeyId: number;
     pricingEnum: PricingsEnum;
-    igdbGamesSysKeyId: number;
     title: string;
     price: number;
-    coming_soon: boolean;
-    preorder: boolean;
     discount_percent: number;
     expires_dt: Date;
-}
-
-/**
- *  IGDB Types
- */
-
-export interface IGDBPlatform {
-    id: number;
-    abbreviation: string;
-    alternative_name: string;
-    category: number;
-    created_at: number;
-    generation: number;
-    name: string;
-    platform_logo: number;
-    product_family: number;
-    slug: string;
-    summary: string;
-    updated_at: number;
-    url: string;
-    versions: number[];
-    websites: number[];
-}
-
-export interface IGDBGenre {
-    id: number;
-    created_at: number;
-    name: string;
-    slug: string;
-    updated_at: number;
-    url: string;
-}
-
-export enum IGDBExternalCategoryEnum {
-    "steam" = 1,
-    "gog" = 5,
-    "youtube" = 10,
-    "microsoft" = 11,
-    "apple" = 13,
-    "twitch" = 14,
-    "android" = 15
-}
-
-export interface IGDBReleaseDate {
-    id: number;
-    category: number;
-    date: number;
-    game: number;
-    human: string;
-    m: number;
-    platform: number;
-    region: number;
-    created_at: number;
-    updated_at: number;
-    y: number;
-}
-
-export interface IGDBGameMode {
-    id: number;
-    created_at: number;
-    name: string;
-    slug: string;
-    updated_at: number;
-    url: string;
-}
-
-export interface IGDBImage {
-    alpha_channel: boolean;
-    animated: boolean;
-    image_id: string;
-    width: number;
-    height: number;
-}
-
-export interface IGDBVideo {
-    name: string;
-    video_id: string;
-}
-
-export interface IGDBWebsite {
-    id: number;
-    trusted: boolean;
-    url: string;
-}
-
-export interface IGDBExternalGame {
-    id: number;
-    category: IGDBExternalCategoryEnum;
-    created_at: number;
-    game: number;
-    name: string;
-    uid: string;
-    updated_at: number;
-    url: string;
-    year: number;
 }
 
 export enum PricingsEnum {
@@ -810,54 +485,50 @@ export enum DbTables {
     accounts = "accounts",
     accounts_role_enum = "accounts_role_enum",
     accounts_roles = "accounts_roles",
+    bus_messages = "bus_messages",
+    bus_messages_enum = "bus_messages_enum",
     chat_emotes = "chat_emotes",
     chatroom_messages = "chatroom_messages",
     chatroom_userlist = "chatroom_userlist",
-    covers = "covers",
     genres = "genres",
-    icons = "icons",
-    icons_enum = "icons_enum",
-    igdb_external_enum = "igdb_external_enum",
-    igdb_games = "igdb_games",
-    igdb_genre_enum = "igdb_genre_enum",
-    igdb_images = "igdb_images",
-    igdb_news = "igdb_news",
-    igdb_platform_enum = "igdb_platform_enum",
-    platforms = "platforms",
+    modes = "modes",
     pricings = "pricings",
     pricings_enum = "pricings_enum",
     ratings = "ratings",
-    release_dates = "release_dates",
-    screenshots = "screenshots",
+    route_cache = "route_cache",
     similar_games = "similar_games",
-    tokens = "tokens",
-    route_cache = "route_cache"
+    steam_games = "steam_games",
+    steam_genre_enum = "steam_genre_enum",
+    steam_images = "steam_images",
+    steam_images_enum = "steam_images_enum",
+    steam_modes_enum = "steam_modes_enum",
+    steam_news = "steam_news",
+    steam_review_enum = "steam_review_enum",
+    steam_state_enum = "steam_state_enum",
+    tokens = "tokens"
 }
 
-export const DbTableAccountsFields: string[] = [`accounts_sys_key_id`, `accounts_type_enum_sys_key_id`, `username`, `email`, `password_hash`, `salt`, `log_dt`, `discord`, `steam`, `twitch`, `email_verification_code`, `recovery_verification_code`, `profile`, `profile_file_extension`, `igdb_account_id`];
+export const DbTableAccountsFields: string[] = [`accounts_sys_key_id`, `username`, `email`, `password_hash`, `salt`, `log_dt`, `discord`, `steam`, `twitch`, `email_verification_code`, `recovery_verification_code`, `profile`, `profile_file_extension`];
+export const DbTableAccountsRoleEnumFields: string[] = [`accounts_roles_enum_sys_key_id`, `name`];
 export const DbTableAccountsRolesFields: string[] = [`accounts_roles_sys_key_id`, `accounts_role_enum_sys_key_id`, `accounts_sys_key_id`];
+export const DbTableBusMessagesRolesFields: string[] = [`bus_messages_enum_sys_key_id`, `value`, `log_dt`];
+export const DbTableBusMessagesEnumRolesFields: string[] = [`bus_messages_enum_sys_key_id`, `name`];
 export const DbTableChatEmotesFields: string[] = [`chat_emotes_sys_key_id`, `prefix`, `suffix`, `file_extension`, `log_dt`];
 export const DbTableChatroomMessagesFields: string[] = [`chatroom_messages_sys_key_id`, `username`, `text`, `attachment`, `attachment_file_extension`, `chatroom_id`, `log_dt`];
 export const DbTableChatroomUserlistFields: string[] = [`accounts_sys_key_id`, `log_dt`];
-export const DbTableCoversFields: string[] = [`covers_sys_key_id`, `igdb_images_sys_key_id`, `igdb_games_sys_key_id`];
-export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `igdb_genre_enum_sys_key_id`, `igdb_games_sys_key_id`];
-export const DbTableIconsFields: string[] = [`icons_sys_key_id`, `icons_enum_sys_key_id`, `igdb_games_sys_key_id`];
-export const DbTableIconsEnumFields: string[] = [`icons_enum_sys_key_id`, `id`, `name`];
-export const DbTableIGDBExternalEnumFields: string[] = [`igdb_external_enum_sys_key_id`, `name`];
-export const DbTableIGDBGamesFields: string[] = [`igdb_games_sys_key_id`, `id`, `name`, `aggregated_rating`, `total_rating_count`, `summary`, `first_release_date`, `video`, `video_cached`, `image_micro_cached`, `image_cover_big_cached`, `image_screenshot_med_cached`, `image_screenshot_big_cached`, `steam_link`, `gog_link`, `microsoft_link`, `apple_link`, `android_link`];
-export const DbTableIGDBGenreEnumFields: string[] = [`igdb_genre_enum_sys_key_id`, `id`, `name`];
-export const DbTableIGDBImagesFields: string[] = [`igdb_images_sys_key_id`, `id`, `alpha_channel`, `animated`, `width`, `height`];
-export const DbTableIGDBPlatformEnumFields: string[] = [`igdb_platform_enum_sys_key_id`, `id`, `name`];
-export const DbTablePlatformsFields: string[] = [`platforms_sys_key_id`, `igdb_platform_enum_sys_key_id`, `igdb_games_sys_key_id`];
-export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `igdb_external_enum_sys_key_id`, `pricings_enum_sys_key_id`, `igdb_games_sys_key_id`, `title`, `price`, `discount_percent`, `coming_soon`, `preorder`, `expires_dt`];
+export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `steam_genre_enum_sys_key_id`, `steam_games_sys_key_id`];
+export const DbTableModesFields: string[] = [`modes_sys_key_id`, `steam_modes_enum_sys_key_id`, `steam_games_sys_key_id`];
+export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `pricings_enum_sys_key_id`, `steam_games_sys_key_id`, `title`, `price`, `discount_percent`, `expires_dt`];
 export const DbTablePricingsEnumFields: string[] = [`pricings_enum_sys_key_id`, `name`];
-export const DbTableRatingsFields: string[] = [`ratings_sys_key_id`, `igdb_games_sys_key_id`, `accounts_sys_key_id`, `rating`, `log_dt`];
-export const DbTableReleaseDatesFields: string[] = [`release_dates_sys_key_id`, `release_date_ts`, `igdb_games_sys_key_id`];
-export const DbTableScreenshotsFields: string[] = [`screenshots_sys_key_id`, `igdb_images_sys_key_id`, `igdb_games_sys_key_id`];
-export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `igdb_games_sys_key_id`, `similar_to_igdb_games_id`];
-export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `accounts_type_enum_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];
-export const DbTableAccountsTypeEnumFields: string[] = [`accounts_type_enum_sys_key_id`, `name`];
-export const DbTableIGDBNewsFields: string[] = [`igdb_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];
+export const DbTableRatingsFields: string[] = [`ratings_sys_key_id`, `steam_games_sys_key_id`, `accounts_sys_key_id`, `rating`, `log_dt`];
 export const DbTableRouteCacheFields: string[] = [`route`, `response`, `expires_dt`];
-export const DbTableIGDBModesEnumFields: string[] = [`igdb_modes_enum_sys_key_id`, `name`];
-export const DbTableModesFields: string[] = [`modes_sys_key_id`, `igdb_modes_enum_sys_key_id`, `igdb_games_sys_key_id`];
+export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `steam_games_sys_key_id`, `similar_to_steam_games_sys_key_id`];
+export const DbTableSteamGamesFields: string[] = [`steam_games_sys_key_id`, `id`, `name`, `steam_review_enum_sys_key_id`, `total_review_count`, `summary`, `first_release_date`, `video`, `steam_link`];
+export const DbTableSteamGenreEnumFields: string[] = [`steam_genre_enum_sys_key_id`, `name`];
+export const DbTableSteamImagesFields: string[] = [`steam_images_sys_key_id`, `steam_images_enum_sys_key_id`, `link`];
+export const DbTableSteamImagesEnumFields: string[] = [`steam_images_enum_sys_key_id`, `name`];
+export const DbTableSteamModesEnumFields: string[] = [`steam_modes_enum_sys_key_id`, `name`];
+export const DbTableSteamNewsFields: string[] = [`steam_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];
+export const DbTableSteamReviewEnumFields: string[] = [`steam_review_enum_sys_key_id`, `name`];
+export const DbTableSteamStateEnumFields: string[] = [`steam_state_enum_sys_key_id`, `name`];
+export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];

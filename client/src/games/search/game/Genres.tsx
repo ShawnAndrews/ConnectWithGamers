@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GenreEnums } from '../../../../client-server-common/common';
+import { SteamGenreEnums } from '../../../../client-server-common/common';
 
 interface IGenresProps {
     genres: number[];
@@ -19,7 +19,7 @@ const Genres: React.SFC<IGenresProps> = (props: IGenresProps) => {
                                 className="genre cursor-pointer d-inline-block py-1" 
                                 onClick={() => { props.handleGenreClick(index); }}
                             >
-                                {GenreEnums[x]}
+                                {SteamGenreEnums[x]}
                             </span>
                         </React.Fragment>
                     );

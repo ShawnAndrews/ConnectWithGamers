@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Filter from './Filter';
-import { IdNamePair, IGDBGenreEnums, IGDBPlatformEnums, IGDBCategoryEnums } from '../../../../client-server-common/common';
+import { IdNamePair, SteamPlatformEnums, SteamGenreEnums, SteamCategoryEnums } from '../../../../client-server-common/common';
 
 export enum SortingOptionEnum {
     "None",
@@ -64,31 +64,31 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         ];
 
         const genreOptions: IdNamePair[] = [
-            { id: IGDBGenreEnums.action, name: 'Action' },
-            { id: IGDBGenreEnums.adventure, name: 'Adventure' },
-            { id: IGDBGenreEnums.shooter, name: 'Shooter' },
-            { id: IGDBGenreEnums.simulation, name: 'Simulation' },
-            { id: IGDBGenreEnums.rpg, name: 'RPG' },
-            { id: IGDBGenreEnums.puzzle, name: 'Puzzle' },
-            { id: IGDBGenreEnums.strategy, name: 'Strategy' },
+            { id: SteamGenreEnums.action, name: 'Action' },
+            { id: SteamGenreEnums.adventure, name: 'Adventure' },
+            { id: SteamGenreEnums.shooter, name: 'Shooter' },
+            { id: SteamGenreEnums.simulation, name: 'Simulation' },
+            { id: SteamGenreEnums.rpg, name: 'RPG' },
+            { id: SteamGenreEnums.puzzle, name: 'Puzzle' },
+            { id: SteamGenreEnums.strategy, name: 'Strategy' },
         ];
 
         const platformOptions: IdNamePair[] = [
-            { id: IGDBPlatformEnums.pc, name: 'PC' },
-            { id: IGDBPlatformEnums.linux, name: 'Linux' },
-            { id: IGDBPlatformEnums.mac, name: 'Mac' },
-            { id: IGDBPlatformEnums.vr, name: 'Virtual Reality' },
-            { id: IGDBPlatformEnums.switch, name: 'Nintendo Switch' },
-            { id: IGDBPlatformEnums.ps4, name: 'Playstation 4' },
-            { id: IGDBPlatformEnums.xboxone, name: 'Xbox One' }
+            { id: SteamPlatformEnums.pc, name: 'PC' },
+            { id: SteamPlatformEnums.linux, name: 'Linux' },
+            { id: SteamPlatformEnums.mac, name: 'Mac' },
+            { id: SteamPlatformEnums.vr, name: 'Virtual Reality' },
+            { id: SteamPlatformEnums.switch, name: 'Nintendo Switch' },
+            { id: SteamPlatformEnums.ps4, name: 'Playstation 4' },
+            { id: SteamPlatformEnums.xboxone, name: 'Xbox One' }
         ];
 
         const categoryOptions: IdNamePair[] = [
-            { id: IGDBCategoryEnums.maingame, name: 'Main Game' },
-            { id: IGDBCategoryEnums.dlc, name: 'DLC' },
-            { id: IGDBCategoryEnums.expansion, name: 'Expansion' },
-            { id: IGDBCategoryEnums.bundle, name: 'Bundle' },
-            { id: IGDBCategoryEnums.standaloneexpansion, name: 'Standalone Expansion' }
+            { id: SteamCategoryEnums.maingame, name: 'Main Game' },
+            { id: SteamCategoryEnums.dlc, name: 'DLC' },
+            { id: SteamCategoryEnums.expansion, name: 'Expansion' },
+            { id: SteamCategoryEnums.bundle, name: 'Bundle' },
+            { id: SteamCategoryEnums.standaloneexpansion, name: 'Standalone Expansion' }
         ];
 
         this.state = {

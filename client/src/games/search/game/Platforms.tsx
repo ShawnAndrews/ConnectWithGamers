@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { Tooltip } from '@material-ui/core';
-import { PlatformEnums } from '../../../../client-server-common/common';
+import { SteamPlatformEnums } from '../../../../client-server-common/common';
 
 interface IPlatformsProps {
     platforms: number[];
-    release_dates: number[];
     handlePlatformClick: (index: number) => void;
 }
 
@@ -17,12 +16,12 @@ const Platforms: React.SFC<IPlatformsProps> = (props: IPlatformsProps) => {
                 .map((x: number, index: number) => {
                     return (
                         <React.Fragment key={x}>
-                            <Tooltip disableFocusListener={true} disableTouchListener={true} title={props.release_dates[index] !== 0 ? new Date(props.release_dates[index] * 1000).toDateString() : `TBA`}>
+                            <Tooltip disableFocusListener={true} disableTouchListener={true} title={x}>
                                 <span 
                                     className="platform cursor-pointer d-inline-block py-1"
                                     onClick={() => { props.handlePlatformClick(index); }}
                                 >
-                                    {PlatformEnums[x]}
+                                    {SteamPlatformEnums[x]}
                                 </span>
                             </Tooltip>
                         </React.Fragment>

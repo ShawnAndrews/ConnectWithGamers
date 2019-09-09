@@ -1,10 +1,9 @@
 import accountController from "./controllers/accountController/account";
 import { router as chatroomController } from "./controllers/chatroomController/chatroom";
-import igdbController from "./controllers/igdbController/igdb";
+import steamController from "./controllers/steamController/steam";
 import config from "./config";
 import logIP from "./controllers/logger/main";
 import { Request, Response, Express, NextFunction } from "express";
-import { IGDBImageSizeEnums } from "./client/client-server-common/common";
 const blocked = require("blocked");
 const express = require("express");
 const app: Express = express();
@@ -53,8 +52,8 @@ app.use("/chatroom", chatroomController);
 /* account authentication controller */
 app.use("/account", accountController);
 
-/* igdb controller */
-app.use("/igdb", igdbController);
+/* steam controller */
+app.use("/steam", steamController);
 
 /* common */
 app.get("/favicon.ico", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });
@@ -74,13 +73,3 @@ app.listen(config.httpPort);
 if (config.useStrictlyHttps) {
     secureServer.listen(config.httpsPort);
 }
-
-/* create directories */
-const cachedImageSizes: string[] = [IGDBImageSizeEnums.micro, IGDBImageSizeEnums.cover_big, IGDBImageSizeEnums.screenshot_big, IGDBImageSizeEnums.screenshot_med];
-cachedImageSizes.forEach((imageSize: string) => {
-    const outputFolderPath: string = `cache/image-cacheing/${imageSize}`;
-
-    if (!fs.existsSync(outputFolderPath)) {
-        fs.mkdirSync(outputFolderPath);
-    }
-});

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as IGDBService from '../../../service/igdb/main';
+import * as SteamService from '../../../service/steam/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import SimilarGames from './SimilarGames';
 import { GameResponse, SingleGameResponse } from '../../../../client-server-common/common';
@@ -42,7 +42,7 @@ class SimilarGamesContainer extends React.PureComponent<ISimilarGamesContainerPr
         const similarGamePromises: Promise<SingleGameResponse>[] = [];
 
         this.props.similarGames.forEach((similarGameId: number) => {
-            similarGamePromises.push(IGDBService.httpGenericGetData<SingleGameResponse>(`/igdb/game/${similarGameId}`));
+            similarGamePromises.push(SteamService.httpGenericGetData<SingleGameResponse>(`/steam/game/${similarGameId}`));
         });
 
         Promise.all(similarGamePromises)

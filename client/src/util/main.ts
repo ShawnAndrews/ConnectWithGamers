@@ -1,5 +1,5 @@
 import { PriceInfoResponse, PricingsEnum, CurrencyType, CURRENCY_TOKEN_NAME } from "../../client-server-common/common";
-import * as IGDBService from '../service/igdb/main';
+import * as SteamService from '../service/steam/main';
 import { resolve } from "dns";
 import { ReactElement } from "react";
 
@@ -68,27 +68,19 @@ export function getGameBestPricingStatus(pricings: PriceInfoResponse[]): PriceIn
 
     pricings && pricings.forEach((pricing: PriceInfoResponse) => {
         if (pricing.pricingEnum === PricingsEnum.main_game) {
-            if (!pricing.coming_soon && !pricing.preorder) {
-                if (pricing.coming_soon) {
-                    comingSoon = true;
-                } else if (pricing.preorder) { 
-                    preorder = true;
-                } else {
-                    if (!pricing.price) {
-                        lowestPrice = undefined;
-                        lowestDiscountPercent = undefined;
-                    } else {
-                        if (lowestPrice !== undefined && (pricing.price < lowestPrice)) {
-                            lowestPrice = pricing.price;
-                            lowestDiscountPercent = pricing.discount_percent;
-                        }
-                    }   
+            if (!pricing.price) {
+                lowestPrice = undefined;
+                lowestDiscountPercent = undefined;
+            } else {
+                if (lowestPrice !== undefined && (pricing.price < lowestPrice)) {
+                    lowestPrice = pricing.price;
+                    lowestDiscountPercent = pricing.discount_percent;
                 }
-            }
+            }  
         }
     })
 
-    const priceInfo: PriceInfoResponse = { title: undefined, coming_soon: comingSoon, preorder: preorder, price: lowestPrice, discount_percent: lowestDiscountPercent, externalEnum: undefined, pricingEnum: PricingsEnum.main_game, igdbGamesSysKeyId: undefined, expires_dt: undefined };
+    const priceInfo: PriceInfoResponse = { steamGamesSysKeyId: -1, title: undefined, price: lowestPrice, discount_percent: lowestDiscountPercent, pricingEnum: PricingsEnum.main_game, expires_dt: undefined };
     return priceInfo;
 }
 
@@ -133,7 +125,7 @@ export function setCurrencyCookie(newCurrencyType: CurrencyType): void {
 export function getCurrencyRate(currencyType: CurrencyType): Promise<number> {
 
     return new Promise((resolve: any, reject: any) => {
-        IGDBService.httpGenericGetData<void>(`https://api.exchangeratesapi.io/latest?base=USD`, true)
+        SteamService.httpGenericGetData<void>(`https://api.exchangeratesapi.io/latest?base=USD`, true)
             .then( (response: any) => {
                 const currencyRate: number = response.rates[currencyType];
                 return resolve(currencyRate);

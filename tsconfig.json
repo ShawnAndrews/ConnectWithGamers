@@ -17,7 +17,8 @@
     },
     "files": [
         "server.ts",
-        "chatserver.ts"
+        "chatserver.ts",
+        "webscraper/populate/main.ts"
     ],
     "include": [
         "*"

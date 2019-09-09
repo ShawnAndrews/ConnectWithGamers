@@ -5,6 +5,7 @@
     "author": "Shawn Andrews",
     "license": "MIT",
     "scripts": {
+        "webscraper-populate": "npm run build-ts && npm run tslint && node dist/webscraper/populate/main.js",
         "server-client": "npm run build-ts && npm run tslint && npm run client-prod --prefix client/ && npm run server",
         "server-prod": "npm run build-ts && npm run tslint",
         "server": "node dist/server.js",
