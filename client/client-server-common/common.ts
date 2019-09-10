@@ -480,6 +480,10 @@ export enum GameModesEnum {
     "MMO" = 5
 }
 
+export enum BusMessagesEnum {
+    game = 0
+}
+
 /* Database tables */
 export enum DbTables {
     accounts = "accounts",
@@ -511,7 +515,7 @@ export enum DbTables {
 export const DbTableAccountsFields: string[] = [`accounts_sys_key_id`, `username`, `email`, `password_hash`, `salt`, `log_dt`, `discord`, `steam`, `twitch`, `email_verification_code`, `recovery_verification_code`, `profile`, `profile_file_extension`];
 export const DbTableAccountsRoleEnumFields: string[] = [`accounts_roles_enum_sys_key_id`, `name`];
 export const DbTableAccountsRolesFields: string[] = [`accounts_roles_sys_key_id`, `accounts_role_enum_sys_key_id`, `accounts_sys_key_id`];
-export const DbTableBusMessagesRolesFields: string[] = [`bus_messages_enum_sys_key_id`, `value`, `log_dt`];
+export const DbTableBusMessagesFields: string[] = [`bus_messages_enum_sys_key_id`, `value`, `log_dt`];
 export const DbTableBusMessagesEnumRolesFields: string[] = [`bus_messages_enum_sys_key_id`, `name`];
 export const DbTableChatEmotesFields: string[] = [`chat_emotes_sys_key_id`, `prefix`, `suffix`, `file_extension`, `log_dt`];
 export const DbTableChatroomMessagesFields: string[] = [`chatroom_messages_sys_key_id`, `username`, `text`, `attachment`, `attachment_file_extension`, `chatroom_id`, `log_dt`];

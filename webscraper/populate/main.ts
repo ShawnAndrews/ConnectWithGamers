@@ -8,57 +8,62 @@ const db: DatabaseBase = new DatabaseBase();
 const getPageLink = (pageNum: number): string => `https://store.steampowered.com/search/?sort_by=Released_DESC&category1=998%2C996&page=${pageNum}`;
 const STEAM_RATE_LIMIT_MS: number = 1000;
 
-axios({
-    method: "get",
-    url: getPageLink(1),
-    headers: {
-        "birthtime": 28801
-    },
-    maxRedirects: 5
-})
-.then((response: AxiosResponse) => {
-    const $: CheerioStatic = cheerio.load(response.data);
+export default function populate () {
 
-    max_pages = parseInt($(".search_pagination_right > a").last().prev().html());
+    axios({
+        method: "get",
+        url: getPageLink(1),
+        headers: {
+            "birthtime": 28801
+        },
+        maxRedirects: 5
+    })
+    .then((response: AxiosResponse) => {
+        const $: CheerioStatic = cheerio.load(response.data);
 
-    for (let i = 1; i <= max_pages; i++) {
+        max_pages = parseInt($(".search_pagination_right > a").last().prev().html());
 
-        setTimeout(() => {
-            console.log(`Processing page #${i}/${max_pages}...`);
-            axios({
-                method: "get",
-                url: getPageLink(i),
-                headers: {
-                    "birthtime": 28801
-                },
-                maxRedirects: 5
-            })
-            .then((response: AxiosResponse) => {
-                const $: CheerioStatic = cheerio.load(response.data);
+        for (let i = 1; i <= max_pages; i++) {
 
-                $("#search_resultsRows > a").each((i: number, element: CheerioElement) => {
-                    const link: string = $(element).attr("href");
+            setTimeout(() => {
+                console.log(`Processing page #${i}/${max_pages}...`);
+                axios({
+                    method: "get",
+                    url: getPageLink(i),
+                    headers: {
+                        "birthtime": 28801
+                    },
+                    maxRedirects: 5
+                })
+                .then((response: AxiosResponse) => {
+                    const $: CheerioStatic = cheerio.load(response.data);
 
-                    db.custom(
-                        `INSERT INTO ${DbTables.bus_messages} (bus_messages_enum_sys_key_id, value, log_dt) VALUES (0, ?, NOW())`,
-                        [link])
-                        .then((dbResponse: GenericModelResponse) => {
-                            if (dbResponse.error) {
-                                console.log(`Failed to insert game '${link}': ${dbResponse.error}`);
-                        });
+                    $("#search_resultsRows > a").each((i: number, element: CheerioElement) => {
+                        const link: string = $(element).attr("href");
 
+                        db.custom(
+                            `INSERT INTO ${DbTables.bus_messages} (bus_messages_enum_sys_key_id, value, log_dt) VALUES (0, ?, NOW())`,
+                            [link])
+                            .then((dbResponse: GenericModelResponse) => {
+                                if (dbResponse.error) {
+                                    console.log(`Failed to insert game '${link}': ${dbResponse.error}`);
+                                }
+                            });
+
+                    });
+
+                })
+                .catch((error: string) => {
+                    console.log(`Failed to request steam results page #${i}: ${error}`);
                 });
 
-            })
-            .catch((error: string) => {
-                console.log(`Failed to request steam results page #${i}: ${error}`);
-            });
+            }, STEAM_RATE_LIMIT_MS * i);
 
-        }, STEAM_RATE_LIMIT_MS * i);
+        }
 
-    }
+    })
+    .catch((error: string) => {
+        console.log(`Failed to request steam results page count: ${error}`);
+    });
 
-})
-.catch((error: string) => {
-    console.log(`Failed to request steam results page count: ${error}`);
-});
+}
