@@ -31,10 +31,6 @@
     <a href="http://www.connectwithgamers.com">
       Website
     </a>
-    <span> | </span>
-    <a href="http://www.saportfolio.ca">
-      Portfolio
-    </a>
   </h3>
 </div>
 
@@ -54,16 +50,14 @@
 - [License](#license)
 
 ## Features
-- Store: View discounted, upcoming and recently released video games across PC, consoles and handhelds.
-- Pricing: Compare up-to-date prices and discounts between popular marketplaces such as Steam, GoG, Microsoft, IOS and Android.
-- Library: Import games from Steam or manually add games from other platforms.
+- Store: View discounted, upcoming and recently released PC games.
+- Pricing: Compare prices and discounts of games over time on the Steam market.
 - Notifications: Get notified of games that go on discount, get released or become available for preorder.
-- Play games: Play any game on your computer without the need for launching multiple clients like BattleNet, Steam or Uplay.
-- Reviews and 5-star ratings - Read reviews and rate the games you like or dislike.
-- Global Chatroom - Talk with fellow gamers about exciting new releases with all your favorite emojis and custom emotes!
-- Linked gaming profiles - Link your gaming profiles such as Twitch, Discord and Steam so people can add you.
-- 192,000 Games - The largest collection of video games to explore provided by IGDB.
-- Search games: Find games across all platforms by searching their name, like Zelda.
+- Play games: Play your Steam game on your computer without the need for launching Steam.
+- Reviews and 5-star ratings: Read Steam reviews and rate the games you like or dislike.
+- Global Chatroom: Talk with fellow gamers about exciting new releases with all your favorite emojis and custom emotes!
+- Linked gaming profiles: Link your gaming profiles such as Twitch, Discord and Steam so people know where they can add you.
+- Complete Steam catalogue: The entire list of Steam games are available and updated daily.
 
 <br/>
 
@@ -198,7 +192,6 @@ SSL information: If you plan to use SSL set "useStrictlyHttps:true" and "https: 
 ## Dependencies
 Apart from the included NPM packages, there are additional components and API's required to run this program without error.
 - MySQL Server: This is required to save Accounts, Authenticaiton Tokens, Chat Emotes, Chatroom messages, and Games.
-- IGDB: You are required to have an IGDB account with a valid v3 API key present in the config file to perform API queries.
 - SMTP: For account recovery and email verification you must set valid SMTP account credentials via the config property "smtp".
 
 ## Testing
@@ -248,23 +241,25 @@ You have two options for running the server. The first involves a single process
 
 - Shell #1 ```npm run server```
 - Shell #2 ```npm run chat-server```
+- Shell #3 ```npm run webscraper```
 
 #2 (cluster mode):
 
 - Shell #1 ```node runcluster.js```
 - Shell #2 ```npm run chat-server```
+- Shell #3 ```npm run webscraper```
 
-This will start running the HTTP/HTTPS web and chat server. You may now access the site via localhost.
+This will start running the HTTP/HTTPS web server, chat server, and webscraper. You may now access the site via localhost.
 
 ## FAQ
 ### Why is it called Connect With Gamers?
-This website was designed to provide information, pricing and notifications abut all the games you love, and give you an opportunity in the chatroom to talk with fellow gamers about them.
+This website was designed to provide information, pricing and notifications about all the games you love, and give you an opportunity in the chatroom to talk with fellow gamers about them.
 
 ### Where can i get a copy of the database?
 Ask the admin (Shawn Andrews) for a copy of the latest database.
 
 ### How was this project developed?
-Using React, Bootstrap, Redux, NodeJS, Mocha, MySQL, and SocketIO.
+Using React, Bootstrap, Redux, NodeJS, MySQL, and SocketIO.
 
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)
