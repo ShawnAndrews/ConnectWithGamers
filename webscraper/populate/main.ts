@@ -39,7 +39,7 @@ export default function populate () {
                     const $: CheerioStatic = cheerio.load(response.data);
 
                     $("#search_resultsRows > a").each((i: number, element: CheerioElement) => {
-                        const link: string = $(element).attr("href");
+                        const link: string = $(element).attr("href").concat("&cc=us");
 
                         db.custom(
                             `INSERT INTO ${DbTables.bus_messages} (bus_messages_enum_sys_key_id, value, log_dt) VALUES (0, ?, NOW())`,

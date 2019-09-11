@@ -460,16 +460,14 @@ export interface PriceInfoResponse {
     title: string;
     price: number;
     discount_percent: number;
-    expires_dt: Date;
+    log_dt: Date;
 }
 
 export enum PricingsEnum {
-    free_or_discounted_with_xbox_game_pass = 1,
-    free_or_discounted_with_xbox_live_gold = 2,
-    main_game = 3,
-    bundles = 4,
-    dlc = 5,
-    in_app_purchase = 6,
+    main_game = 1,
+    bundles = 2,
+    dlc = 3,
+    demo = 4,
 }
 
 export enum GameModesEnum {
@@ -522,7 +520,7 @@ export const DbTableChatroomMessagesFields: string[] = [`chatroom_messages_sys_k
 export const DbTableChatroomUserlistFields: string[] = [`accounts_sys_key_id`, `log_dt`];
 export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `steam_genre_enum_sys_key_id`, `steam_games_sys_key_id`];
 export const DbTableModesFields: string[] = [`modes_sys_key_id`, `steam_modes_enum_sys_key_id`, `steam_games_sys_key_id`];
-export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `pricings_enum_sys_key_id`, `steam_games_sys_key_id`, `title`, `price`, `discount_percent`, `expires_dt`];
+export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `pricings_enum_sys_key_id`, `steam_games_sys_key_id`, `title`, `price`, `discount_percent`, `log_dt`];
 export const DbTablePricingsEnumFields: string[] = [`pricings_enum_sys_key_id`, `name`];
 export const DbTableRatingsFields: string[] = [`ratings_sys_key_id`, `steam_games_sys_key_id`, `accounts_sys_key_id`, `rating`, `log_dt`];
 export const DbTableRouteCacheFields: string[] = [`route`, `response`, `expires_dt`];
