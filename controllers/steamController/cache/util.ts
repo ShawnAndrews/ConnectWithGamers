@@ -49,35 +49,35 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
         const gameResponses: GameResponse[] = [];
 
         RawGames.forEach((RawGame: RawGame) => {
-            let id: number = undefined;
+            let steam_games_sys_key_id: number = undefined;
             let name: string = undefined;
-            let aggregated_rating: number;
-            let total_rating_count: number = undefined;
-            let cover: string = undefined;
+            let steam_review_enum_sys_key_id: number;
+            let total_review_count: number = undefined;
+            let cover_small: string = undefined;
             let summary: string = undefined;
             let linkIcons: string[] = undefined;
             let genres: number[] = undefined;
             let platforms: number[] = undefined;
-            let first_release_date: number = undefined;
+            let first_release_date: Date = undefined;
             let screenshots: string[] = undefined;
             let video: string = undefined;
             let similar_games: number[] = undefined;
-            let game_modes: string[] = undefined;
+            let game_modes: number[] = undefined;
 
             // id
-            id = RawGame.id;
+            steam_games_sys_key_id = RawGame.id;
 
             // name
             name = RawGame.name;
 
             // aggregated_rating
-            aggregated_rating = RawGame.aggregated_rating;
+            steam_review_enum_sys_key_id = RawGame.aggregated_rating;
 
             // total_rating_count
-            total_rating_count = RawGame.total_rating_count;
+            total_review_count = RawGame.total_rating_count;
 
             // cover
-            cover = RawGame.cover;
+            cover_small = RawGame.cover;
 
             // similar games
             if (RawGame.similar_games && RawGame.similar_games.length > 0) {
@@ -116,7 +116,7 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             platforms = RawGame.platforms;
 
             // first release date
-            first_release_date = RawGame.first_release_date && Number(RawGame.first_release_date);
+            first_release_date = RawGame.first_release_date;
 
             // game modes
             game_modes = RawGame.game_modes;
@@ -130,21 +130,21 @@ export function convertRawGame(RawGames: RawGame[]): Promise<GameResponse[]> {
             }
 
             const gameResponse: GameResponse = {
-                id: id,
+                steam_games_sys_key_id: steam_games_sys_key_id,
                 name: name,
-                aggregated_rating: aggregated_rating,
-                total_rating_count: total_rating_count,
-                cover: cover,
+                steam_review_enum_sys_key_id: steam_review_enum_sys_key_id,
+                total_review_count: total_review_count,
+                cover_small: cover_small,
+                cover_large: cover_small,
                 summary: summary,
-                linkIcons: linkIcons,
                 genres: genres,
-                platforms: platforms,
                 first_release_date: first_release_date,
                 screenshots: screenshots,
                 video: video,
                 pricings: undefined,
                 game_modes: game_modes,
-                similar_games: similar_games
+                similar_games: similar_games,
+                steam_state_enum_sys_key_id: 0
             };
 
             gameResponses.push(gameResponse);

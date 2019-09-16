@@ -39,7 +39,7 @@ export function getCachedGame(path: string): Promise<GameResponse> {
                 if (!imagesNeedCacheing) {
                     return resolve(game);
                 } else {
-                    cacheingPromises.push(steamModel.attemptCachePricings(game.id));
+                    cacheingPromises.push(steamModel.attemptCachePricings(game.steam_games_sys_key_id));
                 }
 
                 // reattempt cacheing

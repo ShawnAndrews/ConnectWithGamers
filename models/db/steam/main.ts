@@ -50,7 +50,7 @@ class SteamModel extends DatabaseBase {
 
         return new Promise((resolve, reject) => {
             const filteredSummary: string = game.summary && game.summary.replace(/[^\x00-\x7F]/g, ""); // remove non-ascii
-            const gamesColumnValues: any[] = [game.id, game.name, game.aggregated_rating, game.total_rating_count, filteredSummary, game.first_release_date, game.video];
+            const gamesColumnValues: any[] = [game.steam_games_sys_key_id, game.name, game.steam_review_enum_sys_key_id, game.total_review_count, filteredSummary, game.first_release_date, game.video];
 
             this.insert(
                 DbTables.steam_games,
@@ -62,8 +62,8 @@ class SteamModel extends DatabaseBase {
                     const inserted_steam_games_sys_key_id: number = dbResponse.data.insertId;
                     const gamePromises: Promise<any>[] = [];
 
-                    if (game.cover) {
-                        gamePromises.push(this.setGameCover(inserted_steam_games_sys_key_id, game.cover));
+                    if (game.cover_small) {
+                        gamePromises.push(this.setGameCover(inserted_steam_games_sys_key_id, game.cover_small));
                     }
                     if (game.screenshots) {
                         gamePromises.push(this.setGameScreenshots(inserted_steam_games_sys_key_id, game.screenshots));
@@ -72,10 +72,10 @@ class SteamModel extends DatabaseBase {
                         gamePromises.push(this.setGameGenres(inserted_steam_games_sys_key_id, game.genres));
                     }
                     if (game.similar_games) {
-                        gamePromises.push(this.setGameSimilarGames(game.id, game.similar_games));
+                        gamePromises.push(this.setGameSimilarGames(game.steam_games_sys_key_id, game.similar_games));
                     }
                     if (game.video) {
-                        gamePromises.push(this.setGameVideoPreview(game.id, game.video));
+                        gamePromises.push(this.setGameVideoPreview(game.steam_games_sys_key_id, game.video));
                     }
 
                     return resolve();
@@ -132,13 +132,13 @@ class SteamModel extends DatabaseBase {
         const updateGamePricing = (pricing: PriceInfoResponse): Promise<void> => {
 
             return new Promise((resolve, reject) => {
-                const pricingsVals: any[] = [pricing.pricingEnum, pricing.steamGamesSysKeyId, pricing.title, pricing.price, pricing.discount_percent, pricing.expires_dt];
+                const pricingsVals: any[] = [pricing.pricingEnumSysKeyId, pricing.steamGamesSysKeyId, pricing.title, pricing.price, pricing.discount_percent, pricing.log_dt];
 
                 this.custom(
                     `UPDATE ${DbTables.pricings}
                     SET ${DbTablePricingsFields.slice(1).map((x: string) => `${x} = ?`).join()}
                     WHERE ${DbTablePricingsFields[1]} = ? AND ${DbTablePricingsFields[2]} = ? AND ${DbTablePricingsFields[3]} = ? AND ${DbTablePricingsFields[4]} = ?`,
-                    pricingsVals.concat([pricing.pricingEnum, pricing.steamGamesSysKeyId, pricing.title]))
+                    pricingsVals.concat([pricing.pricingEnumSysKeyId, pricing.steamGamesSysKeyId, pricing.title]))
                     .then(() => {
                         return resolve();
                     })
@@ -153,7 +153,7 @@ class SteamModel extends DatabaseBase {
         const addGamePricing = (pricing: PriceInfoResponse): Promise<void> => {
 
             return new Promise((resolve, reject) => {
-                const pricingsVals: any[] = [pricing.pricingEnum, pricing.steamGamesSysKeyId, pricing.title, pricing.price, pricing.discount_percent, pricing.expires_dt];
+                const pricingsVals: any[] = [pricing.pricingEnumSysKeyId, pricing.steamGamesSysKeyId, pricing.title, pricing.price, pricing.discount_percent, pricing.log_dt];
 
                 this.custom(
                     `INSERT INTO ${DbTables.pricings}
@@ -273,7 +273,7 @@ class SteamModel extends DatabaseBase {
                             .then((dbResponse: GenericModelResponse) => {
                                 const pricings: PriceInfoResponse[] = [];
                                 dbResponse.data.forEach((rawPricing: any) => {
-                                    const pricing: PriceInfoResponse = { steamGamesSysKeyId: undefined, pricingEnum: rawPricing.pricings_enum_sys_key_id, title: rawPricing.title, price: rawPricing.price, discount_percent: rawPricing.discount_percent, expires_dt: undefined };
+                                    const pricing: PriceInfoResponse = { steamGamesSysKeyId: undefined, pricingEnumSysKeyId: rawPricing.pricings_enum_sys_key_id, title: rawPricing.title, price: rawPricing.price, discount_percent: rawPricing.discount_percent, discount_end_dt: undefined, log_dt: undefined };
                                     pricings.push(pricing);
                                 });
                                 return resolve(pricings);

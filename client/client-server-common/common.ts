@@ -1,4 +1,3 @@
-import config from "../../config";
 const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
@@ -326,7 +325,7 @@ export interface IdNamePair {
 export interface RawGame {
     id: number;
     name: string;
-    first_release_date: number;
+    first_release_date: Date;
     cover: string;
     aggregated_rating: number;
     total_rating_count: number;
@@ -336,7 +335,7 @@ export interface RawGame {
     screenshots: string[];
     videos: string[];
     similar_games: number[];
-    game_modes: string[];
+    game_modes: number[];
 }
 
 export interface RawNewsArticle {
@@ -422,21 +421,21 @@ export interface ChatHistoryResponse {
 }
 
 export interface GameResponse {
-    id: number;
+    steam_games_sys_key_id: number;
     name: string;
-    aggregated_rating: number;
-    total_rating_count: number;
-    cover: string;
+    steam_review_enum_sys_key_id: number;
+    total_review_count: number;
     summary: string;
-    linkIcons: string[];
-    genres: number[];
-    platforms: number[];
-    first_release_date: number;
-    screenshots: string[];
+    first_release_date: Date;
     video: string;
-    pricings: PriceInfoResponse[];
-    game_modes: string[];
+    steam_state_enum_sys_key_id: number;
+    game_modes: number[];
     similar_games: number[];
+    pricings: PriceInfoResponse[];
+    genres: number[];
+    screenshots: string[];
+    cover_small: string;
+    cover_large: string;
 }
 
 export interface MultiGameResponse {
@@ -456,10 +455,11 @@ export interface MultiNewsResponse {
 
 export interface PriceInfoResponse {
     steamGamesSysKeyId: number;
-    pricingEnum: PricingsEnum;
+    pricingEnumSysKeyId: PricingsEnum;
     title: string;
     price: number;
     discount_percent: number;
+    discount_end_dt: Date;
     log_dt: Date;
 }
 
@@ -470,12 +470,39 @@ export enum PricingsEnum {
     demo = 4,
 }
 
+export interface BusMessage {
+    bus_messages_enum_sys_key_id: number;
+    value: string;
+    log_dt: Date;
+}
+
 export enum GameModesEnum {
     "Single Player" = 1,
     "Multiplayer" = 2,
     "Co-op" = 3,
     "Split Screen" = 4,
     "MMO" = 5
+}
+
+export enum ReviewEnum {
+    NoUserReviews = 1,
+    "Overhwelmingly Positive" = 2,
+    "Very Positive" = 3,
+    "Positive" = 4,
+    "Mostly Positive" = 5,
+    "Mixed" = 6,
+    "Mostly Negative" = 7,
+    "Negative" = 8,
+    "Very Negative" = 9,
+    "Overwhelmingly Negative" = 10
+}
+
+export enum StateEnum {
+    TBA = 0,
+    upcoming = 1,
+    preorder = 2,
+    earlyaccess = 3,
+    released = 4
 }
 
 export enum BusMessagesEnum {
@@ -520,12 +547,12 @@ export const DbTableChatroomMessagesFields: string[] = [`chatroom_messages_sys_k
 export const DbTableChatroomUserlistFields: string[] = [`accounts_sys_key_id`, `log_dt`];
 export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `steam_genre_enum_sys_key_id`, `steam_games_sys_key_id`];
 export const DbTableModesFields: string[] = [`modes_sys_key_id`, `steam_modes_enum_sys_key_id`, `steam_games_sys_key_id`];
-export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `pricings_enum_sys_key_id`, `steam_games_sys_key_id`, `title`, `price`, `discount_percent`, `log_dt`];
+export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `pricings_enum_sys_key_id`, `steam_games_sys_key_id`, `title`, `price`, `discount_percent`, `discount_end_dt`, `log_dt`];
 export const DbTablePricingsEnumFields: string[] = [`pricings_enum_sys_key_id`, `name`];
 export const DbTableRatingsFields: string[] = [`ratings_sys_key_id`, `steam_games_sys_key_id`, `accounts_sys_key_id`, `rating`, `log_dt`];
 export const DbTableRouteCacheFields: string[] = [`route`, `response`, `expires_dt`];
 export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `steam_games_sys_key_id`, `similar_to_steam_games_sys_key_id`];
-export const DbTableSteamGamesFields: string[] = [`steam_games_sys_key_id`, `id`, `name`, `steam_review_enum_sys_key_id`, `total_review_count`, `summary`, `first_release_date`, `video`, `steam_link`];
+export const DbTableSteamGamesFields: string[] = [`steam_games_sys_key_id`, `name`, `steam_review_enum_sys_key_id`, `total_review_count`, `summary`, `first_release_date`, `video`, `steam_state_enum_sys_key_id`, `log_dt`];
 export const DbTableSteamGenreEnumFields: string[] = [`steam_genre_enum_sys_key_id`, `name`];
 export const DbTableSteamImagesFields: string[] = [`steam_images_sys_key_id`, `steam_images_enum_sys_key_id`, `link`];
 export const DbTableSteamImagesEnumFields: string[] = [`steam_images_enum_sys_key_id`, `name`];

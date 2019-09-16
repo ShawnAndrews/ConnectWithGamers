@@ -107,6 +107,9 @@ export default class DatabaseBase {
 
                 // execute query
                 this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
+                    if (query.includes(`(bus_messages_enum_sys_key_id, value, log_dt)`)) {
+                        console.log (`custom resp 1: ${JSON.stringify(error)}`);
+                    }
                     if (error && error.code !== `ER_DUP_ENTRY`) {
                         console.log(`CUSTOM error: ${JSON.stringify(error)}`);
                         return reject(error);
