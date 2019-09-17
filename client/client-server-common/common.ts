@@ -48,35 +48,6 @@ export enum SidenavEnums {
     cog,
 }
 
-export enum SteamGenreEnums {
-    action = 14,
-    adventure = 31,
-    shooter = 5,
-    simulation = 13,
-    rpg = 12,
-    racing = 10,
-    puzzle = 9,
-    strategy = 15
-}
-
-export enum SteamPlatformEnums {
-    pc = 6,
-    vr = 162,
-    ps4 = 48,
-    xboxone = 49,
-    switch = 130,
-    linux = 3,
-    mac = 14
-}
-
-export enum SteamCategoryEnums {
-    maingame = 0,
-    dlc = 1,
-    expansion = 2,
-    bundle = 3,
-    standaloneexpansion = 4
-}
-
 export enum Breakpoints {
     md = 768
 }
@@ -498,11 +469,17 @@ export enum ReviewEnum {
 }
 
 export enum StateEnum {
-    TBA = 0,
-    upcoming = 1,
-    preorder = 2,
-    earlyaccess = 3,
-    released = 4
+    TBA = 5,
+    upcoming = 4,
+    preorder = 3,
+    earlyaccess = 2,
+    released = 1
+}
+
+export enum PlatformEnum {
+    windows = 1,
+    mac = 2,
+    linux = 3
 }
 
 export enum BusMessagesEnum {
@@ -534,6 +511,8 @@ export enum DbTables {
     steam_news = "steam_news",
     steam_review_enum = "steam_review_enum",
     steam_state_enum = "steam_state_enum",
+    steam_platform_enum = "steam_platform_enum",
+    platforms = "platforms",
     tokens = "tokens"
 }
 
@@ -546,6 +525,7 @@ export const DbTableChatEmotesFields: string[] = [`chat_emotes_sys_key_id`, `pre
 export const DbTableChatroomMessagesFields: string[] = [`chatroom_messages_sys_key_id`, `username`, `text`, `attachment`, `attachment_file_extension`, `chatroom_id`, `log_dt`];
 export const DbTableChatroomUserlistFields: string[] = [`accounts_sys_key_id`, `log_dt`];
 export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `steam_genre_enum_sys_key_id`, `steam_games_sys_key_id`];
+export const DbTablePlatformsFields: string[] = [`platforms_sys_key_id`, `steam_platform_enum_sys_key_id`, `steam_games_sys_key_id`];
 export const DbTableModesFields: string[] = [`modes_sys_key_id`, `steam_modes_enum_sys_key_id`, `steam_games_sys_key_id`];
 export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `pricings_enum_sys_key_id`, `steam_games_sys_key_id`, `title`, `price`, `discount_percent`, `discount_end_dt`, `log_dt`];
 export const DbTablePricingsEnumFields: string[] = [`pricings_enum_sys_key_id`, `name`];
@@ -557,6 +537,7 @@ export const DbTableSteamGenreEnumFields: string[] = [`steam_genre_enum_sys_key_
 export const DbTableSteamImagesFields: string[] = [`steam_images_sys_key_id`, `steam_images_enum_sys_key_id`, `link`];
 export const DbTableSteamImagesEnumFields: string[] = [`steam_images_enum_sys_key_id`, `name`];
 export const DbTableSteamModesEnumFields: string[] = [`steam_modes_enum_sys_key_id`, `name`];
+export const DbTableSteamPlatformEnumFields: string[] = [`steam_platform_enum_sys_key_id`, `name`];
 export const DbTableSteamNewsFields: string[] = [`steam_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];
 export const DbTableSteamReviewEnumFields: string[] = [`steam_review_enum_sys_key_id`, `name`];
 export const DbTableSteamStateEnumFields: string[] = [`steam_state_enum_sys_key_id`, `name`];

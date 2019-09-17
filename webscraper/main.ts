@@ -1,4 +1,4 @@
-import { DbTables, GenericModelResponse, DbTableBusMessagesFields, PriceInfoResponse, PricingsEnum, BusMessage, BusMessagesEnum, DbTableSteamGamesFields, steamAppUrl, DbTablePricingsFields, GameResponse, ReviewEnum, DbTableGenresFields, DbTableSteamGenreEnumFields, StateEnum } from "../client/client-server-common/common";
+import { DbTables, GenericModelResponse, DbTableBusMessagesFields, PriceInfoResponse, PricingsEnum, BusMessage, BusMessagesEnum, DbTableSteamGamesFields, steamAppUrl, DbTablePricingsFields, GameResponse, ReviewEnum, DbTableGenresFields, DbTableSteamGenreEnumFields, StateEnum, PlatformEnum, DbTablePlatformsFields } from "../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 import DatabaseBase from "../models/db/base/dbBase";
@@ -156,42 +156,104 @@ function cacheSteamGame(steamGamesSysKeyId: number, name: string, steamReviewEnu
 function cacheGenres(genres: string[], steamGamesSysKeyId: number): Promise <void> {
 
     return new Promise((resolve: any, reject: any) => {
+        const promises: Promise<void>[] = [];
+        const genrePromise = (genre: string): Promise<void> => {
+            return new Promise((resolve: any, reject: any) => {
+                let genreEnumSysKeyId: number = -1;
 
-        genres.forEach((genre: string) => {
-            let genreEnumSysKeyId: number;
+                // add genre enum if it doesnt exist in db
+                db.custom(
+                    `SELECT *
+                    FROM ${DbTables.steam_genre_enum}
+                    WHERE ${DbTableSteamGenreEnumFields[1]} = ?`,
+                    [genre])
+                    .then((dbResponse: GenericModelResponse) => {
+                        const genreExistsInDb: boolean = dbResponse.data.length > 0;
 
-            // add genre enum if it doesnt exist in db
-            db.custom(
-                `SELECT *
-                FROM ${DbTables.steam_genre_enum}
-                WHERE ${DbTableSteamGenreEnumFields[1]} = ?`,
-                [genre])
-                .then((dbResponse: GenericModelResponse) => {
-                    const genreExistsInDb: boolean = dbResponse.data.length > 0;
+                        if (!genreExistsInDb) {
+                            return db.custom(
+                                `INSERT INTO ${DbTables.steam_genre_enum} (${DbTableSteamGenreEnumFields[1]})
+                                VALUES (?)`,
+                                [genre])
+                                .then((innerDbResponse: GenericModelResponse) => {
+                                    if (!innerDbResponse.data) {
+                                        // enum already in db, do nothing
+                                        return resolve();
+                                    }
 
-                    if (!genreExistsInDb) {
-                        return db.custom(
-                            `INSERT INTO ${DbTables.steam_genre_enum} (${DbTableSteamGenreEnumFields[1]})
-                            VALUES (?)`,
-                            [genre]);
-                    } else {
-                        genreEnumSysKeyId = dbResponse.data[0][DbTableSteamGenreEnumFields[0]];
-                    }
-                })
-                .then((dbResponse: GenericModelResponse) => {
-                    if (dbResponse) {
-                        genreEnumSysKeyId = dbResponse.data[`insertId`];
-                    }
-                    return resolve();
-                })
-                .finally(() => {
-                    return db.custom(
-                        `INSERT INTO ${DbTables.genres} (${DbTableGenresFields[1]}, ${DbTableGenresFields[2]})
-                        VALUES (?, ?)`,
-                        [genreEnumSysKeyId, steamGamesSysKeyId])
-                        .then(() => { return resolve(); });
-                });
+                                    genreEnumSysKeyId = innerDbResponse.data[`insertId`];
 
+                                    // insert
+                                    return db.custom(
+                                        `INSERT INTO ${DbTables.genres} (${DbTableGenresFields[1]}, ${DbTableGenresFields[2]})
+                                        VALUES (?, ?)`,
+                                        [genreEnumSysKeyId, steamGamesSysKeyId])
+                                        .then(() => {
+                                            return resolve();
+                                        });
+                                });
+                        } else {
+                            genreEnumSysKeyId = dbResponse.data[0][DbTableSteamGenreEnumFields[0]];
+
+                            // insert
+                            return db.custom(
+                                `INSERT INTO ${DbTables.genres} (${DbTableGenresFields[1]}, ${DbTableGenresFields[2]})
+                                VALUES (?, ?)`,
+                                [genreEnumSysKeyId, steamGamesSysKeyId])
+                                .then(() => {
+                                    return resolve();
+                                });
+                        }
+                    });
+            });
+        };
+
+        if (genres.length === 0) {
+            return resolve();
+        }
+
+        genres.forEach((genre: string) => promises.push(genrePromise(genre)));
+
+        Promise.all(promises)
+        .then(() => {
+            return resolve();
+        })
+        .catch((error: string) => {
+            console.log(`Error cacheing genre promises.`);
+        });
+
+    });
+
+}
+
+function cachePlatforms(platforms: number[], steamGamesSysKeyId: number): Promise <void> {
+
+    return new Promise((resolve: any, reject: any) => {
+        const promises: Promise<void>[] = [];
+        const platformPromise = (innerPlatformEnumSysKeyId: number, innerSteamGamesSysKeyId: number): Promise<void> => {
+            return new Promise((resolve: any, reject: any) => {
+                return db.custom(
+                    `INSERT INTO ${DbTables.platforms} (${DbTablePlatformsFields[1]}, ${DbTablePlatformsFields[2]})
+                    VALUES (?, ?)`,
+                    [innerPlatformEnumSysKeyId, innerSteamGamesSysKeyId])
+                    .then(() => {
+                        return resolve();
+                    });
+            });
+        };
+
+        if (platforms.length === 0) {
+            return resolve(0);
+        }
+
+        platforms.forEach((platformEnumSysKeyId: number) => promises.push(platformPromise(platformEnumSysKeyId, steamGamesSysKeyId)));
+
+        Promise.all(promises)
+        .then(() => {
+            return resolve();
+        })
+        .catch((error: string) => {
+            console.log(`Error cacheing platform promises.`);
         });
 
     });
@@ -411,6 +473,8 @@ function addSteamGames(link: string): Promise<void> {
             ($(`.early_access_header`).length > 0 ? StateEnum.earlyaccess : undefined) ||
             ((firstReleaseDate && firstReleaseDate.getTime() < (new Date()).getTime()) ? StateEnum.released : undefined) ||
             StateEnum.upcoming;
+            const platforms: number[] = getSteamPlatforms(response.data);
+            // const modes: number[] =
 
             console.log(`Name: ${name}`);
             console.log(`Pricings: ${JSON.stringify(pricings)}`);
@@ -421,6 +485,7 @@ function addSteamGames(link: string): Promise<void> {
             console.log(`Release date: ${firstReleaseDate ? firstReleaseDate.getTime() : undefined}`);
             console.log(`Video: ${video}`);
             console.log(`State: ${stateEnum}`);
+            console.log(`Platforms: ${platforms}`);
 
             console.log(``);
 
@@ -430,6 +495,9 @@ function addSteamGames(link: string): Promise<void> {
                 })
                 .then(() => {
                     return cacheGenres(genres, steamGamesSysKeyId);
+                })
+                .then(() => {
+                    return cachePlatforms(platforms, steamGamesSysKeyId);
                 })
                 .then(() => {
 
@@ -461,6 +529,37 @@ function getSteamGenres(data: string): string[] {
     $(`.glance_tags.popular_tags > a`).each((i: number, element: CheerioElement) => genres.push($(element).html().trim()));
 
     return genres;
+}
+
+function getSteamPlatforms(data: string): number[] {
+    const platforms: number[] = [];
+    const $: CheerioStatic = cheerio.load(data);
+
+    if ($(`.platform_img.win`).length > 0) {
+        platforms.push(PlatformEnum.windows);
+    } else {
+        if ($(`.sysreq_tab[data-os="win"]`).length > 0) {
+            platforms.push(PlatformEnum.windows);
+        }
+    }
+
+    if ($(`.platform_img.mac`).length > 0) {
+        platforms.push(PlatformEnum.mac);
+    } else {
+        if ($(`.sysreq_tab[data-os="mac"]`).length > 0) {
+            platforms.push(PlatformEnum.mac);
+        }
+    }
+
+    if ($(`.platform_img.linux`).length > 0) {
+        platforms.push(PlatformEnum.linux);
+    } else {
+        if ($(`.sysreq_tab[data-os="linux"]`).length > 0) {
+            platforms.push(PlatformEnum.linux);
+        }
+    }
+
+    return platforms;
 }
 
 function getSteamPricings(data: string, steamGamesSysKeyId: number): PriceInfoResponse[] {
