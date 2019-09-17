@@ -25,7 +25,7 @@ const Navbar: React.SFC<INavbarProps> = (props: INavbarProps) => {
         <div className="brand-navbar navbar py-0">
             <a className="logo navbar-brand" href="/">
                 <img src="https://i.imgur.com/MwJUdK9.gif" width="30" height="30" className="d-inline-block align-top mx-3" alt=""/>
-                <span className="logo-name color-primary">Connect With Gamers</span>
+                <span className="logo-name color-secondary">Connect With Gamers</span>
             </a>
             <ul className="brand-menu nav nav-tabs" role="tablist">
                 <li className="nav-item mx-md-2">
