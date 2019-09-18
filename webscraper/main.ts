@@ -1,4 +1,4 @@
-import { DbTables, GenericModelResponse, DbTableBusMessagesFields, PriceInfoResponse, PricingsEnum, BusMessage, BusMessagesEnum, DbTableSteamGamesFields, steamAppUrl, DbTablePricingsFields, GameResponse, ReviewEnum, DbTableGenresFields, DbTableSteamGenreEnumFields, StateEnum, PlatformEnum, DbTablePlatformsFields } from "../client/client-server-common/common";
+import { DbTables, GenericModelResponse, DbTableBusMessagesFields, PriceInfoResponse, PricingsEnum, BusMessage, BusMessagesEnum, DbTableSteamGamesFields, steamAppUrl, DbTablePricingsFields, GameResponse, ReviewEnum, DbTableGenresFields, DbTableSteamGenreEnumFields, StateEnum, PlatformEnum, DbTablePlatformsFields, DbTableSteamModesEnumFields, DbTableModesFields, getSteamCoverURL, getSteamCoverThumbURL, DbTableImagesFields, ImagesEnum } from "../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 import DatabaseBase from "../models/db/base/dbBase";
@@ -11,7 +11,7 @@ const STEAM_RATE_LIMIT_MS: number = 1000;
 const BUS_POLLER_REFRESH: number = 1000;
 let busIsBusy: boolean = false;
 
-const updateAndFindNewGamesJob = scheduleJob({ hour: 11, minute: 19 }, () => {
+const updateAndFindNewGamesJob = scheduleJob({ hour: 21, minute: 38 }, () => {
     console.log (`Job started at ${new Date().toLocaleTimeString()}!`);
 
     let allSteamIds: number[];
@@ -220,6 +220,123 @@ function cacheGenres(genres: string[], steamGamesSysKeyId: number): Promise <voi
         })
         .catch((error: string) => {
             console.log(`Error cacheing genre promises.`);
+        });
+
+    });
+
+}
+
+function cacheModes(modes: string[], steamGamesSysKeyId: number): Promise <void> {
+
+    return new Promise((resolve: any, reject: any) => {
+        const promises: Promise<void>[] = [];
+        const modePromise = (mode: string): Promise<void> => {
+            return new Promise((resolve: any, reject: any) => {
+                let modeEnumSysKeyId: number = -1;
+
+                // add mode enum if it doesnt exist in db
+                db.custom(
+                    `SELECT *
+                    FROM ${DbTables.steam_modes_enum}
+                    WHERE ${DbTableSteamModesEnumFields[1]} = ?`,
+                    [mode])
+                    .then((dbResponse: GenericModelResponse) => {
+                        const modeExistsInDb: boolean = dbResponse.data.length > 0;
+
+                        if (!modeExistsInDb) {
+                            return db.custom(
+                                `INSERT INTO ${DbTables.steam_modes_enum} (${DbTableSteamModesEnumFields[1]})
+                                VALUES (?)`,
+                                [mode])
+                                .then((innerDbResponse: GenericModelResponse) => {
+                                    if (!innerDbResponse.data) {
+                                        // enum already in db, do nothing
+                                        return resolve();
+                                    }
+
+                                    modeEnumSysKeyId = innerDbResponse.data[`insertId`];
+
+                                    // insert
+                                    return db.custom(
+                                        `INSERT INTO ${DbTables.modes} (${DbTableModesFields[1]}, ${DbTableModesFields[2]})
+                                        VALUES (?, ?)`,
+                                        [modeEnumSysKeyId, steamGamesSysKeyId])
+                                        .then(() => {
+                                            return resolve();
+                                        });
+                                });
+                        } else {
+                            modeEnumSysKeyId = dbResponse.data[0][DbTableSteamModesEnumFields[0]];
+
+                            // insert
+                            return db.custom(
+                                `INSERT INTO ${DbTables.modes} (${DbTableModesFields[1]}, ${DbTableModesFields[2]})
+                                VALUES (?, ?)`,
+                                [modeEnumSysKeyId, steamGamesSysKeyId])
+                                .then(() => {
+                                    return resolve();
+                                });
+                        }
+                    });
+            });
+        };
+
+        if (modes.length === 0) {
+            return resolve();
+        }
+
+        modes.forEach((mode: string) => promises.push(modePromise(mode)));
+
+        Promise.all(promises)
+        .then(() => {
+            return resolve();
+        })
+        .catch((error: string) => {
+            console.log(`Error cacheing modes promises.`);
+        });
+
+    });
+
+}
+
+function cacheImages(images: string[], steamGamesSysKeyId: number): Promise <void> {
+
+    return new Promise((resolve: any, reject: any) => {
+        const promises: Promise<void>[] = [];
+        const imagePromise = (link: string, innerImagesEnumSysKeyId: number, innerSteamGamesSysKeyId: number): Promise<void> => {
+            return new Promise((resolve: any, reject: any) => {
+                return db.custom(
+                    `INSERT INTO ${DbTables.images} (${DbTableImagesFields[1]}, ${DbTableImagesFields[2]}, ${DbTableImagesFields[3]})
+                    VALUES (?, ?, ?)`,
+                    [innerSteamGamesSysKeyId, innerImagesEnumSysKeyId, link])
+                    .then(() => {
+                        return resolve();
+                    });
+            });
+        };
+
+        if (images.length === 0) {
+            return resolve(0);
+        }
+
+        images.forEach((image: string, index: number) => {
+            let imagesEnumSysKeyId: number;
+            if (index === 0) {
+                imagesEnumSysKeyId = ImagesEnum.cover;
+            } else if (index === 1) {
+                imagesEnumSysKeyId = ImagesEnum.cover_thumb;
+            } else {
+                imagesEnumSysKeyId = ImagesEnum.screenshot;
+            }
+            promises.push(imagePromise(image, imagesEnumSysKeyId, steamGamesSysKeyId));
+        });
+
+        Promise.all(promises)
+        .then(() => {
+            return resolve();
+        })
+        .catch((error: string) => {
+            console.log(`Error cacheing images promises.`);
         });
 
     });
@@ -464,8 +581,8 @@ function addSteamGames(link: string): Promise<void> {
             ($(".user_reviews_summary_row .summary").length > 0 && $(".user_reviews_summary_row .summary").html().trim() === `No user reviews` ? -1 : undefined) ||
             ($(".user_reviews_summary_row .summary .game_review_summary").length > 0 && $(".user_reviews_summary_row .summary .game_review_summary").html().includes(`user reviews`) ? parseInt($(".user_reviews_summary_row .summary .game_review_summary").html().replace(` user reviews`, ``)) : undefined);
             const totalReviewCount: number = totalReviewCountTemp === -1 ? 0 : totalReviewCountTemp;
-            const reviewEnum: ReviewEnum = $(`.game_review_summary`).length > 0 && $(`.game_review_summary:not(.not_enough_reviews)`).length > 0 ? ReviewEnum[$(`.game_review_summary:not(.not_enough_reviews)`).html()] : ReviewEnum.NoUserReviews;
-            const summary: string = $(".game_area_description").text();
+            const reviewEnum: ReviewEnum = $(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).length > 0 ? ReviewEnum[$(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).html()] : ReviewEnum.NoUserReviews;
+            const summary: string = $(".game_area_description").text().substr(0, 10000);
             const firstReleaseDate: Date = !isNaN((new Date($(".release_date > div.date").html())).getTime()) ? new Date($(".release_date > div.date").html()) : undefined;
             const video: string = $(".highlight_movie").length > 0 && $(".highlight_movie").attr("data-mp4-source");
             const stateEnum: StateEnum =
@@ -474,7 +591,8 @@ function addSteamGames(link: string): Promise<void> {
             ((firstReleaseDate && firstReleaseDate.getTime() < (new Date()).getTime()) ? StateEnum.released : undefined) ||
             StateEnum.upcoming;
             const platforms: number[] = getSteamPlatforms(response.data);
-            // const modes: number[] =
+            const modes: string[] = getSteamModes(response.data);
+            const images: string[] = getSteamImages(response.data, steamGamesSysKeyId);
 
             console.log(`Name: ${name}`);
             console.log(`Pricings: ${JSON.stringify(pricings)}`);
@@ -486,6 +604,8 @@ function addSteamGames(link: string): Promise<void> {
             console.log(`Video: ${video}`);
             console.log(`State: ${stateEnum}`);
             console.log(`Platforms: ${platforms}`);
+            console.log(`Modes: ${modes}`);
+            console.log(`Images: #${images.length - 2} screenshots`);
 
             console.log(``);
 
@@ -498,6 +618,12 @@ function addSteamGames(link: string): Promise<void> {
                 })
                 .then(() => {
                     return cachePlatforms(platforms, steamGamesSysKeyId);
+                })
+                .then(() => {
+                    return cacheModes(modes, steamGamesSysKeyId);
+                })
+                .then(() => {
+                    return cacheImages(images, steamGamesSysKeyId);
                 })
                 .then(() => {
 
@@ -560,6 +686,33 @@ function getSteamPlatforms(data: string): number[] {
     }
 
     return platforms;
+}
+
+function getSteamModes(data: string): string[] {
+    const genres: string[] = [];
+    const $: CheerioStatic = cheerio.load(data);
+
+    $(`#category_block > .game_area_details_specs:not(.learning_about)`).each((i: number, element: CheerioElement) => {
+        genres.push($(element).find(`.name`).html());
+    });
+
+    return genres;
+}
+
+function getSteamImages(data: string, steamGamesSysKeyId: number): string[] {
+    const images: string[] = [];
+    const $: CheerioStatic = cheerio.load(data);
+
+    // covers
+    images.push(getSteamCoverURL(steamGamesSysKeyId));
+    images.push(getSteamCoverThumbURL(steamGamesSysKeyId));
+
+    // screenshots
+    $(`#highlight_strip_scroll > .highlight_strip_screenshot`).each((i: number, element: CheerioElement) => {
+        images.push($(element).find(`img`).attr(`src`).replace(`116x65`, `1920x1080`));
+    });
+
+    return images;
 }
 
 function getSteamPricings(data: string, steamGamesSysKeyId: number): PriceInfoResponse[] {

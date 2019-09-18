@@ -54,6 +54,10 @@ export enum Breakpoints {
 
 export const steamAppUrl: string = `https://store.steampowered.com/app`;
 
+export const getSteamCoverURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/header.jpg?t=1557894336`;
+
+export const getSteamCoverThumbURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/capsule_sm_120.jpg?t=1568772711`;
+
 export interface RouteCache {
     data: any;
 }
@@ -434,6 +438,12 @@ export interface PriceInfoResponse {
     log_dt: Date;
 }
 
+export enum ImagesEnum {
+    cover = 1,
+    cover_thumb = 2,
+    screenshot = 3
+}
+
 export enum PricingsEnum {
     main_game = 1,
     bundles = 2,
@@ -505,7 +515,7 @@ export enum DbTables {
     similar_games = "similar_games",
     steam_games = "steam_games",
     steam_genre_enum = "steam_genre_enum",
-    steam_images = "steam_images",
+    images = "images",
     steam_images_enum = "steam_images_enum",
     steam_modes_enum = "steam_modes_enum",
     steam_news = "steam_news",
@@ -534,7 +544,7 @@ export const DbTableRouteCacheFields: string[] = [`route`, `response`, `expires_
 export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `steam_games_sys_key_id`, `similar_to_steam_games_sys_key_id`];
 export const DbTableSteamGamesFields: string[] = [`steam_games_sys_key_id`, `name`, `steam_review_enum_sys_key_id`, `total_review_count`, `summary`, `first_release_date`, `video`, `steam_state_enum_sys_key_id`, `log_dt`];
 export const DbTableSteamGenreEnumFields: string[] = [`steam_genre_enum_sys_key_id`, `name`];
-export const DbTableSteamImagesFields: string[] = [`steam_images_sys_key_id`, `steam_images_enum_sys_key_id`, `link`];
+export const DbTableImagesFields: string[] = [`images_sys_key_id`, `steam_games_sys_key_id`, `steam_images_enum_sys_key_id`, `link`];
 export const DbTableSteamImagesEnumFields: string[] = [`steam_images_enum_sys_key_id`, `name`];
 export const DbTableSteamModesEnumFields: string[] = [`steam_modes_enum_sys_key_id`, `name`];
 export const DbTableSteamPlatformEnumFields: string[] = [`steam_platform_enum_sys_key_id`, `name`];

@@ -1,6 +1,6 @@
 const fs = require("fs");
 import DatabaseBase from "./../base/dbBase";
-import { PriceInfoResponse, SQLErrorCodes, GenericModelResponse, GameResponse, DbTableSteamNewsFields, DbTablePricingsFields, DbTableSteamGenreEnumFields, DbTableSteamImagesFields, DbTableGenresFields, DbTableSimilarGamesFields, DbTables, NewsArticle, DbTableRouteCacheFields, RouteCache, DbTableSteamGamesFields } from "../../../client/client-server-common/common";
+import { PriceInfoResponse, SQLErrorCodes, GenericModelResponse, GameResponse, DbTableSteamNewsFields, DbTablePricingsFields, DbTableSteamGenreEnumFields, DbTableGenresFields, DbTableSimilarGamesFields, DbTables, NewsArticle, DbTableRouteCacheFields, RouteCache, DbTableSteamGamesFields } from "../../../client/client-server-common/common";
 import { MysqlError } from "mysql";
 import config from "../../../config";
 import * as ytdl from "ytdl-core";
