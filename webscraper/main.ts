@@ -582,7 +582,7 @@ function addSteamGames(link: string): Promise<void> {
             ($(".user_reviews_summary_row .summary .game_review_summary").length > 0 && $(".user_reviews_summary_row .summary .game_review_summary").html().includes(`user reviews`) ? parseInt($(".user_reviews_summary_row .summary .game_review_summary").html().replace(` user reviews`, ``)) : undefined);
             const totalReviewCount: number = totalReviewCountTemp === -1 ? 0 : totalReviewCountTemp;
             const reviewEnum: ReviewEnum = $(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).length > 0 ? ReviewEnum[$(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).html()] : ReviewEnum.NoUserReviews;
-            const summary: string = $(".game_area_description").text().substr(0, 10000);
+            const summary: string = cleanString($(".game_area_description").text().substr(0, 10000));
             const firstReleaseDate: Date = !isNaN((new Date($(".release_date > div.date").html())).getTime()) ? new Date($(".release_date > div.date").html()) : undefined;
             const video: string = $(".highlight_movie").length > 0 && $(".highlight_movie").attr("data-mp4-source");
             const stateEnum: StateEnum =
@@ -646,6 +646,17 @@ function addSteamGames(link: string): Promise<void> {
 
     });
 
+}
+
+function cleanString(input: string): string {
+    let output = "";
+    // remove non-utf8 characters from string
+    for (let i = 0; i < input.length; i++) {
+        if (input.charCodeAt(i) <= 127) {
+            output += input.charAt(i);
+        }
+    }
+    return output;
 }
 
 function getSteamGenres(data: string): string[] {
