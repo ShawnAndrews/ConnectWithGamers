@@ -467,7 +467,7 @@ export enum GameModesEnum {
 
 export enum ReviewEnum {
     NoUserReviews = 1,
-    "Overhwelmingly Positive" = 2,
+    "Overwhelmingly Positive" = 2,
     "Very Positive" = 3,
     "Positive" = 4,
     "Mostly Positive" = 5,
