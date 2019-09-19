@@ -58,6 +58,19 @@ export const getSteamCoverURL = (steamId: number): string => `https://steamcdn-a
 
 export const getSteamCoverThumbURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/capsule_sm_120.jpg?t=1568772711`;
 
+export function cleanString(input: string): string {
+    let output = "";
+    // remove non-utf8 characters from string
+    for (let i = 0; i < input.length; i++) {
+        if (input.charCodeAt(i) <= 127) {
+            output += input.charAt(i);
+        } else {
+            output += " ";
+        }
+    }
+    return output;
+}
+
 export interface RouteCache {
     data: any;
 }
