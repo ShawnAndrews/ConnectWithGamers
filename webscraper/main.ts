@@ -741,7 +741,7 @@ function getSteamPricings(data: string, steamGamesSysKeyId: number): PriceInfoRe
     // dlc
     $(".game_area_dlc_row").each((i: number, element: CheerioElement) => {
         const pricingEnum: PricingsEnum = PricingsEnum.dlc;
-        const title: string = $(element).find(`.game_area_dlc_name`).text().trim();
+        const title: string = cleanString($(element).find(`.game_area_dlc_name`).text().trim());
         const discountPercent: number = Number.parseInt($(element).find(`.discount_pct`).text().replace(`-`, ``).replace(`%`, ``)) || undefined;
         const rawPrice: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`$`, ``) : $(element).find(`.game_area_dlc_price`).text().replace(`$`, ``).trim();
         const price: number = (rawPrice === `N/A` || rawPrice === `Free`) ? undefined : Number.parseFloat(rawPrice);
