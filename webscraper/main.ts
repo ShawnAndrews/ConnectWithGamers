@@ -1,4 +1,4 @@
-import { DbTables, GenericModelResponse, DbTableBusMessagesFields, PriceInfoResponse, PricingsEnum, BusMessage, BusMessagesEnum, DbTableSteamGamesFields, steamAppUrl, DbTablePricingsFields, GameResponse, ReviewEnum, DbTableGenresFields, DbTableSteamGenreEnumFields, StateEnum, PlatformEnum, DbTablePlatformsFields, DbTableSteamModesEnumFields, DbTableModesFields, getSteamCoverURL, getSteamCoverThumbURL, DbTableImagesFields, ImagesEnum, cleanString } from "../client/client-server-common/common";
+import { DbTables, GenericModelResponse, DbTableBusMessagesFields, PriceInfoResponse, PricingsEnum, BusMessage, BusMessagesEnum, DbTableSteamGamesFields, steamAppUrl, DbTablePricingsFields, GameResponse, ReviewEnum, DbTableGenresFields, DbTableSteamGenreEnumFields, StateEnum, PlatformEnum, DbTablePlatformsFields, DbTableSteamModesEnumFields, DbTableModesFields, getSteamCoverURL, getSteamCoverThumbURL, DbTableImagesFields, ImagesEnum, cleanString, DbTableSteamDeveloperEnumFields, DbTableDevelopersFields, DbTableSteamPublisherEnumFields, DbTablePublishersFields } from "../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 import DatabaseBase from "../models/db/base/dbBase";
@@ -213,6 +213,134 @@ function cacheGenres(genres: string[], steamGamesSysKeyId: number): Promise <voi
         }
 
         genres.forEach((genre: string) => promises.push(genrePromise(genre)));
+
+        Promise.all(promises)
+        .then(() => {
+            return resolve();
+        })
+        .catch((error: string) => {
+            console.log(`Error cacheing genre promises.`);
+        });
+
+    });
+
+}
+
+function cacheDeveloperAndPublisher(developer: string, publisher: string, steamGamesSysKeyId: number): Promise <void> {
+
+    return new Promise((resolve: any, reject: any) => {
+        const promises: Promise<void>[] = [];
+        const developerPromise = (innerDeveloper: string): Promise<void> => {
+            return new Promise((resolve: any, reject: any) => {
+                let developerEnumSysKeyId: number = -1;
+
+                // add enum if it doesnt exist in db
+                db.custom(
+                    `SELECT *
+                    FROM ${DbTables.steam_developer_enum}
+                    WHERE ${DbTableSteamDeveloperEnumFields[1]} = ?`,
+                    [innerDeveloper])
+                    .then((dbResponse: GenericModelResponse) => {
+                        const developerExistsInDb: boolean = dbResponse.data.length > 0;
+
+                        if (!developerExistsInDb && innerDeveloper) {
+                            return db.custom(
+                                `INSERT INTO ${DbTables.steam_developer_enum} (${DbTableSteamDeveloperEnumFields[1]})
+                                VALUES (?)`,
+                                [innerDeveloper])
+                                .then((innerDbResponse: GenericModelResponse) => {
+                                    if (!innerDbResponse.data) {
+                                        // enum already in db, do nothing
+                                        return resolve();
+                                    }
+
+                                    developerEnumSysKeyId = innerDbResponse.data[`insertId`];
+
+                                    // insert
+                                    return db.custom(
+                                        `INSERT INTO ${DbTables.developers} (${DbTableDevelopersFields[1]}, ${DbTableDevelopersFields[2]})
+                                        VALUES (?, ?)`,
+                                        [developerEnumSysKeyId, steamGamesSysKeyId])
+                                        .then(() => {
+                                            return resolve();
+                                        });
+                                });
+                        } else {
+                            if (!innerDeveloper) {
+                                developerEnumSysKeyId = undefined;
+                            } else {
+                                developerEnumSysKeyId = dbResponse.data[0][DbTableSteamDeveloperEnumFields[0]];
+                            }
+
+                            // insert
+                            return db.custom(
+                                `INSERT INTO ${DbTables.developers} (${DbTableDevelopersFields[1]}, ${DbTableDevelopersFields[2]})
+                                VALUES (?, ?)`,
+                                [developerEnumSysKeyId, steamGamesSysKeyId])
+                                .then(() => {
+                                    return resolve();
+                                });
+                        }
+                    });
+            });
+        };
+        const publisherPromise = (innerPublisher: string): Promise<void> => {
+            return new Promise((resolve: any, reject: any) => {
+                let publisherEnumSysKeyId: number = -1;
+
+                // add enum if it doesnt exist in db
+                db.custom(
+                    `SELECT *
+                    FROM ${DbTables.steam_publisher_enum}
+                    WHERE ${DbTableSteamPublisherEnumFields[1]} = ?`,
+                    [innerPublisher])
+                    .then((dbResponse: GenericModelResponse) => {
+                        const publisherExistsInDb: boolean = dbResponse.data.length > 0;
+
+                        if (!publisherExistsInDb && innerPublisher) {
+                            return db.custom(
+                                `INSERT INTO ${DbTables.steam_publisher_enum} (${DbTableSteamPublisherEnumFields[1]})
+                                VALUES (?)`,
+                                [innerPublisher])
+                                .then((innerDbResponse: GenericModelResponse) => {
+                                    if (!innerDbResponse.data) {
+                                        // enum already in db, do nothing
+                                        return resolve();
+                                    }
+
+                                    publisherEnumSysKeyId = innerDbResponse.data[`insertId`];
+
+                                    // insert
+                                    return db.custom(
+                                        `INSERT INTO ${DbTables.publishers} (${DbTablePublishersFields[1]}, ${DbTablePublishersFields[2]})
+                                        VALUES (?, ?)`,
+                                        [publisherEnumSysKeyId, steamGamesSysKeyId])
+                                        .then(() => {
+                                            return resolve();
+                                        });
+                                });
+                        } else {
+                            if (!innerPublisher) {
+                                publisherEnumSysKeyId = undefined;
+                            } else {
+                                publisherEnumSysKeyId = dbResponse.data[0][DbTableSteamPublisherEnumFields[0]];
+                            }
+
+                            // insert
+                            return db.custom(
+                                `INSERT INTO ${DbTables.publishers} (${DbTablePublishersFields[1]}, ${DbTablePublishersFields[2]})
+                                VALUES (?, ?)`,
+                                [publisherEnumSysKeyId, steamGamesSysKeyId])
+                                .then(() => {
+                                    return resolve();
+                                });
+                        }
+                    });
+            });
+        };
+
+        promises.push(developerPromise(developer));
+        promises.push(publisherPromise(publisher));
 
         Promise.all(promises)
         .then(() => {
@@ -584,7 +712,7 @@ function addSteamGames(link: string): Promise<void> {
             const reviewEnum: ReviewEnum = $(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).length > 0 ? ReviewEnum[$(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).html()] : ReviewEnum.NoUserReviews;
             const summary: string = cleanString($(".game_area_description").text().substr(0, 10000));
             const firstReleaseDate: Date = !isNaN((new Date($(".release_date > div.date").html())).getTime()) ? new Date($(".release_date > div.date").html()) : undefined;
-            const video: string = $(".highlight_movie").length > 0 && $(".highlight_movie").attr("data-mp4-source");
+            const video: string = $(".highlight_movie").length > 0 ? $(".highlight_movie").attr("data-mp4-source") : undefined;
             const stateEnum: StateEnum =
             ($(`head > title`).html().includes(`Pre-purchase`) ? StateEnum.preorder : undefined) ||
             ($(`.early_access_header`).length > 0 ? StateEnum.earlyaccess : undefined) ||
@@ -593,8 +721,10 @@ function addSteamGames(link: string): Promise<void> {
             const platforms: number[] = getSteamPlatforms(response.data);
             const modes: string[] = getSteamModes(response.data);
             const images: string[] = getSteamImages(response.data, steamGamesSysKeyId);
+            const developer: string = $(`.user_reviews .dev_row`).length > 0 ? $(`.user_reviews .dev_row`).first().find(`a`).html() : undefined;
+            const publisher: string = $(`.user_reviews .dev_row`).length > 0 ? $(`.user_reviews .dev_row`).last().find(`a`).html() : undefined;
 
-            console.log(`Name: ${name}`);
+            console.log(`Name: ${name} - ${developer} - ${publisher}`);
             console.log(`Pricings: ${JSON.stringify(pricings)}`);
             console.log(`Total review count: ${totalReviewCount}`);
             console.log(`Review enum: ${reviewEnum}`);
@@ -624,6 +754,9 @@ function addSteamGames(link: string): Promise<void> {
                 })
                 .then(() => {
                     return cacheImages(images, steamGamesSysKeyId);
+                })
+                .then(() => {
+                    return cacheDeveloperAndPublisher(developer, publisher, steamGamesSysKeyId);
                 })
                 .then(() => {
 

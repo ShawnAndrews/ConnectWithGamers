@@ -536,6 +536,10 @@ export enum DbTables {
     steam_state_enum = "steam_state_enum",
     steam_platform_enum = "steam_platform_enum",
     platforms = "platforms",
+    developers = "developers",
+    publishers = "publishers",
+    steam_developer_enum = "steam_developer_enum",
+    steam_publisher_enum = "steam_publisher_enum",
     tokens = "tokens"
 }
 
@@ -550,6 +554,8 @@ export const DbTableChatroomUserlistFields: string[] = [`accounts_sys_key_id`, `
 export const DbTableGenresFields: string[] = [`genres_sys_key_id`, `steam_genre_enum_sys_key_id`, `steam_games_sys_key_id`];
 export const DbTablePlatformsFields: string[] = [`platforms_sys_key_id`, `steam_platform_enum_sys_key_id`, `steam_games_sys_key_id`];
 export const DbTableModesFields: string[] = [`modes_sys_key_id`, `steam_modes_enum_sys_key_id`, `steam_games_sys_key_id`];
+export const DbTableDevelopersFields: string[] = [`developers_sys_key_id`, `steam_developer_enum_sys_key_id`, `steam_games_sys_key_id`];
+export const DbTablePublishersFields: string[] = [`publishers_sys_key_id`, `steam_publisher_enum_sys_key_id`, `steam_games_sys_key_id`];
 export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `pricings_enum_sys_key_id`, `steam_games_sys_key_id`, `title`, `price`, `discount_percent`, `discount_end_dt`, `log_dt`];
 export const DbTablePricingsEnumFields: string[] = [`pricings_enum_sys_key_id`, `name`];
 export const DbTableRatingsFields: string[] = [`ratings_sys_key_id`, `steam_games_sys_key_id`, `accounts_sys_key_id`, `rating`, `log_dt`];
@@ -557,6 +563,8 @@ export const DbTableRouteCacheFields: string[] = [`route`, `response`, `expires_
 export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `steam_games_sys_key_id`, `similar_to_steam_games_sys_key_id`];
 export const DbTableSteamGamesFields: string[] = [`steam_games_sys_key_id`, `name`, `steam_review_enum_sys_key_id`, `total_review_count`, `summary`, `first_release_date`, `video`, `steam_state_enum_sys_key_id`, `log_dt`];
 export const DbTableSteamGenreEnumFields: string[] = [`steam_genre_enum_sys_key_id`, `name`];
+export const DbTableSteamDeveloperEnumFields: string[] = [`steam_developer_enum_sys_key_id`, `name`];
+export const DbTableSteamPublisherEnumFields: string[] = [`steam_publisher_enum_sys_key_id`, `name`];
 export const DbTableImagesFields: string[] = [`images_sys_key_id`, `steam_games_sys_key_id`, `steam_images_enum_sys_key_id`, `link`];
 export const DbTableSteamImagesEnumFields: string[] = [`steam_images_enum_sys_key_id`, `name`];
 export const DbTableSteamModesEnumFields: string[] = [`steam_modes_enum_sys_key_id`, `name`];
