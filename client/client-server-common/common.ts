@@ -1,6 +1,7 @@
 const MIN_USER_LEN = 5, MAX_USER_LEN = 16;
 const MIN_PASS_LEN = 6, MAX_PASS_LEN = 160;
 
+export const STEAM_RATE_LIMIT_MS = 1000;
 export const SALT_RNDS = 10;
 export const EMAIL_VERIFICATION_LEN = 15;
 export const ACCOUNT_RECOVERYID_LEN = 32;
@@ -53,6 +54,7 @@ export enum Breakpoints {
 }
 
 export const steamAppUrl: string = `https://store.steampowered.com/app`;
+export const getSteamAppAchievementsUrl = (steamId: number): string => `https://steamcommunity.com/stats/${steamId}/achievements`;
 
 export const getSteamCoverURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/header.jpg?t=1557894336`;
 
@@ -509,6 +511,13 @@ export enum BusMessagesEnum {
     game = 0
 }
 
+export interface Achievement {
+    name: string;
+    description: string;
+    percent: number;
+    link: string;
+}
+
 /* Database tables */
 export enum DbTables {
     accounts = "accounts",
@@ -517,6 +526,7 @@ export enum DbTables {
     bus_messages = "bus_messages",
     bus_messages_enum = "bus_messages_enum",
     chat_emotes = "chat_emotes",
+    achievements = "achievements",
     chatroom_messages = "chatroom_messages",
     chatroom_userlist = "chatroom_userlist",
     genres = "genres",
@@ -572,4 +582,5 @@ export const DbTableSteamPlatformEnumFields: string[] = [`steam_platform_enum_sy
 export const DbTableSteamNewsFields: string[] = [`steam_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];
 export const DbTableSteamReviewEnumFields: string[] = [`steam_review_enum_sys_key_id`, `name`];
 export const DbTableSteamStateEnumFields: string[] = [`steam_state_enum_sys_key_id`, `name`];
+export const DbTableAchievementsFields: string[] = [`achievements_sys_key_id`, `steam_games_sys_key_id`, `name`, `description`, `link`, `percent`, `log_dt`];
 export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];
