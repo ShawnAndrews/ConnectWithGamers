@@ -45,9 +45,9 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
             .sort((a: GameResponse, b: GameResponse) => {
 
                 if (props.sortingSelection === SortingOptionEnum.ReleaseDateAsc) {
-                    return a.first_release_date - b.first_release_date;
+                    return a.review.id - b.review.id;
                 } else if (props.sortingSelection === SortingOptionEnum.ReleaseDateDesc) {
-                    return b.first_release_date - a.first_release_date;
+                    return b.review.id - a.review.id;
                 } else if (props.sortingSelection === SortingOptionEnum.AlphabeticallyAsc) {
                     if (a.name > b.name) { return -1; }
                     if (a.name < b.name) { return 1; }
@@ -57,9 +57,9 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
                     if (a.name > b.name) { return 1; }
                     return 0;
                 } else if (props.sortingSelection === SortingOptionEnum.PopularityAsc) {
-                    return (a.aggregated_rating || 0) - (b.aggregated_rating || 0);
+                    return (a.review.id || 0) - (b.review.id || 0);
                 } else if (props.sortingSelection === SortingOptionEnum.PopularityDesc) {
-                    return (b.aggregated_rating || 0) - (a.aggregated_rating || 0);
+                    return (b.review.id || 0) - (a.review.id || 0);
                 } else {
                     return 0; // never hit
                 }
@@ -80,7 +80,7 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
                         .map((game: GameResponse) => {
                             return (
                                 <GameListContainer
-                                    key={game.id}
+                                    key={game.steamId}
                                     type={GameListType.Search}
                                     game={game}
                                 />

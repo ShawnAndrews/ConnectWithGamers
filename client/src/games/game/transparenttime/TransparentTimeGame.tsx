@@ -18,18 +18,18 @@ const TransparentTimeGame: React.SFC<ITransparentTimeGameProps> = (props: ITrans
                     <div className="name">
                         {props.game.name}
                     </div>
-                    {props.game.aggregated_rating && 
+                    {props.game.review.id && 
                         <ReactStars
                             count={5}
-                            value={props.game.aggregated_rating ? (props.game.aggregated_rating / 100) * 5 : 0}
+                            value={props.game.review.id ? (props.game.review.id / 100) * 5 : 0}
                             size={16}
                             edit={false}
                         />}
                     <div className="platform-icons">
-                        {props.game.linkIcons && props.game.linkIcons
+                        {/* {props.game.linkIcons && props.game.linkIcons
                             .map((icon: string) => (
                                 <i className={`${icon} mx-1`}/>
-                            ))}
+                            ))} */}
                     </div>
                     <div className="genres font-italic">
                         {props.game.genres && props.game.genres.join(`, `)}
@@ -37,7 +37,7 @@ const TransparentTimeGame: React.SFC<ITransparentTimeGameProps> = (props: ITrans
                 </div>
                 <div className="right-text align-top d-inline-block">
                     <div className="time">
-                        {formatDate(props.game.first_release_date)}
+                        {formatDate(props.game.first_release_date.getTime())}
                     </div>
                 </div>
             </div>

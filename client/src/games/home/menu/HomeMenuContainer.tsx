@@ -124,7 +124,7 @@ class FullsizeResultsContainer extends React.Component<IHomeMenuContainerProps, 
 
         SteamService.httpGenericGetData<MultiGameResponse>(serverPath)
         .then( (response: MultiGameResponse) => {
-            const games: GameResponse[] = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1);
+            const games: GameResponse[] = response.data.filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1);
 
             this.setState({
                 loadingMsg: 'Loading images...',

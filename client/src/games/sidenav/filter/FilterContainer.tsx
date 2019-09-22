@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Filter from './Filter';
-import { IdNamePair, SteamPlatformEnums, SteamGenreEnums, SteamCategoryEnums } from '../../../../client-server-common/common';
+import { IdNamePair } from '../../../../client-server-common/common';
 
 export enum SortingOptionEnum {
     "None",
@@ -63,42 +63,42 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
             { id: SortingOptionEnum.AlphabeticallyDesc, name: 'Alphabetical ↓' },
         ];
 
-        const genreOptions: IdNamePair[] = [
-            { id: SteamGenreEnums.action, name: 'Action' },
-            { id: SteamGenreEnums.adventure, name: 'Adventure' },
-            { id: SteamGenreEnums.shooter, name: 'Shooter' },
-            { id: SteamGenreEnums.simulation, name: 'Simulation' },
-            { id: SteamGenreEnums.rpg, name: 'RPG' },
-            { id: SteamGenreEnums.puzzle, name: 'Puzzle' },
-            { id: SteamGenreEnums.strategy, name: 'Strategy' },
-        ];
+        // const genreOptions: IdNamePair[] = [
+        //     { id: SteamGenreEnums.action, name: 'Action' },
+        //     { id: SteamGenreEnums.adventure, name: 'Adventure' },
+        //     { id: SteamGenreEnums.shooter, name: 'Shooter' },
+        //     { id: SteamGenreEnums.simulation, name: 'Simulation' },
+        //     { id: SteamGenreEnums.rpg, name: 'RPG' },
+        //     { id: SteamGenreEnums.puzzle, name: 'Puzzle' },
+        //     { id: SteamGenreEnums.strategy, name: 'Strategy' },
+        // ];
 
-        const platformOptions: IdNamePair[] = [
-            { id: SteamPlatformEnums.pc, name: 'PC' },
-            { id: SteamPlatformEnums.linux, name: 'Linux' },
-            { id: SteamPlatformEnums.mac, name: 'Mac' },
-            { id: SteamPlatformEnums.vr, name: 'Virtual Reality' },
-            { id: SteamPlatformEnums.switch, name: 'Nintendo Switch' },
-            { id: SteamPlatformEnums.ps4, name: 'Playstation 4' },
-            { id: SteamPlatformEnums.xboxone, name: 'Xbox One' }
-        ];
+        // const platformOptions: IdNamePair[] = [
+        //     { id: SteamPlatformEnums.pc, name: 'PC' },
+        //     { id: SteamPlatformEnums.linux, name: 'Linux' },
+        //     { id: SteamPlatformEnums.mac, name: 'Mac' },
+        //     { id: SteamPlatformEnums.vr, name: 'Virtual Reality' },
+        //     { id: SteamPlatformEnums.switch, name: 'Nintendo Switch' },
+        //     { id: SteamPlatformEnums.ps4, name: 'Playstation 4' },
+        //     { id: SteamPlatformEnums.xboxone, name: 'Xbox One' }
+        // ];
 
-        const categoryOptions: IdNamePair[] = [
-            { id: SteamCategoryEnums.maingame, name: 'Main Game' },
-            { id: SteamCategoryEnums.dlc, name: 'DLC' },
-            { id: SteamCategoryEnums.expansion, name: 'Expansion' },
-            { id: SteamCategoryEnums.bundle, name: 'Bundle' },
-            { id: SteamCategoryEnums.standaloneexpansion, name: 'Standalone Expansion' }
-        ];
+        // const categoryOptions: IdNamePair[] = [
+        //     { id: SteamCategoryEnums.maingame, name: 'Main Game' },
+        //     { id: SteamCategoryEnums.dlc, name: 'DLC' },
+        //     { id: SteamCategoryEnums.expansion, name: 'Expansion' },
+        //     { id: SteamCategoryEnums.bundle, name: 'Bundle' },
+        //     { id: SteamCategoryEnums.standaloneexpansion, name: 'Standalone Expansion' }
+        // ];
 
         this.state = {
             searchTerm: '',
             popularity: 0,
             releaseDateStart: undefined,
             releaseDateEnd: undefined,
-            genreOptions: genreOptions,
-            categoryOptions: categoryOptions,
-            platformOptions: platformOptions,
+            genreOptions: [],
+            categoryOptions: [],
+            platformOptions: [],
             sortingOptions: sortingOptions,
             sortingSelection: SortingOptionEnum.None,
             genresSelection: [],

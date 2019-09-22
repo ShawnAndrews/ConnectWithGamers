@@ -69,14 +69,14 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
                 </div>
                 :
                 <Slider {...settings}>
-                    {props.similarGames.filter((similarGame: GameResponse) => similarGame.cover).map((similarGame: GameResponse, index: number) => {
+                    {props.similarGames.filter((similarGame: GameResponse) => similarGame.cover_thumb).map((similarGame: GameResponse, index: number) => {
                             const pricingExists: boolean = similarGame.pricings && similarGame.pricings.length > 0; 
                             let bestPrice: number = Number.MAX_SAFE_INTEGER;
 
                             if (pricingExists) {
                                 similarGame.pricings.forEach((pricing: PriceInfoResponse) => {
                                     if (bestPrice) {
-                                        if (pricing.pricingEnum === PricingsEnum.main_game) {
+                                        if (pricing.pricingEnumSysKeyId === PricingsEnum.main_game) {
                                             if (!pricing.price) {
                                                 bestPrice = undefined;
                                             } else {
@@ -90,11 +90,11 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
                             }
 
                             return (
-                                <div key={similarGame.id} className="similar-game" onMouseEnter={() => props.onSimilarGamesMouseOver(index)} onMouseLeave={props.onSimilarGamesMouseLeave}>
+                                <div key={similarGame.steamId} className="similar-game" onMouseEnter={() => props.onSimilarGamesMouseOver(index)} onMouseLeave={props.onSimilarGamesMouseLeave}>
                                     <img 
                                         className={`cursor-pointer ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`}
-                                        src={similarGame.cover}
-                                        onClick={() => props.goToGame(similarGame.id)}
+                                        src={similarGame.cover_thumb}
+                                        onClick={() => props.goToGame(similarGame.steamId)}
                                         onMouseDown={props.onSimilarGamesMouseDown}
                                         onMouseMove={props.onSimilarGamesMouseMove}
                                         onMouseUp={props.onSimilarGamesMouseUp}
@@ -102,7 +102,7 @@ const SimilarGames: React.SFC<ISimilarGamesProps> = (props: ISimilarGamesProps) 
                                     <div className={`overlay ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`} />
                                     <div className={`text-container text-center w-100 ${index === props.hoveredSimilarGameIndex ? 'active' : ''}`}>
                                         <div className="name mb-1">{similarGame.name}</div>
-                                        <Button variant="contained" color="primary" onClick={() => props.goToGame(similarGame.id)}>
+                                        <Button variant="contained" color="primary" onClick={() => props.goToGame(similarGame.steamId)}>
                                             {!pricingExists
                                                 ?
                                                 `Visit`

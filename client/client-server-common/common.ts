@@ -19,15 +19,6 @@ export function getTodayUnixTimestampInSeconds(): number {
     return timestamp;
 }
 
-// export const GamesPresets = {
-//     highlighted: `?required=cover,screenshots&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&popularity=55&platforms=6&sort=popularity:desc`,
-//     ioscomingsoon: `?required=cover,screenshots&platforms=39&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
-//     androidcomingsoon: `?required=cover,screenshots&platforms=34&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
-//     upcoming: `?required=cover,screenshots&released_after=${CURRENT_UNIX_TIME_S}&sort=release_date:asc`,
-//     recentlyReleased: `?required=cover,screenshots&popularity=5&released_before=${CURRENT_UNIX_TIME_S}&sort=release_date:desc`,
-//     popular: `?required=cover,screenshots&popularity=15&released_after=${THREE_MONTH_AGO_UNIX_TIME_S}&released_before=${CURRENT_UNIX_TIME_S}&sort=popularity:desc`,
-// };
-
 export enum CurrencyType {
     USD = "USD",
     EUR = "EUR",
@@ -411,21 +402,24 @@ export interface ChatHistoryResponse {
 }
 
 export interface GameResponse {
-    steam_games_sys_key_id: number;
+    steamId: number;
     name: string;
-    steam_review_enum_sys_key_id: number;
+    review: IdNamePair;
     total_review_count: number;
     summary: string;
     first_release_date: Date;
     video: string;
-    steam_state_enum_sys_key_id: number;
-    game_modes: number[];
-    similar_games: number[];
+    state: IdNamePair;
+    developer: IdNamePair;
+    publisher: IdNamePair;
     pricings: PriceInfoResponse[];
-    genres: number[];
+    achievements: Achievement[];
+    cover: string;
+    cover_thumb: string;
     screenshots: string[];
-    cover_small: string;
-    cover_large: string;
+    game_modes: IdNamePair[];
+    genres: IdNamePair[];
+    log_dt: Date;
 }
 
 export interface MultiGameResponse {
@@ -516,6 +510,7 @@ export interface Achievement {
     description: string;
     percent: number;
     link: string;
+    log_dt: Date;
 }
 
 /* Database tables */
@@ -569,7 +564,7 @@ export const DbTablePublishersFields: string[] = [`publishers_sys_key_id`, `stea
 export const DbTablePricingsFields: string[] = [`pricings_sys_key_id`, `pricings_enum_sys_key_id`, `steam_games_sys_key_id`, `title`, `price`, `discount_percent`, `discount_end_dt`, `log_dt`];
 export const DbTablePricingsEnumFields: string[] = [`pricings_enum_sys_key_id`, `name`];
 export const DbTableRatingsFields: string[] = [`ratings_sys_key_id`, `steam_games_sys_key_id`, `accounts_sys_key_id`, `rating`, `log_dt`];
-export const DbTableRouteCacheFields: string[] = [`route`, `response`, `expires_dt`];
+export const DbTableRouteCacheFields: string[] = [`route`, `response`, `log_dt`];
 export const DbTableSimilarGamesFields: string[] = [`similar_games_sys_key_id`, `steam_games_sys_key_id`, `similar_to_steam_games_sys_key_id`];
 export const DbTableSteamGamesFields: string[] = [`steam_games_sys_key_id`, `name`, `steam_review_enum_sys_key_id`, `total_review_count`, `summary`, `first_release_date`, `video`, `steam_state_enum_sys_key_id`, `log_dt`];
 export const DbTableSteamGenreEnumFields: string[] = [`steam_genre_enum_sys_key_id`, `name`];

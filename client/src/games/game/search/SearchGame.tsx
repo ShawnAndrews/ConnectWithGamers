@@ -21,10 +21,10 @@ const SearchGame: React.SFC<ISearchGameProps> = (props: ISearchGameProps) => {
                     {props.game.genres && 
                         props.game.genres.join(", ")}
                 </div>
-                <div className="icons color-secondary text-nowrap text-right px-2">
+                {/* <div className="icons color-secondary text-nowrap text-right px-2">
                     {props.game.linkIcons && 
                         props.game.linkIcons.map((platformIcon: string, index: number) => { return <i key={index} className={`${platformIcon} mx-1`}/>; })}
-                </div>
+                </div> */}
             </Paper>
         </div>
     );

@@ -81,7 +81,7 @@ class CoverGameContainer extends React.Component<Props, ICoverGameContainerState
     }
 
     goToGame(): void {
-        this.props.history.push(`/search/game/${this.props.game.id}`);
+        this.props.history.push(`/search/game/${this.props.game.steamId}`);
     }
 
     onVideoPreviewEnded(): void {

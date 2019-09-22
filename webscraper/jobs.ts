@@ -1,4 +1,4 @@
-import { DbTables, GenericModelResponse, BusMessagesEnum, DbTableSteamGamesFields, STEAM_RATE_LIMIT_MS } from "../client/client-server-common/common";
+import { DbTables, GenericModelResponse, BusMessagesEnum, DbTableSteamGamesFields, STEAM_RATE_LIMIT_MS, DbTableRouteCacheFields } from "../client/client-server-common/common";
 import DatabaseBase from "../models/db/base/dbBase";
 import { scheduleJob } from "node-schedule";
 import axios, { AxiosResponse } from "axios";
@@ -8,10 +8,27 @@ import { log } from "./logger/main";
 const steamIdsNotAvailableInRegion: number[] = [801220];
 const db: DatabaseBase = new DatabaseBase();
 
-export const scheduleDailyJob = (rule: any) => {
+export const scheduleRouteJob = (rule: any) => {
+    scheduleJob(rule, () => {
+        log(`[Route job] Started.`);
+
+        db.custom(
+            `DELETE FROM ${DbTables.route_cache}
+            WHERE ${DbTableRouteCacheFields[2]} <= NOW() - INTERVAL 1 DAY`,
+            [])
+            .then((dbResponse: GenericModelResponse) => {
+                log(`[Route job] Ended and deleted ${dbResponse.data[`affectedRows`]} routes cached.`);
+            })
+            .catch((error: string) => {
+                log(`[Route job] Failed. ${error}`);
+            });
+    });
+};
+
+export const scheduleGamesJob = (rule: any) => {
     scheduleJob(rule, () => {
         const jobStartTime: Date = new Date();
-        log(`[Daily job] Started.`);
+        log(`[Games job] Started.`);
 
         let allSteamIds: number[];
         let cwgSteamIds: number[];
@@ -30,16 +47,16 @@ export const scheduleDailyJob = (rule: any) => {
                 steamIdsToAdd = allSteamIds
                     .filter(x => cwgSteamIds.indexOf(x) === -1);
 
-                log(`[Daily job] Detected #${steamIdsToAdd.length} missing games and added them to the bus.`);
+                log(`[Games job] Detected #${steamIdsToAdd.length} missing games and added them to the bus.`);
 
                 return addGamesToBus(steamIdsToAdd);
             })
             .then(() => {
                 const jobEndTime: Date = new Date();
-                log(`[Daily job] Ended and took ${Math.floor((Math.abs(jobEndTime.getTime() - jobStartTime.getTime()) / 1000) / 60)} minutes!`);
+                log(`[Games job] Ended and took ${Math.floor((Math.abs(jobEndTime.getTime() - jobStartTime.getTime()) / 1000) / 60)} minutes!`);
             })
             .catch((error: string) => {
-                log(`[Daily job] Failed. ${error}`);
+                log(`[Games job] Failed. ${error}`);
             });
 
     });
@@ -101,7 +118,7 @@ function getAllSteamDatabaseGames(): Promise<number[]> {
                         if (!isNaN(steamGamesSysKeyId)) {
                             steamIds.push(steamGamesSysKeyId);
                         } else {
-                            log(`[Daily job] Found game on in Steam list buy could not add steam id #${steamGamesSysKeyId} in link ${link}.`);
+                            log(`[Games job] Found game on in Steam list but could not add steam id #${steamGamesSysKeyId} in link ${link}.`);
                         }
 
                     });
@@ -129,21 +146,21 @@ function getAllSteamDatabaseGames(): Promise<number[]> {
                         addSteamIdsToList(innerResponse).then(() => { return resolve(steamIds); }).catch(() => {});
                     })
                     .catch(() => {
-                        log(`[Daily job] Attempting to retry page #${i}/${max_pages}... (1/3)`);
+                        log(`[Games job] Attempting to retry page #${i}/${max_pages}... (1/3)`);
 
                         axios(httpParams)
                         .then((innerResponse: AxiosResponse) => {
                             addSteamIdsToList(innerResponse).then(() => { return resolve(steamIds); }).catch(() => {});
                         })
                         .catch(() => {
-                            log(`[Daily job] Attempting to retry page #${i}/${max_pages}... (2/3)`);
+                            log(`[Games job] Attempting to retry page #${i}/${max_pages}... (2/3)`);
 
                             axios(httpParams)
                             .then((innerResponse: AxiosResponse) => {
                                 addSteamIdsToList(innerResponse).then(() => { return resolve(steamIds); }).catch(() => {});
                             })
                             .catch(() => {
-                                log(`[Daily job] Attempting to retry page #${i}/${max_pages}... (3/3)`);
+                                log(`[Games job] Attempting to retry page #${i}/${max_pages}... (3/3)`);
 
                                 axios(httpParams)
                                 .then((innerResponse: AxiosResponse) => {

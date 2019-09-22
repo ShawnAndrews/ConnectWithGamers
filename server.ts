@@ -47,13 +47,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 /* chatroom controller */
-app.use("/chatroom", chatroomController);
+app.use("/api/chatroom", chatroomController);
 
 /* account authentication controller */
-app.use("/account", accountController);
+app.use("/api/account", accountController);
 
 /* steam controller */
-app.use("/steam", steamController);
+app.use("/api/steam", steamController);
 
 /* common */
 app.get("/favicon.ico", (req: Request, res: Response) => {res.sendFile(path.join(__dirname, "../client/favicon.ico")); });

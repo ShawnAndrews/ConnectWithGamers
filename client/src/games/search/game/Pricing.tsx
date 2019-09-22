@@ -13,19 +13,17 @@ interface IPricingProps {
 
 const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
 
-    const mainGame: PriceInfoResponse = props.pricings.find((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.main_game);
-    const xboxPassPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.free_or_discounted_with_xbox_game_pass) !== -1;
-    const xboxGoldPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.free_or_discounted_with_xbox_live_gold) !== -1;
-    const dlcPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.dlc) !== -1;
-    const inAppPurchasePricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.in_app_purchase) !== -1;
-    const bundlesPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.bundles) !== -1;
-    const noAdditonalPricingsExist: boolean = !xboxPassPricingsExist && !xboxGoldPricingsExist && !dlcPricingsExist && !inAppPurchasePricingsExist && !bundlesPricingsExist && !bundlesPricingsExist;
+    const mainGame: PriceInfoResponse = props.pricings.find((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.main_game);
+    const demoPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.demo) !== -1;
+    const dlcPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.dlc) !== -1;
+    const bundlesPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.bundles) !== -1;
+    const noAdditonalPricingsExist: boolean = !dlcPricingsExist && !bundlesPricingsExist && !bundlesPricingsExist;
     const imgSrc: string = 'https://i.imgur.com/sIw8aIf.png';
 
     const getEntriesByPricingsEnum = (pricingEnum: PricingsEnum): any[] => {
         return props.pricings
             .filter((priceInfo: PriceInfoResponse) => {
-                return priceInfo.pricingEnum === pricingEnum
+                return priceInfo.pricingEnumSysKeyId === pricingEnum
             })
             .map((priceInfo: PriceInfoResponse) => (
                 <div>
@@ -49,25 +47,15 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
                     title={
                         <>
                             {noAdditonalPricingsExist && <div className="tooltip-header">No additional content available.</div>}
-                            {xboxPassPricingsExist && 
-                                <div className="my-2">
-                                    <p className="tooltip-header">Xbox Game Pass - Free and Discount games</p>
-                                    {getEntriesByPricingsEnum(PricingsEnum.free_or_discounted_with_xbox_game_pass)}
-                                </div>}
-                            {xboxGoldPricingsExist && 
-                                <div className="my-2">
-                                    <p className="tooltip-header">Xbox Live Gold - Discounted games</p>
-                                    {getEntriesByPricingsEnum(PricingsEnum.free_or_discounted_with_xbox_live_gold)}
-                                </div>}
                             {dlcPricingsExist && 
                                 <div className="my-2">
                                     <p className="tooltip-header">Downloadable Content</p>
                                     {getEntriesByPricingsEnum(PricingsEnum.dlc)}
                                 </div>}
-                            {inAppPurchasePricingsExist && 
+                            {demoPricingsExist && 
                                 <div className="my-2">
-                                    <p className="tooltip-header">In-App Purchases</p>
-                                    {getEntriesByPricingsEnum(PricingsEnum.in_app_purchase)}
+                                    <p className="tooltip-header">Demos</p>
+                                    {getEntriesByPricingsEnum(PricingsEnum.demo)}
                                 </div>}
                             {bundlesPricingsExist && 
                                 <div className="my-2">

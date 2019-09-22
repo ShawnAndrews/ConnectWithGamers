@@ -1,7 +1,7 @@
 import config from "../../../../config";
 import { NewsArticle, RawNewsArticle, getTodayUnixTimestampInSeconds } from "../../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-import { steamModel } from "../../../../models/db/steam/main";
+import { gameModel } from "../../../../models/db/game/main";
 
 /**
  * Check if news exists.
@@ -9,7 +9,7 @@ import { steamModel } from "../../../../models/db/steam/main";
 export function newsKeyExists(path: string): Promise<boolean> {
 
     return new Promise((resolve: any, reject: any) => {
-        steamModel.newsExists(path)
+        gameModel.newsExists(path)
         .then((exists: boolean) => {
             return resolve(exists);
         })
@@ -27,7 +27,7 @@ export function getCachedNews(path: string): Promise<NewsArticle[]> {
 
     return new Promise((resolve: any, reject: any) => {
 
-        steamModel.getNews(path)
+        gameModel.getNews(path)
         .then((newsArticles: NewsArticle[]) => {
             return resolve(newsArticles);
         })
@@ -71,7 +71,7 @@ export function cacheNews(path: string): Promise<NewsArticle[]> {
                 newsArticles.push(NewsArticle);
             });
 
-            steamModel.setNews(newsArticles, path)
+            gameModel.setNews(newsArticles, path)
             .then(() => {
                 return resolve(newsArticles);
             })

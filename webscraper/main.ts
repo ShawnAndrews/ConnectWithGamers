@@ -1,5 +1,6 @@
-import { scheduleDailyJob } from "./jobs";
+import { scheduleGamesJob, scheduleRouteJob } from "./jobs";
 import { runBus } from "./bus";
 
-scheduleDailyJob({ hour: 21, minute: 7 });
+scheduleRouteJob({ hour: 4, minute: 0 });
+scheduleGamesJob({ hour: 16, minute: 4 });
 runBus();

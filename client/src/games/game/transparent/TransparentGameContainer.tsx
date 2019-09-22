@@ -18,7 +18,7 @@ class TransparentGameContainer extends React.Component<ITransparentGameContainer
     }
 
     goToGame(): void {
-        this.props.history.push(`/search/game/${this.props.game.id}`);
+        this.props.history.push(`/search/game/${this.props.game.steamId}`);
     }
 
     render() {

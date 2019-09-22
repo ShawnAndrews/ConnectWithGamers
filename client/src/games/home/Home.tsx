@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, SteamGenreEnums, NewsArticle, SidenavEnums } from '../../../client-server-common/common';
+import { GameResponse, NewsArticle, SidenavEnums } from '../../../client-server-common/common';
 import Spinner from '../../spinner/main';
 import Slider from "react-slick";
 import FullsizeGameContainer from '../game/fullsize/FullsizeGameContainer';
@@ -65,12 +65,12 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                                 <Textfit className='name' min={18} max={30}>
                                     {props.bigGames[index].name}
                                 </Textfit>
-                                <div className='genres'>
+                                {/* <div className='genres'>
                                     {props.bigGames[index].genres && props.bigGames[index].genres.map((x: number) => SteamGenreEnums[x]).join(', ')}
-                                </div>
-                                <div className='platforms my-1'>
+                                </div> */}
+                                {/* <div className='platforms my-1'>
                                     {props.bigGames[index].linkIcons && props.bigGames[index].linkIcons.map((x: string) => <i className={`fab ${x} mx-2`}/>)}
-                                </div>
+                                </div> */}
                                 <Button
                                     className="price-btn mt-1" 
                                     variant="raised"

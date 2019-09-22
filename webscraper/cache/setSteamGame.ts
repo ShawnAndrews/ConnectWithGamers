@@ -1,6 +1,5 @@
 import { DbTables, GenericModelResponse, PriceInfoResponse, DbTableSteamGamesFields, DbTablePricingsFields, GameResponse, DbTableGenresFields, DbTableSteamGenreEnumFields, DbTablePlatformsFields, DbTableSteamModesEnumFields, DbTableModesFields, DbTableImagesFields, ImagesEnum, cleanString, DbTableSteamDeveloperEnumFields, DbTableDevelopersFields, DbTableSteamPublisherEnumFields, DbTablePublishersFields, Achievement, DbTableAchievementsFields } from "../../client/client-server-common/common";
 import DatabaseBase from "../../models/db/base/dbBase";
-import { log } from "../logger/main";
 const db: DatabaseBase = new DatabaseBase();
 
 export function cacheSteamGame(steamGamesSysKeyId: number, name: string, steamReviewEnumSysKeyId: number, totalReviewCount: number, summary: string, firstReleaseDate: Date, video: string, steamStateEnumSysKeyId: number): Promise<void>  {
@@ -13,12 +12,12 @@ export function cacheSteamGame(steamGamesSysKeyId: number, name: string, steamRe
             WHERE ${DbTableSteamGamesFields[0]} = ?`,
             [steamGamesSysKeyId])
             .then((dbResponse: GenericModelResponse) => {
-                const steamGamesRecordsInDb: GameResponse[] = dbResponse.data;
+                const rawGames: any[] = dbResponse.data;
 
-                if (steamGamesRecordsInDb.length > 0) {
-                    const gameResponse: GameResponse = steamGamesRecordsInDb[0];
+                if (rawGames.length > 0) {
+                    const rawGame: any = rawGames[0];
 
-                    if (gameResponse.name != name || gameResponse.steam_review_enum_sys_key_id != steamReviewEnumSysKeyId || gameResponse.total_review_count != totalReviewCount || gameResponse.summary != summary || gameResponse.first_release_date != firstReleaseDate || gameResponse.steam_state_enum_sys_key_id != steamStateEnumSysKeyId) {
+                    if (rawGame.name != name || rawGame.steam_review_enum_sys_key_id != steamReviewEnumSysKeyId || rawGame.total_review_count != totalReviewCount || rawGame.summary != summary || rawGame.first_release_date != firstReleaseDate || rawGame.steam_state_enum_sys_key_id != steamStateEnumSysKeyId) {
 
                         // update game info
                         db.custom(
@@ -336,7 +335,7 @@ export function cacheAchievements(achievements: Achievement[], steamGamesSysKeyI
                                     `UPDATE ${DbTables.achievements}
                                     SET ${DbTableAchievementsFields[4]} = ?, ${DbTableAchievementsFields[5]} = ?, ${DbTableAchievementsFields[6]} = ?
                                     WHERE ${DbTableAchievementsFields[1]} = ? AND ${DbTableAchievementsFields[2]} = ? AND ${DbTableAchievementsFields[3]} = ?`,
-                                    [achievement.link, achievement.percent, new Date(), steamGamesSysKeyId, achievement.name, achievement.description])
+                                    [achievement.link, achievement.percent, achievement.log_dt, steamGamesSysKeyId, achievement.name, achievement.description])
                                     .then(() => {
                                         return resolve();
                                     })
@@ -352,7 +351,7 @@ export function cacheAchievements(achievements: Achievement[], steamGamesSysKeyI
                             }
 
                         } else {
-                            const achievementVals: any[] = [steamGamesSysKeyId, achievement.name, achievement.description, achievement.link, achievement.percent, new Date()];
+                            const achievementVals: any[] = [steamGamesSysKeyId, achievement.name, achievement.description, achievement.link, achievement.percent, achievement.log_dt];
 
                             // insert
                             return db.custom(

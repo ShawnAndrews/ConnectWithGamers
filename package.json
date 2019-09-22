@@ -8,7 +8,7 @@
         "webscraper-populate": "npm run build-ts && npm run tslint && node dist/webscraper/populate/main.js",
         "webscraper": "npm run build-ts && npm run tslint && node dist/webscraper/main.js",
         "server-client": "npm run build-ts && npm run tslint && npm run client-prod --prefix client/ && npm run server",
-        "server-prod": "npm run build-ts && npm run tslint",
+        "server-client-build": "npm run build-ts && npm run tslint",
         "server": "node dist/server.js",
         "chat-server": "node dist/chatserver.js",
         "build-ts": "tsc",
@@ -42,8 +42,7 @@
         "node-schedule": "^1.3.2",
         "nodemailer": "^5.0.0",
         "socket.io": "^2.2.0",
-        "web-request": "^1.0.7",
-        "ytdl-core": "^0.29.1"
+        "web-request": "^1.0.7"
     },
     "devDependencies": {
         "ts-node": "^7.0.1",

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Tooltip } from '@material-ui/core';
-import { SteamPlatformEnums } from '../../../../client-server-common/common';
 
 interface IPlatformsProps {
     platforms: number[];
@@ -21,7 +20,7 @@ const Platforms: React.SFC<IPlatformsProps> = (props: IPlatformsProps) => {
                                     className="platform cursor-pointer d-inline-block py-1"
                                     onClick={() => { props.handlePlatformClick(index); }}
                                 >
-                                    {SteamPlatformEnums[x]}
+                                    {}
                                 </span>
                             </Tooltip>
                         </React.Fragment>

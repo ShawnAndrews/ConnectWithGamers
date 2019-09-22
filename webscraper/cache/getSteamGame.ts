@@ -5,7 +5,7 @@ export function getSteamGenres(data: string): string[] {
     const genres: string[] = [];
     const $: CheerioStatic = cheerio.load(data);
 
-    $(`.glance_tags.popular_tags > a`).each((i: number, element: CheerioElement) => genres.push($(element).html().trim()));
+    $(`.glance_tags.popular_tags > a`).each((i: number, element: CheerioElement) => genres.push($(element).html().trim().replace(`&amp;`, `&`).replace(`&apos;`, `'`)));
 
     return genres;
 }
@@ -62,7 +62,7 @@ export function getSteamAchievements(data: string): Achievement[] {
             const name: string = cleanString($(element).find(`.achieveTxt h3`).html()).trim();
             const description: string = cleanString($(element).find(`.achieveTxt h5`).html()).trim();
             const percent: number = parseFloat($(element).find(`.achievePercent`).html().replace(`%`, ``));
-            const achievement: Achievement = { name: name, description: description, link: link, percent: percent };
+            const achievement: Achievement = { name: name, description: description, link: link, percent: percent, log_dt: new Date() };
 
             achievements.push(achievement);
         });

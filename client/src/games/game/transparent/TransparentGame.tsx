@@ -29,7 +29,7 @@ const TransparentGame: React.SFC<ITransparentGameProps> = (props: ITransparentGa
                 <div className="mx-auto" style={gameContainer}>
                     <ReactStars
                         count={5}
-                        value={props.game.aggregated_rating ? (props.game.aggregated_rating / 100) * 5 : 0}
+                        value={props.game.review.id ? (props.game.review.id / 100) * 5 : 0}
                         size={13}
                         edit={false}
                     />

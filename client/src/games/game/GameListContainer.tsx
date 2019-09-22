@@ -30,7 +30,7 @@ class GameListContainer extends React.Component<IGameListContainerProps, IGameLi
     }
 
     goToGame(): void {
-        this.props.history.push(`/search/game/${this.props.game.id}`);
+        this.props.history.push(`/search/game/${this.props.game.steamId}`);
     }
 
     render() {

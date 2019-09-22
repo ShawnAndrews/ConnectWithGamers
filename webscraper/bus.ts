@@ -96,7 +96,7 @@ function processSteamId(steamId: number): Promise<void> {
             const totalReviewCount: number = totalReviewCountTemp === -1 ? 0 : totalReviewCountTemp;
             const reviewEnum: ReviewEnum = $(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).length > 0 ? ReviewEnum[$(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).html()] : ReviewEnum.NoUserReviews;
             const summary: string = cleanString($(".game_area_description").text().substr(0, 10000));
-            const firstReleaseDate: Date = !isNaN((new Date($(".release_date > div.date").html())).getTime()) ? new Date($(".release_date > div.date").html()) : undefined;
+            const firstReleaseDate: Date = $(".release_date > div.date").html().includes(`, 2019`) ? new Date($(".release_date > div.date").html()) : undefined;
             const video: string = $(".highlight_movie").length > 0 ? $(".highlight_movie").attr("data-mp4-source") : undefined;
             const stateEnum: StateEnum =
             ($(`head > title`).html().includes(`Pre-purchase`) ? StateEnum.preorder : undefined) ||
@@ -109,6 +109,7 @@ function processSteamId(steamId: number): Promise<void> {
             const developer: string = $(`.user_reviews .dev_row`).length > 0 ? $(`.user_reviews .dev_row`).first().find(`a`).html() : undefined;
             const publisher: string = $(`.user_reviews .dev_row`).length > 0 ? $(`.user_reviews .dev_row`).last().find(`a`).html() : undefined;
             const achievements: Achievement[] = getSteamAchievements(responseGameAchievementsPage.data);
+            const deleteBusMessage = (steamGamesSysKeyId: number): Promise<GenericModelResponse> => db.custom(`DELETE FROM ${DbTables.bus_messages} WHERE ${DbTableBusMessagesFields[1]} = ?`, [steamGamesSysKeyId]);
 
             // // debug
             // console.log(`Name: ${name} - ${developer} - ${publisher}`);
@@ -126,7 +127,13 @@ function processSteamId(steamId: number): Promise<void> {
             // console.log(`Achievements: ${achievements.length}`);
             // console.log(``);
 
-            cacheSteamGame(steamGamesSysKeyId, name, reviewEnum, totalReviewCount, summary, firstReleaseDate, video, stateEnum)
+            if (!name) {
+                deleteBusMessage(steamGamesSysKeyId)
+                .then(() => {
+                    return reject(`Game page not setup yet and redirected to homepage.`);
+                });
+            } else {
+                cacheSteamGame(steamGamesSysKeyId, name, reviewEnum, totalReviewCount, summary, firstReleaseDate, video, stateEnum)
                 .then(() => {
                     return cachePricings(pricings);
                 })
@@ -149,15 +156,15 @@ function processSteamId(steamId: number): Promise<void> {
                     return cacheAchievements(achievements, steamGamesSysKeyId);
                 })
                 .then(() => {
-                    return db.custom(`DELETE FROM ${DbTables.bus_messages} WHERE ${DbTableBusMessagesFields[1]} = ?`, [steamGamesSysKeyId]);
+                    return deleteBusMessage(steamGamesSysKeyId);
                 })
                 .then(() => {
                     return resolve();
                 })
                 .catch((error: string) => {
-                    busIsBusy = false;
                     return reject(error);
                 });
+            }
 
         })
         .catch((error: string) => {

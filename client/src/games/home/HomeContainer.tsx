@@ -89,23 +89,23 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             .then((data: any[]) => {
                 const featuredGamesData: MultiGameResponse = data[0];
                 const featuredGames: GameResponse[] = featuredGamesData.data
-                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
+                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
                     .filter((game: GameResponse) => game.cover)
-                    .sort((a: GameResponse, b: GameResponse) => b.aggregated_rating - a.aggregated_rating)
+                    .sort((a: GameResponse, b: GameResponse) => b.review.id - a.review.id)
                     .slice(0, 13);
                 const bigGamesData: GenericModelResponse[] = data.slice(1, 1 + this.state.bigGamesInfo.length);
                 const bigGames: GameResponse[] = [];
                 bigGamesData.forEach((x: GenericModelResponse) => {
                     const game: GameResponse = x.data;
                     this.state.bigGamesInfo.forEach((y: BigGameInfo) => {
-                        if (game.id === y.gameId) {
+                        if (game.steamId === y.gameId) {
                             bigGames.push(x.data);
                         }
                     });
                 });
                 const weeklyGamesData: MultiGameResponse = data[1 + this.state.bigGamesInfo.length];
                 const weeklyGames: GameResponse[] = weeklyGamesData.data
-                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
+                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
                     .filter((game: GameResponse) => getGameBestPricingStatus(game.pricings).discount_percent && getGameBestPricingStatus(game.pricings).discount_percent > 0)
                     .filter((game: GameResponse) => game.cover);
                 const newsData: MultiNewsResponse = data[2 + this.state.bigGamesInfo.length];
@@ -113,26 +113,26 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 const upcomingGamesData: MultiGameResponse = data[3 + this.state.bigGamesInfo.length];
                 const upcomingGames: GameResponse[] = upcomingGamesData.data
                     .filter((game: GameResponse) => game.cover)
-                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
-                    .filter((game: GameResponse) => new Date(game.first_release_date * 1000) > new Date())
-                    .sort((a: GameResponse, b: GameResponse) => a.first_release_date - b.first_release_date)
+                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
+                    .filter((game: GameResponse) => new Date(game.first_release_date.getTime() * 1000) > new Date())
+                    .sort((a: GameResponse, b: GameResponse) => a.first_release_date.getTime() - b.first_release_date.getTime())
                     .slice(0, 20);
                 const recentGamesData: MultiGameResponse = data[4 + this.state.bigGamesInfo.length];
                 const recentGames: GameResponse[] = recentGamesData.data
                     .filter((game: GameResponse) => game.cover)
-                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
-                    .sort((a: GameResponse, b: GameResponse) => b.first_release_date - a.first_release_date)
+                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
+                    .sort((a: GameResponse, b: GameResponse) => b.first_release_date.getTime() - a.first_release_date.getTime())
                     .slice(0, 20);
                 const earlyGamesData: MultiGameResponse = data[5 + this.state.bigGamesInfo.length];
                 const earlyGames: GameResponse[] = earlyGamesData.data
                     .filter((game: GameResponse) => game.cover)
-                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
-                    .sort((a: GameResponse, b: GameResponse) => a.first_release_date - b.first_release_date)
+                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
+                    .sort((a: GameResponse, b: GameResponse) => a.first_release_date.getTime() - b.first_release_date.getTime())
                     .slice(0, 20);
                 const horrorGamesData: MultiGameResponse = data[6 + this.state.bigGamesInfo.length];
                 const horrorGames: GameResponse[] = horrorGamesData.data
                     .filter((game: GameResponse) => game.cover)
-                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.id) === -1)
+                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
                     .sort((a: GameResponse, b: GameResponse) => {
                         const bestPriceDiscountPercentA: number = getGameBestPricingStatus(a.pricings).discount_percent || 0;
                         const bestPriceDiscountPercentB: number = getGameBestPricingStatus(b.pricings).discount_percent || 0;

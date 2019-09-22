@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { SteamGenreEnums } from '../../../../client-server-common/common';
+import { IdNamePair } from '../../../../client-server-common/common';
 
 interface IGenresProps {
-    genres: number[];
+    genres: IdNamePair[];
     handleGenreClick: (index: number) => void;
 }
 
@@ -12,14 +12,14 @@ const Genres: React.SFC<IGenresProps> = (props: IGenresProps) => {
         <div className="genres color-secondary mt-2">
             <span className="title my-1">{`Genres: `}</span>
             {props.genres && props.genres
-                .map((x: number, index: number) => {
+                .map((x: IdNamePair, index: number) => {
                     return (
-                        <React.Fragment key={x}>
+                        <React.Fragment key={x.id}>
                             <span 
                                 className="genre cursor-pointer d-inline-block py-1" 
                                 onClick={() => { props.handleGenreClick(index); }}
                             >
-                                {SteamGenreEnums[x]}
+                                {}
                             </span>
                         </React.Fragment>
                     );

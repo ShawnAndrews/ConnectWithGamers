@@ -67,7 +67,7 @@ export function getGameBestPricingStatus(pricings: PriceInfoResponse[]): PriceIn
     let preorder: boolean = false;
 
     pricings && pricings.forEach((pricing: PriceInfoResponse) => {
-        if (pricing.pricingEnum === PricingsEnum.main_game) {
+        if (pricing.pricingEnumSysKeyId === PricingsEnum.main_game) {
             if (!pricing.price) {
                 lowestPrice = undefined;
                 lowestDiscountPercent = undefined;
@@ -80,7 +80,7 @@ export function getGameBestPricingStatus(pricings: PriceInfoResponse[]): PriceIn
         }
     })
 
-    const priceInfo: PriceInfoResponse = { steamGamesSysKeyId: -1, title: undefined, price: lowestPrice, discount_percent: lowestDiscountPercent, pricingEnum: PricingsEnum.main_game, expires_dt: undefined };
+    const priceInfo: PriceInfoResponse = { steamGamesSysKeyId: -1, title: undefined, price: lowestPrice, discount_percent: lowestDiscountPercent, pricingEnumSysKeyId: PricingsEnum.main_game, discount_end_dt: undefined, log_dt: undefined };
     return priceInfo;
 }
 

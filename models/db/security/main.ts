@@ -9,9 +9,7 @@ import {
     TokenInfo,
     DbTables,
     DbTableAccountsFields,
-    DbTableTokensFields,
-    EMAIL_VERIFICATION_LEN, ACCOUNT_RECOVERYID_LEN } from "../../../client/client-server-common/common";
-import Axios, { AxiosResponse } from "axios";
+    DbTableTokensFields } from "../../../client/client-server-common/common";
 
 export enum SecurityCacheEnum {
     attachment = "attachment",

@@ -59,7 +59,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
     }
     
     let steamPricings: PriceInfoResponse[] = props.game.pricings;
-    let steamMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => priceInfo.pricingEnum === PricingsEnum.main_game);
+    let steamMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.main_game);
     let steamIsFree: boolean = steamMainGame && !steamMainGame.price;
     let steamIsDiscounted: boolean = steamMainGame && steamMainGame.price && !!steamMainGame.discount_percent;
     let steamBasePrice: number = steamIsDiscounted && + (steamMainGame.price / ((100 - steamMainGame.discount_percent) / 100)).toFixed(2);
@@ -112,7 +112,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
         }
 
         return {
-            marginTop: `calc(${newHeight * 0.7}px ${props.game.aggregated_rating ? ` - ${starsHeight}px` : ''})`
+            marginTop: `calc(${newHeight * 0.7}px ${props.game.review.id ? ` - ${starsHeight}px` : ''})`
         };
     }
 
@@ -161,11 +161,11 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 onPricingClick={props.onPricingClick}
                                 getConvertedPrice={props.getConvertedPrice}
                             />}
-                        {props.game.platforms && 
+                        {/* {props.game.platforms && 
                             <Platforms
                                 platforms={props.game.platforms}
                                 handlePlatformClick={props.handlePlatformClick}
-                            />}
+                            />} */}
                         {props.game.genres && 
                             <Genres 
                                 genres={props.game.genres}
@@ -173,7 +173,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                             />}
                         {props.game.first_release_date && 
                             <ReleaseDate 
-                                firstReleaseDate={props.game.first_release_date}
+                                firstReleaseDate={props.game.first_release_date.getTime()}
                             />}
                         {/* {props.game.game_modes && 
                             props.game.game_modes.map((mode: number) => (
@@ -191,7 +191,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                 <div className="d-inline-block align-top pl-4 h-100 w-md-100" style={getCoverTitleContainerStyle()}>
                     <Title
                         name={props.game.name}
-                        rating={props.game.aggregated_rating}
+                        rating={props.game.review.id}
                         onRateStarsClick={props.onRateStarsClick}
                         gameRatedSnackbarOpen={props.gameRatedSnackbarOpen}
                         nameStyle={getCoverNameStyle()}
@@ -212,7 +212,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                         />
                     </div>
                 </div>
-                {props.game.similar_games && 
+                {/* {props.game.similar_games && 
                     <SimilarGamesContainer
                         similarGames={props.game.similar_games}
                         hoveredSimilarGameIndex={props.hoveredSimilarGameIndex}
@@ -223,7 +223,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                         onSimilarGamesMouseOver={props.onSimilarGamesMouseOver}
                         onSimilarGamesMouseLeave={props.onSimilarGamesMouseLeave}
                         getConvertedPrice={props.getConvertedPrice}
-                    />}
+                    />} */}
             </div>
             <Snackbar
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
