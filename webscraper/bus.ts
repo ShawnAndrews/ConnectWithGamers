@@ -96,8 +96,8 @@ function processSteamId(steamId: number): Promise<void> {
             const totalReviewCount: number = totalReviewCountTemp === -1 ? 0 : totalReviewCountTemp;
             const reviewEnum: ReviewEnum = $(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).length > 0 ? ReviewEnum[$(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).html()] : ReviewEnum.NoUserReviews;
             const summary: string = cleanString($(".game_area_description").text().substr(0, 10000));
-            const firstReleaseDate: Date = $(".release_date > div.date").html().includes(`, 2019`) ? new Date($(".release_date > div.date").html()) : undefined;
-            const video: string = $(".highlight_movie").length > 0 ? $(".highlight_movie").attr("data-mp4-source") : undefined;
+            const firstReleaseDate: Date = ($(".release_date > div.date").length > 0 && $(".release_date > div.date").html().includes(`, 2019`)) ? new Date($(".release_date > div.date").html()) : undefined;
+            const video: string = $(".highlight_movie").length > 0 ? $(".highlight_movie").attr("data-mp4-source").replace(`movie480`, `movie_max`) : undefined;
             const stateEnum: StateEnum =
             ($(`head > title`).html().includes(`Pre-purchase`) ? StateEnum.preorder : undefined) ||
             ($(`.early_access_header`).length > 0 ? StateEnum.earlyaccess : undefined) ||

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GameResponse, NewsArticle, SidenavEnums } from '../../../client-server-common/common';
+import { GameResponse, NewsArticle, SidenavEnums, steamAppUrl } from '../../../client-server-common/common';
 import Spinner from '../../spinner/main';
 import Slider from "react-slick";
 import FullsizeGameContainer from '../game/fullsize/FullsizeGameContainer';
@@ -15,12 +15,10 @@ import GenreBannerContainer from './genrebanner/GenreBannerContainer';
 interface IHomeProps {
     isLoading: boolean;
     loadingMsg: string;
-    bigGames: GameResponse[];
-    bigGamesInfo: BigGameInfo[];
+    games: GameResponse[];
     featuredGames: GameResponse[];
     featuredEditorsGamesIndicies: number[];
     featuredBigGamesIndicies: number[];
-    news: NewsArticle[];
     goToRedirect: (URL: string) => void;
     sidebarActiveEnum: SidenavEnums;
     weeklyGames: GameResponse[];
@@ -50,20 +48,23 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
         arrows: false
     };
     const timeGames: GameResponse[] = props.timeGamesOption === TimeGamesOptions.Upcoming ? props.upcomingGames : (props.timeGamesOption === TimeGamesOptions.Recent ? props.recentGames : props.earlyGames);
-
+    console.log(`Time option: ${props.timeGamesOption}, Time games: ${timeGames.length}`);
+    console.log(props.earlyGames.length);
+    console.log(props.upcomingGames.length);
+    console.log(props.recentGames.length);
     return (
         <>
             <Slider {...settings} >
-                {props.bigGamesInfo && 
-                    props.bigGamesInfo.map((gameInfo: BigGameInfo, index: number) => (
+                {props.games && 
+                    props.games.map((game: GameResponse, index: number) => (
                         <div className="item">
                             <video className="video-preview w-100 h-100" muted={true} autoPlay={true} loop={true} onEnded={() => {}} playsInline={true} onClick={() => {}}>
-                                <source src={`/cache/video-previews/${gameInfo.gameId}.mp4`} type="Video/mp4"/>
+                                <source src={game.video} type="Video/mp4"/>
                                 <span>Your browser does not support the video tag.</span>
                             </video>
                             <div className="highlighted-table-text">
                                 <Textfit className='name' min={18} max={30}>
-                                    {props.bigGames[index].name}
+                                    {game.name}
                                 </Textfit>
                                 {/* <div className='genres'>
                                     {props.bigGames[index].genres && props.bigGames[index].genres.map((x: number) => SteamGenreEnums[x]).join(', ')}
@@ -74,9 +75,9 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                                 <Button
                                     className="price-btn mt-1" 
                                     variant="raised"
-                                    onClick={() => window.open(gameInfo.btnLink)}
+                                    onClick={() => window.open(steamAppUrl.concat(`/${game.steamId}`))}
                                 >
-                                    {gameInfo.btnText}
+                                    Description here
                                 </Button>
                             </div>
                         </div>
@@ -133,7 +134,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                     games={props.horrorGames}
                 />
             </div>
-            <h5 className="header color-tertiary px-5 mb-3">
+            {/* <h5 className="header color-tertiary px-5 mb-3">
                 <i className="far fa-newspaper d-inline-block mr-2"/>
                 <div className="d-inline-block title" onClick={() => props.goToRedirect(`/news`)}>News</div> 
             </h5>
@@ -143,7 +144,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                         news={props.news}
                         limit={12}
                     />}
-            </div>
+            </div> */}
         </>
     );
 

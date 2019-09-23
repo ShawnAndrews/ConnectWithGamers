@@ -60,10 +60,10 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             news: undefined,
             timeGamesOption: TimeGamesOptions.Upcoming,
             bigGamesInfo: [
-                { gameId: 118610, btnText: `Available Summer 2019`, btnLink: `https://store.steampowered.com/app/1060100/Call_of_the_Void/` },
-                { gameId: 27804, btnText: `Pre-order $39.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Fphoenix-point%2Fhome%3FpurchaseIntentId%3D75e9feab76fc46bb8ce6f3d7dadae3c8&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
-                { gameId: 113212, btnText: `Buy it now $29.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Foperencia%2Fhome%3FpurchaseIntentId%3D7d1d766667ef423bbd636ee6f054f755&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
-                { gameId: 26166, btnText: `Coming soon`, btnLink: `https://www.epicgames.com/store/en-US/product/dauntless/home`},
+                { gameId: 10090, btnText: `Available Summer 2019`, btnLink: `https://store.steampowered.com/app/1060100/Call_of_the_Void/` },
+                { gameId: 1001240, btnText: `Pre-order $39.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Fphoenix-point%2Fhome%3FpurchaseIntentId%3D75e9feab76fc46bb8ce6f3d7dadae3c8&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
+                { gameId: 1001450, btnText: `Buy it now $29.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Foperencia%2Fhome%3FpurchaseIntentId%3D7d1d766667ef423bbd636ee6f054f755&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
+                { gameId: 1001430, btnText: `Coming soon`, btnLink: `https://www.epicgames.com/store/en-US/product/dauntless/home`},
             ],
             featuredEditorsGamesIndicies: [0],
             featuredBigGamesIndicies: [0]
@@ -74,16 +74,15 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
     componentDidMount(): void {
         let promises: Promise<any>[] = [];
 
-        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/popular`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/popular`));
         this.state.bigGamesInfo.forEach((x: BigGameInfo) => {
-            promises.push(SteamService.httpGenericGetData<GenericModelResponse>(`/steam/game/${x.gameId}`));
+            promises.push(SteamService.httpGenericGetData<GenericModelResponse>(`/api/steam/game/${x.gameId}`));
         });
-        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/weeklydeals`));
-        promises.push(SteamService.httpGenericGetData<MultiNewsResponse>(`/steam/games/news`));
-        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/upcoming`));
-        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/recent`));
-        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/earlyaccess`));
-        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/steam/steam/horror`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/weeklydeals`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/upcoming`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/recent`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/earlyaccess`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/horror`));
 
         Promise.all(promises)
             .then((data: any[]) => {
@@ -108,28 +107,26 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
                     .filter((game: GameResponse) => getGameBestPricingStatus(game.pricings).discount_percent && getGameBestPricingStatus(game.pricings).discount_percent > 0)
                     .filter((game: GameResponse) => game.cover);
-                const newsData: MultiNewsResponse = data[2 + this.state.bigGamesInfo.length];
-                const news: NewsArticle[] = newsData.data;
-                const upcomingGamesData: MultiGameResponse = data[3 + this.state.bigGamesInfo.length];
+                const upcomingGamesData: MultiGameResponse = data[2 + this.state.bigGamesInfo.length];
                 const upcomingGames: GameResponse[] = upcomingGamesData.data
                     .filter((game: GameResponse) => game.cover)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
-                    .filter((game: GameResponse) => new Date(game.first_release_date.getTime() * 1000) > new Date())
-                    .sort((a: GameResponse, b: GameResponse) => a.first_release_date.getTime() - b.first_release_date.getTime())
+                    // .filter((game: GameResponse) => new Date(new Date(game.first_release_date).getTime() * 1000) > new Date())
+                    // .sort((a: GameResponse, b: GameResponse) => new Date(a.first_release_date).getTime() - new Date(b.first_release_date).getTime())
                     .slice(0, 20);
-                const recentGamesData: MultiGameResponse = data[4 + this.state.bigGamesInfo.length];
+                const recentGamesData: MultiGameResponse = data[3 + this.state.bigGamesInfo.length];
                 const recentGames: GameResponse[] = recentGamesData.data
                     .filter((game: GameResponse) => game.cover)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
-                    .sort((a: GameResponse, b: GameResponse) => b.first_release_date.getTime() - a.first_release_date.getTime())
+                    .sort((a: GameResponse, b: GameResponse) => new Date(b.first_release_date).getTime() - new Date(a.first_release_date).getTime())
                     .slice(0, 20);
-                const earlyGamesData: MultiGameResponse = data[5 + this.state.bigGamesInfo.length];
+                const earlyGamesData: MultiGameResponse = data[4 + this.state.bigGamesInfo.length];
                 const earlyGames: GameResponse[] = earlyGamesData.data
                     .filter((game: GameResponse) => game.cover)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
-                    .sort((a: GameResponse, b: GameResponse) => a.first_release_date.getTime() - b.first_release_date.getTime())
+                    .sort((a: GameResponse, b: GameResponse) => new Date(a.first_release_date).getTime() - new Date(b.first_release_date).getTime())
                     .slice(0, 20);
-                const horrorGamesData: MultiGameResponse = data[6 + this.state.bigGamesInfo.length];
+                const horrorGamesData: MultiGameResponse = data[5 + this.state.bigGamesInfo.length];
                 const horrorGames: GameResponse[] = horrorGamesData.data
                     .filter((game: GameResponse) => game.cover)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
@@ -148,8 +145,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                     upcomingGames: upcomingGames,
                     recentGames: recentGames,
                     earlyGames: earlyGames,
-                    horrorGames: horrorGames,
-                    news: news
+                    horrorGames: horrorGames
                 });
                 
             })
@@ -182,12 +178,10 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             <Home
                 isLoading={this.state.isLoading}
                 loadingMsg={this.state.loadingMsg}
-                bigGames={this.state.bigGames}
-                bigGamesInfo={this.state.bigGamesInfo}
+                games={this.state.bigGames}
                 featuredGames={this.state.featuredGames}
                 featuredEditorsGamesIndicies={this.state.featuredEditorsGamesIndicies}
                 featuredBigGamesIndicies={this.state.featuredBigGamesIndicies}
-                news={this.state.news}
                 goToRedirect={this.goToRedirect}
                 sidebarActiveEnum={this.props.sidebarActiveEnum}
                 weeklyGames={this.state.weeklyGames}

@@ -64,8 +64,6 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
     let steamIsDiscounted: boolean = steamMainGame && steamMainGame.price && !!steamMainGame.discount_percent;
     let steamBasePrice: number = steamIsDiscounted && + (steamMainGame.price / ((100 - steamMainGame.discount_percent) / 100)).toFixed(2);
 
-    const maxWidth: number = 250;
-    const aspectRatio: number = props.game.cover && 0.8; // (maxWidth / props.game.cover.width);
     const newWidth: number = props.game.cover && 200; // (aspectRatio * props.game.cover.width);
     const newHeight: number = props.game.cover && 400; // (aspectRatio * props.game.cover.height);
     const titleHeight: number = 60;
@@ -78,22 +76,14 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
         }
 
         return {
-            marginTop: `-${newHeight * 0.7}px`,
-        };
-    }
-
-    const getCoverImgStyle = (): Object => {
-
-        return {
-            width: `${newWidth}px`,
-            height: `${newHeight}px`
+            marginTop: `-180px`,
         };
     }
 
     const getCoverTitleContainerStyle = (): Object => {
 
         return {
-            width: `calc(100% - ${newWidth}px)`
+            width: `calc(100% - 460px)`
         };
     }
 
@@ -112,14 +102,14 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
         }
 
         return {
-            marginTop: `calc(${newHeight * 0.7}px ${props.game.review.id ? ` - ${starsHeight}px` : ''})`
+            marginTop: `175px`
         };
     }
 
     const getCoverGameInfoStyle = (): Object => {
 
         return {
-            width: `${newWidth}px`
+            width: `460px`
         };
     }
 
@@ -135,8 +125,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                 <div className="d-inline-block" style={getCoverGameInfoStyle()}>
                     {props.game.cover &&
                         <Cover
-                            url={props.game.cover }
-                            style={getCoverImgStyle()}
+                            url={props.game.cover}
                         />}
                     <div className="game-info">
                         <Button className={`game-notifications-btn ${props.notifcationsEnabled ? `enabled` : `disabled`} mt-2 mb-5`} onClick={props.onNotificationsClick} variant="contained" fullWidth={true}>
@@ -173,7 +162,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                             />}
                         {props.game.first_release_date && 
                             <ReleaseDate 
-                                firstReleaseDate={props.game.first_release_date.getTime()}
+                                firstReleaseDate={new Date(props.game.first_release_date).getTime()}
                             />}
                         {/* {props.game.game_modes && 
                             props.game.game_modes.map((mode: number) => (

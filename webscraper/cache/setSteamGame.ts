@@ -382,7 +382,7 @@ export function cacheAchievements(achievements: Achievement[], steamGamesSysKeyI
 
         achievements.forEach((achievement: Achievement) => {
             // skip unicode achievements
-            if (!achievement.name.includes(`&#`) && !achievement.description.includes(`&#`)) {
+            if ((achievement.name && !achievement.name.includes(`&#`)) && (achievement.description && !achievement.description.includes(`&#`))) {
                 promises.push(achievementPromise(achievement));
             }
         });

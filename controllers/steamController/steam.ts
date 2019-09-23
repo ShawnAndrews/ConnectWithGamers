@@ -155,4 +155,99 @@ router.post(routes.getRoute("steamweeklydeals"), (req: Request, res: Response) =
         });
 });
 
+/* popular games */
+router.post(routes.getRoute("steampopular"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const path: string = req.path;
+    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT ${DbTableSteamGamesFields[0]}
+        FROM ${DbTables.steam_games}
+        LIMIT 10`,
+        path)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* upcoming games */
+router.post(routes.getRoute("steamupcoming"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const path: string = req.path;
+    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT ${DbTableSteamGamesFields[0]}
+        FROM ${DbTables.steam_games}
+        LIMIT 10`,
+        path)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* recent games */
+router.post(routes.getRoute("steamrecent"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const path: string = req.path;
+    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT ${DbTableSteamGamesFields[0]}
+        FROM ${DbTables.steam_games}
+        LIMIT 10`,
+        path)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* early access games */
+router.post(routes.getRoute("steamearlyaccess"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const path: string = req.path;
+    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT ${DbTableSteamGamesFields[0]}
+        FROM ${DbTables.steam_games}
+        LIMIT 10`,
+        path)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* horror games */
+router.post(routes.getRoute("steamhorror"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const path: string = req.path;
+    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT ${DbTableSteamGamesFields[0]}
+        FROM ${DbTables.steam_games}
+        LIMIT 10`,
+        path)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
 export default router;

@@ -43,7 +43,7 @@ const CoverGame: React.SFC<ICoverGameProps> = (props: ICoverGameProps) => {
                     </Textfit>
                     {props.game.genres &&
                         <div className={`genre ${props.isBigGame ? 'large' : ''}`}>
-                            {props.game.genres[0]}
+                            {props.game.genres[0].name}
                         </div>}
                 </>
             </div>

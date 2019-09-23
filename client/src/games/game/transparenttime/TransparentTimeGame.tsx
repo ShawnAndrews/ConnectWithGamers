@@ -37,7 +37,7 @@ const TransparentTimeGame: React.SFC<ITransparentTimeGameProps> = (props: ITrans
                 </div>
                 <div className="right-text align-top d-inline-block">
                     <div className="time">
-                        {formatDate(props.game.first_release_date.getTime())}
+                        {formatDate(new Date(props.game.first_release_date).getTime())}
                     </div>
                 </div>
             </div>

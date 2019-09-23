@@ -12,10 +12,10 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
     if (!props.video && !props.screenshots) {
         return null;
     }
-    const youtubeId: string = props.video && props.video.substring(props.video.lastIndexOf("/") + 1, props.video.length);
+
     let mediaPreviews: string[] = [];
-    if (youtubeId) {
-        mediaPreviews.push(`https://img.youtube.com/vi/${youtubeId}/default.jpg`);
+    if (props.video) {
+        mediaPreviews.push(props.video);
     }
     props.screenshots.map((x: string) => mediaPreviews.push(x));
     const settings = {
@@ -23,7 +23,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
             return (
                 <a className="w-100 h-100">
                     <img className="w-100 h-100" src={mediaPreviews[i]} />
-                    {youtubeId && i === 0 && 
+                    {props.video && i === 0 && 
                         <div className="video-preview-overlay"/>}
                 </a>
             );
@@ -45,10 +45,10 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
         slideshowImages.push(
             <div className="w-100 h-100" onMouseEnter={() => props.mediaCarouselElement.slickPause()}>
                 <div className="aspect-ratio">
-                    <YouTube
-                        className="m-0"
-                        videoId={youtubeId}
-                    />
+                    <video controls={true} loop={false} playsInline={true}>
+                        <source src={props.video} type="video/mp4"/>
+                        <span>Your browser does not support the video tag.</span>
+                    </video>
                 </div>
             </div>
         );

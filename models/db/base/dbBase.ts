@@ -1,6 +1,7 @@
 import { createConnection, Connection, MysqlError, FieldInfo } from "mysql";
 import { GenericModelResponse } from "../../../client/client-server-common/common";
 import config from "../../../config";
+import { log } from "../../../webscraper/logger/main";
 
 export default class DatabaseBase {
 

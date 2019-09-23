@@ -15,7 +15,7 @@ const Background: React.SFC<IBackgroundProps> = (props: IBackgroundProps) => {
                 <img className="screenshot w-100 h-100" src={props.screenshots[0]} />
                 :
                 <video className="video-preview w-100 h-100" muted={true} autoPlay={true} loop={true} playsInline={true}>
-                    <source src={`/cache/video-previews/${props.gameId}.mp4`} type="Video/mp4"/>
+                    <source src={props.video} type="video/mp4"/>
                     <span>Your browser does not support the video tag.</span>
                 </video>}
             <div className="filter" />

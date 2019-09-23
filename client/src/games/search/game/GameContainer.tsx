@@ -91,7 +91,7 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
     }
 
     loadGame(id: number): void {
-        SteamService.httpGenericGetData<SingleGameResponse>(`/steam/game/${id}`)
+        SteamService.httpGenericGetData<SingleGameResponse>(`/api/steam/game/${id}`)
             .then( (gameResponse: SingleGameResponse) => {
                 const game: GameResponse = gameResponse.data;
 
@@ -151,7 +151,6 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
 
     goToGame(id: number): void {
         if (!this.state.mouseDragged) {
-            console.log(`going to ${`/search/game/${id}`}`);
             this.props.history.push(`/search/game/${id}`);
         }
     }

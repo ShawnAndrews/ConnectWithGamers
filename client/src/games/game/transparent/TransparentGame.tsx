@@ -22,7 +22,7 @@ const TransparentGame: React.SFC<ITransparentGameProps> = (props: ITransparentGa
     return (
         <div className="price-item">
             <div onClick={props.goToGame}>
-                <img className={`cover-img ${props.transparentSmallCover ? 'large' : ''}`} src={props.game.cover || 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
+                <img className={`cover-img ${props.transparentSmallCover ? 'large' : ''}`} src={props.game.cover_thumb || 'https://i.imgur.com/WcPkTiF.png'} alt="Game cover"/>
                 <div className="name mt-2 mx-auto">
                     {props.game.name}
                 </div>

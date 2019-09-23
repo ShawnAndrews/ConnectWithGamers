@@ -66,15 +66,17 @@ function addGamesToBus(steamIds: number[]): Promise<void> {
 
     return new Promise((resolve: any, reject: any) => {
 
-        if (steamIds.length === 0) {
+        const filteredSteamIds: number[] = [...new Set(steamIds)];
+
+        if (filteredSteamIds.length === 0) {
             return resolve();
         }
 
         db.custom(
             `INSERT INTO ${DbTables.bus_messages} (bus_messages_enum_sys_key_id, value, log_dt)
             VALUES
-            ${steamIds.map(() => `(${BusMessagesEnum.game}, ?, NOW())`).join(`,`)}`,
-            steamIds)
+            ${filteredSteamIds.map(() => `(${BusMessagesEnum.game}, ?, NOW())`).join(`,`)}`,
+            filteredSteamIds)
             .then(() => {
                 return resolve();
             })
@@ -89,8 +91,6 @@ function addGamesToBus(steamIds: number[]): Promise<void> {
 function getAllSteamDatabaseGames(): Promise<number[]> {
 
     let max_pages: number = -1;
-    let pages_processed: number = 0;
-    const steamIds: number[] = [];
     const getPageLink = (pageNum: number): string => `https://store.steampowered.com/search/?sort_by=Released_DESC&category1=998&page=${pageNum}`;
 
     return new Promise((resolve: any, reject: any) => {
@@ -105,30 +105,39 @@ function getAllSteamDatabaseGames(): Promise<number[]> {
         })
         .then((response: AxiosResponse) => {
             const $: CheerioStatic = cheerio.load(response.data);
-            const addSteamIdsToList = (innerResponse: AxiosResponse): Promise<void> => {
+            const promises: Promise<number[]>[] = [];
+            const createPagePromise = (pageNum: number): Promise<number[]> => {
 
                 return new Promise((resolve: any, reject: any) => {
 
-                    const $: CheerioStatic = cheerio.load(innerResponse.data);
+                    setTimeout(() => {
+                        const httpParams: any = { method: "get", url: getPageLink(pageNum), headers: { "birthtime": 28801 }, maxRedirects: 5 };
 
-                    $("#search_resultsRows > a").each((i: number, element: CheerioElement) => {
-                        const link: string = $(element).attr("href").concat("&cc=us");
-                        const steamGamesSysKeyId: number = parseInt(link.substring(link.indexOf("app/") + 4, link.indexOf("/", link.indexOf("app/") + 5)));
+                        axios(httpParams)
+                        .then((innerResponse: AxiosResponse) => {
+                            const $: CheerioStatic = cheerio.load(innerResponse.data);
+                            const steamIds: number[] = [];
 
-                        if (!isNaN(steamGamesSysKeyId)) {
-                            steamIds.push(steamGamesSysKeyId);
-                        } else {
-                            log(`[Games job] Found game on in Steam list but could not add steam id #${steamGamesSysKeyId} in link ${link}.`);
-                        }
+                            $("#search_resultsRows > a").each((i: number, element: CheerioElement) => {
+                                const link: string = $(element).attr("href").concat("&cc=us");
+                                const steamGamesSysKeyId: number = parseInt(link.substring(link.indexOf("app/") + 4, link.indexOf("/", link.indexOf("app/") + 5)));
 
-                    });
+                                if (!isNaN(steamGamesSysKeyId)) {
+                                    steamIds.push(steamGamesSysKeyId);
+                                } else {
+                                    log(`[Games job] Skipping game in Steam list because could not add steam id #${steamGamesSysKeyId} in link ${link}.`);
+                                }
 
-                    pages_processed++;
-                    if (pages_processed === max_pages - 1) {
-                        return resolve();
-                    } else {
-                        return reject();
-                    }
+                            });
+
+                            return resolve(steamIds);
+                        })
+                        .catch(() => {
+                            log(`[Games job] Skipping page #${pageNum}/${max_pages} due to failed HTTP request.`);
+                            return resolve([]);
+                        });
+
+                    }, STEAM_RATE_LIMIT_MS * pageNum);
 
                 });
 
@@ -137,48 +146,16 @@ function getAllSteamDatabaseGames(): Promise<number[]> {
             max_pages = parseInt($(".search_pagination_right > a").last().prev().html());
 
             for (let i = 1; i <= max_pages; i++) {
-
-                setTimeout(() => {
-                    const httpParams: any = { method: "get", url: getPageLink(i), headers: { "birthtime": 28801 }, maxRedirects: 5 };
-
-                    axios(httpParams)
-                    .then((innerResponse: AxiosResponse) => {
-                        addSteamIdsToList(innerResponse).then(() => { return resolve(steamIds); }).catch(() => {});
-                    })
-                    .catch(() => {
-                        log(`[Games job] Attempting to retry page #${i}/${max_pages}... (1/3)`);
-
-                        axios(httpParams)
-                        .then((innerResponse: AxiosResponse) => {
-                            addSteamIdsToList(innerResponse).then(() => { return resolve(steamIds); }).catch(() => {});
-                        })
-                        .catch(() => {
-                            log(`[Games job] Attempting to retry page #${i}/${max_pages}... (2/3)`);
-
-                            axios(httpParams)
-                            .then((innerResponse: AxiosResponse) => {
-                                addSteamIdsToList(innerResponse).then(() => { return resolve(steamIds); }).catch(() => {});
-                            })
-                            .catch(() => {
-                                log(`[Games job] Attempting to retry page #${i}/${max_pages}... (3/3)`);
-
-                                axios(httpParams)
-                                .then((innerResponse: AxiosResponse) => {
-                                    addSteamIdsToList(innerResponse).then(() => { return resolve(steamIds); }).catch(() => {});
-                                })
-                                .catch(() => {
-                                    return reject(`Failed to request steam results page #${i}. All retry attempts exhausted.`);
-                                });
-
-                            });
-
-                        });
-
-                    });
-
-                }, STEAM_RATE_LIMIT_MS * i);
-
+                promises.push(createPagePromise(i));
             }
+
+            Promise.all(promises)
+                .then((steamIds: number[][]) => {
+                    return resolve([].concat(...steamIds));
+                })
+                .catch((error: string) => {
+                    return reject(error);
+                });
 
         })
         .catch((error: string) => {
