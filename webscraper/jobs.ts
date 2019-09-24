@@ -1,4 +1,4 @@
-import { DbTables, GenericModelResponse, BusMessagesEnum, DbTableSteamGamesFields, STEAM_RATE_LIMIT_MS, DbTableRouteCacheFields } from "../client/client-server-common/common";
+import { DbTables, GenericModelResponse, BusMessagesEnum, DbTableSteamGamesFields, STEAM_RATE_LIMIT_MS, DbTableRouteCacheFields, cheerioOptions } from "../client/client-server-common/common";
 import DatabaseBase from "../models/db/base/dbBase";
 import { scheduleJob } from "node-schedule";
 import axios, { AxiosResponse } from "axios";
@@ -104,7 +104,7 @@ function getAllSteamDatabaseGames(): Promise<number[]> {
             maxRedirects: 5
         })
         .then((response: AxiosResponse) => {
-            const $: CheerioStatic = cheerio.load(response.data);
+            const $: CheerioStatic = cheerio.load(response.data, cheerioOptions);
             const promises: Promise<number[]>[] = [];
             const createPagePromise = (pageNum: number): Promise<number[]> => {
 
@@ -115,7 +115,7 @@ function getAllSteamDatabaseGames(): Promise<number[]> {
 
                         axios(httpParams)
                         .then((innerResponse: AxiosResponse) => {
-                            const $: CheerioStatic = cheerio.load(innerResponse.data);
+                            const $: CheerioStatic = cheerio.load(innerResponse.data, cheerioOptions);
                             const steamIds: number[] = [];
 
                             $("#search_resultsRows > a").each((i: number, element: CheerioElement) => {

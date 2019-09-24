@@ -44,25 +44,13 @@ export enum Breakpoints {
     md = 768
 }
 
+export const cheerioOptions: any = { decodeEntities: false };
 export const steamAppUrl: string = `https://store.steampowered.com/app`;
 export const getSteamAppAchievementsUrl = (steamId: number): string => `https://steamcommunity.com/stats/${steamId}/achievements`;
 
 export const getSteamCoverURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/header.jpg?t=1557894336`;
 
 export const getSteamCoverThumbURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/capsule_sm_120.jpg?t=1568772711`;
-
-export function cleanString(input: string): string {
-    let output = "";
-    // remove non-utf8 characters from string
-    for (let i = 0; i < input.length; i++) {
-        if (input.charCodeAt(i) <= 127) {
-            output += input.charAt(i);
-        } else {
-            output += " ";
-        }
-    }
-    return output;
-}
 
 export interface RouteCache {
     data: any;

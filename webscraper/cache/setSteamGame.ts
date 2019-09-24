@@ -1,4 +1,4 @@
-import { DbTables, GenericModelResponse, PriceInfoResponse, DbTableSteamGamesFields, DbTablePricingsFields, GameResponse, DbTableGenresFields, DbTableSteamGenreEnumFields, DbTablePlatformsFields, DbTableSteamModesEnumFields, DbTableModesFields, DbTableImagesFields, ImagesEnum, cleanString, DbTableSteamDeveloperEnumFields, DbTableDevelopersFields, DbTableSteamPublisherEnumFields, DbTablePublishersFields, Achievement, DbTableAchievementsFields } from "../../client/client-server-common/common";
+import { DbTables, GenericModelResponse, PriceInfoResponse, DbTableSteamGamesFields, DbTablePricingsFields, GameResponse, DbTableGenresFields, DbTableSteamGenreEnumFields, DbTablePlatformsFields, DbTableSteamModesEnumFields, DbTableModesFields, DbTableImagesFields, ImagesEnum, DbTableSteamDeveloperEnumFields, DbTableDevelopersFields, DbTableSteamPublisherEnumFields, DbTablePublishersFields, Achievement, DbTableAchievementsFields } from "../../client/client-server-common/common";
 import DatabaseBase from "../../models/db/base/dbBase";
 const db: DatabaseBase = new DatabaseBase();
 
@@ -381,10 +381,7 @@ export function cacheAchievements(achievements: Achievement[], steamGamesSysKeyI
         }
 
         achievements.forEach((achievement: Achievement) => {
-            // skip unicode achievements
-            if ((achievement.name && !achievement.name.includes(`&#`)) && (achievement.description && !achievement.description.includes(`&#`))) {
-                promises.push(achievementPromise(achievement));
-            }
+            promises.push(achievementPromise(achievement));
         });
 
         Promise.all(promises)
@@ -590,22 +587,24 @@ export function cachePricings(pricings: PriceInfoResponse[]): Promise <void> {
                     const pricingsVals: any[] = [pricing.pricingEnumSysKeyId, pricing.steamGamesSysKeyId, pricing.title, pricing.price, pricing.discount_percent, pricing.discount_end_dt, pricing.log_dt];
 
                     // if pricing is not in database, or it is but the price or discount changed
-                    if (!isPricingInDb || (isPricingInDb && (pricingRecordsInDb[0].price !== pricing.price || pricingRecordsInDb[0].discount_percent !== pricing.discount_percent))) {
+                    if (!isPricingInDb) {
+                        if (pricingRecordsInDb[0].price !== pricing.price || pricingRecordsInDb[0].discount_percent !== pricing.discount_percent) {
 
-                        // add pricing record
-                        db.custom(
-                            `INSERT INTO ${DbTables.pricings}
-                            (${DbTablePricingsFields.slice(1).join()})
-                            VALUES
-                            (${DbTablePricingsFields.slice(1).map(() => "?").join()})`,
-                            pricingsVals)
-                            .then(() => {
-                                return resolve();
-                            })
-                            .catch((error: string) => {
-                                return reject(error);
-                            });
+                            // add pricing record
+                            db.custom(
+                                `INSERT INTO ${DbTables.pricings}
+                                (${DbTablePricingsFields.slice(1).join()})
+                                VALUES
+                                (${DbTablePricingsFields.slice(1).map(() => "?").join()})`,
+                                pricingsVals)
+                                .then(() => {
+                                    return resolve();
+                                })
+                                .catch((error: string) => {
+                                    return reject(error);
+                                });
 
+                        }
                     } else {
                         // nothing change
                         return resolve();

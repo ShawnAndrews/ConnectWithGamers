@@ -1,4 +1,4 @@
-import { DbTables, GenericModelResponse, DbTableBusMessagesFields, PriceInfoResponse, BusMessage, BusMessagesEnum, steamAppUrl, ReviewEnum, StateEnum, cleanString, Achievement, getSteamAppAchievementsUrl } from "../client/client-server-common/common";
+import { DbTables, GenericModelResponse, DbTableBusMessagesFields, PriceInfoResponse, BusMessage, BusMessagesEnum, steamAppUrl, ReviewEnum, StateEnum, Achievement, getSteamAppAchievementsUrl, cheerioOptions } from "../client/client-server-common/common";
 import DatabaseBase from "../models/db/base/dbBase";
 import { setInterval } from "timers";
 import axios, { AxiosResponse } from "axios";
@@ -84,7 +84,7 @@ function processSteamId(steamId: number): Promise<void> {
         .then((response: AxiosResponse) => {
             responseGameAchievementsPage = response;
 
-            const $: CheerioStatic = cheerio.load(responseGamePage.data);
+            const $: CheerioStatic = cheerio.load(responseGamePage.data, cheerioOptions);
 
             const name: string = $(".apphub_AppName").html();
             const pricings: PriceInfoResponse[] = getSteamPricings(responseGamePage.data, steamGamesSysKeyId);
@@ -95,7 +95,7 @@ function processSteamId(steamId: number): Promise<void> {
             ($(".user_reviews_summary_row .summary .game_review_summary").length > 0 && $(".user_reviews_summary_row .summary .game_review_summary").html().includes(`user reviews`) ? parseInt($(".user_reviews_summary_row .summary .game_review_summary").html().replace(` user reviews`, ``)) : undefined);
             const totalReviewCount: number = totalReviewCountTemp === -1 ? 0 : totalReviewCountTemp;
             const reviewEnum: ReviewEnum = $(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).length > 0 ? ReviewEnum[$(`.user_reviews_summary_row .game_review_summary:not(.not_enough_reviews)`).html()] : ReviewEnum.NoUserReviews;
-            const summary: string = cleanString($(".game_area_description").text().substr(0, 10000));
+            const summary: string = $(".game_area_description").text().substr(0, 10000);
             const firstReleaseDate: Date = ($(".release_date > div.date").length > 0 && $(".release_date > div.date").html().includes(`, 2019`)) ? new Date($(".release_date > div.date").html()) : undefined;
             const video: string = $(".highlight_movie").length > 0 ? $(".highlight_movie").attr("data-mp4-source").replace(`movie480`, `movie_max`) : undefined;
             const stateEnum: StateEnum =
@@ -111,21 +111,21 @@ function processSteamId(steamId: number): Promise<void> {
             const achievements: Achievement[] = getSteamAchievements(responseGameAchievementsPage.data);
             const deleteBusMessage = (steamGamesSysKeyId: number): Promise<GenericModelResponse> => db.custom(`DELETE FROM ${DbTables.bus_messages} WHERE ${DbTableBusMessagesFields[1]} = ?`, [steamGamesSysKeyId]);
 
-            // // debug
-            // console.log(`Name: ${name} - ${developer} - ${publisher}`);
-            // console.log(`Pricings: ${JSON.stringify(pricings)}`);
-            // console.log(`Total review count: ${totalReviewCount}`);
-            // console.log(`Review enum: ${reviewEnum}`);
-            // console.log(`Genres: ${genres.join(`, `)}`);
-            // console.log(`Summary: ${summary.length} chars long`);
-            // console.log(`Release date: ${firstReleaseDate ? firstReleaseDate.getTime() : undefined}`);
-            // console.log(`Video: ${video}`);
-            // console.log(`State: ${stateEnum}`);
-            // console.log(`Platforms: ${platforms}`);
-            // console.log(`Modes: ${modes}`);
-            // console.log(`Images: #${images.length - 2} screenshots`);
-            // console.log(`Achievements: ${achievements.length}`);
-            // console.log(``);
+            // debug
+            console.log(`Name: ${name} - ${developer} - ${publisher}`);
+            console.log(`Pricings: ${JSON.stringify(pricings)}`);
+            console.log(`Total review count: ${totalReviewCount}`);
+            console.log(`Review enum: ${reviewEnum}`);
+            console.log(`Genres: ${genres.join(`, `)}`);
+            console.log(`Summary: ${summary.length} chars long`);
+            console.log(`Release date: ${firstReleaseDate ? firstReleaseDate.getTime() : undefined}`);
+            console.log(`Video: ${video}`);
+            console.log(`State: ${stateEnum}`);
+            console.log(`Platforms: ${platforms}`);
+            console.log(`Modes: ${modes}`);
+            console.log(`Images: #${images.length - 2} screenshots`);
+            console.log(`Achievements: ${achievements.length}`);
+            console.log(``);
 
             if (!name) {
                 deleteBusMessage(steamGamesSysKeyId)

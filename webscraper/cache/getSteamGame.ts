@@ -1,9 +1,9 @@
-import { PlatformEnum, Achievement, cleanString, getSteamCoverURL, getSteamCoverThumbURL, PriceInfoResponse, PricingsEnum } from "../../client/client-server-common/common";
+import { PlatformEnum, Achievement, getSteamCoverURL, getSteamCoverThumbURL, PriceInfoResponse, PricingsEnum, cheerioOptions } from "../../client/client-server-common/common";
 import * as cheerio from "cheerio";
 
 export function getSteamGenres(data: string): string[] {
     const genres: string[] = [];
-    const $: CheerioStatic = cheerio.load(data);
+    const $: CheerioStatic = cheerio.load(data, cheerioOptions);
 
     $(`.glance_tags.popular_tags > a`).each((i: number, element: CheerioElement) => genres.push($(element).html().trim().replace(`&amp;`, `&`).replace(`&apos;`, `'`)));
 
@@ -12,7 +12,7 @@ export function getSteamGenres(data: string): string[] {
 
 export function getSteamPlatforms(data: string): number[] {
     const platforms: number[] = [];
-    const $: CheerioStatic = cheerio.load(data);
+    const $: CheerioStatic = cheerio.load(data, cheerioOptions);
 
     if ($(`.platform_img.win`).length > 0) {
         platforms.push(PlatformEnum.windows);
@@ -43,7 +43,7 @@ export function getSteamPlatforms(data: string): number[] {
 
 export function getSteamModes(data: string): string[] {
     const genres: string[] = [];
-    const $: CheerioStatic = cheerio.load(data);
+    const $: CheerioStatic = cheerio.load(data, cheerioOptions);
 
     $(`#category_block > .game_area_details_specs:not(.learning_about)`).each((i: number, element: CheerioElement) => {
         genres.push($(element).find(`.name`).html());
@@ -54,13 +54,13 @@ export function getSteamModes(data: string): string[] {
 
 export function getSteamAchievements(data: string): Achievement[] {
     const achievements: Achievement[] = [];
-    const $: CheerioStatic = cheerio.load(data);
+    const $: CheerioStatic = cheerio.load(data, cheerioOptions);
 
     if ($(`#mainContents .achieveRow`).length > 0) {
         $(`#mainContents .achieveRow`).each((i: number, element: CheerioElement) => {
             const link: string = $(element).find(`img`).length > 0 ? $(element).find(`img`).attr(`src`) : undefined;
-            const name: string = cleanString($(element).find(`.achieveTxt h3`).html()).trim();
-            const description: string = cleanString($(element).find(`.achieveTxt h5`).html()).trim();
+            const name: string = $(element).find(`.achieveTxt h3`).html().trim();
+            const description: string = $(element).find(`.achieveTxt h5`).html().trim();
             const percent: number = parseFloat($(element).find(`.achievePercent`).html().replace(`%`, ``));
             const achievement: Achievement = { name: name, description: description, link: link, percent: percent, log_dt: new Date() };
 
@@ -74,7 +74,7 @@ export function getSteamAchievements(data: string): Achievement[] {
 
 export function getSteamImages(data: string, steamGamesSysKeyId: number): string[] {
     const images: string[] = [];
-    const $: CheerioStatic = cheerio.load(data);
+    const $: CheerioStatic = cheerio.load(data, cheerioOptions);
 
     // covers
     images.push(getSteamCoverURL(steamGamesSysKeyId));
@@ -90,13 +90,13 @@ export function getSteamImages(data: string, steamGamesSysKeyId: number): string
 
 export function getSteamPricings(data: string, steamGamesSysKeyId: number): PriceInfoResponse[] {
 
-    const $: CheerioStatic = cheerio.load(data);
+    const $: CheerioStatic = cheerio.load(data, cheerioOptions);
     const pricings: PriceInfoResponse[] = [];
 
     // main game/bundles
     $(".game_area_purchase_game").each((i: number, element: CheerioElement) => {
         const monthNameToNumber = (name: string) =>  new Date(Date.parse(name + " 1, 2012")).getMonth() + 1;
-        const title: string = cleanString($(element).find(`h1`).clone().children().remove().end().text().replace(`Buy `, ``).replace(`Pre-Purchase`, ``).replace(`Play`, ``).trim());
+        const title: string = $(element).find(`h1`).clone().children().remove().end().text().replace(`Buy `, ``).replace(`Pre-Purchase`, ``).replace(`Play`, ``).trim();
         const discountPercent: number = Number.parseInt($(element).find(`.discount_pct, .bundle_base_discount`).text().replace(`-`, ``).replace(`%`, ``)) || undefined;
         const discountEndDate: Date = $(element).find(`.game_purchase_discount_countdown`).length > 0
         ? new Date((parseInt(data.substring(data.indexOf(`$DiscountCountdown, `), data.indexOf(` );`, data.indexOf(`$DiscountCountdown, `) + 20)))) || new Date(`${$(element).find(`.game_purchase_discount_countdown`).text().split(" ").splice(-2)}, ${monthNameToNumber($(element).find(`.game_purchase_discount_countdown`).text().split(" ").splice(-2)[0]) >= monthNameToNumber(new Date().toLocaleString(`default`, { month: `long` })) ? new Date().getFullYear() : new Date().getFullYear() + 1}`).getTime())
@@ -114,7 +114,7 @@ export function getSteamPricings(data: string, steamGamesSysKeyId: number): Pric
     // dlc
     $(".game_area_dlc_row").each((i: number, element: CheerioElement) => {
         const pricingEnum: PricingsEnum = PricingsEnum.dlc;
-        const title: string = cleanString($(element).find(`.game_area_dlc_name`).text().trim());
+        const title: string = $(element).find(`.game_area_dlc_name`).text().trim();
         const discountPercent: number = Number.parseInt($(element).find(`.discount_pct`).text().replace(`-`, ``).replace(`%`, ``)) || undefined;
         const rawPrice: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`$`, ``) : $(element).find(`.game_area_dlc_price`).text().replace(`$`, ``).trim();
         const price: number = (rawPrice === `N/A` || rawPrice === `Free`) ? undefined : Number.parseFloat(rawPrice);
