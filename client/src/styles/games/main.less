@@ -680,7 +680,8 @@
         .option {
 
             &.selected {
-                background: linear-gradient(to right, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+                border-left: 3px solid;
+                color: #39caeb !important;
             }
 
             .arrow {
@@ -714,6 +715,10 @@
             svg {
                 width: 20px;
             }
+
+            .option {
+                font-size: 15px;
+            }
         }
     }
 
@@ -723,6 +728,12 @@
         width: @games-sidebar-width;
         height: calc(100% - @navbar-height);
         background-color: @games-sidebar-color;
+
+        > i.active {
+            svg {
+                color: rgba(@tertiary-color, 1.0);
+            }
+        }
 
         .home {
             position: absolute;
@@ -996,7 +1007,7 @@
                 position: absolute;
                 top: 0;
                 bottom: 0;
-                right: 48px;
+                right: 0;
                 width: calc(100vw - 945px);
                 background-color: #397448;
 

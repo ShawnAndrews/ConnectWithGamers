@@ -48,10 +48,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
         arrows: false
     };
     const timeGames: GameResponse[] = props.timeGamesOption === TimeGamesOptions.Upcoming ? props.upcomingGames : (props.timeGamesOption === TimeGamesOptions.Recent ? props.recentGames : props.earlyGames);
-    console.log(`Time option: ${props.timeGamesOption}, Time games: ${timeGames.length}`);
-    console.log(props.earlyGames.length);
-    console.log(props.upcomingGames.length);
-    console.log(props.recentGames.length);
+
     return (
         <>
             <Slider {...settings} >

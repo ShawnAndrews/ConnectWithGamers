@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GenericModelResponse, AccountImageResponse, EmailVerifiedFlagResponse, EmailRecoveryVerifyResponse, AccountInfoResponse, DatalessResponse } from '../../../../client/client-server-common/common';
+import { GenericModelResponse, AccountImageResponse, EmailVerifiedFlagResponse, EmailRecoveryVerifyResponse, AccountInfoResponse, DatalessResponse, GameSuggestion, GameSuggestionsResponse } from '../../../../client/client-server-common/common';
 import { AUTH_TOKEN_NAME } from '../../../client-server-common/common';
 import { SettingsData } from '../../../src/account/settings/SettingsFormsContainer';
 
@@ -216,6 +216,26 @@ export function httpDeleteAccountImage (): Promise<AccountImageResponse> {
             } else {
                 const accountImageResponse: AccountImageResponse = result.data;
                 return resolve(accountImageResponse);
+            }
+        })
+        .catch((err: string) => {
+            return reject(`HTTP error: ${err}.`);
+        });
+    }); 
+}
+
+/**
+ * HTTP request to get the full list of game suggestions.
+ */
+export function httpGetGameSuggestions(): Promise<GameSuggestionsResponse> {
+    return new Promise((resolve: any, reject: any) => {
+        axios.post('/api/steam/gamesuggestions')
+        .then((result) => {
+            if (result.data.error) {
+                return reject(`Failed to retrieve game suggestions. ${result.data.error}`);
+            } else {
+                const gameSuggesstionsResponse: GameSuggestionsResponse = result.data;
+                return resolve(gameSuggesstionsResponse);
             }
         })
         .catch((err: string) => {

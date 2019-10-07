@@ -52,6 +52,22 @@ export const getSteamCoverURL = (steamId: number): string => `https://steamcdn-a
 
 export const getSteamCoverThumbURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/capsule_sm_120.jpg?t=1568772711`;
 
+export function cleanString(input: string): string {
+    let output = "";
+    // remove non-utf8 characters from string
+    for (let i = 0; i < input.length; i++) {
+        if (input.charCodeAt(i) <= 127) {
+            output += input.charAt(i);
+        }
+    }
+    return output;
+}
+
+export interface GameSuggestion {
+    name: string;
+    steamId: number;
+}
+
 export interface RouteCache {
     data: any;
 }
@@ -352,6 +368,11 @@ export interface AccountInfoResponse {
     data?: AccountInfo;
 }
 
+export interface GameSuggestionsResponse {
+    error: string;
+    data?: GameSuggestion[];
+}
+
 export interface EmailVerifiedFlagResponse {
     error: string;
     data?: boolean;
@@ -398,8 +419,8 @@ export interface GameResponse {
     first_release_date: Date;
     video: string;
     state: IdNamePair;
-    developer: IdNamePair;
-    publisher: IdNamePair;
+    developer: string;
+    publisher: string;
     pricings: PriceInfoResponse[];
     achievements: Achievement[];
     cover: string;
@@ -407,6 +428,7 @@ export interface GameResponse {
     screenshots: string[];
     game_modes: IdNamePair[];
     genres: IdNamePair[];
+    platforms: IdNamePair[];
     log_dt: Date;
 }
 
@@ -420,9 +442,23 @@ export interface SingleGameResponse {
     data?: GameResponse;
 }
 
+export interface GameReviewsResponse {
+    error: string;
+    data?: Review[];
+}
+
 export interface MultiNewsResponse {
     error: string;
     data?: NewsArticle[];
+}
+
+export interface Review {
+    review: string;
+    voted_up: boolean;
+    timestamp_created: number;
+    author: {
+        playtime_forever: number;
+    };
 }
 
 export interface PriceInfoResponse {
@@ -463,7 +499,7 @@ export enum GameModesEnum {
 }
 
 export enum ReviewEnum {
-    NoUserReviews = 1,
+    "No User Reviews" = 1,
     "Overwhelmingly Positive" = 2,
     "Very Positive" = 3,
     "Positive" = 4,
@@ -476,11 +512,11 @@ export enum ReviewEnum {
 }
 
 export enum StateEnum {
-    TBA = 5,
-    upcoming = 4,
-    preorder = 3,
-    earlyaccess = 2,
-    released = 1
+    "To Be Announced" = 5,
+    "Upcoming" = 4,
+    "Preorder" = 3,
+    "Early Access" = 2,
+    "Released" = 1
 }
 
 export enum PlatformEnum {

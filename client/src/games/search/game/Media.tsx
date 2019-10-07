@@ -22,9 +22,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
         customPaging: (i: number): any => {
             return (
                 <a className="w-100 h-100">
-                    <img className="w-100 h-100" src={mediaPreviews[i]} />
-                    {props.video && i === 0 && 
-                        <div className="video-preview-overlay"/>}
+                    <img className="w-100 h-100" src={(props.video && i === 0) ? `https://i.imgur.com/sO7eLKq.png` : mediaPreviews[i]} />
                 </a>
             );
         },
@@ -45,7 +43,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
         slideshowImages.push(
             <div className="w-100 h-100" onMouseEnter={() => props.mediaCarouselElement.slickPause()}>
                 <div className="aspect-ratio">
-                    <video controls={true} loop={false} playsInline={true}>
+                    <video controls={true} loop={false} playsInline={true} autoPlay={true} muted={true}>
                         <source src={props.video} type="video/mp4"/>
                         <span>Your browser does not support the video tag.</span>
                     </video>
@@ -61,7 +59,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
     }
     
     return (
-        <Slider className="media-carousel" ref={slider => (props.mediaCarouselElement = slider)} {...settings}>
+        <Slider className="media-carousel mt-2" ref={slider => (props.mediaCarouselElement = slider)} {...settings}>
             {slideshowImages}
         </Slider>
     );

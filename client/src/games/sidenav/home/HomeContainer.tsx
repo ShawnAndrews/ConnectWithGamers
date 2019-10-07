@@ -39,7 +39,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
         }
 
         this.state = {
-            selectedOption: undefined,
+            selectedOption: HomeOptionsEnum.Home,
             breakingNewsClickCollapsed: newsClosed,
             breakingNewsGameName: newNewsGameName,
             breakingNewsGameId: newsNewsGameId,
@@ -121,7 +121,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
     onOptionClick(homeOptionEnum: HomeOptionsEnum): void {
 
         this.setState({
-            selectedOption: homeOptionEnum,
+            selectedOption: (homeOptionEnum !== HomeOptionsEnum.Genres && homeOptionEnum !== HomeOptionsEnum.VRSupported) ? homeOptionEnum : this.state.selectedOption,
             genresExpanded: homeOptionEnum === HomeOptionsEnum.Genres ? !this.state.genresExpanded : this.state.genresExpanded,
             vrExpanded: homeOptionEnum === HomeOptionsEnum.VRSupported ? !this.state.vrExpanded : this.state.vrExpanded,
         });

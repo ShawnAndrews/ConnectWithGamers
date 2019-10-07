@@ -29,7 +29,7 @@
         }
 
         a {
-            color: #38caeb!important;
+            color: #38caeba8!important;
             border: 2px solid transparent;
         }
 
@@ -60,34 +60,51 @@
             }
         }
 
+        .search-icon {
+            font-size: 18px;
+            vertical-align: sub;
+
+            svg {
+                color: @tertiary-color;
+            }
+        }
+
         .searchbar {
 
-            &.has-search .form-control {
-                padding-left: 2.375rem;
-            }
-            
-            &.has-search .form-control-feedback {
-                position: absolute;
-                z-index: 2;
-                display: block;
-                width: 2.375rem;
-                height: 2.375rem;
-                line-height: 2.375rem;
-                text-align: center;
-                pointer-events: none;
-                color: rgba(@primary-color, 0.72);
+            input {
+                background: transparent;
+                border: none;
+                border-bottom: 2px solid @tertiary-color;
+                color:  @tertiary-color;
 
-                > svg {
-                    opacity: 0.4;
+                &::placeholder {
+                    color: @tertiary-color!important;
+                }
+
+                &:focus {
+                    outline: none!important;
                 }
             }
 
-            > input {
-                border: none;
-                background-color: transparent;
-                height: 35px!important;
-                padding-top: 8px;
-                border-bottom: 2px solid rgba(0,0,0,0.2);
+            .react-autosuggest__suggestions-container--open {
+                position: absolute;
+                width: 195px;
+
+                > ul[role=listbox], ul[role=menu] {
+                    list-style-type: none;
+                    border: 2px solid @tertiary-color;
+                    border-radius: 0px 0px 5px 5px;
+                    border-top: 0;
+                    background-color: transparent!important;
+
+                    li {
+                        cursor: pointer;
+                        background-color: transparent!important;
+                        color: @tertiary-color!important;
+                        padding: 5px;
+                        border: 1px solid rgba(@tertiary-color,0.2);
+                    }
+                }
             }
         }
 

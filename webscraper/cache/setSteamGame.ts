@@ -1,5 +1,6 @@
 import { DbTables, GenericModelResponse, PriceInfoResponse, DbTableSteamGamesFields, DbTablePricingsFields, GameResponse, DbTableGenresFields, DbTableSteamGenreEnumFields, DbTablePlatformsFields, DbTableSteamModesEnumFields, DbTableModesFields, DbTableImagesFields, ImagesEnum, DbTableSteamDeveloperEnumFields, DbTableDevelopersFields, DbTableSteamPublisherEnumFields, DbTablePublishersFields, Achievement, DbTableAchievementsFields } from "../../client/client-server-common/common";
 import DatabaseBase from "../../models/db/base/dbBase";
+import { log } from "../../webscraper/logger/main";
 const db: DatabaseBase = new DatabaseBase();
 
 export function cacheSteamGame(steamGamesSysKeyId: number, name: string, steamReviewEnumSysKeyId: number, totalReviewCount: number, summary: string, firstReleaseDate: Date, video: string, steamStateEnumSysKeyId: number): Promise<void>  {
@@ -371,7 +372,9 @@ export function cacheAchievements(achievements: Achievement[], steamGamesSysKeyI
 
                     })
                     .catch((error: string) => {
-                        return reject(error);
+                        // skip achievements with character collation problems
+                        log(`[Bus] Skipping achievement has possible collation problems. ${error}`);
+                        return resolve();
                     });
             });
         };
@@ -587,24 +590,22 @@ export function cachePricings(pricings: PriceInfoResponse[]): Promise <void> {
                     const pricingsVals: any[] = [pricing.pricingEnumSysKeyId, pricing.steamGamesSysKeyId, pricing.title, pricing.price, pricing.discount_percent, pricing.discount_end_dt, pricing.log_dt];
 
                     // if pricing is not in database, or it is but the price or discount changed
-                    if (!isPricingInDb) {
-                        if (pricingRecordsInDb[0].price !== pricing.price || pricingRecordsInDb[0].discount_percent !== pricing.discount_percent) {
+                    if (!isPricingInDb || (pricingRecordsInDb[0].price !== pricing.price || pricingRecordsInDb[0].discount_percent !== pricing.discount_percent)) {
 
-                            // add pricing record
-                            db.custom(
-                                `INSERT INTO ${DbTables.pricings}
-                                (${DbTablePricingsFields.slice(1).join()})
-                                VALUES
-                                (${DbTablePricingsFields.slice(1).map(() => "?").join()})`,
-                                pricingsVals)
-                                .then(() => {
-                                    return resolve();
-                                })
-                                .catch((error: string) => {
-                                    return reject(error);
-                                });
+                        // add pricing record
+                        db.custom(
+                            `INSERT INTO ${DbTables.pricings}
+                            (${DbTablePricingsFields.slice(1).join()})
+                            VALUES
+                            (${DbTablePricingsFields.slice(1).map(() => "?").join()})`,
+                            pricingsVals)
+                            .then(() => {
+                                return resolve();
+                            })
+                            .catch((error: string) => {
+                                return reject(error);
+                            });
 
-                        }
                     } else {
                         // nothing change
                         return resolve();

@@ -31,6 +31,7 @@
         "cheerio": "^1.0.0-rc.2",
         "cluster": "^0.7.7",
         "cookie-parser": "^1.4.3",
+        "email-templates": "^3.0.6",
         "express": "^4.16.4",
         "express-force-ssl": "^0.3.2",
         "express-rate-limit": "^3.3.2",

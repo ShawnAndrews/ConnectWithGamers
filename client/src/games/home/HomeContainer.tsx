@@ -60,7 +60,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             news: undefined,
             timeGamesOption: TimeGamesOptions.Upcoming,
             bigGamesInfo: [
-                { gameId: 10090, btnText: `Available Summer 2019`, btnLink: `https://store.steampowered.com/app/1060100/Call_of_the_Void/` },
+                { gameId: 848450, btnText: `Available Summer 2019`, btnLink: `https://store.steampowered.com/app/1060100/Call_of_the_Void/` },
                 { gameId: 1001240, btnText: `Pre-order $39.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Fphoenix-point%2Fhome%3FpurchaseIntentId%3D75e9feab76fc46bb8ce6f3d7dadae3c8&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
                 { gameId: 1001450, btnText: `Buy it now $29.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Foperencia%2Fhome%3FpurchaseIntentId%3D7d1d766667ef423bbd636ee6f054f755&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
                 { gameId: 1001430, btnText: `Coming soon`, btnLink: `https://www.epicgames.com/store/en-US/product/dauntless/home`},

@@ -1,5 +1,7 @@
 import DatabaseBase from "../base/dbBase";
-import { GenericModelResponse, GameResponse, DbTables, DbTableRouteCacheFields, DbTableSteamGamesFields, ReviewEnum, StateEnum, PriceInfoResponse, DbTablePricingsFields, DbTableDevelopersFields, DbTablePublishersFields, DbTableImagesFields, DbTableSteamDeveloperEnumFields, DbTableSteamPublisherEnumFields, IdNamePair, DbTableSteamGenreEnumFields, DbTableGenresFields, ImagesEnum, DbTableSteamModesEnumFields, DbTableModesFields, Achievement, DbTableAchievementsFields } from "../../../client/client-server-common/common";
+import { GenericModelResponse, GameResponse, DbTables, DbTableRouteCacheFields, DbTableSteamGamesFields, ReviewEnum, StateEnum, PriceInfoResponse, DbTablePricingsFields, DbTableDevelopersFields, DbTablePublishersFields, DbTableImagesFields, DbTableSteamDeveloperEnumFields, DbTableSteamPublisherEnumFields, IdNamePair, DbTableSteamGenreEnumFields, DbTableGenresFields, ImagesEnum, DbTableSteamModesEnumFields, DbTableModesFields, Achievement, DbTableAchievementsFields, GameSuggestion, DbTablePlatformsFields, DbTableSteamPlatformEnumFields, Review, GameReviewsResponse } from "../../../client/client-server-common/common";
+import axios, { AxiosResponse } from "axios";
+import { log } from "../../../webscraper/logger/main";
 
 class GameModel extends DatabaseBase {
 
@@ -8,6 +10,7 @@ class GameModel extends DatabaseBase {
         this.getGamesByQuery = this.getGamesByQuery.bind(this);
         this.getRouteCache = this.getRouteCache.bind(this);
         this.routeCacheExists = this.routeCacheExists.bind(this);
+        this.getGameSuggestions = this.getGameSuggestions.bind(this);
         this.getGame = this.getGame.bind(this);
     }
 
@@ -102,6 +105,10 @@ class GameModel extends DatabaseBase {
                 })
                 .then((response: IdNamePair[]) => {
                     game.genres = response;
+                    return this.getGamePlatforms(steamId);
+                })
+                .then((response: IdNamePair[]) => {
+                    game.platforms = response;
                     return this.getGameScreenshots(steamId);
                 })
                 .then((response: string[]) => {
@@ -122,6 +129,32 @@ class GameModel extends DatabaseBase {
 
         });
 
+    }
+
+    /**
+     * Get game reviews directly from Steam
+     */
+    getGameReviews(steamId: number): Promise <Review[]> {
+
+        return new Promise((resolve: any, reject: any) => {
+
+            axios.get(`https://store.steampowered.com/appreviews/${steamId}?json=1&num_per_page=20&review_type=all&purchase_type=all&cursor=*&filter=recent`)
+            .then((response: AxiosResponse) => {
+                if (response.data.error) {
+                    return reject(response.data.error);
+                }
+
+                if (response.data.success !== 1) {
+                    return resolve([]);
+                }
+
+
+                return resolve(response.data.reviews);
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
+        });
     }
 
     /**
@@ -157,6 +190,7 @@ class GameModel extends DatabaseBase {
                             screenshots: undefined,
                             game_modes: undefined,
                             genres: undefined,
+                            platforms: undefined,
                             log_dt: rawGame.log_dt
                         };
 
@@ -310,6 +344,39 @@ class GameModel extends DatabaseBase {
     }
 
     /**
+     * Get game's platforms.
+     */
+    private getGamePlatforms(steamId: number): Promise<IdNamePair[]> {
+
+        return new Promise((resolve, reject) => {
+            this.custom(
+                `SELECT pe.${DbTableSteamPlatformEnumFields[0]} as 'id', pe.${DbTableSteamPlatformEnumFields[1]} as 'name'
+                FROM ${DbTables.platforms} p
+                JOIN ${DbTables.steam_platform_enum} pe ON p.${DbTablePlatformsFields[1]} = pe.${DbTableSteamPlatformEnumFields[0]}
+                WHERE p.${DbTablePlatformsFields[2]} = ?`,
+                [steamId])
+                .then((response: GenericModelResponse) => {
+                    const pairs: IdNamePair[] = [];
+
+                    if (response.data.length > 0) {
+                        const rawPairs: any = response.data;
+
+                        rawPairs.forEach((rawPair: IdNamePair) => {
+                            const pair: IdNamePair = { id: rawPair.id, name: rawPair.name };
+                            pairs.push(pair);
+                        });
+                    }
+
+                    return resolve(pairs);
+                })
+                .catch((error: string) => {
+                    return reject(error);
+                });
+        });
+
+    }
+
+    /**
      * Get game's developer, publisher, and cover links.
      */
     private getGameDeveloperPublisherCovers(steamId: number): Promise<GameResponse> {
@@ -348,6 +415,7 @@ class GameModel extends DatabaseBase {
                             screenshots: undefined,
                             game_modes: undefined,
                             genres: undefined,
+                            platforms: undefined,
                             log_dt: undefined
                         };
 
@@ -414,7 +482,6 @@ class GameModel extends DatabaseBase {
                 query,
                 [])
                 .then((dbResponse: GenericModelResponse) => {
-
                     if (dbResponse.data.length > 0) {
                         const steamIds: number[] = dbResponse.data.map((x: any) => x.steam_games_sys_key_id);
                         const promises: Promise<GameResponse>[] = [];
@@ -441,6 +508,36 @@ class GameModel extends DatabaseBase {
                             .catch((error: string) => {
                                 return reject(error);
                             });
+
+                    } else {
+                        return reject("Database error.");
+                    }
+
+                })
+                .catch((error: string) => {
+                    return reject(error);
+                });
+
+        });
+
+    }
+
+    /**
+     * Get game's list from query.
+     */
+    getGameSuggestions(query: string): Promise <GameSuggestion[]> {
+
+        return new Promise((resolve, reject) => {
+            this.custom(
+                query,
+                [])
+                .then((dbResponse: GenericModelResponse) => {
+                    if (dbResponse.data.length > 0) {
+                        const suggestions: GameSuggestion[] = [];
+                        dbResponse.data.forEach((x: any) => {
+                            suggestions.push({name: x.name, steamId: x.steam_games_sys_key_id });
+                        });
+                        return resolve(suggestions);
 
                     } else {
                         return reject("Database error.");

@@ -1,4 +1,4 @@
-import { PlatformEnum, Achievement, getSteamCoverURL, getSteamCoverThumbURL, PriceInfoResponse, PricingsEnum, cheerioOptions } from "../../client/client-server-common/common";
+import { PlatformEnum, Achievement, getSteamCoverURL, getSteamCoverThumbURL, PriceInfoResponse, PricingsEnum, cheerioOptions, cleanString } from "../../client/client-server-common/common";
 import * as cheerio from "cheerio";
 
 export function getSteamGenres(data: string): string[] {
@@ -42,14 +42,14 @@ export function getSteamPlatforms(data: string): number[] {
 }
 
 export function getSteamModes(data: string): string[] {
-    const genres: string[] = [];
+    const modes: string[] = [];
     const $: CheerioStatic = cheerio.load(data, cheerioOptions);
 
     $(`#category_block > .game_area_details_specs:not(.learning_about)`).each((i: number, element: CheerioElement) => {
-        genres.push($(element).find(`.name`).html());
+        modes.push($(element).find(`.name`).html());
     });
 
-    return genres;
+    return modes;
 }
 
 export function getSteamAchievements(data: string): Achievement[] {
@@ -96,7 +96,7 @@ export function getSteamPricings(data: string, steamGamesSysKeyId: number): Pric
     // main game/bundles
     $(".game_area_purchase_game").each((i: number, element: CheerioElement) => {
         const monthNameToNumber = (name: string) =>  new Date(Date.parse(name + " 1, 2012")).getMonth() + 1;
-        const title: string = $(element).find(`h1`).clone().children().remove().end().text().replace(`Buy `, ``).replace(`Pre-Purchase`, ``).replace(`Play`, ``).trim();
+        const title: string = cleanString($(element).find(`h1`).clone().children().remove().end().text().replace(`Buy `, ``).replace(`Pre-Purchase`, ``).replace(`Play`, ``).trim());
         const discountPercent: number = Number.parseInt($(element).find(`.discount_pct, .bundle_base_discount`).text().replace(`-`, ``).replace(`%`, ``)) || undefined;
         const discountEndDate: Date = $(element).find(`.game_purchase_discount_countdown`).length > 0
         ? new Date((parseInt(data.substring(data.indexOf(`$DiscountCountdown, `), data.indexOf(` );`, data.indexOf(`$DiscountCountdown, `) + 20)))) || new Date(`${$(element).find(`.game_purchase_discount_countdown`).text().split(" ").splice(-2)}, ${monthNameToNumber($(element).find(`.game_purchase_discount_countdown`).text().split(" ").splice(-2)[0]) >= monthNameToNumber(new Date().toLocaleString(`default`, { month: `long` })) ? new Date().getFullYear() : new Date().getFullYear() + 1}`).getTime())
@@ -114,7 +114,7 @@ export function getSteamPricings(data: string, steamGamesSysKeyId: number): Pric
     // dlc
     $(".game_area_dlc_row").each((i: number, element: CheerioElement) => {
         const pricingEnum: PricingsEnum = PricingsEnum.dlc;
-        const title: string = $(element).find(`.game_area_dlc_name`).text().trim();
+        const title: string = cleanString($(element).find(`.game_area_dlc_name`).text().trim());
         const discountPercent: number = Number.parseInt($(element).find(`.discount_pct`).text().replace(`-`, ``).replace(`%`, ``)) || undefined;
         const rawPrice: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`$`, ``) : $(element).find(`.game_area_dlc_price`).text().replace(`$`, ``).trim();
         const price: number = (rawPrice === `N/A` || rawPrice === `Free`) ? undefined : Number.parseFloat(rawPrice);
@@ -126,7 +126,7 @@ export function getSteamPricings(data: string, steamGamesSysKeyId: number): Pric
     // demo
     if ($(".demo_above_purchase").length > 0) {
         const pricingEnum: PricingsEnum = PricingsEnum.demo;
-        const title: string = $(`.demo_above_purchase > h1`).text().trim().replace(`Download `, ``);
+        const title: string = cleanString($(`.demo_above_purchase > h1`).text().trim().replace(`Download `, ``));
         const discountPercent: number = undefined;
         const price: number = undefined;
         const pricing: PriceInfoResponse = { pricingEnumSysKeyId: pricingEnum, steamGamesSysKeyId: steamGamesSysKeyId, title: title, price: price, discount_percent: discountPercent, discount_end_dt: undefined, log_dt: new Date() };

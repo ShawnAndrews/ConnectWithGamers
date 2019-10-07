@@ -2,6 +2,7 @@ import * as React from 'react';
 import { SnackbarContent, IconButton } from '@material-ui/core';
 
 export enum HomeOptionsEnum {
+    Home,
     MostPopular,
     RecentlyReleased,
     Upcoming,
@@ -60,6 +61,10 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                 
             />
             <div className="px-3 my-3">
+                <div className={`option py-1 px-2 my-1 mb-2 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.Home) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.Home)}>
+                    <i className="fas fa-home mr-3"/>
+                    Home
+                </div>
                 <div className="title mb-2">Browse Steam</div>
                 <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.MostPopular) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.MostPopular)}>
                     <i className="fas fa-fire mr-3"/>
@@ -78,7 +83,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                     Early Access
                 </div>
                 <div className="title mb-2">Categories</div>
-                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.Genres) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.Genres)}>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary`} onClick={() => props.onOptionClick(HomeOptionsEnum.Genres)}>
                     <i className="fas fa-align-justify mr-3"/>
                     <span>Genres</span>
                     <i className={`fas ${props.genresExpanded ? 'fa-chevron-left' : 'fa-chevron-right'} arrow float-right`}/>

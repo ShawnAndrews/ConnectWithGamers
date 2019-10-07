@@ -1,7 +1,5 @@
 import { PriceInfoResponse, PricingsEnum, CurrencyType, CURRENCY_TOKEN_NAME } from "../../client-server-common/common";
 import * as SteamService from '../service/steam/main';
-import { resolve } from "dns";
-import { ReactElement } from "react";
 
 /**
  * Convert Date->MM-DD-YYYY/Today at/Yesterday at/<day_of_week> at.
@@ -14,11 +12,11 @@ export function getFormattedDate(dateParam: Date) {
     yesterday.setDate(today.getDate() - 1);
     lastweek.setDate(today.getDate() - 7);
     if (today.toLocaleDateString() === date.toLocaleDateString()) {
-        return "Today at";
+        return `Today at ${date.toLocaleTimeString()}`;
     } else if (yesterday.toLocaleDateString() === date.toLocaleDateString()) {
-        return "Yesterday at";
-    } else if (date.toLocaleDateString() > lastweek.toLocaleDateString()) {
-        return `${date.toLocaleString(window.navigator.language, {weekday: "short"})} at`;
+        return `Yesterday at ${date.toLocaleTimeString()}`;
+    } else if (date.getTime() > lastweek.getTime()) {
+        return `${date.toLocaleString(window.navigator.language, {weekday: "long"})}`;
     } else {
         return date.toLocaleDateString();
     }
@@ -153,4 +151,25 @@ export function getPriceInUserCurrency(price: number, currencyType: CurrencyType
     }
 
     return `${currencySymbol} ${(currencyRate * price).toFixed(2)}${!skipCurrencyType ? ` ${currencyType}` : ``}`;
+}
+
+/**
+ *  Get pricings without their history.
+ */
+export function getUniquePricings(pricings: PriceInfoResponse[]): PriceInfoResponse[] {
+    const uniquePricings: PriceInfoResponse[] = [];
+
+    pricings.forEach((pricing: PriceInfoResponse) => {
+        let isDuplicate: boolean = false;
+        uniquePricings.forEach((uniquePricing: PriceInfoResponse) => {
+            if (uniquePricing.steamGamesSysKeyId === pricing.steamGamesSysKeyId && uniquePricing.pricingEnumSysKeyId === pricing.pricingEnumSysKeyId && uniquePricing.title === pricing.title) {
+                isDuplicate = true; 
+            }
+        });
+        if (!isDuplicate) {
+            uniquePricings.push(pricing);
+        }
+    });
+
+    return uniquePricings;
 }

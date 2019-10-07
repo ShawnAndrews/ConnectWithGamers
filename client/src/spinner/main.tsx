@@ -16,7 +16,7 @@ class Spinner extends React.Component<ISpinnerProps, ISpinnerState> {
 
     render() {
         return (
-            <div className={`login-spinner ${this.props.className ? this.props.className : ''}`}>
+            <div className={`spinner ${this.props.className ? this.props.className : ''}`}>
                 <CircularProgress
                     size={120} 
                     thickness={2}

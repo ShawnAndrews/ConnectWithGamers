@@ -5,11 +5,13 @@ import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { NAV_PAGE } from '../app/app';
 import Navbar from './Navbar';
-import { httpGetPublicAccountInfo } from '../service/account/main';
-import { AccountInfoResponse, CurrencyType } from '../../client-server-common/common';
+import { httpGetPublicAccountInfo, httpGetGameSuggestions } from '../service/account/main';
+import { AccountInfoResponse, CurrencyType, GameSuggestion, GameSuggestionsResponse } from '../../client-server-common/common';
 import { GlobalReduxState } from '../reducers/main';
 import { changeCurrency } from '../actions/main';
 import { getCurrencyByCookie, getCurrencyRate } from '../util/main';
+import { SuggestionSelectedEventData } from 'react-autosuggest';
+
 
 interface INavbarContainerProps extends RouteComponentProps<any> { } 
 
@@ -19,6 +21,9 @@ interface INavbarContainerState {
     profileImage: string;
     profileName: string;
     currencyAnchorEl: HTMLElement;
+    suggestions: GameSuggestion[];
+    searchValue: string;
+    allSuggestions: GameSuggestion[];
 }
 
 interface ReduxStateProps {
@@ -39,7 +44,6 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         this.onTabClick = this.onTabClick.bind(this);
         this.updateNavSelection = this.updateNavSelection.bind(this);
         this.onSubmitSearch = this.onSubmitSearch.bind(this);
-        this.onSearchQueryChanged = this.onSearchQueryChanged.bind(this);
         this.loadPublicAccountInfo = this.loadPublicAccountInfo.bind(this);
         this.onRedirect = this.onRedirect.bind(this);
         this.onCurrencyClick = this.onCurrencyClick.bind(this);
@@ -47,22 +51,33 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         this.onCurrencyChange = this.onCurrencyChange.bind(this);
         this.setNewCurrency = this.setNewCurrency.bind(this);
 
+        this.onSearchChange = this.onSearchChange.bind(this);
+        this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
+        this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
+        this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
+        this.loadGameSuggestions = this.loadGameSuggestions.bind(this);
+
         const onLoginScreen: boolean = props.history.location.pathname.startsWith(NAV_PAGE.ACCOUNT);
         const newCurrencyType: CurrencyType = getCurrencyByCookie();
-
-        if (this.props.loggedIn) {
-            this.loadPublicAccountInfo();
-        }
-
-        this.setNewCurrency(newCurrencyType);
 
         this.state = {
             index: onLoginScreen ? 3 : undefined,
             searchQuery: '',
             profileImage: undefined,
             profileName: undefined,
-            currencyAnchorEl: null
+            currencyAnchorEl: null,
+            suggestions: [],
+            allSuggestions: undefined,
+            searchValue: ''
         };
+
+        if (this.props.loggedIn) {
+            this.loadPublicAccountInfo();
+        }
+
+        this.loadGameSuggestions();
+
+        this.setNewCurrency(newCurrencyType);
     }
 
     componentWillMount(): void {
@@ -100,6 +115,43 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
 
     }
 
+    loadGameSuggestions(): void {
+        
+        httpGetGameSuggestions()
+        .then((response: GameSuggestionsResponse) => {
+            this.setState({
+                allSuggestions: response.data
+            });
+        })
+        .catch((error: string) => {
+            popupS.modal({ content: `<div>• ${error}</div>` });
+        });
+
+    }
+
+    onSuggestionsFetchRequested({ value }): void {
+        const getSuggestions = (x: string) => {
+            const inputValue = x.trim().toLowerCase();
+            const inputLength = inputValue.length;
+
+            return inputLength === 0 ? [] : this.state.allSuggestions.filter(suggestion => suggestion.name.toLowerCase().includes(inputValue)).slice(0, 5);
+        };
+
+        this.setState({
+          suggestions: getSuggestions(value)
+        });
+    };
+
+    onSuggestionSelected(event: React.FormEvent<any>, data: SuggestionSelectedEventData<GameSuggestion>): void {
+        this.props.history.push(`/search/game/${data.suggestion.steamId}`);
+    }
+
+    onSuggestionsClearRequested(): void {
+        this.setState({
+            suggestions: []
+        });
+    };
+
     updateNavSelection(path: string): void {
         if (path === NAV_PAGE.HOME) {
             this.setState({ index: 0 });
@@ -121,10 +173,6 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
     onSubmitSearch(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault();
         this.props.history.push(`/search/filter/?query=${this.state.searchQuery}`);
-    }
-
-    onSearchQueryChanged(e: React.ChangeEvent<HTMLInputElement>): void {
-        this.setState({ searchQuery: e.target.value });
     }
 
     onRedirect(URL: string): void {
@@ -160,6 +208,12 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
 
     }
 
+    onSearchChange(event: any, { newValue }): void {
+        this.setState({
+            searchValue: newValue
+        });
+    };
+
     render() {
         return (
             <Navbar
@@ -167,7 +221,6 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
                 searchQuery={this.state.searchQuery}
                 onTabClick={this.onTabClick}
                 onSubmitSearch={this.onSubmitSearch}
-                onSearchQueryChanged={this.onSearchQueryChanged}
                 onRedirect={this.onRedirect}
                 profileImage={this.state.profileImage}
                 profileName={this.state.profileName}
@@ -176,6 +229,12 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
                 onCurrencyClose={this.onCurrencyClose}
                 onCurrencyChange={this.onCurrencyChange}
                 currencyType={this.props.currencyType}
+                suggestions={this.state.suggestions}
+                onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+                onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+                onSuggestionSelected={this.onSuggestionSelected}
+                SearchValue={this.state.searchValue}
+                onSearchChange={this.onSearchChange}
             />
         );
     }

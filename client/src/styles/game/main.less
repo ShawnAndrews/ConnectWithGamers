@@ -33,6 +33,187 @@
         background: linear-gradient(to right, rgba(black,0.0) 0%, rgba(black,0.5) 5%, rgba(black,0.5) 76%,rgba(black,0.0) 100%);
     }
 
+    .developer-publisher {
+        color: rgba(white, 0.55);
+    }
+
+    .state-stepper {
+
+        > div {
+            background-color: transparent;
+        }
+
+        svg {
+            color: rgba(@tertiary-color,0.8);
+        }
+
+        text {
+            fill: #171a21;
+        }
+
+        span {
+            color: rgba(@tertiary-color,0.8);
+        }
+
+        .optional-text {
+            color: #9c9c9c;
+        }
+    }
+
+    .container {
+        background: transparent;
+        padding: 0;
+
+        * {
+            color: #38caeb;
+        }
+
+        .price-history {
+            canvas {
+                margin-bottom: 35px;
+            }
+        }
+
+        .achievements {
+
+            .info-header {
+                height: 1em;
+            }
+
+            .achievement {
+                position: relative;
+                outline: 2px solid @tertiary-color;
+                height: 64px;
+                  
+                .title {
+                    position: absolute;
+                    left: 70px;
+                    top: 2px;
+                    font-size: 13px;
+                    color: rgba(white,0.8);
+                    width: calc(100% - 80px);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    display: block;
+                    text-overflow: ellipsis;
+                }
+
+                .description {
+                    position: absolute;
+                    left: 70px;
+                    top: 21px;
+                    font-size: 11px;
+                    color: rgba(white,0.65);
+                    width: calc(100% - 80px);
+                    white-space: nowrap;
+                    overflow: hidden;
+                    display: block;
+                    text-overflow: ellipsis;
+                }
+
+                .percent-text {
+                    position: absolute;
+                    top: -5px;
+                }
+                  
+            }
+        }
+
+        .similar-games {
+            
+            img {
+                cursor: pointer;
+                object-fit: cover;
+            }
+        }
+
+        .review-text.green-border > div > div {
+            padding: 10px;
+            border: 5px solid rgba(0,128,0,0.18);
+            border-top: none;
+            color: rgba(@tertiary-color, 0.8);
+        }
+
+        .review-text.red-border > div > div {
+            padding: 10px;
+            border: 5px solid rgba(128,0,0,0.18);
+            border-top: none;
+            color: rgba(@tertiary-color, 0.8);
+        }
+
+        .green {
+            background-color: rgba(0, 128, 0, 0.18);
+        }
+        .red {
+            background-color: rgba(128, 0, 0, 0.18);
+        }
+
+        div[role=tablist] > span:last-of-type {
+            background-color: #38caeb;
+        }
+
+        header {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        div[role=tablist] > div {
+            border-bottom: 2px solid rgba(@tertiary-color,0.3);
+        }
+
+        div[role=tabpanel] {
+            max-height: 600px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            padding: 20px;
+            background-color: transparent;
+            box-shadow: none;
+
+            &::-webkit-scrollbar-track {
+                box-shadow: inset 0 0 6px rgba(0,0,0,0.8);
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.8);
+                border-radius: 10px;
+                background-color: rgba(white, 0.1);
+            }
+            &::-webkit-scrollbar {
+                width: 5px;
+                background: transparent;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+                background-color: #484848;
+            }
+        }
+
+        .summary {
+            line-height: 1.5em;
+            font-size: 14px;
+            margin-top: 30px;
+            overflow: hidden;
+            font-family: "Motiva Sans", Sans-serif;
+            font-weight: normal;
+            color: white;
+            padding: 10px;
+
+            h2 {
+                margin-top: 18px;
+                margin-bottom: 0px;
+                background-image: none;
+                font-size: 15px;
+                color: #38caeb;
+                text-transform: none;
+                letter-spacing: 0px;
+            }
+    
+            a {
+                color: #9a9a9a;
+            }
+        }
+    }
+
     .game-info {
     
         .game-notifications-btn {
@@ -49,57 +230,155 @@
         }
 
         .pricing {
-            position: relative;
-            height: 50px;
-            margin-bottom: 35px;
-            
-            .price {
-                position: absolute;
-                bottom: -20px;
-                right: 25px;
-                width: 100px;
-                border-radius: 0px;
-                background-color: #308320;
-                text-align: center;
-                vertical-align: middle;
-                line-height: 36px;
-                font-weight: bold;
-                color: white;
+            color: rgba(white, 0.9);
 
-                del {
-                    opacity: 0.5;
-                    font-size: 0.7rem;
+            .tooltip-container {
+
+                .tooltip-header {
+                    font-size: 14px;
+                    color: rgba(@tertiary-color,1.0);
+                    font-weight: bold;
+                }
+
+                .entry {
+                    display: flex;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    border: 2px solid @tertiary-color;
+                    margin-bottom: 5px;
+
+                    .entry-name {
+                        width: 70%;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        font-size: 14px;
+                    }
+
+                    .entry-price {
+                        width: 30%;
+                        vertical-align: top;
+                        text-align: center;
+                        background-color: @tertiary-color;
+                        color: rgba(white, 0.9);
+                        font-size: 15px;
+
+                        .entry-price-discount {
+                            font-size: 11px;
+                            color: greenyellow;
+                            vertical-align: top;
+                        }
+                    }
                 }
             }
 
-            img {
-                object-fit: cover;
-                outline: 2px solid #308420;
+            .review {
+                vertical-align: bottom;
+
+                .name {
+                    font-weight: bold;
+                }
+
+                .stat-bar {
+                    background-color: #2b8096;
+                    left: 0;
+                }
             }
-         }
-    
-        .platforms, .genres, .release-date {
-    
-            > .title {
-                color: rgba(white, 0.5)!important;
+            
+            .free {
+                color: #38caeb;
+                font-weight: bold;
+                font-size: 35px;
             }
 
-            .platform, .genre, .date {
+            .price-container {
+
+                .price {
+                    color: #38caeb;
+                    font-weight: bold;
+                    font-size: 35px;
+                }
+
+                .discount-container {
+                
+                    .discount-price {
+                        color: @tertiary-color;
+                    }
+
+                    .discount-percent {
+                        background-color: #308420;
+                        border-radius: 20px;
+                        width: 47px;
+                        font-size: 13px;
+                        color: rgba(255, 255, 255, 0.73);
+                        margin-left: 10px;
+                        margin-bottom: 10px;
+                    }
+                    
+                }
+            }
+        }
+    
+        .genres {
+    
+            > .title {
+                font-size: 14px;
+                color: rgba(@tertiary-color,1.0);
+                font-weight: bold;
+            }
+
+            .genre {
                 font-size: 0.8rem;
+                background-color: @tertiary-color;
+                border-radius: 15px;
             }
 
             * {
                 color: white;
             }
         }
-        
-        .game_mode {
-            cursor: default;
-            line-height: 40px;
-            border-radius: 10px;
-            color: rgba(white, .6);
-            box-shadow: 0 0 0pt 2pt rgba(white, .6);   
+
+        .features {
+    
+            > .title {
+                font-size: 14px;
+                color: rgba(@tertiary-color,1.0);
+                font-weight: bold;
+            }
+
+            .entry {
+                display: flex;
+                white-space: nowrap;
+                overflow: hidden;
+                border: 2px solid @tertiary-color;
+                margin-bottom: 5px;
+
+                .entry-icon {
+                    width: 15%;
+                    text-align: center;
+                    background-color: @tertiary-color;
+                    color: rgba(white, 0.9);
+                }
+
+                .entry-name {
+                    width: 85%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    text-align: center;
+                    font-size: 14px;
+                }
+            }
         }
+
+        .platforms {
+            position: absolute;
+            top: 190px;
+            left: 10px;
+            opacity: 0.75;
+            color: white;
+        }
+
     }
 
     .media-carousel {
@@ -123,16 +402,6 @@
                     border: 2px solid @tertiary-color;
                 }
             }
-
-            .video-preview-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: url("https://i.imgur.com/Pk4pw6i.png");
-                background-repeat: no-repeat;
-            }
         }
 
         .slick-track, img {
@@ -145,7 +414,7 @@
             height: 0;
             padding-bottom: 56%;
 
-            iframe {
+            video {
                 position: absolute;
                 width: 100%;
                 height: 100%;
