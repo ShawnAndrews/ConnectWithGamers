@@ -20,10 +20,10 @@
   :video_game::space_invader::game_die::speech_balloon:
 </div>
 <div align="center">
-  <strong>Discover new games today!</strong>
+  <strong>Discover a new way to shop for games today!</strong>
 </div>
 <div align="center">
-  A games library and chat application.
+  A games shop and library application.
 </div>
 
 <div align="center">
