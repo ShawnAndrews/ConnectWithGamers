@@ -96,7 +96,7 @@ function processSteamId(steamId: number): Promise<void> {
             ($(`.user_reviews_summary_row:nth-child(${totalReviewCountTempTemp}) .summary .game_review_summary`).length > 0 && $(`.user_reviews_summary_row:nth-child(${totalReviewCountTempTemp}) .summary .game_review_summary`).html().includes(`user reviews`) ? parseInt($(`.user_reviews_summary_row:nth-child(${totalReviewCountTempTemp}) .summary .game_review_summary`).html().replace(`,`, ``).replace(` user reviews`, ``)) : undefined);
             const totalReviewCount: number = totalReviewCountTemp === -1 ? 0 : totalReviewCountTemp;
             const reviewEnum: ReviewEnum = $(`.user_reviews_summary_row:nth-child(${totalReviewCountTempTemp}) .game_review_summary:not(.not_enough_reviews)`).length > 0 ? ReviewEnum[$(`.user_reviews_summary_row:nth-child(${totalReviewCountTempTemp}) .game_review_summary:not(.not_enough_reviews)`).html()] : ReviewEnum["No User Reviews"];
-            const summary: string = $(`#game_area_description`).length > 0 ? cleanString($(`#game_area_description`).html().replace(`<h2>About This Game</h2>`, ``)) : undefined;
+            const summary: string = $(`#game_area_description`).length > 0 ? cleanString($(`#game_area_description`).html().replace(`<h2>About This Game</h2>`, ``)) : "";
             const firstReleaseDate: Date = ($(".release_date > div.date").length > 0 && ($(".release_date > div.date").html().includes(`, 20`) || $(".release_date > div.date").html().includes(`, 19`))) ? new Date($(".release_date > div.date").html()) : undefined;
             const video: string = $(".highlight_movie").length > 0 ? $(".highlight_movie").attr("data-mp4-source").replace(`movie480`, `movie_max`) : undefined;
             const stateEnum: StateEnum =
@@ -118,7 +118,7 @@ function processSteamId(steamId: number): Promise<void> {
             // console.log(`Total review count: ${totalReviewCount}`);
             // console.log(`Review enum: ${reviewEnum}`);
             // console.log(`Genres: ${genres.join(`, `)}`);
-            // console.log(`Summary: ${summary.length} chars long`);
+            // console.log(`Summary: ${$(`#game_area_description`).length > 0} chars long`);
             // console.log(`Release date: ${firstReleaseDate ? firstReleaseDate.getTime() : undefined}`);
             // console.log(`Video: ${video}`);
             // console.log(`State: ${stateEnum}`);
