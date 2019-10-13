@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { GameResponse } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
-import RegularGameContainer from '../../game/search/SearchGameContainer';
 import TopnavContainer from './topnav/TopnavContainer';
 import { Paper, Button } from '@material-ui/core';
 import { SortingOptionEnum } from '../../sidenav/filter/FilterContainer';
 import GameListContainer, { GameListType } from '../../game/GameListContainer';
+import Pagination from 'rc-pagination';
+import 'rc-pagination/assets/index.css';
 
 interface IResultsProps {
     isLoading: boolean;
@@ -14,29 +15,33 @@ interface IResultsProps {
     onRetryClick: () => void;
     onSortingSelectionChange: (event: any) => void;
     sortingSelection: SortingOptionEnum;
+    onChangePage: (page: number, pageSize: number) => void;
+    currentPage: number;
 }
 
 const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
     
+    const pageSize: number = 30;
+
     if (props.isLoading) {
         return (
             <Spinner className="text-center mt-5 pt-5" loadingMsg="Loading results..." />
         );
     }
 
-    if (props.retry) {
-        return (
-            <Paper className="retry color-secondary bg-tertiary p-3 mx-auto my-4">
-                <div className="text-center">
-                    Failed to connect to database. Please retry.
-                </div>
-                <Button className="color-primary bg-secondary-solid hover-secondary-solid mt-3" onClick={props.onRetryClick} variant="contained" color="primary" fullWidth={true}>
-                    Retry
-                </Button>
-            </Paper>
-        );
-    }
-    
+    // if (props.retry) {
+    //     return (
+    //         <Paper className="retry color-secondary bg-tertiary p-3 mx-auto my-4">
+    //             <div className="text-center">
+    //                 Failed to connect to database. Please retry.
+    //             </div>
+    //             <Button className="color-primary bg-secondary-solid hover-secondary-solid mt-3" onClick={props.onRetryClick} variant="contained" color="primary" fullWidth={true}>
+    //                 Retry
+    //             </Button>
+    //         </Paper>
+    //     );
+    // }
+
     let sortedGames: GameResponse[] = props.games;
 
     if (props.sortingSelection !== SortingOptionEnum.None) {
@@ -45,9 +50,9 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
             .sort((a: GameResponse, b: GameResponse) => {
 
                 if (props.sortingSelection === SortingOptionEnum.ReleaseDateAsc) {
-                    return a.review.id - b.review.id;
+                    return new Date(a.first_release_date).getTime() - new Date(b.first_release_date).getTime();
                 } else if (props.sortingSelection === SortingOptionEnum.ReleaseDateDesc) {
-                    return b.review.id - a.review.id;
+                    return new Date(b.first_release_date).getTime() - new Date(a.first_release_date).getTime();
                 } else if (props.sortingSelection === SortingOptionEnum.AlphabeticallyAsc) {
                     if (a.name > b.name) { return -1; }
                     if (a.name < b.name) { return 1; }
@@ -57,9 +62,9 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
                     if (a.name > b.name) { return 1; }
                     return 0;
                 } else if (props.sortingSelection === SortingOptionEnum.PopularityAsc) {
-                    return (a.review.id || 0) - (b.review.id || 0);
+                    return (b.review.id === 1 ? 11 : b.review.id) - (a.review.id === 1 ? 11 : a.review.id);
                 } else if (props.sortingSelection === SortingOptionEnum.PopularityDesc) {
-                    return (b.review.id || 0) - (a.review.id || 0);
+                    return (a.review.id === 1 ? 11 : a.review.id) - (b.review.id === 1 ? 11 : b.review.id);
                 } else {
                     return 0; // never hit
                 }
@@ -68,11 +73,12 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
     }
 
     return (
-        <Paper className="results bg-primary-solid overflow-auto" elevation={24}>
+        <Paper className="results bg-primary-solid overflow-auto">
             <TopnavContainer
                 title="Search results"
                 onSortingSelectionChange={props.onSortingSelectionChange}
                 sortingSelection={props.sortingSelection}
+                totalGames={props.games.length}
             />
             <div className="row w-100 m-0">
                 {sortedGames && 
@@ -86,7 +92,18 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
                                 />
                             );
                         })
+                        .slice(pageSize * (props.currentPage - 1), Math.ceil(sortedGames.length / pageSize) !== props.currentPage ? (pageSize * (props.currentPage - 1) + pageSize) : sortedGames.length)
                     }
+            </div>
+            <div className="pagination-container text-center my-4">
+                <Pagination
+                    className="pagination"
+                    showTitle={false}
+                    defaultCurrent={props.currentPage}
+                    total={props.games.length}
+                    onChange={props.onChangePage}
+                    pageSize={pageSize}
+                />
             </div>
         </Paper>
     );

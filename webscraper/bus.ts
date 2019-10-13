@@ -86,7 +86,7 @@ function processSteamId(steamId: number): Promise<void> {
 
             const $: CheerioStatic = cheerio.load(responseGamePage.data, cheerioOptions);
 
-            const name: string = $(".apphub_AppName").html() != undefined ? cleanString($(".apphub_AppName").html()) : undefined;
+            const name: string = $(".apphub_AppName").html() != undefined ? cleanString($(".apphub_AppName").html().replace(`<sup>®</sup>`, ``)) : undefined;
             const pricings: PriceInfoResponse[] = getSteamPricings(responseGamePage.data, steamGamesSysKeyId);
             const genres: string[] = getSteamGenres(responseGamePage.data);
             const totalReviewCountTempTemp: number = $(".user_reviews_summary_row").length;

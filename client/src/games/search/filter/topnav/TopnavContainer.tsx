@@ -8,6 +8,7 @@ interface ITopnavContainerProps extends RouteComponentProps<any> {
     title: string;
     onSortingSelectionChange: (event: any) => void;
     sortingSelection: SortingOptionEnum;
+    totalGames: number;
 }
 
 interface ITopnavContainerState {
@@ -43,6 +44,7 @@ class TopnavContainer extends React.Component<ITopnavContainerProps, ITopnavCont
                 sortingOptions={this.state.sortingOptions}
                 sortingSelection={this.props.sortingSelection}
                 onSortingSelectionChange={this.props.onSortingSelectionChange}
+                totalGames={this.props.totalGames}
             />
         );
     }

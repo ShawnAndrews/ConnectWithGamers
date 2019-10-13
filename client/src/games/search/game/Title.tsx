@@ -8,16 +8,15 @@ interface ITitleProps {
     rating: number;
     gameRatedSnackbarOpen: boolean;
     onRateStarsClick: (rating: number) => void;
-    nameStyle: Object;
     developer: string;
     publisher: string;
 }
 
 const Title: React.SFC<ITitleProps> = (props: ITitleProps) => {
     return (
-        <div className="px-2 pb-3">
+        <div className="title px-2 pb-3">
             {props.name && 
-                <Textfit className="title font-weight-bold" style={props.nameStyle} min={20} max={40}>{props.name}</Textfit>}
+                <Textfit className="name font-weight-bold" min={20} max={40}>{props.name}</Textfit>}
             {(props.publisher || props.developer) && 
                 <div className="developer-publisher">{[props.developer, props.publisher].join(` | `)}</div>}
             <ReactStars

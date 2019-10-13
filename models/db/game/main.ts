@@ -1,7 +1,6 @@
 import DatabaseBase from "../base/dbBase";
 import { GenericModelResponse, GameResponse, DbTables, DbTableRouteCacheFields, DbTableSteamGamesFields, ReviewEnum, StateEnum, PriceInfoResponse, DbTablePricingsFields, DbTableDevelopersFields, DbTablePublishersFields, DbTableImagesFields, DbTableSteamDeveloperEnumFields, DbTableSteamPublisherEnumFields, IdNamePair, DbTableSteamGenreEnumFields, DbTableGenresFields, ImagesEnum, DbTableSteamModesEnumFields, DbTableModesFields, Achievement, DbTableAchievementsFields, GameSuggestion, DbTablePlatformsFields, DbTableSteamPlatformEnumFields, Review, GameReviewsResponse } from "../../../client/client-server-common/common";
 import axios, { AxiosResponse } from "axios";
-import { log } from "../../../webscraper/logger/main";
 
 class GameModel extends DatabaseBase {
 
@@ -385,19 +384,40 @@ class GameModel extends DatabaseBase {
             this.custom(
                 `SELECT de.${DbTableSteamDeveloperEnumFields[1]} as 'developer', pe.${DbTableSteamPublisherEnumFields[1]} as 'publisher', c1.${DbTableImagesFields[3]} as 'cover', c2.${DbTableImagesFields[3]} as 'cover_thumb'
                 FROM ${DbTables.steam_games} t
-                JOIN developers d ON t.${DbTableSteamGamesFields[0]} = d.${DbTableDevelopersFields[2]}
-                JOIN publishers p ON t.${DbTableSteamGamesFields[0]} = p.${DbTablePublishersFields[2]}
-                JOIN ${DbTables.steam_developer_enum} de ON d.${DbTableDevelopersFields[1]} = de.${DbTableSteamDeveloperEnumFields[0]}
-                JOIN ${DbTables.steam_publisher_enum} pe ON p.${DbTablePublishersFields[1]} = pe.${DbTableSteamPublisherEnumFields[0]}
-                JOIN images c1 ON t.${DbTableSteamGamesFields[0]} = c1.${DbTableImagesFields[1]} AND c1.${DbTableImagesFields[2]} = ${ImagesEnum.cover}
-                JOIN images c2 ON t.${DbTableSteamGamesFields[0]} = c2.${DbTableImagesFields[1]} AND c2.${DbTableImagesFields[2]} = ${ImagesEnum.cover_thumb}
+                LEFT JOIN developers d ON t.${DbTableSteamGamesFields[0]} = d.${DbTableDevelopersFields[2]}
+                LEFT JOIN publishers p ON t.${DbTableSteamGamesFields[0]} = p.${DbTablePublishersFields[2]}
+                LEFT JOIN ${DbTables.steam_developer_enum} de ON d.${DbTableDevelopersFields[1]} = de.${DbTableSteamDeveloperEnumFields[0]}
+                LEFT JOIN ${DbTables.steam_publisher_enum} pe ON p.${DbTablePublishersFields[1]} = pe.${DbTableSteamPublisherEnumFields[0]}
+                LEFT JOIN images c1 ON t.${DbTableSteamGamesFields[0]} = c1.${DbTableImagesFields[1]} AND c1.${DbTableImagesFields[2]} = ${ImagesEnum.cover}
+                LEFT JOIN images c2 ON t.${DbTableSteamGamesFields[0]} = c2.${DbTableImagesFields[1]} AND c2.${DbTableImagesFields[2]} = ${ImagesEnum.cover_thumb}
                 WHERE t.${DbTableSteamGamesFields[0]} = ?`,
                 [steamId])
                 .then((response: GenericModelResponse) => {
+                    let game: GameResponse = {
+                        steamId: undefined,
+                        name: undefined,
+                        review: undefined,
+                        total_review_count: undefined,
+                        summary: undefined,
+                        first_release_date: undefined,
+                        video: undefined,
+                        state: undefined,
+                        developer: undefined,
+                        publisher: undefined,
+                        pricings: undefined,
+                        achievements: undefined,
+                        cover: undefined,
+                        cover_thumb: undefined,
+                        screenshots: undefined,
+                        game_modes: undefined,
+                        genres: undefined,
+                        platforms: undefined,
+                        log_dt: undefined
+                    };
 
                     if (response.data.length > 0) {
                         const raw: any = response.data[0];
-                        const game: GameResponse = {
+                        game = {
                             steamId: undefined,
                             name: undefined,
                             review: undefined,
@@ -419,10 +439,9 @@ class GameModel extends DatabaseBase {
                             log_dt: undefined
                         };
 
-                        return resolve(game);
-                    } else {
-                        return reject("Database error.");
                     }
+
+                    return resolve(game);
 
                 })
                 .catch((error: string) => {
@@ -475,12 +494,12 @@ class GameModel extends DatabaseBase {
     /**
      * Get game's list from query.
      */
-    getGamesByQuery(query: string): Promise <GameResponse[]> {
+    getGamesByQuery(query: string, preparedVars: any[]): Promise <GameResponse[]> {
 
         return new Promise((resolve, reject) => {
             this.custom(
                 query,
-                [])
+                preparedVars)
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
                         const steamIds: number[] = dbResponse.data.map((x: any) => x.steam_games_sys_key_id);

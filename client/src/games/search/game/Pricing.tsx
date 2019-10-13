@@ -4,8 +4,6 @@ import { PriceInfoResponse, PricingsEnum, IdNamePair, ReviewEnum } from '../../.
 
 interface IPricingProps {
     pricings: PriceInfoResponse[];
-    isDiscounted: boolean;
-    basePrice: number;
     onPricingClick: () => void;
     getConvertedPrice: (price: number, skipCurrencyType: boolean) => string;
     review: IdNamePair;
@@ -15,6 +13,8 @@ interface IPricingProps {
 const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
 
     const mainGame: PriceInfoResponse = props.pricings.find((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.main_game);
+    let isDiscounted: boolean = mainGame && mainGame.price && !!mainGame.discount_percent;
+    let basePrice: number = isDiscounted && + (mainGame.price / ((100 - mainGame.discount_percent) / 100)).toFixed(2);
     const demoPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.demo) !== -1;
     const dlcPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.dlc) !== -1;
     const bundlesPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.bundles) !== -1;
@@ -66,10 +66,10 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
                     : 
                     <div className="price-container">
                         {mainGame.price && <div className="price d-inline-block">{props.getConvertedPrice(mainGame.price, true)}</div>}
-                        {props.isDiscounted &&
+                        {isDiscounted &&
                             <div className="discount-container d-inline-block">
                                 <span className="discount-percent d-block pl-2">-{mainGame.discount_percent}%</span>
-                                <del className="discount-price d-block pl-2">{props.getConvertedPrice(props.basePrice, true)}</del>
+                                <del className="discount-price d-block pl-2">{props.getConvertedPrice(basePrice, true)}</del>
                             </div>}
                     </div>}
             </div>

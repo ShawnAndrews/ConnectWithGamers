@@ -17,7 +17,6 @@ interface INavbarContainerProps extends RouteComponentProps<any> { }
 
 interface INavbarContainerState {
     index: number;
-    searchQuery: string;
     profileImage: string;
     profileName: string;
     currencyAnchorEl: HTMLElement;
@@ -62,7 +61,6 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
 
         this.state = {
             index: onLoginScreen ? 3 : undefined,
-            searchQuery: '',
             profileImage: undefined,
             profileName: undefined,
             currencyAnchorEl: null,
@@ -172,7 +170,7 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
 
     onSubmitSearch(e: React.FormEvent<HTMLFormElement>): void {
         e.preventDefault();
-        this.props.history.push(`/search/filter/?query=${this.state.searchQuery}`);
+        this.props.history.push(`/search/filter/?query=${this.state.searchValue}`);
     }
 
     onRedirect(URL: string): void {
@@ -218,7 +216,6 @@ class NavbarContainer extends React.Component<Props, INavbarContainerState> {
         return (
             <Navbar
                 index={this.state.index}
-                searchQuery={this.state.searchQuery}
                 onTabClick={this.onTabClick}
                 onSubmitSearch={this.onSubmitSearch}
                 onRedirect={this.onRedirect}

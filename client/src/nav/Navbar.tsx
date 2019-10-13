@@ -6,7 +6,6 @@ import { SuggestionSelectedEventData } from 'react-autosuggest';
 
 interface INavbarProps {
     index: number;
-    searchQuery: string;
     onTabClick: (path: string) => void;
     onSubmitSearch: (e: React.FormEvent<HTMLFormElement>) => void;
     onRedirect: (URL: string) => void;

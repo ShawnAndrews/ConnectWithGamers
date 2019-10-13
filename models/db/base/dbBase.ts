@@ -23,6 +23,7 @@ export default class DatabaseBase {
         this.connection = createConnection(config.mysql);
         this.connection.connect(errCallback);
         this.connection.on("error", function(err) {
+            console.log(err.code);
             if (err.code === "PROTOCOL_CONNECTION_LOST") {
                 console.log(`Connection to MySQL database lost. Retrying...`);
                 setTimeout(this.connectToDatabase, 2000);

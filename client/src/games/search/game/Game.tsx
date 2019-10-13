@@ -15,6 +15,12 @@ import SimilarGames from './SimilarGames';
 import Achievements from './Achievements';
 import PriceHistory from './PriceHistory';
 
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: any;
+    value: any;
+}
+
 interface IGameProps {
     isLoading: boolean;
     gameId: number;
@@ -65,57 +71,6 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
             </div>
         );
     }
-    
-    let steamPricings: PriceInfoResponse[] = props.game.pricings;
-    let pricingsExist: boolean = props.game.pricings.length > 0;
-    let steamMainGame: PriceInfoResponse = props.game.pricings && props.game.pricings.find((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.main_game);
-    let steamIsFree: boolean = steamMainGame && !steamMainGame.price;
-    let steamIsDiscounted: boolean = steamMainGame && steamMainGame.price && !!steamMainGame.discount_percent;
-    let steamBasePrice: number = steamIsDiscounted && + (steamMainGame.price / ((100 - steamMainGame.discount_percent) / 100)).toFixed(2);
-
-    const newWidth: number = props.game.cover && 200; // (aspectRatio * props.game.cover.width);
-    const newHeight: number = props.game.cover && 400; // (aspectRatio * props.game.cover.height);
-    const titleHeight: number = 60;
-    const starsHeight: number = 25;
-
-    const getCoverContainerStyle = (): Object => {
-
-        if (!props.game.screenshots) {
-            return {};
-        }
-
-        return {
-            marginTop: `-180px`,
-        };
-    }
-
-    const getCoverTitleContainerStyle = (): Object => {
-
-        return {
-            width: `calc(100% - 460px)`
-        };
-    }
-
-    const getCoverNameStyle = (): Object => {
-
-        return {
-            height: `${titleHeight}px`,
-            color: `rgba(255,255,255,0.8)`
-        };
-    }
-
-    const getCoverGameInfoStyle = (): Object => {
-
-        return {
-            width: `460px`
-        };
-    }
-
-    interface TabPanelProps {
-        children?: React.ReactNode;
-        index: any;
-        value: any;
-    }
 
     function TabPanel(tabProps: TabPanelProps) {
         const { children, value, index, ...other } = tabProps;
@@ -149,8 +104,8 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     screenshots={props.game.screenshots}
                     video={props.game.video}
                 />}
-            <div className="position-relative mx-5 mb-2" style={getCoverContainerStyle()}>
-                <div className="d-inline-block" style={getCoverGameInfoStyle()}>
+            <div className="cover-container position-relative mx-5 mb-2">
+                <div className="cover-game-info d-inline-block">
                     {props.game.cover &&
                         <Cover
                             steamId={props.game.steamId}
@@ -170,11 +125,9 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                     Enable notifcations
                                 </>}
                         </Button>
-                        {pricingsExist && 
+                        {props.game.pricings.length > 0 && 
                             <Pricing
-                                pricings={steamPricings}
-                                isDiscounted={steamIsDiscounted}
-                                basePrice={steamBasePrice}
+                                pricings={props.game.pricings}
                                 onPricingClick={props.onPricingClick}
                                 getConvertedPrice={props.getConvertedPrice}
                                 review={props.game.review}
@@ -204,13 +157,12 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                         </div>
                     </div>
                 </div>
-                <div className="d-inline-block align-top pl-4 h-100 w-md-100" style={getCoverTitleContainerStyle()}>
+                <div className="title-container d-inline-block align-top pl-4 h-100 w-md-100">
                     <Title
                         name={props.game.name}
                         rating={props.game.review.id}
                         onRateStarsClick={props.onRateStarsClick}
                         gameRatedSnackbarOpen={props.gameRatedSnackbarOpen}
-                        nameStyle={getCoverNameStyle()}
                         developer={props.game.developer}
                         publisher={props.game.publisher}
                     />
@@ -278,18 +230,6 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                     screenshots={props.game.screenshots}
                     mediaCarouselElement={props.mediaCarouselElement}
                 />
-                {/* {props.game.similar_games && 
-                    <SimilarGamesContainer
-                        similarGames={props.game.similar_games}
-                        hoveredSimilarGameIndex={props.hoveredSimilarGameIndex}
-                        goToGame={props.goToGame}
-                        onSimilarGamesMouseDown={props.onSimilarGamesMouseDown}
-                        onSimilarGamesMouseUp={props.onSimilarGamesMouseUp}
-                        onSimilarGamesMouseMove={props.onSimilarGamesMouseMove}
-                        onSimilarGamesMouseOver={props.onSimilarGamesMouseOver}
-                        onSimilarGamesMouseLeave={props.onSimilarGamesMouseLeave}
-                        getConvertedPrice={props.getConvertedPrice}
-                    />} */}
             </div>
             <Snackbar
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}

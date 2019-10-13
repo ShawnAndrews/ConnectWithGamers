@@ -9,6 +9,7 @@ interface ITopnavProps {
     sortingOptions: IdNamePair[];
     sortingSelection: SortingOptionEnum;
     onSortingSelectionChange: (event: any) => void;
+    totalGames: number;
 }
 
 const Topnav: React.SFC<ITopnavProps> = (props: ITopnavProps) => {
@@ -19,7 +20,8 @@ const Topnav: React.SFC<ITopnavProps> = (props: ITopnavProps) => {
                 {props.title}
             </div>
             <hr/>
-            <div className="filter-wrapper">
+            <div className="total-results d-inline-block">Total results: {props.totalGames}</div>
+            <div className="filter-wrapper align-top d-inline-block">
                 <div className="title color-tertiary mr-2">Sort by</div>
                 <Select
                     className="filter-select text-center short"

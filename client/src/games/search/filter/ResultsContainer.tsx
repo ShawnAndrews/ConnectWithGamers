@@ -16,6 +16,7 @@ interface IResultsContainerState {
     games: GameResponse[];
     retry: boolean;
     sortingSelection: SortingOptionEnum;
+    currentPage: number;
 }
 
 class ResultsContainer extends React.Component<IResultsContainerProps, IResultsContainerState> {
@@ -25,7 +26,8 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
         this.loadSearchGames = this.loadSearchGames.bind(this);
         this.onRetryClick = this.onRetryClick.bind(this);
         this.onSortingSelectionChange = this.onSortingSelectionChange.bind(this);
-        
+        this.onChangePage = this.onChangePage.bind(this);
+
         const searchQuery: string = props.location.search;
         this.loadSearchGames(searchQuery);
 
@@ -34,7 +36,8 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
             searchQuery: searchQuery,
             games: undefined,
             retry: false,
-            sortingSelection: SortingOptionEnum.ReleaseDateDesc
+            sortingSelection: SortingOptionEnum.ReleaseDateDesc,
+            currentPage: 1
         };
     }
 
@@ -74,7 +77,7 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
 
     loadSearchGames(queryString: string): void {
         
-        SteamService.httpGenericGetData<MultiGameResponse>(`/steam/games/results/${queryString}`)
+        SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/games/query/${queryString}`)
             .then( (response: MultiGameResponse) => {
                 const games: GameResponse[] = response.data;
                 const localSort: string = this.getLocalSortType(queryString);
@@ -123,6 +126,10 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
         });
     }
 
+    onChangePage(page: number, pageSize: number): void {
+        this.setState({ currentPage: page });
+    }
+
     render() {
         return (
             <Results
@@ -132,6 +139,8 @@ class ResultsContainer extends React.Component<IResultsContainerProps, IResultsC
                 onRetryClick={this.onRetryClick}
                 sortingSelection={this.state.sortingSelection}
                 onSortingSelectionChange={this.onSortingSelectionChange}
+                onChangePage={this.onChangePage}
+                currentPage={this.state.currentPage}
             />
         );
     }

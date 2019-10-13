@@ -1,11 +1,52 @@
-@results-game-width: 150px;
+@results-game-width: 250px;
 
 .retry {
     width: 300px;
 }
 
 .results {
-    background-color: #252525!important;
+    background-color: transparent!important;
+    box-shadow: none!important;
+
+    .pagination-container {
+
+        .pagination {
+            width: auto!important;
+            text-align: center!important;
+            margin: auto;
+            display: inline-block;
+
+            li {
+                background: transparent!important;
+                border: 1px solid @tertiary-color!important;
+                color: @tertiary-color!important;
+
+                &:hover, &.rc-pagination-item-active {
+                    border: 1px solid rgba(@tertiary-color, 1.0)!important;
+
+                    a {
+                        color: rgba(@tertiary-color, 1.0)!important;
+                    }
+                }
+            }
+
+            a:hover {
+                color: rgba(@tertiary-color, 1.0)!important;
+            }
+
+            .rc-pagination-jump-prev:after, .rc-pagination-jump-next:after {
+                color: @tertiary-color!important;
+            }
+
+        }
+    }
+
+    ul {
+
+        li:focus {
+            outline: none; 
+        }
+    }
 
     .topnav {
         width: 100%;
@@ -18,18 +59,17 @@
     .game {
         background-color: rgba(white, 0.05);
 
+        .stat-bar {
+            left: 0!important;
+        }
+
         .cover-img {
-            height: 120px;
-            max-width: @results-game-width;
+            width: @results-game-width;
             border-top-left-radius: 4px;
             border-bottom-left-radius: 4px;
         }
 
         .name {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: calc(100% - @results-game-width);
             letter-spacing: 1px;
             height: 28px;
             overflow: hidden;
@@ -45,50 +85,45 @@
         }
 
         .genres {
-            position: absolute;
-            right: 0;
-            top: 1.8rem;
-            width: calc(100% - @results-game-width);
             font-size: .8rem;
             font-style: italic;
             color: rgba(255,226,82,.7);
             overflow: hidden;
             text-overflow: ellipsis;
         }
-    
-        .icons {
-            position: absolute;
-            top: 3rem;
-            right: 0;
-            opacity: 0.6;
-            width: calc(100% - @results-game-width);
-            overflow: hidden;
 
-            i {
-                font-size: 1.4rem;
-            }
+        .time {
+            color: @tertiary-color;
         }
 
-        .price {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: calc(100% - @results-game-width);
-            height: 26px;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .pricing {
+            width: 90px;
+            height: 25px;
+            margin-top: 12px;
 
-            .discount-text {
-                color: lightgreen;
+            .original-price {
+                position: absolute;
+                bottom: 15px;
+                left: 0px;
+                font-size: 10px;
+                text-decoration: line-through;
+                color: rgba(white, 0.4);
             }
 
-            .plain-text {
-                font-style: italic;
-                opacity: 0.5;
+            .price {
+                position: absolute;
+                bottom: 0px;
+                left: 0px;
+                font-size: 12px;
+                color: white
             }
 
-            svg {
-                color: rgba(white, 0.7);
+            .discount {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                color: #90d794d8;
+                font-size: 13px;
             }
         }
     }

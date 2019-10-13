@@ -8,11 +8,8 @@ import {
     DbTables,
     GameSuggestion,
     Review,
-    GameReviewsResponse,
-    DbTableSteamDeveloperEnumFields,
     DbTableDevelopersFields,
-    DbTableModesFields,
-    DbTablePublishersFields
+    DbTableModesFields
 } from "../../client/client-server-common/common";
 import routeModel from "../../models/routemodel";
 import { gameModel } from "../../models/db/game/main";
@@ -21,7 +18,7 @@ export const routes = new routeModel();
 
 /* routes */
 routes.addRoute("news", "/games/news");
-routes.addRoute("resultsgames", "/games/results");
+routes.addRoute("gamesquery", "/games/query");
 routes.addRoute("gamesuggestions", "/gamesuggestions");
 routes.addRoute("gamesimilar", "/game/similar/:id");
 routes.addRoute("gamereviews", "/game/reviews/:id");
@@ -130,12 +127,66 @@ export function GenericCachedWithDataRoute<T extends any, V> (cacheData: (param:
 
 }
 
+export function GenericCachedWitQueryRoute<T extends any, V> (cacheData: (query: string, preparedVars: any[]) => Promise<T>, query: string, preparedVars: any[], path: string): Promise<T> {
+
+    return new Promise((resolve: any, reject: any) => {
+        gameModel.routeCacheExists(path)
+            .then((exists: boolean) => {
+                if (exists) {
+                    gameModel.getRouteCache(path)
+                    .then((listItems: T) => {
+                        return resolve(listItems);
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+                } else {
+                    let data: T;
+                    cacheData(query, preparedVars)
+                    .then((listItems: T) => {
+                        data = listItems;
+                        return gameModel.insertRouteCache(data, path);
+                    })
+                    .then(() => {
+                        return resolve(data);
+                    })
+                    .catch((error: string) => {
+                        return reject(error);
+                    });
+                }
+            })
+            .catch((error: string) => {
+                return reject(error);
+            });
+    });
+
+}
+
 /* a single game */
 router.post(routes.getRoute("game"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    const path: string = req.path;
-    GenericCachedWithDataRoute<GameResponse, number>(gameModel.getGame, req.params.id, path)
+    const url: string = req.url;
+    GenericCachedWithDataRoute<GameResponse, number>(gameModel.getGame, req.params.id, url)
         .then((data: GameResponse) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* get games by filter */
+router.post(routes.getRoute("gamesquery"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const url: string = req.url;
+    const queryFilter: string = req.query.query;
+    GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT ${DbTableSteamGamesFields[0]} FROM ${DbTables.steam_games} WHERE ${DbTableSteamGamesFields[1]} LIKE ? LIMIT 500`,
+        [`%${queryFilter}%`],
+        url)
+        .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
         })
@@ -148,17 +199,18 @@ router.post(routes.getRoute("game"), (req: Request, res: Response) => {
 /* a game's similar */
 router.post(routes.getRoute("gamesimilar"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    const path: string = req.path;
+    const url: string = req.url;
     const steamId: number = req.params.id;
-    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+    GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
         `SELECT ${DbTableDevelopersFields[2]} FROM
         (SELECT 1 as seq, ${DbTableDevelopersFields[2]} FROM ${DbTables.developers} t where t.${DbTableDevelopersFields[1]} = (SELECT ${DbTableDevelopersFields[1]} FROM ${DbTables.developers} t WHERE t.${DbTableDevelopersFields[2]} = ${steamId})
         UNION
         SELECT 2 as seq, ${DbTableModesFields[2]} FROM ${DbTables.modes} t WHERE t.${DbTableModesFields[1]} IN (SELECT ${DbTableModesFields[1]} FROM ${DbTables.modes} t WHERE t.${DbTableModesFields[2]} = ${steamId}) ORDER BY RAND()) AS D
-        WHERE ${DbTableSteamGamesFields[0]} != ${steamId}
+        WHERE ${DbTableSteamGamesFields[0]} != ?
         ORDER BY seq
         LIMIT 20`,
-        path)
+        [steamId],
+        url)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -172,8 +224,8 @@ router.post(routes.getRoute("gamesimilar"), (req: Request, res: Response) => {
 /* a game's reviews */
 router.post(routes.getRoute("gamereviews"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    const path: string = req.path;
-    GenericCachedWithDataRoute<Review[], number>(gameModel.getGameReviews, req.params.id, path)
+    const url: string = req.url;
+    GenericCachedWithDataRoute<Review[], number>(gameModel.getGameReviews, req.params.id, url)
         .then((data: Review[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -187,11 +239,12 @@ router.post(routes.getRoute("gamereviews"), (req: Request, res: Response) => {
 /* game suggestions */
 router.post(routes.getRoute("gamesuggestions"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    const path: string = req.path;
-    GenericCachedWithDataRoute<GameSuggestion[], string>(gameModel.getGameSuggestions,
+    const url: string = req.url;
+    GenericCachedWitQueryRoute<GameSuggestion[], string>(gameModel.getGameSuggestions,
         `SELECT ${DbTableSteamGamesFields[0]}, ${DbTableSteamGamesFields[1]}
         FROM ${DbTables.steam_games}`,
-        path)
+        [],
+        url)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -205,12 +258,13 @@ router.post(routes.getRoute("gamesuggestions"), (req: Request, res: Response) =>
 /* weekly deals games */
 router.post(routes.getRoute("steamweeklydeals"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    const path: string = req.path;
-    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+    const url: string = req.url;
+    GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
         `SELECT ${DbTableSteamGamesFields[0]}
         FROM ${DbTables.steam_games}
         LIMIT 10`,
-        path)
+        [],
+        url)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -224,12 +278,13 @@ router.post(routes.getRoute("steamweeklydeals"), (req: Request, res: Response) =
 /* popular games */
 router.post(routes.getRoute("steampopular"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    const path: string = req.path;
-    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+    const url: string = req.url;
+    GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
         `SELECT ${DbTableSteamGamesFields[0]}
         FROM ${DbTables.steam_games}
         LIMIT 10`,
-        path)
+        [],
+        url)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -243,12 +298,13 @@ router.post(routes.getRoute("steampopular"), (req: Request, res: Response) => {
 /* upcoming games */
 router.post(routes.getRoute("steamupcoming"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    const path: string = req.path;
-    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+    const url: string = req.url;
+    GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
         `SELECT ${DbTableSteamGamesFields[0]}
         FROM ${DbTables.steam_games}
         LIMIT 10`,
-        path)
+        [],
+        url)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -262,12 +318,13 @@ router.post(routes.getRoute("steamupcoming"), (req: Request, res: Response) => {
 /* recent games */
 router.post(routes.getRoute("steamrecent"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    const path: string = req.path;
-    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+    const url: string = req.url;
+    GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
         `SELECT ${DbTableSteamGamesFields[0]}
         FROM ${DbTables.steam_games}
         LIMIT 10`,
-        path)
+        [],
+        url)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -281,12 +338,13 @@ router.post(routes.getRoute("steamrecent"), (req: Request, res: Response) => {
 /* early access games */
 router.post(routes.getRoute("steamearlyaccess"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    const path: string = req.path;
-    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+    const url: string = req.url;
+    GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
         `SELECT ${DbTableSteamGamesFields[0]}
         FROM ${DbTables.steam_games}
         LIMIT 10`,
-        path)
+        [],
+        url)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
@@ -300,12 +358,13 @@ router.post(routes.getRoute("steamearlyaccess"), (req: Request, res: Response) =
 /* horror games */
 router.post(routes.getRoute("steamhorror"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
-    const path: string = req.path;
-    GenericCachedWithDataRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+    const url: string = req.url;
+    GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
         `SELECT ${DbTableSteamGamesFields[0]}
         FROM ${DbTables.steam_games}
         LIMIT 10`,
-        path)
+        [],
+        url)
         .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
