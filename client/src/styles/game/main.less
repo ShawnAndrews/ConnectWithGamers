@@ -20,7 +20,7 @@
     }
 
     .title-container {
-        width: calc(100% - 460px);
+        width: calc(100% - 325px);
 
         .title {
 
@@ -35,7 +35,7 @@
         margin-top: -180px;
 
         .cover-game-info {
-            width: 460px;
+            width: 325px;
         }
     }
 
@@ -177,8 +177,12 @@
             box-shadow: none;
         }
 
-        div[role=tablist] > div {
-            border-bottom: 2px solid rgba(@tertiary-color,0.3);
+        div[role=tablist] {
+            margin-bottom: -17px!important;
+
+            > div {
+                border-bottom: 2px solid rgba(@tertiary-color,0.3);
+            }
         }
 
         div[role=tabpanel] {
@@ -393,7 +397,7 @@
 
         .platforms {
             position: absolute;
-            top: 190px;
+            top: 130px;
             left: 10px;
             opacity: 0.75;
             color: white;

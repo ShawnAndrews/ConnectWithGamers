@@ -9,7 +9,7 @@ interface ICoverProps {
 const Cover: React.SFC<ICoverProps> = (props: ICoverProps) => {
 
     return (
-        <a href={`${steamAppUrl}/${props.steamId}`} target="_blank"><img src={props.url} /></a>
+        <a href={`${steamAppUrl}/${props.steamId}`} target="_blank"><img className="w-100" src={props.url} /></a>
     );
 
 };
