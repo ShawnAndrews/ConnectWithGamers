@@ -11,7 +11,11 @@
 @xl: ~"screen and (max-width:1200px)";
 
 html, body, #root {
-    background-color: #292929;
+    height: 100vh;
+    width: 100vw;
+    background: radial-gradient(farthest-corner circle at 85% 200%, #2d2c2c 0%, #353434 50%, transparent),
+    radial-gradient(farthest-corner circle at 100% 200%, #2d2c2c  0%, #3e3c3c 46%, transparent),
+    radial-gradient(farthest-corner circle at 0px 0px, #2d2c2c 0%, #3e3c3c 50%, #232323);
     overflow: hidden;
 
     * {

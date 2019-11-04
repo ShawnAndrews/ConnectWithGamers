@@ -1,5 +1,4 @@
 import * as React from 'react';
-import YouTube from 'react-youtube';
 import Slider from "react-slick";
 
 interface IMediaProps {

@@ -48,9 +48,11 @@ export const cheerioOptions: any = { decodeEntities: false };
 export const steamAppUrl: string = `https://store.steampowered.com/app`;
 export const getSteamAppAchievementsUrl = (steamId: number): string => `https://steamcommunity.com/stats/${steamId}/achievements`;
 
-export const getSteamCoverURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/header.jpg?t=1557894336`;
+export const getSteamCoverURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/header.jpg`;
 
-export const getSteamCoverThumbURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/capsule_sm_120.jpg?t=1568772711`;
+export const getSteamCoverThumbURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/capsule_sm_120.jpg`;
+
+export const getSteamCoverHugeURL = (steamId: number): string => `https://steamcdn-a.akamaihd.net/steam/apps/${steamId}/capsule_616x353.jpg`;
 
 export function cleanString(input: string): string {
     let output = "";
@@ -111,7 +113,8 @@ export interface Config {
         user: string,
         password: string,
         database: string,
-        insecureAuth: boolean
+        insecureAuth: boolean,
+        charset: string
     };
 }
 
@@ -425,6 +428,7 @@ export interface GameResponse {
     achievements: Achievement[];
     cover: string;
     cover_thumb: string;
+    cover_huge: string;
     screenshots: string[];
     game_modes: IdNamePair[];
     genres: IdNamePair[];
@@ -474,7 +478,8 @@ export interface PriceInfoResponse {
 export enum ImagesEnum {
     cover = 1,
     cover_thumb = 2,
-    screenshot = 3
+    screenshot = 3,
+    cover_huge = 4,
 }
 
 export enum PricingsEnum {
@@ -529,6 +534,12 @@ export enum BusMessagesEnum {
     game = 0
 }
 
+export enum BusMessagesPriorityEnum {
+    low = 1,
+    medium = 2,
+    high = 3
+}
+
 export interface Achievement {
     name: string;
     description: string;
@@ -569,13 +580,14 @@ export enum DbTables {
     publishers = "publishers",
     steam_developer_enum = "steam_developer_enum",
     steam_publisher_enum = "steam_publisher_enum",
-    tokens = "tokens"
+    tokens = "tokens",
+    bus_messages_priority_enum = "bus_messages_priority_enum"
 }
 
 export const DbTableAccountsFields: string[] = [`accounts_sys_key_id`, `username`, `email`, `password_hash`, `salt`, `log_dt`, `discord`, `steam`, `twitch`, `email_verification_code`, `recovery_verification_code`, `profile`, `profile_file_extension`];
 export const DbTableAccountsRoleEnumFields: string[] = [`accounts_roles_enum_sys_key_id`, `name`];
 export const DbTableAccountsRolesFields: string[] = [`accounts_roles_sys_key_id`, `accounts_role_enum_sys_key_id`, `accounts_sys_key_id`];
-export const DbTableBusMessagesFields: string[] = [`bus_messages_enum_sys_key_id`, `value`, `log_dt`];
+export const DbTableBusMessagesFields: string[] = [`bus_messages_enum_sys_key_id`, `bus_messages_priority_enum_sys_key_id`, `value`, `log_dt`];
 export const DbTableBusMessagesEnumRolesFields: string[] = [`bus_messages_enum_sys_key_id`, `name`];
 export const DbTableChatEmotesFields: string[] = [`chat_emotes_sys_key_id`, `prefix`, `suffix`, `file_extension`, `log_dt`];
 export const DbTableChatroomMessagesFields: string[] = [`chatroom_messages_sys_key_id`, `username`, `text`, `attachment`, `attachment_file_extension`, `chatroom_id`, `log_dt`];
@@ -601,5 +613,6 @@ export const DbTableSteamPlatformEnumFields: string[] = [`steam_platform_enum_sy
 export const DbTableSteamNewsFields: string[] = [`steam_news_sys_key_id`, `title`, `author`, `image`, `url`, `created_dt`, `org`, `expires_dt`];
 export const DbTableSteamReviewEnumFields: string[] = [`steam_review_enum_sys_key_id`, `name`];
 export const DbTableSteamStateEnumFields: string[] = [`steam_state_enum_sys_key_id`, `name`];
+export const DbTableBusMessagesPriorityEnumFields: string[] = [`bus_messages_priority_enum_sys_key_id`, `name`];
 export const DbTableAchievementsFields: string[] = [`achievements_sys_key_id`, `steam_games_sys_key_id`, `name`, `description`, `link`, `percent`, `log_dt`];
 export const DbTableTokensFields: string[] = [`tokens_sys_key_id`, `accounts_sys_key_id`, `auth_token_code`, `created_dt`, `expires_dt`];

@@ -100,6 +100,7 @@ class GameModel extends DatabaseBase {
                     game.publisher = response.publisher;
                     game.cover = response.cover;
                     game.cover_thumb = response.cover_thumb;
+                    game.cover_huge = response.cover_huge;
                     return this.getGameGenres(steamId);
                 })
                 .then((response: IdNamePair[]) => {
@@ -186,6 +187,7 @@ class GameModel extends DatabaseBase {
                             achievements: undefined,
                             cover: undefined,
                             cover_thumb: undefined,
+                            cover_huge: undefined,
                             screenshots: undefined,
                             game_modes: undefined,
                             genres: undefined,
@@ -382,7 +384,7 @@ class GameModel extends DatabaseBase {
 
         return new Promise((resolve, reject) => {
             this.custom(
-                `SELECT de.${DbTableSteamDeveloperEnumFields[1]} as 'developer', pe.${DbTableSteamPublisherEnumFields[1]} as 'publisher', c1.${DbTableImagesFields[3]} as 'cover', c2.${DbTableImagesFields[3]} as 'cover_thumb'
+                `SELECT de.${DbTableSteamDeveloperEnumFields[1]} as 'developer', pe.${DbTableSteamPublisherEnumFields[1]} as 'publisher', c1.${DbTableImagesFields[3]} as 'cover', c2.${DbTableImagesFields[3]} as 'cover_thumb', c3.${DbTableImagesFields[3]} as 'cover_huge'
                 FROM ${DbTables.steam_games} t
                 LEFT JOIN developers d ON t.${DbTableSteamGamesFields[0]} = d.${DbTableDevelopersFields[2]}
                 LEFT JOIN publishers p ON t.${DbTableSteamGamesFields[0]} = p.${DbTablePublishersFields[2]}
@@ -390,6 +392,7 @@ class GameModel extends DatabaseBase {
                 LEFT JOIN ${DbTables.steam_publisher_enum} pe ON p.${DbTablePublishersFields[1]} = pe.${DbTableSteamPublisherEnumFields[0]}
                 LEFT JOIN images c1 ON t.${DbTableSteamGamesFields[0]} = c1.${DbTableImagesFields[1]} AND c1.${DbTableImagesFields[2]} = ${ImagesEnum.cover}
                 LEFT JOIN images c2 ON t.${DbTableSteamGamesFields[0]} = c2.${DbTableImagesFields[1]} AND c2.${DbTableImagesFields[2]} = ${ImagesEnum.cover_thumb}
+                LEFT JOIN images c3 ON t.${DbTableSteamGamesFields[0]} = c3.${DbTableImagesFields[1]} AND c3.${DbTableImagesFields[2]} = ${ImagesEnum.cover_huge}
                 WHERE t.${DbTableSteamGamesFields[0]} = ?`,
                 [steamId])
                 .then((response: GenericModelResponse) => {
@@ -408,6 +411,7 @@ class GameModel extends DatabaseBase {
                         achievements: undefined,
                         cover: undefined,
                         cover_thumb: undefined,
+                        cover_huge: undefined,
                         screenshots: undefined,
                         game_modes: undefined,
                         genres: undefined,
@@ -432,6 +436,7 @@ class GameModel extends DatabaseBase {
                             achievements: undefined,
                             cover: raw.cover,
                             cover_thumb: raw.cover_thumb,
+                            cover_huge: raw.cover_huge,
                             screenshots: undefined,
                             game_modes: undefined,
                             genres: undefined,

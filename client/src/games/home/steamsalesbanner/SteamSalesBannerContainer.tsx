@@ -1,9 +1,7 @@
-const popupS = require('popups');
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import SteamSalesBanner from './SteamSalesBanner';
-import { SidenavEnums, GameResponse, MultiGameResponse, ExcludedGameIds } from '../../../../client-server-common/common';
-import * as SteamService from '../../../service/steam/main';
+import { SidenavEnums, GameResponse } from '../../../../client-server-common/common';
 
 interface ISteamSalesBannerContainerProps extends RouteComponentProps<any> {
     goToRedirect: (URL: string) => void;
@@ -38,11 +36,11 @@ class SteamSalesBannerContainer extends React.Component<ISteamSalesBannerContain
         body = d.getElementsByTagName('body')[0],
         width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
         height = w.innerHeight|| documentElement.clientHeight|| body.clientHeight;
-
+        
         this.setState({ weeklyGamesToDisplay: this.calcWeeklyGamesToDisplay(width) });
     }
 
-    calcWeeklyGamesToDisplay = (width: number): number => (Math.floor((width - 1000) / 107))
+    calcWeeklyGamesToDisplay = (width: number): number => (Math.floor((width - 1000) / 192))
 
     render() {
         return (

@@ -25,32 +25,17 @@ const SteamSalesBanner: React.SFC<ISteamSalesBannerProps> = (props: ISteamSalesB
 
     return (
         <div className="steam-banner position-relative w-100 overflow-hidden mb-5">
-            <img src="https://i.imgur.com/77wnr4y.jpg" />
+            <img src="https://i.imgur.com/D7hYPWq.png" />
             <div className="filter-black" />
-            <div className={`filter-steamsales ${props.sidebarActiveEnum === undefined ? 'expanded' : ''}`} />
-            <div className={`filter-steamsales-gradient ${props.sidebarActiveEnum === undefined ? 'expanded' : ''}`} />
-            <div className="description ml-4">
-                <div className="h3 font-weight-bold">Weeklong Steam Deals</div>
-                <SteamSalesTimerContainer/>
-                <div className="text-center">
-                    <Button className="color-primary bg-secondary-solid" onClick={() => props.goToRedirect(`/search/steam/weeklydeals`)} variant="contained">
-                        See more <i className="fas fa-chevron-right ml-2"/>
-                    </Button>
-                </div>
-            </div>
-            <div className="steam-banner-games text-center">
-                <div className="grid-results h-100" style={gridStyle}>
-                    {props.games && props.games
-                        .filter((game: GameResponse) => game.cover)
-                        .sort((a: GameResponse, b: GameResponse) => (b.review.id - a.review.id))
-                        .slice(0, props.weeklyGamesToDisplay)
-                        .map((game: GameResponse) => 
-                            <GameListContainer
-                                type={GameListType.Transparent}
-                                game={game}
-                                transparentSmallCover={false}
-                            />
-                        )}
+            <div className={`filter-steamsales-gradient ${props.sidebarActiveEnum === undefined ? 'expanded' : ''}`}>
+                <div className="description">
+                    <div className="h3 text-center">Weeklong Steam Deals</div>
+                    <SteamSalesTimerContainer/>
+                    <div className="text-center">
+                        <Button className="more-button" onClick={() => props.goToRedirect(`/search/steam/weeklydeals`)} variant="outlined">
+                            See more <i className="fas fa-chevron-right ml-2"/>
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

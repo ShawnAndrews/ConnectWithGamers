@@ -56,6 +56,7 @@ routes.addRoute("steamfps", "/fps");
 routes.addRoute("steamcards", "/cards");
 routes.addRoute("steammmorpg", "/mmorpg");
 routes.addRoute("steamsurvival", "/survival");
+routes.addRoute("endingsoon", "/endingsoon");
 
 export function GenericCachedRoute<T extends any> (cacheData: () => Promise<T>, path: string): Promise<T> {
 
@@ -262,6 +263,7 @@ router.post(routes.getRoute("steamweeklydeals"), (req: Request, res: Response) =
     GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
         `SELECT ${DbTableSteamGamesFields[0]}
         FROM ${DbTables.steam_games}
+        where steam_games_sys_key_id = 289070 OR first_release_date > DATE_SUB(now(), INTERVAL 6 MONTH) order by total_review_count desc
         LIMIT 10`,
         [],
         url)
@@ -282,6 +284,7 @@ router.post(routes.getRoute("steampopular"), (req: Request, res: Response) => {
     GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
         `SELECT ${DbTableSteamGamesFields[0]}
         FROM ${DbTables.steam_games}
+        where steam_games_sys_key_id = 289070 OR first_release_date > DATE_SUB(now(), INTERVAL 6 MONTH) order by total_review_count desc
         LIMIT 10`,
         [],
         url)
@@ -300,9 +303,10 @@ router.post(routes.getRoute("steamupcoming"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
     const url: string = req.url;
     GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
-        `SELECT ${DbTableSteamGamesFields[0]}
-        FROM ${DbTables.steam_games}
-        LIMIT 10`,
+        `select steam_games_sys_key_id from steam_games t
+        where t.first_release_date IS NOT NULL AND t.first_release_date >= now()
+        order by t.first_release_date asc
+        limit 20`,
         [],
         url)
         .then((data: GameResponse[]) => {
@@ -320,9 +324,10 @@ router.post(routes.getRoute("steamrecent"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
     const url: string = req.url;
     GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
-        `SELECT ${DbTableSteamGamesFields[0]}
-        FROM ${DbTables.steam_games}
-        LIMIT 10`,
+        `select steam_games_sys_key_id from steam_games t
+        where t.first_release_date IS NOT NULL AND t.first_release_date <= now()
+        order by t.first_release_date desc
+        limit 20`,
         [],
         url)
         .then((data: GameResponse[]) => {
@@ -340,9 +345,10 @@ router.post(routes.getRoute("steamearlyaccess"), (req: Request, res: Response) =
     const genericResponse: GenericModelResponse = { error: undefined };
     const url: string = req.url;
     GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
-        `SELECT ${DbTableSteamGamesFields[0]}
-        FROM ${DbTables.steam_games}
-        LIMIT 10`,
+        `select steam_games_sys_key_id from steam_games t
+        where t.first_release_date IS NOT NULL AND t.first_release_date >= now() AND t.steam_state_enum_sys_key_id = 2
+        order by t.first_release_date asc
+        limit 20`,
         [],
         url)
         .then((data: GameResponse[]) => {
@@ -362,6 +368,29 @@ router.post(routes.getRoute("steamhorror"), (req: Request, res: Response) => {
     GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
         `SELECT ${DbTableSteamGamesFields[0]}
         FROM ${DbTables.steam_games}
+        where steam_games_sys_key_id = 289070 OR first_release_date > DATE_SUB(now(), INTERVAL 6 MONTH) order by total_review_count desc
+        LIMIT 10`,
+        [],
+        url)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* deals ending soon games */
+router.post(routes.getRoute("endingsoon"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const url: string = req.url;
+    GenericCachedWitQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `select t.steam_games_sys_key_id, t.name, p.discount_end_dt from steam_games t
+        join pricings p on p.steam_games_sys_key_id = t.steam_games_sys_key_id and p.pricings_enum_sys_key_id = 1
+        where p.discount_end_dt > NOW() and p.discount_end_dt < (NOW() + INTERVAL 5 DAY)
+        order by t.total_review_count desc
         LIMIT 10`,
         [],
         url)

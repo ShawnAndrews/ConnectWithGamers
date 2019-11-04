@@ -61,8 +61,7 @@ export function onImgError(image: any): any {
 export function getGameBestPricingStatus(pricings: PriceInfoResponse[]): PriceInfoResponse {
     let lowestPrice: number = Number.MAX_SAFE_INTEGER;
     let lowestDiscountPercent: number = undefined;
-    let comingSoon: boolean = false;
-    let preorder: boolean = false;
+    let discountEndDt: Date = undefined;
 
     pricings && pricings.forEach((pricing: PriceInfoResponse) => {
         if (pricing.pricingEnumSysKeyId === PricingsEnum.main_game) {
@@ -73,12 +72,13 @@ export function getGameBestPricingStatus(pricings: PriceInfoResponse[]): PriceIn
                 if (lowestPrice !== undefined && (pricing.price < lowestPrice)) {
                     lowestPrice = pricing.price;
                     lowestDiscountPercent = pricing.discount_percent;
+                    discountEndDt = pricing.discount_end_dt
                 }
             }  
         }
     })
 
-    const priceInfo: PriceInfoResponse = { steamGamesSysKeyId: -1, title: undefined, price: lowestPrice, discount_percent: lowestDiscountPercent, pricingEnumSysKeyId: PricingsEnum.main_game, discount_end_dt: undefined, log_dt: undefined };
+    const priceInfo: PriceInfoResponse = { steamGamesSysKeyId: -1, title: undefined, price: lowestPrice, discount_percent: lowestDiscountPercent, pricingEnumSysKeyId: PricingsEnum.main_game, discount_end_dt: discountEndDt, log_dt: undefined };
     return priceInfo;
 }
 

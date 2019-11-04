@@ -1,6 +1,7 @@
-import { scheduleGamesJob, scheduleRouteJob } from "./jobs";
+import { scheduleNewGamesJob, scheduleRouteJob, scheduleRefreshGamesJob } from "./jobs";
 import { runBus } from "./bus";
 
-scheduleRouteJob({ hour: 4, minute: 0 });
-scheduleGamesJob({ hour: 23, minute: 8 });
+scheduleRouteJob(`* * 1 * *`); // every hour
+scheduleNewGamesJob({ hour: 0, minute: 0 });
+scheduleRefreshGamesJob(`*/3 * * * * *`); // every 3 seconds
 runBus();

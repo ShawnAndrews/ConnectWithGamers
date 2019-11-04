@@ -54,7 +54,7 @@ const RecoveryForm: React.SFC<IRecoveryFormProps> = (props: IRecoveryFormProps) 
                         fullWidth={true}
                     />
                     <Button 
-                        variant="raised" 
+                        variant="contained" 
                         className="color-primary bg-secondary mt-4"
                         color="primary" 
                         onClick={props.onRecoveryClick}
@@ -65,7 +65,7 @@ const RecoveryForm: React.SFC<IRecoveryFormProps> = (props: IRecoveryFormProps) 
                 </>
                 :
                 <Button 
-                    variant="raised" 
+                    variant="contained" 
                     className="color-primary bg-secondary mt-4"
                     color="primary" 
                     onClick={props.onLoginClick}

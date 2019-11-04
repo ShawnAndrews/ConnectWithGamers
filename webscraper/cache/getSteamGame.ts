@@ -1,4 +1,4 @@
-import { PlatformEnum, Achievement, getSteamCoverURL, getSteamCoverThumbURL, PriceInfoResponse, PricingsEnum, cheerioOptions, cleanString } from "../../client/client-server-common/common";
+import { PlatformEnum, Achievement, getSteamCoverURL, getSteamCoverThumbURL, PriceInfoResponse, PricingsEnum, cheerioOptions, cleanString, getSteamCoverHugeURL } from "../../client/client-server-common/common";
 import * as cheerio from "cheerio";
 
 export function getSteamGenres(data: string): string[] {
@@ -79,10 +79,12 @@ export function getSteamImages(data: string, steamGamesSysKeyId: number): string
     // covers
     images.push(getSteamCoverURL(steamGamesSysKeyId));
     images.push(getSteamCoverThumbURL(steamGamesSysKeyId));
+    images.push(getSteamCoverHugeURL(steamGamesSysKeyId));
 
     // screenshots
     $(`#highlight_strip_scroll > .highlight_strip_screenshot`).each((i: number, element: CheerioElement) => {
-        images.push($(element).find(`img`).attr(`src`).replace(`116x65`, `1920x1080`));
+        const link: string = $(element).find(`img`).attr(`src`).replace(`116x65`, `1920x1080`);
+        images.push(link.slice(0, link.indexOf(`?t=`)));
     });
 
     return images;

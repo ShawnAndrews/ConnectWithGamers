@@ -59,6 +59,36 @@
 
     .state-stepper {
 
+        &.state-1 {
+            > div > div:nth-child(1n + 3) {
+                opacity: 0.35;
+            }
+        }
+
+        &.state-2 {
+            > div > div:nth-child(1n + 5) {
+                opacity: 0.35;
+            }
+        }
+
+        &.state-3 {
+            > div > div:nth-child(1n + 7) {
+                opacity: 0.35;
+            }
+        }
+
+        &.state-4 {
+            > div > div:nth-child(1n + 9) {
+                opacity: 0.35;
+            }
+        }
+
+        &.state-5 {
+            > div > div:nth-child(1n + 11) {
+                opacity: 0.35;
+            }
+        }
+
         > div {
             background-color: transparent;
         }
@@ -168,7 +198,7 @@
             background-color: rgba(128, 0, 0, 0.18);
         }
 
-        div[role=tablist] > span:last-of-type {
+        .MuiTabs-indicator {
             background-color: #38caeb;
         }
 
@@ -178,7 +208,6 @@
         }
 
         div[role=tablist] {
-            margin-bottom: -17px!important;
 
             > div {
                 border-bottom: 2px solid rgba(@tertiary-color,0.3);
@@ -254,8 +283,9 @@
         }
 
         .pricing {
+            position: relative;
             color: rgba(white, 0.9);
-
+            
             .tooltip-container {
 
                 .tooltip-header {
@@ -280,15 +310,15 @@
                     }
 
                     .entry-price {
-                        width: 30%;
+                        width: 37%;
                         vertical-align: top;
                         text-align: center;
                         background-color: @tertiary-color;
                         color: rgba(white, 0.9);
-                        font-size: 15px;
+                        font-size: 13px;
 
                         .entry-price-discount {
-                            font-size: 11px;
+                            font-size: 9px;
                             color: greenyellow;
                             vertical-align: top;
                         }
@@ -297,7 +327,10 @@
             }
 
             .review {
-                vertical-align: bottom;
+                position: absolute;
+                right: 0;
+                top: 8px;
+                width: 45%;
 
                 .name {
                     font-weight: bold;
@@ -315,18 +348,19 @@
                 font-size: 35px;
             }
 
-            .price-container {
+            .game-price-container {
 
                 .price {
                     color: #38caeb;
                     font-weight: bold;
-                    font-size: 35px;
+                    font-size: 30px;
                 }
 
                 .discount-container {
                 
                     .discount-price {
                         color: @tertiary-color;
+                        font-size: 13px;
                     }
 
                     .discount-percent {

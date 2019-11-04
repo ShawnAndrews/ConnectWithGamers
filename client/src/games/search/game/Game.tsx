@@ -37,11 +37,6 @@ interface IGameProps {
     gameRatedSnackbarClose: () => void;
     mediaCarouselElement: any;
     goToGame: (id: number) => void;
-    onSimilarGamesMouseMove: (event: React.MouseEvent<HTMLDivElement>) => void;
-    onSimilarGamesMouseDown: (event: React.MouseEvent<HTMLDivElement>) => void;
-    onSimilarGamesMouseUp: (event: React.MouseEvent<HTMLDivElement>) => void;
-    onSimilarGamesMouseOver: (index: number) => void;
-    onSimilarGamesMouseLeave: () => void;
     onNotificationsClick: () => void;
     onPricingClick: () => void;
     hoveredSimilarGameIndex: number;
@@ -166,7 +161,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                         developer={props.game.developer}
                         publisher={props.game.publisher}
                     />
-                    <div className="state-stepper mt-4">
+                    <div className={`state-stepper mt-4 state-${6 - props.game.state.id}`}>
                         <Stepper activeStep={(Object.keys(StateEnum).length / 2) - props.game.state.id + 1}>
                             {Object.keys(StateEnum).filter(value => isNaN(Number(value))).map((label: string, index: number) => 
                                 {

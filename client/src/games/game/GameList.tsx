@@ -6,15 +6,15 @@ import SearchGameContainer from './search/SearchGameContainer';
 import TransparentGameContainer from './transparent/TransparentGameContainer';
 import TransparentTimeGameContainer from './transparenttime/TransparentTimeGameContainer';
 import CoverGameContainer from './cover/CoverGameContainer';
+import CoverScrollingGameContainer from './coverscrolling/CoverScrollingGameContainer';
 
 interface IGameListProps {
     type: GameListType;
     game: GameResponse;
     goToGame: () => void;
-    fullsizeIndex?: number;
-    fullsizeIsEditorsChoiceGame?: boolean;
-    fullsizeIsBigGame?: boolean;
-    transparentSmallCover?: boolean;
+    getConvertedPrice: (price: number) => string;
+    index?: number;
+
 }
 
 const GameList: React.SFC<IGameListProps> = (props: IGameListProps) => {
@@ -23,9 +23,7 @@ const GameList: React.SFC<IGameListProps> = (props: IGameListProps) => {
         return (
             <FullsizeGameContainer
                 game={props.game}
-                index={props.fullsizeIndex}
-                isEditorsChoiceGame={props.fullsizeIsEditorsChoiceGame}
-                isBigGame={props.fullsizeIsBigGame}
+                index={props.index}
             />
         );
     } else if (props.type === GameListType.Search) {
@@ -38,22 +36,28 @@ const GameList: React.SFC<IGameListProps> = (props: IGameListProps) => {
         return (
             <TransparentGameContainer
                 game={props.game}
-                transparentSmallCover={props.transparentSmallCover}
             />
         );
     } else if (props.type === GameListType.FullsizeCover) {
         return (
             <CoverGameContainer
                 game={props.game}
-                index={props.fullsizeIndex}
-                isEditorsChoiceGame={props.fullsizeIsEditorsChoiceGame}
-                isBigGame={props.fullsizeIsBigGame}
+                index={props.index}
+                getConvertedPrice={props.getConvertedPrice}
+            />
+        );
+    } else if (props.type === GameListType.ScrollingCover) {
+        return (
+            <CoverScrollingGameContainer
+                game={props.game}
+                index={props.index}
             />
         );
     } else {
         return (
             <TransparentTimeGameContainer
                 game={props.game}
+                getConvertedPrice={props.getConvertedPrice}
             />
         );
     }

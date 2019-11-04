@@ -11,8 +11,6 @@ import { getPriceInUserCurrency } from '../../../util/main';
 interface IFullsizeGameContainerProps extends RouteComponentProps<any> {
     index: number;
     game: GameResponse;
-    isEditorsChoiceGame: boolean;
-    isBigGame: boolean;
 }
 
 interface IFullsizeGameContainerState {
@@ -61,7 +59,7 @@ class FullsizeGameContainer extends React.Component<Props, IFullsizeGameContaine
     }
 
     onHoverGame(): void {
-        $(`.game-${this.props.index} .overlay`).stop().fadeIn("fast");
+        $(`.screenshot-game-${this.props.index} .overlay`).stop().fadeIn("fast");
         this.setState({
             hoveredTimeout: window.setTimeout(() => {
                 this.setState({ 
@@ -72,7 +70,7 @@ class FullsizeGameContainer extends React.Component<Props, IFullsizeGameContaine
     }
 
     onHoverOutGame(): void {
-        $(`.game-${this.props.index} .overlay`).stop().fadeOut("fast");
+        $(`.screenshot-game-${this.props.index} .overlay`).stop().fadeOut("fast");
         clearTimeout(this.state.hoveredTimeout);
         clearTimeout(this.state.hoveredInterval);
         this.setState({
@@ -99,8 +97,6 @@ class FullsizeGameContainer extends React.Component<Props, IFullsizeGameContaine
             <FullsizeGame
                 index={this.props.index}
                 game={this.props.game}
-                isEditorsChoiceGame={this.props.isEditorsChoiceGame}
-                isBigGame={this.props.isBigGame}
                 onHoverGame={this.onHoverGame}
                 onHoverOutGame={this.onHoverOutGame}
                 hoveredScreenshotIndex={this.state.hoveredScreenshotIndex}

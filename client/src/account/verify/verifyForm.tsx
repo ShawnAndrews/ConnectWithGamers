@@ -25,7 +25,7 @@ const VerifyForm: React.SFC<IVerifyFormProps> = (props: IVerifyFormProps) => {
                 ? <div className="text-center color-tertiary">Successfully verified email!</div>
                 : <div className="text-center color-tertiary">Failed to verify email. <br/> Please ensure the verification code in the URL is correct.</div>}
             <Button 
-                variant="raised" 
+                variant="contained" 
                 className="color-primary bg-tertiary mt-4"
                 color="primary" 
                 onClick={props.onVerifyEmailClick}

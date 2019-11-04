@@ -1,8 +1,7 @@
 import * as React from 'react';
-import Slider from '@material-ui/lab/Slider';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { Select, FormControl, MenuItem, Input, Chip, FormControlLabel, Checkbox } from '@material-ui/core';
+import { Select, FormControl, MenuItem, Input, Chip, FormControlLabel, Checkbox, Slider } from '@material-ui/core';
 import { IdNamePair } from '../../../../client-server-common/common';
 import { SortingOptionEnum } from './FilterContainer';
 

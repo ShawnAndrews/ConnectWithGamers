@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { GameResponse } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
-import { Paper, Button } from '@material-ui/core';
 import GameListContainer, { GameListType } from '../../game/GameListContainer';
 
 interface IHomeMenusProps {
@@ -22,36 +21,16 @@ const HomeMenu: React.SFC<IHomeMenusProps> = (props: IHomeMenusProps) => {
         );
     }
 
-    if (props.retry) {
-        return (
-            <Paper className="retry color-secondary bg-tertiary p-3 mx-auto my-4">
-                <div className="text-center">
-                    Failed to connect to database. Please retry.
-                </div>
-                <Button className="color-primary bg-secondary-solid hover-secondary-solid mt-3" onClick={props.onRetryClick} variant="contained" color="primary" fullWidth={true}>
-                    Retry
-                </Button>
-            </Paper>
-        );
-    }
-
     return (
         <div className="grid-results games m-4">
             {props.games && props.games
-                .map((game: GameResponse, index: number) => {
-                    const isEditorsChoiceGame: boolean = props.editorsGamesIndicies.findIndex((x: number) => x === index) !== -1;
-                    const isBigGame: boolean = props.bigGamesIndicies.findIndex((x: number) => x === index) !== -1;
-
-                    return (
-                        <GameListContainer
-                            type={GameListType.FullsizeScreenshot}
-                            game={game}
-                            fullsizeIndex={index}
-                            fullsizeIsEditorsChoiceGame={isEditorsChoiceGame}
-                            fullsizeIsBigGame={isBigGame}
-                        />
-                    );
-                })}
+                .map((game: GameResponse, index: number) => (
+                    <GameListContainer
+                        type={GameListType.FullsizeScreenshot}
+                        game={game}
+                        index={index}
+                    />
+                ))}
         </div>
     );
 

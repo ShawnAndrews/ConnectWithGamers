@@ -1,4 +1,4 @@
-import { DbTables, GenericModelResponse, BusMessagesEnum, DbTableSteamGamesFields, STEAM_RATE_LIMIT_MS, DbTableRouteCacheFields, cheerioOptions } from "../client/client-server-common/common";
+import { DbTables, GenericModelResponse, BusMessagesEnum, DbTableSteamGamesFields, STEAM_RATE_LIMIT_MS, DbTableRouteCacheFields, cheerioOptions, DbTableBusMessagesFields, BusMessagesPriorityEnum } from "../client/client-server-common/common";
 import DatabaseBase from "../models/db/base/dbBase";
 import { scheduleJob } from "node-schedule";
 import axios, { AxiosResponse } from "axios";
@@ -7,6 +7,41 @@ import { log } from "./logger/main";
 
 const steamIdsNotAvailableInRegion: number[] = [801220];
 const db: DatabaseBase = new DatabaseBase();
+
+export const scheduleRefreshGamesJob = (rule: any) => {
+    scheduleJob(rule, () => {
+        let steamIdToRefresh: number;
+
+        db.custom(
+            `SELECT ${DbTableSteamGamesFields[0]}
+            FROM ${DbTables.steam_games}
+            ORDER BY ${DbTableSteamGamesFields[8]} ASC
+            LIMIT 1`,
+            [])
+            .then((dbResponse: GenericModelResponse) => {
+
+                if (dbResponse.data.length > 0) {
+                    steamIdToRefresh = dbResponse.data[0][DbTableSteamGamesFields[0]];
+
+                    db.custom(
+                        `INSERT INTO ${DbTables.bus_messages} (${DbTableBusMessagesFields.join(`,`)})
+                        VALUES (${BusMessagesEnum.game}, ${BusMessagesPriorityEnum.low}, ?, NOW())`,
+                        [steamIdToRefresh])
+                        .then()
+                        .catch(() => {
+                            // do nothing, steam id already exists in db to be updated
+                        });
+                } else {
+                    log(`[Refresh games job] Failed because there are no games in database.`);
+                }
+
+            })
+            .catch((error: string) => {
+                log(`[Refresh games job] Failed to select a game to refresh. ${error}`);
+            });
+
+    });
+};
 
 export const scheduleRouteJob = (rule: any) => {
     scheduleJob(rule, () => {
@@ -25,7 +60,7 @@ export const scheduleRouteJob = (rule: any) => {
     });
 };
 
-export const scheduleGamesJob = (rule: any) => {
+export const scheduleNewGamesJob = (rule: any) => {
     scheduleJob(rule, () => {
         const jobStartTime: Date = new Date();
         log(`[Games job] Started.`);
@@ -73,9 +108,9 @@ function addGamesToBus(steamIds: number[]): Promise<void> {
         }
 
         db.custom(
-            `INSERT INTO ${DbTables.bus_messages} (bus_messages_enum_sys_key_id, value, log_dt)
+            `INSERT INTO ${DbTables.bus_messages} (${DbTableBusMessagesFields.join(`,`)})
             VALUES
-            ${filteredSteamIds.map(() => `(${BusMessagesEnum.game}, ?, NOW())`).join(`,`)}`,
+            ${filteredSteamIds.map(() => `(${BusMessagesEnum.game}, ${BusMessagesPriorityEnum.medium}, ?, NOW())`).join(`,`)}`,
             filteredSteamIds)
             .then(() => {
                 return resolve();

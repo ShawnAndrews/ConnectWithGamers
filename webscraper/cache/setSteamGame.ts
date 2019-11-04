@@ -35,7 +35,7 @@ export function cacheSteamGame(steamGamesSysKeyId: number, name: string, steamRe
 
                     } else {
 
-                        // no changes to game info
+                        // no new game info
                         return resolve();
                     }
 
@@ -514,6 +514,8 @@ export function cacheImages(images: string[], steamGamesSysKeyId: number): Promi
                 imagesEnumSysKeyId = ImagesEnum.cover;
             } else if (index === 1) {
                 imagesEnumSysKeyId = ImagesEnum.cover_thumb;
+            } else if (index == 2) {
+                imagesEnumSysKeyId = ImagesEnum.cover_huge;
             } else {
                 imagesEnumSysKeyId = ImagesEnum.screenshot;
             }

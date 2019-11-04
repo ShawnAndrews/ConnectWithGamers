@@ -3,13 +3,13 @@
         "outDir": "./dist/",
         "noImplicitAny": false,
         "module": "commonjs",
-        "target": "es5",
+        "target": "es2016",
         "jsx": "react",
         "moduleResolution": "node",
         "lib": [
-            "es5",
-            "es2015",
-            "dom"]
+            "es2017",
+            "dom",
+            "scripthost"]
     },
     "include": [
         "./src/**/*"

@@ -113,66 +113,95 @@
 
     .grid-results {
         display: grid;
-        grid-gap: 17px;
+        grid-gap: 30px;
 
         .time-item {
+            
+            &:last-child {
+                padding-bottom: 1em;
+            }
 
-            &>div {
-                background: rgba(white, 0.03);   
+            .MuiSlider-valueLabel {
+                top: -18px!important;
+
+                & > span {
+                    width: max-content!important;
+                    background-color: transparent!important;
+
+                    > span {
+                        color: rgba(@tertiary-color,1.0)!important;
+                    }
+                }
             }
             
-            .left-text {
-                width: 190px;
+            .time-item-text {
+                width: calc(100% - 250px);
                 height: 90px;
 
+                .price-container {
+                    position: absolute;
+                    right: 10px;
+                    top: 30px;
+
+                    .base-price {
+                        position: absolute;
+                        right: 0px;
+                        top: -13px;
+                        font-size: 12px;
+                        opacity: 0.5;
+                    }
+
+                    .discount {
+                        color: green;
+                        border: 1px solid green;
+                        border-radius: 4px;
+                    }
+                }
+
                 .name {
-                    font-size: 17px;
+                    font-size: 15px;
                     white-space: nowrap; 
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    color: white;
+                    color: #90d793;
                 }
 
-                .platform-icons {
-                    color: rgba(white, 0.4);
+                .platforms {
+                    color: rgba(white, 0.7);
+                    height: 1.4em;
+                    font-size: 13px;
                 }
 
                 .genres {
-                    color: rgba(white, 0.75);
-                    font-size: 12px;
+                    color: #ffc55b;
+                    font-size: 11px;
                 }
-            }
-
-            .right-text {
-                position: relative;
-                color: rgba(white,0.8);
-                width: calc(100% - 190px - 105px);
-                height: 90px;
 
                 .time {
-                    position: absolute;
-                    top: 50%;
-                    left: 70%;
-                    transform: translate(-50%,-50%);
+                    font-size: 14px;
+                    color: white;
                 }
             }
 
             img {
-                height: 90px;
-                box-shadow: -6px 6px rgba(black, 0.5);
+                height: 115px;
+            }
+
+            & > div {
+                background: rgba(black, 0.2);
             }
 
         }
 
         .price-item {
 
-            img {
-                height: 120px;
-                box-shadow: 6px 6px;
+            .stars-container {
+                width: 180px;
+            }
 
-                &.large {
-                    height: 145px;
-                }
+            img {
+                height: 90px;
+                box-shadow: 6px 6px;
             }
 
             .name {
@@ -184,9 +213,14 @@
             }
 
             .pricing {
-                width: 90px;
+                width: 180px;
                 height: 25px;
                 margin-top: 12px;
+
+                .free-text {
+                    font-size: 20px;
+                    color: rgba(white, 0.85);
+                }
 
                 .original-price {
                     position: absolute;
@@ -210,7 +244,7 @@
                     bottom: 0;
                     right: 0;
                     color: #90d794d8;
-                    font-size: 13px;
+                    font-size: 19px;
                 }
             }
         }
@@ -221,8 +255,7 @@
         }
 
         &.featured-games {
-            grid-template-columns: repeat(8, 1fr);
-            grid-auto-rows: minmax(125px, 20vh);
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
         }
 
         &.genrebanner-games {
@@ -267,249 +300,6 @@
                 overflow: hidden;
                 height: 1.4em;
             }
-        }
-
-        [class*="game"] {
-            background-color: rgba(white,0.03);
-            border-radius: 5px;
-            overflow: visible;
-    
-            &.big-game {
-                grid-row: span 2;
-                grid-column: span 2;
-    
-                @media @md {
-                    grid-row: span 1;
-                    grid-column: span 1;
-                }
-            }
-
-            .screenshot {
-                
-                div, img {
-                    width: 100%;
-                    height: calc(100% + 1px);
-                }
-            }
-
-            .overlay {
-                position: absolute;
-                top: 0px;
-                left: 0px;
-                height: calc(100% + 1px);
-                width: 100%;
-                background: radial-gradient(ellipse at center, rgba(255,255,255,0) 0%,rgba(255,255,255,.25) 100%);
-                display: none;
-                pointer-events: none;
-            }
-
-            .text-overlay {
-                position: absolute;
-                bottom: -1px;
-                left: 0;
-                width: 100%;
-                height: 75px;
-                background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0,0,0,0) 100%);
-                pointer-events: none;
-            }
-
-            .highlighted-table-discount {
-                position: absolute;
-                top: 0;
-                right: 0;
-                color: white;
-                background-color: forestgreen;
-                opacity: 0.7;
-                font-size: 15px;
-            }
-
-            .highlighted-table-text {
-                position: absolute;
-                bottom: 2px;
-                left: 15px;
-                width: calc(100% - 30px);
-                pointer-events: none;
-
-                .name {
-                    position: initial;
-                    width: 100%;
-                    height: 20px;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                
-                    &.large {
-                        height: 30px;
-                    }
-                    
-                    > div {
-                        color: #90d793;
-                        font-weight: bold;
-                    }
-                }
-    
-                .genre {
-                    font-size: 0.9em;
-                    width: 100%;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    
-                    &.large {
-                        font-size: 1.2em;
-                    }
-                }
-    
-                .genres {
-                    font-size: 0.8rem;
-                }
-
-                .platforms {
-                    font-size: 1.3rem;
-                }
-
-                * {
-                    color: rgba(white, 0.8);
-                }
-            }
-
-            .price-container {
-                position: absolute;
-                top: 0;
-                right: 0;
-                color: white;
-                background-color: #4c6b22b3;
-                width: 110px;
-                height: 24px;
-
-                .discount {
-                    position: absolute;
-                    top: 0;
-                    height: 100%;
-                    font-size: 17px;
-                    background: #516b2d;
-                    color: rgba(white, 0.7);
-                }
-
-                .base-price {
-                    position: absolute;
-                    top: 0px;
-                    right: 0px;
-                    opacity: 0.75;
-                    font-size: 7px;
-
-                    del {
-                        opacity: 0.8;
-                        vertical-align: text-top;
-                    }
-                }
-
-                .final-price {
-                    position: absolute;
-                    bottom: 0px;
-                    right: 0px;
-                    opacity: 0.7;
-                    font-size: 8px;
-                }
-
-                .text {
-                    position: absolute;
-                    bottom: 0px;
-                    right: 0px;
-                    font-size: 9px;
-                }
-
-                &.no-price {
-                    width: auto;
-                    height: auto;
-                    background: none;
-
-                    .text {
-                        position: relative;
-                        font-size: 11px;
-                        color: rgba(0,0,0,0.7);
-                        font-weight: 800;   
-                        text-transform: uppercase;
-                    }
-                }
-
-                &.no-discount {
-                    width: 77px;
-                    height: 18px;
-                    background: #4c6b22;
-                    opacity: 0.8;
-
-                    &.large {
-                        width: 105px;
-                        height: 22px;  
-                    }
-                    
-                    .text {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        line-height: 18px;
-                        font-size: 12px;
-                        color: white;
-                        
-                        &.large {
-                            font-size: 16px;
-                            line-height: 22px;
-                        }
-                    }
-                }
-            }
-
-            .filter {
-                position: absolute; 
-                top: 0;
-                left: 0;
-                height: calc(100% + 1px);
-                width: 100%;
-                background: radial-gradient(ellipse at center, rgba(0,0,0,0.7) 0%, transparent 50%);
-                pointer-events: none;
-            }
-
-            .banner {
-                position: absolute;
-                top: -7px;
-                right: -16px;
-                width: 93px;
-            }
-
-            .banner-text {
-                position: absolute;
-                top: 8px;
-                right: 1px;
-                font-size: 10px;
-                font-weight: 900;
-                text-transform: uppercase;
-                transform: rotate(43deg);
-
-                &.long-text {
-                    top: 9px;
-                    right: -9px;
-                    font-size: 8px;
-                }
-            }
-            
-            .editor-banner {
-                position: absolute;
-                top: -14px;
-                left: -29px;
-                width: 150px;
-            }
-
-            .editor-banner-text {
-                position: absolute;
-                top: 18px;
-                left: -8px;
-                font-size: 8px;
-                font-weight: bold;
-                text-transform: uppercase;
-                transform: rotate(-43deg);
-            }
-
         }
 
     }
@@ -846,76 +636,63 @@
             }
         }
 
+        .cheap-games-banner {
+            
+            .arrow-left {
+                position: absolute;
+                color: @tertiary-color;
+                top: 50%;
+                width: 20px;
+                height: 45px;
+                font-size: 30px;
+                transform: translate(0,-50%);
+                cursor: pointer;
+                left: -32px;
+            }
+
+            .arrow-right {
+                position: absolute;
+                color: @tertiary-color;
+                top: 50%;
+                width: 20px;
+                height: 45px;
+                font-size: 30px;
+                transform: translate(0,-50%);
+                cursor: pointer;
+                right: -32px;
+            }
+
+            .slick-slide {
+                margin: 10px;
+
+                & > div {
+                    width: 375px!important;
+                }
+            }
+        }
+
         .time-games {
             position: relative;
-            height: 700px;
-            width: calc(100% - 350px);
-            color: @tertiary-color;
+            height: 688px;
+            width: calc(100% - 616px);
+            color: rgba(@tertiary-color, 1.0);
             overflow: hidden;
-
-            .upcoming {
-                position: absolute;
-                left: 0px;
-                top: 5px;
-            }
-
-            .recent {
-                position: absolute;
-                left: 92px;
-                top: 5px;
-            }
-
-            .early {
-                position: absolute;
-                left: 160px;
-                top: 5px;
-            }
 
             .show {
                 position: absolute;
                 right: 0px;
                 top: 11px;
                 font-size: 12px;
+                color: @tertiary-color;
             }
 
             .underline {
-                position: absolute;
-                top: 30px;
-                left: 0px;
+                position: relative;
                 height: 2px;
-                background-color: rgba(@tertiary-color, 0.5);
-            }
-
-            .underline-slider {
-                position: absolute;
-                top: 30px;
-                height: 2px;
-                background-color: @tertiary-color;
-                -webkit-transition: all 1s ease;
-                -moz-transition: all 1s ease;
-                -o-transition: all 1s ease;
-                -ms-transition: all 1s ease;
-                transition: all 1s ease;
-
-                &.upcoming {
-                    left: 0px;
-                    width: 72px;
-                }
-
-                &.recent {
-                    left: 92px;
-                    width: 52px;
-                }
-
-                &.early {
-                    left: 160px;
-                    width: 93px;
-                }
-
+                background-color: rgb(41, 41, 41);
             }
 
             .time-games-grid {
-                margin-top: 50px;
                 height: calc(100% - 50px);
                 overflow-y: scroll;
                 overflow-x: hidden;
@@ -923,46 +700,143 @@
 
         }
 
-        .genre-banner {
-            position: relative;
-            height: 700px;
-            width: 300px;
-            margin-left: 50px;
-            
-            .title-one {
-                position: absolute;
-                top: 40px;
-                left: 0;
-                font-size: 26px;
-                color: white;
+        .ending-soon {
+            width: 616px;
+
+            .spotlights {
+
+                .spotlight {
+
+                    .head, .foot {
+                        position: relative;
+                        height: 40px;
+                        background: #292929;
+                        color: @tertiary-color;
+
+                        &.head .left {
+                            font-size: 0.85em;
+                        }
+
+                        > div {
+                            position: absolute;
+                            margin: 0;
+                            top: 50%;
+                            -ms-transform: translateY(-50%);
+                            transform: translateY(-50%);
+                        }
+                    }
+    
+                    .left {
+                        left: 10px;
+                        font-weight: bold;
+    
+                        &.name {
+                            font-weight: normal;
+                            color: #8dd290;
+                        }
+                    }
+
+                }
+                
             }
 
-            .title-two {
-                position: absolute;
-                top: 76px;
-                left: 0;
-                font-size: 19px;
-                color: white;
-            }
+            .today-deals {
 
-            .filter-genre {
-                height: calc(100% - 200px);
-                background-color: #343534;
-            }
-
-            .filter-genre-gradient {
-                position: absolute;
-                top: 125px;
-                height: 100px;
-                background: -moz-linear-gradient(bottom, rgba(0,0,0,0) 0%, #343534 54%, #343534 55%, #343534 100%); /* FF3.6-15 */
-                background: -webkit-linear-gradient(bottom, rgba(0,0,0,0) 0%,#343534 54%,#343534 55%,#343534 100%); /* Chrome10-25,Safari5.1-6 */
-                background: linear-gradient(to bottom, rgba(0,0,0,0) 0%,#343534 54%,#343534 55%,#343534 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-            }
-
-            .genre-banner-games {
-                position: absolute;
-                top: 200px;
-                height: 500px;
+                .today-deals-header, .today-deals-footer {
+                    position: relative;
+                    height: 40px;
+                    background: #292929;
+                    color: @tertiary-color;
+    
+                    &.today-deals-footer {
+                        padding: 20px;
+                    }
+    
+                    .left {
+                        left: 10px;
+                        font-weight: bold;
+    
+                        &.name {
+                            font-weight: normal;
+                            color: #8dd290;
+                        }
+                    }
+    
+                    .right {
+                        right: 10px;
+    
+                        .discount-percent {
+                            font-size: 0.8em;
+                            background-color: green;
+                            border-radius: 5px;
+                            padding-left: 5px;
+                            padding-right: 5px;
+                            margin-right: 7px;
+                            color: rgba(255, 255, 255, 0.8);
+                        }
+    
+                        .base-price {
+                            font-size: 0.7em;
+                            font-style: italic;
+                            opacity: 0.75;
+                            text-decoration: line-through;
+                            margin-right: 7px;
+                        }
+                    }
+    
+                    > div {
+                        position: absolute;
+                        margin: 0;
+                        top: 50%;
+                        -ms-transform: translateY(-50%);
+                        transform: translateY(-50%);
+                    }
+                }
+    
+                .arrow-left {
+                    position: absolute;
+                    color: @tertiary-color;
+                    top: 50%;
+                    width: 20px;
+                    height: 45px;
+                    font-size: 30px;
+                    transform: translate(0,-50%);
+                    cursor: pointer;
+                    left: 12px;
+                    z-index: 1000;
+                }
+    
+                .arrow-right {
+                    position: absolute;
+                    color: @tertiary-color;
+                    top: 50%;
+                    width: 20px;
+                    height: 45px;
+                    font-size: 30px;
+                    transform: translate(0,-50%);
+                    cursor: pointer;
+                    right: 12px;
+                    z-index: 1000;
+                }
+    
+                .slick-list {
+                    height: auto!important;
+                    z-index: 999;
+    
+                    .slick-slide {
+                        text-align: center;
+                    
+                        img {
+                            width: auto!important;
+                            max-width: 100%!important;
+                            height: auto!important;
+                        }
+                    }
+                }
+    
+                .slick-dots {
+                    z-index: 1000;
+                }
             }
         }
 
@@ -983,61 +857,33 @@
             }
 
             .description {
-                position: absolute;
-                left: 50px;
-                top: 50%;
-                transform: translateY(-50%);
+                margin-top: 55px;
+                margin-right: 75px;
                 color: rgba(white, 0.9);
 
-                @media @lg {
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    text-align: center;
+                .more-button {
+                    color: white;
+                    border: 1px solid white;
+                    box-shadow: 0px 1px 5px 0px rgba(255, 255, 255, 0.2), 0px 2px 2px 0px rgba(255, 255, 255, 0.14), 0px 3px 1px -2px rgba(255, 255, 255, 0.12);
+                    
+                    &:hover {
+                        background-color: #ffffff1f;
+                    }
                 }
             }
 
             img {
-                @media @lg {
-                    width: 100%;
-                    height: 240px;
-                }
-            }
-
-            .filter-steamsales {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                right: 0;
-                width: calc(100vw - 945px);
-                background-color: #397448;
-
-                &.expanded {
-                    width: calc(100vw - 645px);
-                }
-
-                @media @lg {
-                    visibility: hidden;
-                }
-
+                float: right;
             }
 
             .filter-steamsales-gradient {
                 position: absolute;
                 top: 0;
                 bottom: 0;
-                right: calc(100vw - 945px);
-                width: 100px;
-                background: -moz-linear-gradient(left, rgba(0,0,0,0) 0%, #397448 54%, #397448 55%, #397448 100%); /* FF3.6-15 */
-                background: -webkit-linear-gradient(left, rgba(0,0,0,0) 0%,#397448 54%,#397448 55%,#397448 100%); /* Chrome10-25,Safari5.1-6 */
-                background: linear-gradient(to right, rgba(0,0,0,0) 0%,#397448 54%,#397448 55%,#397448 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-            
-                &.expanded {
-                    right: calc(100vw - 645px);
-                }
-
-                @media @lg {
-                    visibility: hidden;
-                }
+                left: 0;
+                width: calc(100vw - 1127px);
+                background: -moz-linear-gradient(left, rgba(0,0,0,0) 0%, #59a89e 18%, #59a89e 100%);
+                background: linear-gradient(to left, rgba(0,0,0,0) 0%, #59a89e 18%, #59a89e 100%);
 
             }
         }

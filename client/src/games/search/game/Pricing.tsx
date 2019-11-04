@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Tooltip } from '@material-ui/core';
 import { PriceInfoResponse, PricingsEnum, IdNamePair, ReviewEnum } from '../../../../client-server-common/common';
+import { Textfit } from 'react-textfit';
 
 interface IPricingProps {
     pricings: PriceInfoResponse[];
@@ -59,12 +60,12 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
 
     return (
         <div className="pricing w-100 d-inline-block">
-            <div className="w-50 d-inline-block">
+            <div className="d-inline-block">
                 {!mainGame 
                     ? 
                     <div className="free">Free</div>
                     : 
-                    <div className="price-container">
+                    <div className="game-price-container">
                         {mainGame.price && <div className="price d-inline-block">{props.getConvertedPrice(mainGame.price, true)}</div>}
                         {isDiscounted &&
                             <div className="discount-container d-inline-block">
@@ -73,8 +74,8 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
                             </div>}
                     </div>}
             </div>
-            <div className="review w-50 d-inline-block">
-                <div className="name" style={{ color: `rgb(${reviewColor})` }}>{props.review.name} <sup>{props.total_review_count !== 0 ? props.total_review_count : ``}</sup></div>
+            <div className="review d-inline-block">
+                <Textfit className="name" style={{ color: `rgb(${reviewColor})` }} min={10.5}>{props.review.name} <sup>{props.total_review_count !== 0 ? props.total_review_count : ``}</sup></Textfit>
                 <div className="stat-bar position-relative mt-2 w-100">
                     <span className="stat-bar-rating" role="stat-bar" style={{ width: `${reviewPercent}%`, backgroundImage: `-webkit-linear-gradient(bottom, rgba(${reviewColor}, 1.0) 0%, rgba(${reviewColor}, 1.0) 47%, rgba(${reviewColor}, 0.65) 50%, rgba(${reviewColor}, 0.65) 100%)` }}/>
                 </div>

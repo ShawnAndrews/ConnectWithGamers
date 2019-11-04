@@ -155,7 +155,7 @@ const SettingsForm: React.SFC<ISettingsFormProps> = (props: ISettingsFormProps) 
             </Button>
             {showSaveChanges && 
                 <Button 
-                    variant="raised" 
+                    variant="contained" 
                     className="save br-0"
                     color="primary" 
                     onClick={props.saveChanges}

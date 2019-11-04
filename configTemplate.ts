@@ -39,7 +39,8 @@ const config: Config = {
         user: "",
         password: "",
         database: "",
-        insecureAuth: true
+        insecureAuth: true,
+        charset: ""
     }
 };
 

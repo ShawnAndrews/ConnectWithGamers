@@ -2,7 +2,7 @@ import * as React from 'react';
 import { GameResponse } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
 import TopnavContainer from './topnav/TopnavContainer';
-import { Paper, Button } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
 import { SortingOptionEnum } from '../../sidenav/filter/FilterContainer';
 import GameListContainer, { GameListType } from '../../game/GameListContainer';
 import Pagination from 'rc-pagination';
@@ -21,26 +21,13 @@ interface IResultsProps {
 
 const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
     
-    const pageSize: number = 30;
+    const pageSize: number = 28;
 
     if (props.isLoading) {
         return (
             <Spinner className="text-center mt-5 pt-5" loadingMsg="Loading results..." />
         );
     }
-
-    // if (props.retry) {
-    //     return (
-    //         <Paper className="retry color-secondary bg-tertiary p-3 mx-auto my-4">
-    //             <div className="text-center">
-    //                 Failed to connect to database. Please retry.
-    //             </div>
-    //             <Button className="color-primary bg-secondary-solid hover-secondary-solid mt-3" onClick={props.onRetryClick} variant="contained" color="primary" fullWidth={true}>
-    //                 Retry
-    //             </Button>
-    //         </Paper>
-    //     );
-    // }
 
     let sortedGames: GameResponse[] = props.games;
 

@@ -41,10 +41,10 @@ const EmotesCreate: React.SFC<IEmotesCreateProps> = (props: IEmotesCreateProps) 
                     <div className="completion-container">
                         <i className="far fa-check-circle fa-5x d-block text-center color-tertiary"/>
                         <p className="text-center color-tertiary my-3">Successfully created emote!</p>
-                        <Button variant="raised" className="bg-primary-solid bg-tertiary color-primary w-100 mt-3" color="primary" onClick={props.onClickCreateBack}>
+                        <Button variant="contained" className="bg-primary-solid bg-tertiary color-primary w-100 mt-3" color="primary" onClick={props.onClickCreateBack}>
                             Back
                         </Button>
-                        <Button variant="raised" className="bg-primary-solid bg-tertiary color-primary w-100 mt-2" color="primary" onClick={props.onClickCreateGoToEmotes}>
+                        <Button variant="contained" className="bg-primary-solid bg-tertiary color-primary w-100 mt-2" color="primary" onClick={props.onClickCreateGoToEmotes}>
                             Go to emotes
                         </Button>
                     </div>}
@@ -80,7 +80,7 @@ const EmotesCreate: React.SFC<IEmotesCreateProps> = (props: IEmotesCreateProps) 
                                 startAdornment={<InputAdornment position="start" className="mr-0">{props.emotePrefix}</InputAdornment>}
                             />
                         </FormControl>
-                        <Button variant="raised" className="create-btn bg-tertiary color-primary w-100" color="primary" onClick={props.onClickCreateEmote}>
+                        <Button variant="contained" className="create-btn bg-tertiary color-primary w-100" color="primary" onClick={props.onClickCreateEmote}>
                             Create Emote
                         </Button>
                     </>}

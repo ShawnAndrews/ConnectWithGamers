@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { GameResponse, PriceInfoResponse } from '../../../../client-server-common/common';
-import { Card, Button } from '@material-ui/core';
+import { GameResponse, PriceInfoResponse, StateEnum } from '../../../../client-server-common/common';
+import { Card } from '@material-ui/core';
 import { Textfit } from 'react-textfit';
 import Crossfade from '../crossfade/CrossfadeContainer';
 import { getGameBestPricingStatus } from '../../../util/main';
@@ -8,8 +8,6 @@ import { getGameBestPricingStatus } from '../../../util/main';
 interface IFullsizeGameProps {
     index: number;
     game: GameResponse;
-    isEditorsChoiceGame: boolean;
-    isBigGame: boolean;
     onHoverGame: () => void;
     onHoverOutGame: () => void;
     hoveredScreenshotIndex: number;
@@ -26,46 +24,37 @@ const FullsizeGame: React.SFC<IFullsizeGameProps> = (props: IFullsizeGameProps) 
     const noBestPricingExists: boolean = bestPricing && bestPricing.price === Number.MAX_SAFE_INTEGER;
 
     return (
-        <Card className={`game-${props.index} ${props.isBigGame ? 'big-game' : ''} primary-shadow position-relative bg-transparent cursor-pointer h-100`} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
-            <div className="screenshot w-100 h-100" onClick={props.goToGame}>
+        <Card className={`screenshot-game-${props.index} primary-shadow position-relative bg-transparent cursor-pointer h-100`}>
+            <div className="screenshot w-100" onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
                 <Crossfade src={props.game.screenshots} index={props.hoveredScreenshotIndex} />
             </div>
             <div className='overlay'/>
-            <div className='text-overlay'/>
-            {props.isEditorsChoiceGame &&
+            <div className='text-overlay mb-3'/>
+            <div className="highlighted-table-text p-2">
                 <>
-                    <div className="filter w-100 h-100" />
-                    <img className="editor-banner" src="https://i.imgur.com/B57fSZj.png" />
-                    <div className="editor-banner-text color-primary">Editor's Choice</div>
-                </>}
-            <div className="highlighted-table-text">
-                <>
-                    <Textfit className={`name ${props.isBigGame ? 'large' : ''}`} min={props.isBigGame ? 15 : 11} max={props.isBigGame ? 23 : 15}>
+                    <Textfit className={`name`} min={11} max={15}>
                         {props.game.name}
                     </Textfit>
                     {props.game.genres &&
-                        <div className={`genre ${props.isBigGame ? 'large' : ''}`}>
-                            {props.game.genres[0]}
+                        <div className={`genre`}>
+                            {props.game.genres[0].name}
                         </div>}
                 </>
             </div>
             {!noBestPricingExists &&
                 <>
-                    {numericalStatus
-                        ?
-                        <div className={`price-container ${!bestPricing.price ? `no-price` : (!bestPricing.discount_percent ? 'no-discount': '')} ${props.isBigGame ? 'large' : ''} mt-1`}>
+                    <img className="cover-img" src={props.game.cover} />
+                    <div className={`price-container mt-1`}>
+                    {numericalStatus &&
+                        <>
                             {bestPricing.discount_percent && 
                                 <>
                                     <div className="discount d-inline-block px-1">-{bestPricing.discount_percent}%</div>
                                     <div className="base-price d-inline-block px-1"><del>{props.getConvertedPrice(bestPricingBasePrice)}</del></div>
                                 </>}
-                            <div className={`text d-inline-block ${props.isBigGame ? 'large' : ''} px-1`}>{props.getConvertedPrice(bestPricing.price)}</div>
-                        </div>
-                        :
-                        <>
-                            <img className="banner" src="https://i.imgur.com/tHFxgQt.png" />
-                            {/* <div className={`banner-text ${bestPricing.preorder && 'long-text'} color-primary`}>{bestPricing.coming_soon ? `Soon` : (bestPricing.preorder ? `Preorder` : `Free`)}</div> */}
                         </>}
+                        <div className={`text ${numericalStatus && bestPricing.discount_percent ? `with-discount` : ``} d-inline-block`}>{numericalStatus ? props.getConvertedPrice(bestPricing.price) : props.game.state.id === StateEnum["Early Access"] ? `Early Access` : props.game.state.id === StateEnum.Preorder ? `Preorder` : props.game.state.id === StateEnum.Released ? `Free` : `TBA`}</div>
+                    </div>
                 </>}
         </Card>
     );

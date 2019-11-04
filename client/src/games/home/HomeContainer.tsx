@@ -2,20 +2,17 @@ const popupS = require('popups');
 import * as React from 'react';
 import Home from './Home';
 import * as SteamService from '../../service/steam/main';
-import { MultiGameResponse, GameResponse, ExcludedGameIds, GenericModelResponse, NewsArticle, MultiNewsResponse, SidenavEnums } from '../../../client-server-common/common';
+import { MultiGameResponse, GameResponse, ExcludedGameIds, GenericModelResponse, NewsArticle, SidenavEnums, CurrencyType } from '../../../client-server-common/common';
 import { withRouter, RouteComponentProps } from 'react-router';
 import { getGameBestPricingStatus } from '../../util/main';
+import * as Redux from 'redux';
+import { GlobalReduxState } from '../../reducers/main';
+import { connect } from 'react-redux';
 
 export enum TimeGamesOptions {
     Upcoming,
     Recent,
     Early
-}
-
-export interface BigGameInfo {
-    gameId: number;
-    btnLink: string;
-    btnText: string;
 }
 
 interface IHomeContainerProps extends RouteComponentProps<any> {
@@ -25,11 +22,9 @@ interface IHomeContainerProps extends RouteComponentProps<any> {
 interface IHomeContainerState {
     isLoading: boolean;
     loadingMsg: string;
-    bigGamesInfo: BigGameInfo[];
+    bigGameSteamIds: number[];
     bigGames: GameResponse[];
     featuredGames: GameResponse[];
-    featuredEditorsGamesIndicies: number[];
-    featuredBigGamesIndicies: number[];
     news: NewsArticle[];
     weeklyGames: GameResponse[];
     timeGamesOption: TimeGamesOptions;
@@ -37,11 +32,23 @@ interface IHomeContainerState {
     recentGames: GameResponse[];
     earlyGames: GameResponse[];
     horrorGames: GameResponse[];
+    endingSoonGames: GameResponse[];
 }
 
-class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerState> {
+interface ReduxStateProps {
+    currencyType: CurrencyType;
+    currencyRate: number;
+}
 
-    constructor(props: IHomeContainerProps) {
+interface ReduxDispatchProps {
+
+}
+
+type Props = IHomeContainerProps & ReduxStateProps & ReduxDispatchProps;
+
+class HomeContainer extends React.Component<Props, IHomeContainerState> {
+
+    constructor(props: Props) {
         super(props);
         this.goToRedirect = this.goToRedirect.bind(this);
         this.changeTimeGamesOption = this.changeTimeGamesOption.bind(this);
@@ -50,6 +57,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
         this.state = {
             isLoading: true,
             loadingMsg: 'Loading games...',
+            bigGameSteamIds: [648800, 848450, 361420, 275850],
             bigGames: undefined,
             featuredGames: undefined,
             weeklyGames: undefined,
@@ -59,14 +67,7 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
             horrorGames: undefined,
             news: undefined,
             timeGamesOption: TimeGamesOptions.Upcoming,
-            bigGamesInfo: [
-                { gameId: 848450, btnText: `Available Summer 2019`, btnLink: `https://store.steampowered.com/app/1060100/Call_of_the_Void/` },
-                { gameId: 1001240, btnText: `Pre-order $39.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Fphoenix-point%2Fhome%3FpurchaseIntentId%3D75e9feab76fc46bb8ce6f3d7dadae3c8&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
-                { gameId: 1001450, btnText: `Buy it now $29.99 USD`, btnLink: `https://accounts.epicgames.com/login?lang=en_US&redirectUrl=https%3A%2F%2Fwww.epicgames.com%2Fstore%2Fen-US%2Fproduct%2Foperencia%2Fhome%3FpurchaseIntentId%3D7d1d766667ef423bbd636ee6f054f755&client_id=875a3b57d3a640a6b7f9b4e883463ab4&noHostRedirect=true` },
-                { gameId: 1001430, btnText: `Coming soon`, btnLink: `https://www.epicgames.com/store/en-US/product/dauntless/home`},
-            ],
-            featuredEditorsGamesIndicies: [0],
-            featuredBigGamesIndicies: [0]
+            endingSoonGames: undefined
         };
 
     }
@@ -75,14 +76,15 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
         let promises: Promise<any>[] = [];
 
         promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/popular`));
-        this.state.bigGamesInfo.forEach((x: BigGameInfo) => {
-            promises.push(SteamService.httpGenericGetData<GenericModelResponse>(`/api/steam/game/${x.gameId}`));
+        this.state.bigGameSteamIds.forEach((steamId: number) => {
+            promises.push(SteamService.httpGenericGetData<GenericModelResponse>(`/api/steam/game/${steamId}`));
         });
         promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/weeklydeals`));
         promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/upcoming`));
         promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/recent`));
         promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/earlyaccess`));
         promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/horror`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/endingsoon`));
 
         Promise.all(promises)
             .then((data: any[]) => {
@@ -91,42 +93,41 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
                     .filter((game: GameResponse) => game.cover)
                     .sort((a: GameResponse, b: GameResponse) => b.review.id - a.review.id)
-                    .slice(0, 13);
-                const bigGamesData: GenericModelResponse[] = data.slice(1, 1 + this.state.bigGamesInfo.length);
+                    .slice(0, 10);
+                const bigGamesData: GenericModelResponse[] = data.slice(1, 1 + this.state.bigGameSteamIds.length);
                 const bigGames: GameResponse[] = [];
                 bigGamesData.forEach((x: GenericModelResponse) => {
                     const game: GameResponse = x.data;
-                    this.state.bigGamesInfo.forEach((y: BigGameInfo) => {
-                        if (game.steamId === y.gameId) {
+                    this.state.bigGameSteamIds.forEach((steamId: number) => {
+                        if (game.steamId === steamId) {
                             bigGames.push(x.data);
                         }
                     });
                 });
-                const weeklyGamesData: MultiGameResponse = data[1 + this.state.bigGamesInfo.length];
+                const weeklyGamesData: MultiGameResponse = data[1 + this.state.bigGameSteamIds.length];
                 const weeklyGames: GameResponse[] = weeklyGamesData.data
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
-                    .filter((game: GameResponse) => getGameBestPricingStatus(game.pricings).discount_percent && getGameBestPricingStatus(game.pricings).discount_percent > 0)
                     .filter((game: GameResponse) => game.cover);
-                const upcomingGamesData: MultiGameResponse = data[2 + this.state.bigGamesInfo.length];
+                const upcomingGamesData: MultiGameResponse = data[2 + this.state.bigGameSteamIds.length];
                 const upcomingGames: GameResponse[] = upcomingGamesData.data
                     .filter((game: GameResponse) => game.cover)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
-                    // .filter((game: GameResponse) => new Date(new Date(game.first_release_date).getTime() * 1000) > new Date())
-                    // .sort((a: GameResponse, b: GameResponse) => new Date(a.first_release_date).getTime() - new Date(b.first_release_date).getTime())
+                    .filter((game: GameResponse) => new Date(game.first_release_date) > new Date())
                     .slice(0, 20);
-                const recentGamesData: MultiGameResponse = data[3 + this.state.bigGamesInfo.length];
+                const recentGamesData: MultiGameResponse = data[3 + this.state.bigGameSteamIds.length];
                 const recentGames: GameResponse[] = recentGamesData.data
                     .filter((game: GameResponse) => game.cover)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
                     .sort((a: GameResponse, b: GameResponse) => new Date(b.first_release_date).getTime() - new Date(a.first_release_date).getTime())
                     .slice(0, 20);
-                const earlyGamesData: MultiGameResponse = data[4 + this.state.bigGamesInfo.length];
+                const earlyGamesData: MultiGameResponse = data[4 + this.state.bigGameSteamIds.length];
                 const earlyGames: GameResponse[] = earlyGamesData.data
                     .filter((game: GameResponse) => game.cover)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
+                    .filter((game: GameResponse) => new Date(game.first_release_date) > new Date())
                     .sort((a: GameResponse, b: GameResponse) => new Date(a.first_release_date).getTime() - new Date(b.first_release_date).getTime())
                     .slice(0, 20);
-                const horrorGamesData: MultiGameResponse = data[5 + this.state.bigGamesInfo.length];
+                const horrorGamesData: MultiGameResponse = data[5 + this.state.bigGameSteamIds.length];
                 const horrorGames: GameResponse[] = horrorGamesData.data
                     .filter((game: GameResponse) => game.cover)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
@@ -136,6 +137,11 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                         return bestPriceDiscountPercentB - bestPriceDiscountPercentA;
                     })
                     .slice(0, 4);
+                const endingSoonGamesData: MultiGameResponse = data[6 + this.state.bigGameSteamIds.length];
+                const endingSoonGames: GameResponse[] = endingSoonGamesData.data
+                    .filter((game: GameResponse) => game.cover)
+                    .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
+                    .slice(0, 9);
 
                 this.setState({
                     isLoading: false,
@@ -145,7 +151,8 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                     upcomingGames: upcomingGames,
                     recentGames: recentGames,
                     earlyGames: earlyGames,
-                    horrorGames: horrorGames
+                    horrorGames: horrorGames,
+                    endingSoonGames: endingSoonGames
                 });
                 
             })
@@ -180,8 +187,6 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 loadingMsg={this.state.loadingMsg}
                 games={this.state.bigGames}
                 featuredGames={this.state.featuredGames}
-                featuredEditorsGamesIndicies={this.state.featuredEditorsGamesIndicies}
-                featuredBigGamesIndicies={this.state.featuredBigGamesIndicies}
                 goToRedirect={this.goToRedirect}
                 sidebarActiveEnum={this.props.sidebarActiveEnum}
                 weeklyGames={this.state.weeklyGames}
@@ -192,10 +197,27 @@ class HomeContainer extends React.Component<IHomeContainerProps, IHomeContainerS
                 recentGames={this.state.recentGames}
                 earlyGames={this.state.earlyGames}
                 horrorGames={this.state.horrorGames}
+                endingSoonGames={this.state.endingSoonGames}
+                currencyRate={this.props.currencyRate}
+                currencyType={this.props.currencyType}
             />
         );
     }
 
 }
 
-export default withRouter(HomeContainer);
+const mapStateToProps = (state: any, ownProps: IHomeContainerProps): ReduxStateProps => {
+    const globalModalReduxState: GlobalReduxState = state;
+
+    return {
+        currencyType: globalModalReduxState.topnav.currencyType,
+        currencyRate: globalModalReduxState.topnav.currencyRate
+    };
+};
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: IHomeContainerProps): ReduxDispatchProps => ({
+
+});
+
+export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, IHomeContainerProps>
+    (mapStateToProps, mapDispatchToProps)(HomeContainer));

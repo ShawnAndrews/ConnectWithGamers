@@ -1,4 +1,4 @@
-import { DbTables, GenericModelResponse, DbTableBusMessagesFields, PriceInfoResponse, BusMessage, BusMessagesEnum, steamAppUrl, ReviewEnum, StateEnum, Achievement, getSteamAppAchievementsUrl, cheerioOptions, cleanString } from "../client/client-server-common/common";
+import { DbTables, GenericModelResponse, DbTableBusMessagesFields, PriceInfoResponse, BusMessage, BusMessagesEnum, steamAppUrl, ReviewEnum, StateEnum, Achievement, getSteamAppAchievementsUrl, cheerioOptions, cleanString, DbTableSteamGamesFields } from "../client/client-server-common/common";
 import DatabaseBase from "../models/db/base/dbBase";
 import { setInterval } from "timers";
 import axios, { AxiosResponse } from "axios";
@@ -15,7 +15,10 @@ export const runBus = () => {
     setInterval(() => {
 
         db.custom(
-            `SELECT * FROM ${DbTables.bus_messages} WHERE ${DbTableBusMessagesFields[0]} = ${BusMessagesEnum.game} LIMIT 1`,
+            `SELECT * FROM ${DbTables.bus_messages}
+            WHERE ${DbTableBusMessagesFields[0]} = ${BusMessagesEnum.game}
+            ORDER BY ${DbTableBusMessagesFields[1]} DESC
+            LIMIT 1`,
             [])
             .then((dbResponse: GenericModelResponse) => {
                 const results: BusMessage[] = dbResponse.data;
@@ -86,7 +89,7 @@ function processSteamId(steamId: number): Promise<void> {
 
             const $: CheerioStatic = cheerio.load(responseGamePage.data, cheerioOptions);
 
-            const name: string = $(".apphub_AppName").html() != undefined ? cleanString($(".apphub_AppName").html().replace(`<sup>®</sup>`, ``)) : undefined;
+            const name: string = $(".apphub_AppName").html() != undefined ? $(".apphub_AppName").html().replace(`<sup>®</sup>`, ``) : undefined;
             const pricings: PriceInfoResponse[] = getSteamPricings(responseGamePage.data, steamGamesSysKeyId);
             const genres: string[] = getSteamGenres(responseGamePage.data);
             const totalReviewCountTempTemp: number = $(".user_reviews_summary_row").length;
@@ -110,9 +113,18 @@ function processSteamId(steamId: number): Promise<void> {
             const developer: string = $(`.user_reviews .dev_row`).length > 0 ? cleanString($(`.user_reviews .dev_row`).first().find(`a`).html()) : undefined;
             const publisher: string = $(`.user_reviews .dev_row`).length > 0 ? cleanString($(`.user_reviews .dev_row`).last().find(`a`).html()) : undefined;
             const achievements: Achievement[] = getSteamAchievements(responseGameAchievementsPage.data);
-            const deleteBusMessage = (steamGamesSysKeyId: number): Promise<GenericModelResponse> => db.custom(`DELETE FROM ${DbTables.bus_messages} WHERE ${DbTableBusMessagesFields[1]} = ?`, [steamGamesSysKeyId]);
+            const deleteBusMessage = (steamGamesSysKeyId: number): Promise<GenericModelResponse> => {
+                return db.custom(
+                    `UPDATE ${DbTables.steam_games}
+                    SET ${DbTableSteamGamesFields[8]} = ?
+                    WHERE ${DbTableSteamGamesFields[0]} = ?`,
+                    [new Date(), steamGamesSysKeyId])
+                    .then(() => {
+                        return db.custom(`DELETE FROM ${DbTables.bus_messages} WHERE ${DbTableBusMessagesFields[2]} = ?`, [steamGamesSysKeyId]);
+                    });
+            };
 
-            // // debug
+            // debug
             // console.log(`Name: ${name} - ${developer} - ${publisher}`);
             // console.log(`Pricings: ${JSON.stringify(pricings)}`);
             // console.log(`Total review count: ${totalReviewCount}`);

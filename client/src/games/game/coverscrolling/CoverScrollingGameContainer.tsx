@@ -1,31 +1,46 @@
 const $ = require('jquery');
+import * as Redux from 'redux';
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { GameResponse } from '../../../../client-server-common/common';
-import CoverGame from './CoverGame';
+import { GameResponse, CurrencyType } from '../../../../client-server-common/common';
+import CoverScrollingGame from './CoverScrollingGame';
+import { GlobalReduxState } from '../../../reducers/main';
+import { getPriceInUserCurrency } from '../../../util/main';
 
-interface ICoverGameContainerProps extends RouteComponentProps<any> {
+interface ICoverScrollingGameContainerProps extends RouteComponentProps<any> {
     index: number;
     game: GameResponse;
-    getConvertedPrice: (price: number) => string;
 }
 
-interface ICoverGameContainerState {
+interface ICoverScrollingGameContainerState {
     hoveredTimeout: number;
     hoveredInterval: number;
     hoveredScreenshotIndex: number;
     videoPreviewEnded: boolean;
 }
 
-class CoverGameContainer extends React.Component<ICoverGameContainerProps, ICoverGameContainerState> {
+interface ReduxStateProps {
+    currencyType: CurrencyType;
+    currencyRate: number;
+}
 
-    constructor(props: ICoverGameContainerProps) {
+interface ReduxDispatchProps {
+
+}
+
+type Props = ICoverScrollingGameContainerProps & ReduxStateProps & ReduxDispatchProps;
+
+class CoverScrollingGameContainer extends React.Component<Props, ICoverScrollingGameContainerState> {
+
+    constructor(props: Props) {
         super(props);
         this.goToGame = this.goToGame.bind(this);
         this.onHoverGame = this.onHoverGame.bind(this);
         this.onHoverOutGame = this.onHoverOutGame.bind(this);
         this.nextScreenshotIndex = this.nextScreenshotIndex.bind(this);
         this.onVideoPreviewEnded = this.onVideoPreviewEnded.bind(this);
+        this.getConvertedPrice = this.getConvertedPrice.bind(this);
 
         this.state = {
             hoveredTimeout: undefined,
@@ -44,7 +59,7 @@ class CoverGameContainer extends React.Component<ICoverGameContainerProps, ICove
     }
 
     onHoverGame(): void {
-        $(`.cover-game-${this.props.index} .overlay`).stop().fadeIn("fast");
+        $(`.cover-scrolling-game-${this.props.index} .overlay`).stop().fadeIn("fast");
         this.setState({
             hoveredTimeout: window.setTimeout(() => {
                 this.setState({ 
@@ -55,7 +70,7 @@ class CoverGameContainer extends React.Component<ICoverGameContainerProps, ICove
     }
 
     onHoverOutGame(): void {
-        $(`.cover-game-${this.props.index} .overlay`).stop().fadeOut("fast");
+        $(`.cover-scrolling-game-${this.props.index} .overlay`).stop().fadeOut("fast");
         clearTimeout(this.state.hoveredTimeout);
         clearTimeout(this.state.hoveredInterval);
         this.setState({
@@ -73,9 +88,13 @@ class CoverGameContainer extends React.Component<ICoverGameContainerProps, ICove
         });
     }
 
+    getConvertedPrice(price: number): string {
+        return getPriceInUserCurrency(price, this.props.currencyType, this.props.currencyRate);
+    }
+
     render() {
         return (
-            <CoverGame
+            <CoverScrollingGame
                 index={this.props.index}
                 game={this.props.game}
                 onHoverGame={this.onHoverGame}
@@ -84,11 +103,25 @@ class CoverGameContainer extends React.Component<ICoverGameContainerProps, ICove
                 goToGame={this.goToGame}
                 onVideoPreviewEnded={this.onVideoPreviewEnded}
                 videoPreviewEnded={this.state.videoPreviewEnded}
-                getConvertedPrice={this.props.getConvertedPrice}
+                getConvertedPrice={this.getConvertedPrice}
             />
         );
     }
 
 }
 
-export default withRouter(CoverGameContainer);
+const mapStateToProps = (state: any, ownProps: ICoverScrollingGameContainerProps): ReduxStateProps => {
+    const globalModalReduxState: GlobalReduxState = state;
+
+    return {
+        currencyType: globalModalReduxState.topnav.currencyType,
+        currencyRate: globalModalReduxState.topnav.currencyRate
+    };
+};
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: ICoverScrollingGameContainerProps): ReduxDispatchProps => ({
+
+});
+
+export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, ICoverScrollingGameContainerProps>
+    (mapStateToProps, mapDispatchToProps)(CoverScrollingGameContainer));
