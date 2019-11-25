@@ -2,7 +2,7 @@ import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 import EndingSoonBanner from './EndingSoonBanner';
 import { SidenavEnums, GameResponse, CurrencyType } from '../../../../client-server-common/common';
-import { getGameBestPricingStatus } from '../../../util/main';
+import { getLatestMainGamePricingStatus } from '../../../util/main';
 
 interface IEndingSoonBannerContainerProps extends RouteComponentProps<any> {
     goToRedirect: (URL: string) => void;
@@ -24,14 +24,14 @@ class EndingSoonBannerContainer extends React.Component<IEndingSoonBannerContain
         this.updateCurrentSlideIndex = this.updateCurrentSlideIndex.bind(this);
 
         this.state = {
-            discountEndDt: new Date(getGameBestPricingStatus(this.props.games[0].pricings).discount_end_dt),
+            discountEndDt: new Date(getLatestMainGamePricingStatus(this.props.games[0].pricings).discount_end_dt),
             currentSlideIndex: 0
         };
     }
 
     updateCurrentSlideIndex(current: number): void {
         this.setState({
-            discountEndDt: new Date(getGameBestPricingStatus(this.props.games[current].pricings).discount_end_dt),
+            discountEndDt: new Date(getLatestMainGamePricingStatus(this.props.games[current].pricings).discount_end_dt),
             currentSlideIndex: current
         });
     }

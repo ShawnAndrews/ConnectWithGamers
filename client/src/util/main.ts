@@ -1,4 +1,4 @@
-import { PriceInfoResponse, PricingsEnum, CurrencyType, CURRENCY_TOKEN_NAME } from "../../client-server-common/common";
+import { PriceInfoResponse, PricingsEnum, CurrencyType, CURRENCY_TOKEN_NAME, PricingStatus } from "../../client-server-common/common";
 import * as SteamService from '../service/steam/main';
 
 /**
@@ -56,30 +56,24 @@ export function onImgError(image: any): any {
 };
 
 /**
- * Get a game's best price. 
+ * Get a game's latest main game pricing. 
  */
-export function getGameBestPricingStatus(pricings: PriceInfoResponse[]): PriceInfoResponse {
-    let lowestPrice: number = Number.MAX_SAFE_INTEGER;
-    let lowestDiscountPercent: number = undefined;
-    let discountEndDt: Date = undefined;
+export function getLatestMainGamePricingStatus(pricings: PriceInfoResponse[]): PricingStatus {
+    let pricingStatus: PricingStatus = { title: null, price: null, discount_end_dt: null, discount_percent: null, state: null };
 
-    pricings && pricings.forEach((pricing: PriceInfoResponse) => {
-        if (pricing.pricingEnumSysKeyId === PricingsEnum.main_game) {
-            if (!pricing.price) {
-                lowestPrice = undefined;
-                lowestDiscountPercent = undefined;
-            } else {
-                if (lowestPrice !== undefined && (pricing.price < lowestPrice)) {
-                    lowestPrice = pricing.price;
-                    lowestDiscountPercent = pricing.discount_percent;
-                    discountEndDt = pricing.discount_end_dt
-                }
-            }  
-        }
-    })
+    pricings && 
+        pricings
+            .filter((pricing: PriceInfoResponse) => pricing.pricingEnumSysKeyId === PricingsEnum.main_game)
+            .sort((a: PriceInfoResponse, b: PriceInfoResponse) => new Date(b.log_dt).getTime() - new Date(a.log_dt).getTime())
+            .slice(0, 1)
+            .forEach((pricing: PriceInfoResponse) => {
+                pricingStatus.title = pricing.title;
+                pricingStatus.price = pricing.price;
+                pricingStatus.discount_percent = pricing.discount_percent;
+                pricingStatus.discount_end_dt = pricing.discount_end_dt;
+            })
 
-    const priceInfo: PriceInfoResponse = { steamGamesSysKeyId: -1, title: undefined, price: lowestPrice, discount_percent: lowestDiscountPercent, pricingEnumSysKeyId: PricingsEnum.main_game, discount_end_dt: discountEndDt, log_dt: undefined };
-    return priceInfo;
+    return pricingStatus
 }
 
 /**
@@ -136,6 +130,20 @@ export function getCurrencyRate(currencyType: CurrencyType): Promise<number> {
 
 }
 
+export function getCurrencySymbol(currencyType: CurrencyType): string {
+    let currencySymbol: string = undefined;
+
+    if (currencyType === CurrencyType.USD || currencyType === CurrencyType.CAD || currencyType === CurrencyType.AUD) {
+        currencySymbol = `$`;
+    } else if (currencyType === CurrencyType.GBP) {
+        currencySymbol = `£`;
+    } else if (currencyType === CurrencyType.EUR) {
+        currencySymbol = `€`;
+    }
+
+    return currencySymbol;
+}
+
 /**
  *  Get price converted to user currency in string form.
  */
@@ -172,4 +180,11 @@ export function getUniquePricings(pricings: PriceInfoResponse[]): PriceInfoRespo
     });
 
     return uniquePricings;
+}
+
+/**
+ *  Get base price given a pricing, assuming the pricing is discounted.
+ */
+export function getBasePrice(price: number, discountPercent: number): number {
+    return + (price / ((100 - discountPercent) / 100)).toFixed(2);
 }

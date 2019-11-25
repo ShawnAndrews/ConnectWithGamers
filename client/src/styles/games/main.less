@@ -8,28 +8,93 @@
 .games-page {
     height: -webkit-fill-available;
 
-    .editors-games-carousel {
-        height: 35vw;
+    .pricey-games {
+        display: table;
+        table-layout: fixed;
+        border-spacing: 10px;
+        border-collapse: separate;
 
-        .item {
-            position: relative;
+        .pricey-games-item {
+            display: table-cell;
 
-            .video-preview {
-                object-fit: fill; 
+            @media @xl {
+                display: block;
             }
 
-            .highlighted-table-text {
-                position: absolute;
-                top: 47%;
-                left: 50%;
-                transform: translate(-50%, -70%);
-                text-align: center;
+            .pricey-games-label {
+                color: @tertiary-color;
+                font-size: 19px;
+            }
+
+            .grid-results {
+                height: calc(700px - 28px);
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                overflow: hidden;
+
+                & > div {
+                    width: 215px;
+                    height: 205px;
+                    margin: 10px 10px;
+                }
+
+                .genre {
+                    display: none;
+                }
+
+                .overlay {
+                    height: calc(100% - 109px)!important;
+                }
+            }
+        }
+    }
+
+    .editors-games {
+        position: relative;
+        display: table;
+
+        @media @xxl {
+            display: block;
+        }
+
+        .recommended-games {
+            display: table-cell;
+            width: auto;
+            height: 480px;
+
+            @media @xxl {
+                display: block;
+            }
+
+            .recommended-games-label {
+                color: @tertiary-color;
+            }
+
+            .grid-results {
+                height: calc(480px - 40px);
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                overflow: hidden;
+            }
+        }
+
+        .editors-games-container {
+            display: table-cell;
+            width: 1054px;
+            
+            .editors-game-info {
+                position: relative;
+                width: 200px;
+                height: 480px;
+
+                @media @xxl {
+                    width: 100%;
+                }
 
                 .name {
                     position: initial;
-                    width: 25vw;
-                    height: 46px;
-                    white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
                 
@@ -40,7 +105,7 @@
                 }
     
                 .genres {
-                    color: white;
+                    color: #ffc55b;
                     opacity: 0.8;
                     font-size: 0.8rem;
                 }
@@ -50,57 +115,98 @@
                     opacity: 0.8;
                     font-size: 1.3rem;
                 }
+    
+                .on-sale {
+                    color: rgba(white, 0.8);
+                    font-size: 0.8em;
+                }
 
-                .price-btn {
-                    min-width: unset!important;
-                    min-height: unset!important;
-                    background-color: #4c6b22 !important;
-                    color: white!important;
-                    font-size: 0.7rem;
-                    margin-bottom: 4px;
-                    pointer-events: all;
-                    
-                    &:hover {
-                        background-color: #699230!important
+                .price-btn-container {
+                    position: absolute;
+                    bottom: 10px;
+                    width: calc(100%  - 32px);
+
+                    .price-label {
+                        color: rgba(white, 0.9);
+                        font-size: 1.2em;
+                    }
+
+                    .price-btn {
+                        left: 50%;
+                        transform: translateX(-50%);
+                        min-width: unset!important;
+                        min-height: unset!important;
+                        background-color: #4c6b22 !important;
+                        color: white!important;
+                        font-size: 0.7rem;
+                        margin-bottom: 4px;
+                        pointer-events: all;
+                        
+                        &:hover {
+                            background-color: #699230!important
+                        }
+    
+                        .base-price {
+                            position: relative;
+                            bottom: -1px;
+                            font-size: 0.8em;
+                            opacity: 0.5;
+                            text-decoration: line-through;
+                        }
                     }
                 }
 
             }
-        }
 
-        .slick-list {
-            height: inherit;
-        }
-
-        .slick-slide > div {
-            height: inherit;
-        }
-
-        .slick-slider {
-            margin-bottom: 0px!important;
-        }
-
-        .slick-dots {
-            position: relative!important;
-            bottom: 5px!important;
-
-            li {
-                margin: 5px 8px!important;
-                width: 40px!important;
-                height: 40px!important;
-            }
-
-            .slick-active {
-                img {
-                    border: 2px solid @tertiary-color;
+            .editors-games-carousel {
+                width: 854px;
+                height: 480px;
+                overflow: hidden;
+            
+                @media @xxl {
+                    display: none!important;
                 }
+
+                .item {
+                    position: relative;
+                }
+        
+                .slick-list {
+                    height: inherit;
+                }
+        
+                .slick-slide > div {
+                    height: inherit;
+                }
+        
+                .slick-slider {
+                    margin-bottom: 0px!important;
+                }
+        
+                .slick-dots {
+                    position: relative!important;
+                    bottom: 5px!important;
+        
+                    li {
+                        margin: 5px 8px!important;
+                        width: 40px!important;
+                        height: 40px!important;
+                    }
+        
+                    .slick-active {
+                        img {
+                            border: 2px solid @tertiary-color;
+                        }
+                    }
+                }
+        
+                .slick-track, img {
+                    height: inherit!important;
+                }
+        
             }
         }
-
-        .slick-track, img {
-            height: inherit!important;
-        }
-
+        
     }
 
     .header .title {
@@ -115,8 +221,34 @@
         display: grid;
         grid-gap: 30px;
 
+        &.horizontal {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            overflow: hidden;
+
+            &.limit-two-rows {
+                height: 575px;
+            }
+
+            & > div {
+                width: 315px;
+                height: 240px;
+                margin: 20px 10px;
+            }
+        }
+
+        &.small {
+            & > div {
+                width: 250px;
+                height: 240px;
+                margin: 10px 10px;
+            }
+        }
+
         .time-item {
-            
+            width: 230px;
+
             &:last-child {
                 padding-bottom: 1em;
             }
@@ -135,26 +267,37 @@
             }
             
             .time-item-text {
-                width: calc(100% - 250px);
-                height: 90px;
+                width: 100%;
 
                 .price-container {
-                    position: absolute;
-                    right: 10px;
-                    top: 30px;
+                    position: relative;
+                    padding-top: 15px;
+                    padding-bottom: 3px;
 
                     .base-price {
                         position: absolute;
-                        right: 0px;
-                        top: -13px;
+                        bottom: 21px;
+                        left: 60px;
                         font-size: 12px;
-                        opacity: 0.5;
+                        opacity: .5;
                     }
 
                     .discount {
-                        color: green;
-                        border: 1px solid green;
-                        border-radius: 4px;
+                        position: relative;
+                        bottom: 7px;
+                        font-size: .8em;
+                        background-color: green;
+                        border-radius: 5px;
+                        padding-left: 5px;
+                        padding-right: 5px;
+                        color: rgba(255,255,255,0.8);
+                    }
+
+                    .text {
+                        
+                        &.with-discount {
+                            margin-left: 10px;
+                        }
                     }
                 }
 
@@ -184,7 +327,7 @@
             }
 
             img {
-                height: 115px;
+                width: 100%;
             }
 
             & > div {
@@ -252,16 +395,6 @@
         &.games {
             grid-template-columns: auto auto auto auto;
             grid-auto-rows: minmax(125px, 25vh);
-        }
-
-        &.featured-games {
-            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-        }
-
-        &.genrebanner-games {
-            grid-template-columns: auto auto;
-            grid-auto-rows: 250px;
-            grid-gap: 0px;
         }
 
         &.news {
@@ -466,6 +599,7 @@
         background-color: #232323;
         overflow-y: scroll;
         overflow-x: hidden;
+        z-index: 1000;
 
         .option {
 
@@ -636,7 +770,7 @@
             }
         }
 
-        .cheap-games-banner {
+        .horror-games-banner {
             
             .arrow-left {
                 position: absolute;
@@ -678,6 +812,10 @@
             color: rgba(@tertiary-color, 1.0);
             overflow: hidden;
 
+            @media @xxl {
+                width: 100%;
+            }
+
             .show {
                 position: absolute;
                 right: 0px;
@@ -696,12 +834,26 @@
                 height: calc(100% - 50px);
                 overflow-y: scroll;
                 overflow-x: hidden;
+
+                .grid-results {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: space-around;
+
+                    & > div {
+                        padding-top: 15px;
+                    }
+                }
             }
 
         }
 
         .ending-soon {
             width: 616px;
+
+            @media @xxl {
+                width: 100%;
+            }
 
             .spotlights {
 
@@ -733,6 +885,10 @@
                         &.name {
                             font-weight: normal;
                             color: #8dd290;
+                            width: calc(100% - 20px);
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
                         }
                     }
 
@@ -765,7 +921,7 @@
                     .right {
                         right: 10px;
     
-                        .discount-percent {
+                        .discount {
                             font-size: 0.8em;
                             background-color: green;
                             border-radius: 5px;
@@ -827,8 +983,7 @@
                         text-align: center;
                     
                         img {
-                            width: auto!important;
-                            max-width: 100%!important;
+                            width: 100%!important;
                             height: auto!important;
                         }
                     }
@@ -856,22 +1011,6 @@
                 }
             }
 
-            .description {
-                margin-top: 55px;
-                margin-right: 75px;
-                color: rgba(white, 0.9);
-
-                .more-button {
-                    color: white;
-                    border: 1px solid white;
-                    box-shadow: 0px 1px 5px 0px rgba(255, 255, 255, 0.2), 0px 2px 2px 0px rgba(255, 255, 255, 0.14), 0px 3px 1px -2px rgba(255, 255, 255, 0.12);
-                    
-                    &:hover {
-                        background-color: #ffffff1f;
-                    }
-                }
-            }
-
             img {
                 float: right;
             }
@@ -885,6 +1024,31 @@
                 background: -moz-linear-gradient(left, rgba(0,0,0,0) 0%, #59a89e 18%, #59a89e 100%);
                 background: linear-gradient(to left, rgba(0,0,0,0) 0%, #59a89e 18%, #59a89e 100%);
 
+                .description {
+                    margin-top: 55px;
+                    margin-right: 75px;
+                    color: rgba(white, 0.9);
+    
+                    .more-button {
+                        color: white;
+                        border: 1px solid white;
+                        box-shadow: 0px 1px 5px 0px rgba(255, 255, 255, 0.2), 0px 2px 2px 0px rgba(255, 255, 255, 0.14), 0px 3px 1px -2px rgba(255, 255, 255, 0.12);
+                        
+                        &:hover {
+                            background-color: #ffffff1f;
+                        }
+                    }
+                }
+
+                @media @xl {
+                    width: 100%;
+                    background: -moz-linear-gradient(left, rgba(0,0,0,0) 0%, #59a89e 0%, #59a89e 100%);
+                    background: linear-gradient(to left, rgba(0,0,0,0) 0%, #59a89e 0%, #59a89e 100%);
+
+                    .description {
+                        margin-right: 0px;
+                    }
+                }
             }
         }
 

@@ -2,24 +2,23 @@ const $ = require('jquery');
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GameResponse } from '../../../../client-server-common/common';
-import CoverGame from './CoverGame';
+import CoverFullsizeGame from './CoverFullsizeGame';
 
-interface ICoverGameContainerProps extends RouteComponentProps<any> {
+interface ICoverFullsizeGameContainerProps extends RouteComponentProps<any> {
     index: number;
     game: GameResponse;
-    getConvertedPrice: (price: number) => string;
 }
 
-interface ICoverGameContainerState {
+interface ICoverFullsizeGameContainerState {
     hoveredTimeout: number;
     hoveredInterval: number;
     hoveredScreenshotIndex: number;
     videoPreviewEnded: boolean;
 }
 
-class CoverGameContainer extends React.Component<ICoverGameContainerProps, ICoverGameContainerState> {
+class CoverFullsizeGameContainer extends React.Component<ICoverFullsizeGameContainerProps, ICoverFullsizeGameContainerState> {
 
-    constructor(props: ICoverGameContainerProps) {
+    constructor(props: ICoverFullsizeGameContainerProps) {
         super(props);
         this.goToGame = this.goToGame.bind(this);
         this.onHoverGame = this.onHoverGame.bind(this);
@@ -75,7 +74,7 @@ class CoverGameContainer extends React.Component<ICoverGameContainerProps, ICove
 
     render() {
         return (
-            <CoverGame
+            <CoverFullsizeGame
                 index={this.props.index}
                 game={this.props.game}
                 onHoverGame={this.onHoverGame}
@@ -84,11 +83,10 @@ class CoverGameContainer extends React.Component<ICoverGameContainerProps, ICove
                 goToGame={this.goToGame}
                 onVideoPreviewEnded={this.onVideoPreviewEnded}
                 videoPreviewEnded={this.state.videoPreviewEnded}
-                getConvertedPrice={this.props.getConvertedPrice}
             />
         );
     }
 
 }
 
-export default withRouter(CoverGameContainer);
+export default withRouter(CoverFullsizeGameContainer);

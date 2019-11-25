@@ -9,9 +9,9 @@ const Achievements: React.SFC<IAchievementsProps> = (props: IAchievementsProps) 
 
     return (
         <div className="achievements">
-            {props.achievements.length === 0 &&
+            {props.achievements && props.achievements.length === 0 &&
                     <h3 className="text-center my-4">Game does not have any achievements.</h3>}
-            {props.achievements.length > 0 &&
+            {props.achievements && props.achievements.length > 0 &&
                 <div>
                     <div className="info-header"><span className="float-left">{props.achievements.length} Total achievements</span><span className="float-right">% of players completed achievement</span></div>
                     {props.achievements

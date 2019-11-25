@@ -30,9 +30,7 @@ const Media: React.SFC<IMediaProps> = (props: IMediaProps) => {
         dotsClass: "slick-dots slick-thumb",
         infinite: true,
         slidesToShow: 1,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 4000
+        slidesToScroll: 1
     };
     const screenshots: string[] = props.screenshots;
     const deviceWidth = (window.innerWidth > 0) ? window.innerWidth : screen.width;

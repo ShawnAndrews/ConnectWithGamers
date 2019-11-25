@@ -4,7 +4,7 @@ import { Textfit } from 'react-textfit';
 import Crossfade from '../crossfade/CrossfadeContainer';
 import PriceContainer from '../../price/PriceContainer';
 
-interface ISearchGameProps {
+interface ICoverFullsizeGameProps {
     index: number;
     game: GameResponse;
     onHoverGame: () => void;
@@ -15,10 +15,10 @@ interface ISearchGameProps {
     videoPreviewEnded: boolean;
 }
 
-const SearchGame: React.SFC<ISearchGameProps> = (props: ISearchGameProps) => {
+const CoverFullsizeGame: React.SFC<ICoverFullsizeGameProps> = (props: ICoverFullsizeGameProps) => {
 
     return (
-        <div className={`search-game-${props.index} position-relative bg-transparent cursor-pointer`}>
+        <div className={`cover-game-${props.index} position-relative bg-transparent cursor-pointer`}>
             <div className="screenshot w-100" onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
                 <Crossfade src={[props.game.cover, ...props.game.screenshots]} index={props.hoveredScreenshotIndex} />
             </div>
@@ -41,15 +41,10 @@ const SearchGame: React.SFC<ISearchGameProps> = (props: ISearchGameProps) => {
                                     if (platform.id === PlatformEnum.mac) return <i className="fab fa-apple mr-2"/>;
                                     })}
                             </div>}
-                        <div className={`release-date`}>
-                            {props.game.first_release_date
-                                ? new Date(new Date(props.game.first_release_date).getTime() - (new Date(props.game.first_release_date).getTimezoneOffset() * 60000 )).toISOString().split("T")[0]
-                                : 'TBA'}
-                        </div>
-                        <PriceContainer 
-                            game={props.game}
-                            showTextStatus={true}
-                        />
+                            <PriceContainer 
+                                game={props.game}
+                                showTextStatus={true}
+                            />
                     </div>
                 </>
             </div>
@@ -58,4 +53,4 @@ const SearchGame: React.SFC<ISearchGameProps> = (props: ISearchGameProps) => {
 
 };
 
-export default SearchGame;
+export default CoverFullsizeGame;

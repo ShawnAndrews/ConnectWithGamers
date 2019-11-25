@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { SidenavEnums, GameResponse, PriceInfoResponse, CurrencyType } from '../../../../client-server-common/common';
+import { SidenavEnums, GameResponse, CurrencyType, getSteamCoverHugeURL } from '../../../../client-server-common/common';
 import Slider from "react-slick";
 import TimerBannerContainer from './TimerBannerContainer';
-import { getGameBestPricingStatus, getPriceInUserCurrency } from '../../../util/main';
 import { Textfit } from 'react-textfit';
+import PriceContainer from '../../price/PriceContainer';
 
 interface IEndingSoonBannerProps {
     goToRedirect: (URL: string) => void;
@@ -17,9 +17,6 @@ interface IEndingSoonBannerProps {
 }
 
 const EndingSoonBanner: React.SFC<IEndingSoonBannerProps> = (props: IEndingSoonBannerProps) => {
-
-    const bestPricing: PriceInfoResponse = getGameBestPricingStatus(props.games[props.currentSlideIndex].pricings);
-    const bestPricingBasePrice: number = bestPricing.price && bestPricing.discount_percent && + (bestPricing.price / ((100 - bestPricing.discount_percent) / 100)).toFixed(2);
 
     function SampleNextArrow(props) {
         const { className, style, onClick } = props;
@@ -42,8 +39,6 @@ const EndingSoonBanner: React.SFC<IEndingSoonBannerProps> = (props: IEndingSoonB
         infinite: true,
         swipe: false,
         slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 2200,
         swipeToSlide: false,
         nextArrow: <SampleNextArrow />,
         prevArrow: <SamplePrevArrow />,
@@ -71,12 +66,10 @@ const EndingSoonBanner: React.SFC<IEndingSoonBannerProps> = (props: IEndingSoonB
                 <div className="today-deals-footer">
                     <div className="left name">{props.games[props.currentSlideIndex].name}</div>
                     <div className="right">
-                        {bestPricing.discount_percent &&
-                            <>
-                                <div className="discount-percent d-inline-block">-{bestPricing.discount_percent}%</div>
-                                <div className="base-price d-inline-block">{getPriceInUserCurrency(bestPricingBasePrice, props.currencyType, props.currencyRate)}</div>
-                            </>}
-                        <div className="price d-inline-block">{getPriceInUserCurrency(bestPricing.price, props.currencyType, props.currencyRate)}</div>
+                        <PriceContainer
+                            game={props.games[props.currentSlideIndex]}
+                            showTextStatus={true}
+                        />
                     </div>
                 </div>
             </div>
@@ -85,18 +78,18 @@ const EndingSoonBanner: React.SFC<IEndingSoonBannerProps> = (props: IEndingSoonB
                     <div className="head">
                         <div className="left">Editor's Choice</div>
                     </div>
-                    <img className="w-100 cursor-pointer" src="https://steamcdn-a.akamaihd.net/steam/apps/24980/capsule_616x353.jpg"/>
+                    <img className="w-100 cursor-pointer" src={getSteamCoverHugeURL(props.games[2].steamId)}/>
                     <div className="foot">
-                        <Textfit className="left name px-2 w-100" max={17} mode="single">{props.games[props.games.length - 1].name}</Textfit>
+                        <Textfit className="left name" min={12} max={17} mode="single">{props.games[2].name}</Textfit>
                     </div>
                 </div>
                 <div className="spotlight align-top d-inline-block w-50 pl-2">
                     <div className="head">
                         <div className="left">Game of the month</div>
                     </div>
-                    <img className="w-100 cursor-pointer" src="https://steamcdn-a.akamaihd.net/steam/apps/244850/capsule_616x353.jpg"/>
+                    <img className="w-100 cursor-pointer" src={getSteamCoverHugeURL(props.games[3].steamId)}/>
                     <div className="foot">
-                        <Textfit className="left name px-2 w-100" max={17} mode="single">{props.games[props.games.length - 2].name}</Textfit>
+                        <Textfit className="left name" min={12} max={17} mode="single">{props.games[3].name}</Textfit>
                     </div>
                 </div>
             </div>

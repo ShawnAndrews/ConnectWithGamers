@@ -7,9 +7,12 @@ class GameModel extends DatabaseBase {
     constructor() {
         super();
         this.getGamesByQuery = this.getGamesByQuery.bind(this);
+        this.getGamesBySP = this.getGamesBySP.bind(this);
+        this.getEnumByQuery = this.getEnumByQuery.bind(this);
         this.getRouteCache = this.getRouteCache.bind(this);
         this.routeCacheExists = this.routeCacheExists.bind(this);
         this.getGameSuggestions = this.getGameSuggestions.bind(this);
+        this.getGameAchievements = this.getGameAchievements.bind(this);
         this.getGame = this.getGame.bind(this);
     }
 
@@ -117,10 +120,6 @@ class GameModel extends DatabaseBase {
                 })
                 .then((response: IdNamePair[]) => {
                     game.game_modes = response;
-                    return this.getGameAchievements(steamId);
-                })
-                .then((response: Achievement[]) => {
-                    game.achievements = response;
                     return resolve(game);
                 })
                 .catch((error: string) => {
@@ -184,7 +183,6 @@ class GameModel extends DatabaseBase {
                             developer: undefined,
                             publisher: undefined,
                             pricings: undefined,
-                            achievements: undefined,
                             cover: undefined,
                             cover_thumb: undefined,
                             cover_huge: undefined,
@@ -211,13 +209,13 @@ class GameModel extends DatabaseBase {
     /**
      * Get game's achievements.
      */
-    private getGameAchievements(steamId: number): Promise<Achievement[]> {
+    public getGameAchievements(steamId: number): Promise<Achievement[]> {
 
         return new Promise((resolve, reject) => {
             this.custom(
                 `SELECT *
                 FROM ${DbTables.achievements} a
-                WHERE a.${DbTableAchievementsFields[1]} = ?;`,
+                WHERE a.${DbTableAchievementsFields[1]} = ?`,
                 [steamId])
                 .then((response: GenericModelResponse) => {
                     const achievements: Achievement[] = [];
@@ -408,7 +406,6 @@ class GameModel extends DatabaseBase {
                         developer: undefined,
                         publisher: undefined,
                         pricings: undefined,
-                        achievements: undefined,
                         cover: undefined,
                         cover_thumb: undefined,
                         cover_huge: undefined,
@@ -433,7 +430,6 @@ class GameModel extends DatabaseBase {
                             developer: raw.developer,
                             publisher: raw.publisher,
                             pricings: undefined,
-                            achievements: undefined,
                             cover: raw.cover,
                             cover_thumb: raw.cover_thumb,
                             cover_huge: raw.cover_huge,
@@ -492,6 +488,51 @@ class GameModel extends DatabaseBase {
                 .catch((error: string) => {
                     return reject(error);
                 });
+        });
+
+    }
+
+    /**
+     * Get game's list from stored procedure.
+     */
+    getGamesBySP(query: string, preparedVars: any[]): Promise <GameResponse[]> {
+
+        return new Promise((resolve, reject) => {
+            this.custom(
+                query,
+                preparedVars)
+                .then((dbResponse: GenericModelResponse) => {
+                    const steamIds: number[] = dbResponse.data[0].map((x: any) => x.steam_games_sys_key_id);
+                    const promises: Promise<GameResponse>[] = [];
+                    const createGamePromise = (steamId: number): Promise<GameResponse> => {
+                        return new Promise((resolve, reject) => {
+                            this.getGame(steamId)
+                                .then((game: GameResponse) => {
+                                    return resolve(game);
+                                })
+                                .catch((error: string) => {
+                                    return reject(error);
+                                });
+                        });
+                    };
+
+                    steamIds.forEach((steamId: number) => {
+                        promises.push(createGamePromise(steamId));
+                    });
+
+                    Promise.all(promises)
+                        .then((games: GameResponse[]) => {
+                            return resolve(games);
+                        })
+                        .catch((error: string) => {
+                            return reject(error);
+                        });
+
+                })
+                .catch((error: string) => {
+                    return reject(error);
+                });
+
         });
 
     }
@@ -562,6 +603,36 @@ class GameModel extends DatabaseBase {
                             suggestions.push({name: x.name, steamId: x.steam_games_sys_key_id });
                         });
                         return resolve(suggestions);
+
+                    } else {
+                        return reject("Database error.");
+                    }
+
+                })
+                .catch((error: string) => {
+                    return reject(error);
+                });
+
+        });
+
+    }
+
+    /**
+     * Get enum by query.
+     */
+    getEnumByQuery(query: string): Promise <IdNamePair[]> {
+
+        return new Promise((resolve, reject) => {
+            this.custom(
+                query,
+                [])
+                .then((dbResponse: GenericModelResponse) => {
+                    if (dbResponse.data.length > 0) {
+                        const genres: IdNamePair[] = [];
+                        dbResponse.data.forEach((x: any) => {
+                            genres.push({id: x.id, name: x.name });
+                        });
+                        return resolve(genres);
 
                     } else {
                         return reject("Database error.");

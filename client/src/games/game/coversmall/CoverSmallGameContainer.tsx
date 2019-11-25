@@ -1,46 +1,30 @@
 const $ = require('jquery');
-import * as Redux from 'redux';
 import * as React from 'react';
-import { connect } from 'react-redux';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { GameResponse, CurrencyType } from '../../../../client-server-common/common';
-import FullsizeGame from './FullsizeGame';
-import { GlobalReduxState } from '../../../reducers/main';
-import { getPriceInUserCurrency } from '../../../util/main';
+import { GameResponse } from '../../../../client-server-common/common';
+import CoverSmallGame from './CoverSmallGame';
 
-interface IFullsizeGameContainerProps extends RouteComponentProps<any> {
+interface ICoverSmallGameContainerProps extends RouteComponentProps<any> {
     index: number;
     game: GameResponse;
 }
 
-interface IFullsizeGameContainerState {
+interface ICoverSmallGameContainerState {
     hoveredTimeout: number;
     hoveredInterval: number;
     hoveredScreenshotIndex: number;
     videoPreviewEnded: boolean;
 }
 
-interface ReduxStateProps {
-    currencyType: CurrencyType;
-    currencyRate: number;
-}
+class CoverSmallGameContainer extends React.Component<ICoverSmallGameContainerProps, ICoverSmallGameContainerState> {
 
-interface ReduxDispatchProps {
-
-}
-
-type Props = IFullsizeGameContainerProps & ReduxStateProps & ReduxDispatchProps;
-
-class FullsizeGameContainer extends React.Component<Props, IFullsizeGameContainerState> {
-
-    constructor(props: Props) {
+    constructor(props: ICoverSmallGameContainerProps) {
         super(props);
         this.goToGame = this.goToGame.bind(this);
         this.onHoverGame = this.onHoverGame.bind(this);
         this.onHoverOutGame = this.onHoverOutGame.bind(this);
         this.nextScreenshotIndex = this.nextScreenshotIndex.bind(this);
         this.onVideoPreviewEnded = this.onVideoPreviewEnded.bind(this);
-        this.getConvertedPrice = this.getConvertedPrice.bind(this);
 
         this.state = {
             hoveredTimeout: undefined,
@@ -59,7 +43,7 @@ class FullsizeGameContainer extends React.Component<Props, IFullsizeGameContaine
     }
 
     onHoverGame(): void {
-        $(`.screenshot-game-${this.props.index} .overlay`).stop().fadeIn("fast");
+        $(`.search-game-${this.props.index} .overlay`).stop().fadeIn("fast");
         this.setState({
             hoveredTimeout: window.setTimeout(() => {
                 this.setState({ 
@@ -70,7 +54,7 @@ class FullsizeGameContainer extends React.Component<Props, IFullsizeGameContaine
     }
 
     onHoverOutGame(): void {
-        $(`.screenshot-game-${this.props.index} .overlay`).stop().fadeOut("fast");
+        $(`.search-game-${this.props.index} .overlay`).stop().fadeOut("fast");
         clearTimeout(this.state.hoveredTimeout);
         clearTimeout(this.state.hoveredInterval);
         this.setState({
@@ -88,13 +72,9 @@ class FullsizeGameContainer extends React.Component<Props, IFullsizeGameContaine
         });
     }
 
-    getConvertedPrice(price: number): string {
-        return getPriceInUserCurrency(price, this.props.currencyType, this.props.currencyRate);
-    }
-
     render() {
         return (
-            <FullsizeGame
+            <CoverSmallGame
                 index={this.props.index}
                 game={this.props.game}
                 onHoverGame={this.onHoverGame}
@@ -103,25 +83,10 @@ class FullsizeGameContainer extends React.Component<Props, IFullsizeGameContaine
                 goToGame={this.goToGame}
                 onVideoPreviewEnded={this.onVideoPreviewEnded}
                 videoPreviewEnded={this.state.videoPreviewEnded}
-                getConvertedPrice={this.getConvertedPrice}
             />
         );
     }
 
 }
 
-const mapStateToProps = (state: any, ownProps: IFullsizeGameContainerProps): ReduxStateProps => {
-    const globalModalReduxState: GlobalReduxState = state;
-
-    return {
-        currencyType: globalModalReduxState.topnav.currencyType,
-        currencyRate: globalModalReduxState.topnav.currencyRate
-    };
-};
-
-const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: IFullsizeGameContainerProps): ReduxDispatchProps => ({
-
-});
-
-export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, IFullsizeGameContainerProps>
-    (mapStateToProps, mapDispatchToProps)(FullsizeGameContainer));
+export default withRouter(CoverSmallGameContainer);

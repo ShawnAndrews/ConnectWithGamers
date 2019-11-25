@@ -5,7 +5,6 @@ import TransparentTimeGame from './TransparentTimeGame';
 
 interface ITransparentTimeGameContainerProps extends RouteComponentProps<any> {
     game: GameResponse;
-    getConvertedPrice: (price: number) => string;
 } 
 
 interface ITransparentTimeGameContainerState { }
@@ -26,7 +25,6 @@ class TransparentTimeGameContainer extends React.Component<ITransparentTimeGameC
             <TransparentTimeGame
                 game={this.props.game}
                 goToGame={this.goToGame}
-                getConvertedPrice={this.props.getConvertedPrice}
             />
         );
     }

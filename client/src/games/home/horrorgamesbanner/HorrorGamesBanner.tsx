@@ -3,14 +3,14 @@ import { SidenavEnums, GameResponse } from '../../../../client-server-common/com
 import GameListContainer, { GameListType } from '../../game/GameListContainer';
 import Slider from "react-slick";
 
-interface ICheapGamesBannerProps {
+interface IHorrorGamesBannerProps {
     goToRedirect: (URL: string) => void;
     sidebarActiveEnum: SidenavEnums;
     games: GameResponse[];
     mediaCarouselElement: any;
 }
 
-const CheapGamesBanner: React.SFC<ICheapGamesBannerProps> = (props: ICheapGamesBannerProps) => {
+const HorrorGamesBanner: React.SFC<IHorrorGamesBannerProps> = (props: IHorrorGamesBannerProps) => {
 
     function SampleNextArrow(props) {
         const { className, style, onClick } = props;
@@ -31,8 +31,6 @@ const CheapGamesBanner: React.SFC<ICheapGamesBannerProps> = (props: ICheapGamesB
         infinite: true,
         arrows: true,
         slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 3500,
         adaptiveHeight: true,
         variableWidth: true,
         draggable: false,
@@ -41,10 +39,10 @@ const CheapGamesBanner: React.SFC<ICheapGamesBannerProps> = (props: ICheapGamesB
     };
 
     return (
-        <div className="cheap-games-banner my-2">
+        <div className="horror-games-banner my-2">
             <h5 className="header color-tertiary px-5 mb-3">
-                <i className="far fa-star d-inline-block mr-2"/>
-                <div className="d-inline-block title" onClick={() => props.goToRedirect(`/search/steam/cheapgames`)}>Games under $10</div>
+                <i className="fas fa-ghost d-inline-block mr-2"/>
+                <div className="d-inline-block title" onClick={() => props.goToRedirect(`/search/steam/HorrorGames`)}>Horror</div>
             </h5>
             <Slider className="media-carousel mx-5" ref={slider => (props.mediaCarouselElement = slider)} {...settings} >
                 {props.games && props.games
@@ -65,4 +63,4 @@ const CheapGamesBanner: React.SFC<ICheapGamesBannerProps> = (props: ICheapGamesB
 
 };
 
-export default CheapGamesBanner;
+export default HorrorGamesBanner;

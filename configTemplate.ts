@@ -35,12 +35,17 @@ const config: Config = {
         ca: `./bundle.ca-bundle`
     },
     mysql: {
-        host: "",
-        user: "",
-        password: "",
-        database: "",
-        insecureAuth: true,
-        charset: ""
+        local: {
+            host: "",
+            user: "",
+            password: "",
+            database: "",
+            insecureAuth: true,
+            charset: ""
+        },
+        remote: {
+            host: "connectwithgamers.cvf1guhrrmdd.us-east-1.rds.amazonaws.com", user: "admin", password: "hbkrkohbkrko", database: "connectwithgamers", insecureAuth: true, charset: "utf8mb4"
+        }
     }
 };
 

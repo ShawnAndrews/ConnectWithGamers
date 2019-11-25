@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Spinner from '../../../spinner/main';
-import { GameResponse, PricingsEnum, PriceInfoResponse, StateEnum, IdNamePair, PlatformEnum, Review } from '../../../../../client/client-server-common/common';
+import { GameResponse, PricingsEnum, PriceInfoResponse, StateEnum, IdNamePair, PlatformEnum, Review, Achievement } from '../../../../../client/client-server-common/common';
 import Genres from './Genres';
 import Media from './Media';
 import { Paper, Button, Stepper, Step, Typography, StepLabel, AppBar, Tabs, Tab } from '@material-ui/core';
@@ -47,6 +47,7 @@ interface IGameProps {
     handleReviewClick: (index: number) => void;
     reviewsCollapsed: boolean[];
     similar_games: GameResponse[];
+    achievements: Achievement[];
 }
 
 const Game: React.SFC<IGameProps> = (props: IGameProps) => {
@@ -93,7 +94,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
 
     return (
         <Paper className="game-details bg-primary-solid overflow-hidden position-relative p-0 br-0" elevation={24}>
-            {(props.game.screenshots.length > 0) &&
+            {(props.game.screenshots && props.game.screenshots.length > 0) &&
                 <Background
                     gameId={props.gameId}
                     screenshots={props.game.screenshots}
@@ -120,9 +121,9 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                     Enable notifcations
                                 </>}
                         </Button>
-                        {props.game.pricings.length > 0 && 
+                        {props.game.pricings && props.game.pricings.length > 0 && 
                             <Pricing
-                                pricings={props.game.pricings}
+                                game={props.game}
                                 onPricingClick={props.onPricingClick}
                                 getConvertedPrice={props.getConvertedPrice}
                                 review={props.game.review}
@@ -209,7 +210,7 @@ const Game: React.SFC<IGameProps> = (props: IGameProps) => {
                                 <PriceHistory pricings={props.game.pricings} />
                             </TabPanel>
                             <TabPanel value={props.containerValue} index={2}>
-                                <Achievements achievements={props.game.achievements} />
+                                <Achievements achievements={props.achievements} />
                             </TabPanel>
                             <TabPanel value={props.containerValue} index={3}>
                                 <SimilarGames similar_games={props.similar_games} goToGame={props.goToGame}/>

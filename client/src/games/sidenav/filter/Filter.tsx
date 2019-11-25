@@ -1,13 +1,14 @@
 import * as React from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { Select, FormControl, MenuItem, Input, Chip, FormControlLabel, Checkbox, Slider } from '@material-ui/core';
-import { IdNamePair } from '../../../../client-server-common/common';
-import { SortingOptionEnum } from './FilterContainer';
+import { Select, FormControl, MenuItem, Input, Chip, Slider } from '@material-ui/core';
+import { IdNamePair, CurrencyType } from '../../../../client-server-common/common';
+import { SortingOptionEnum, MIN_PRICE_RANGE, MAX_PRICE_RANGE } from './FilterContainer';
+import { getCurrencySymbol } from '../../../util/main';
 
 interface IFilterProps {
-    popularity: number;
-    onPopularityChange: (value: number) => void;
+    priceRange: number[];
+    onPricesChange: (event: any, newValue: number | number[]) => void;
     releaseDateStart: Date;
     releaseDateEnd: Date;
     onReleaseDateStartChange: (date: Date) => void;
@@ -21,18 +22,10 @@ interface IFilterProps {
     platformOptions: IdNamePair[];
     platformsSelection: IdNamePair[];
     onPlatformSelectionChange: (event: any) => void;
-    categoryOptions: IdNamePair[];
-    categorySelection: IdNamePair[];
-    onCategorySelectionChange: (event: any) => void;
     onRefreshClick: () => void;
-    onCoverClick: (checked: boolean) => void;
-    onScreenshotsClick: (checked: boolean) => void;
-    onTrailerClick: (checked: boolean) => void;
     onSearchKeypress: (event: React.KeyboardEvent<Element>) => void;
     onSearchQueryChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    cover: boolean;
-    screenshots: boolean;
-    trailer: boolean;
+    currencyType: CurrencyType;
 }
 
 const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
@@ -49,21 +42,10 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                             <span className="fa fa-search form-control-feedback"/>
                             <input type="text" className="form-control" placeholder="Game title" onChange={props.onSearchQueryChanged} onKeyPress={props.onSearchKeypress} />
                         </div>
-                        <div className={`popularity px-3 mt-4 mb-5`}>
-                            Popularity — {props.popularity}%+
-                            <Slider
-                                className="slider mt-3"
-                                value={props.popularity}
-                                onChange={(e: any, v: any) => props.onPopularityChange(v)}
-                                min={0}
-                                max={100}
-                                step={1}
-                            />
-                        </div>
                         <div className={`release-date px-3 my-3`}>
                             <div>Release Date</div>
                             <div className="mt-2">
-                                <div className="date-picker cursor-pointer d-inline-block">
+                                <div className="date-picker left cursor-pointer d-inline-block position-relative">
                                     <DatePicker
                                         selected={props.releaseDateStart}
                                         onChange={props.onReleaseDateStartChange}
@@ -71,7 +53,7 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                     />
                                 </div>
                                 <div className="divider text-center d-inline-block">—</div>
-                                <div className="date-picker cursor-pointer d-inline-block">
+                                <div className="date-picker right cursor-pointer d-inline-block position-relative">
                                     <DatePicker
                                         selected={props.releaseDateEnd}
                                         onChange={props.onReleaseDateEndChange}
@@ -128,54 +110,6 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                 </Select>
                             </FormControl>
                         </div>
-                        <div className={`category px-3 my-3`}>
-                            <div>Category</div>
-                            <FormControl className="filter-multi-select w-100">
-                                <Select
-                                    multiple
-                                    value={props.categorySelection}
-                                    onChange={props.onCategorySelectionChange}
-                                    input={<Input id="select-multiple-chip" />}
-                                    renderValue={(selected: any) => (
-                                        <div>
-                                            {selected.map((x: IdNamePair) => (
-                                                <Chip key={x.id} className="chip m-2" label={x.name}/>
-                                            ))}
-                                        </div>
-                                    )}
-                                >
-                                    {props.categoryOptions.map((x: IdNamePair) => (
-                                        <MenuItem key={x.id} value={x.name}>
-                                            {x.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </div>
-                        <div className={`required px-3 my-3`}>
-                            <div className="mb-2">Required</div>
-                            <FormControlLabel
-                                className="filter-checkbox"
-                                control={
-                                    <Checkbox className="check" checked={props.cover} value={props.cover} onChange={(event: any, checked: boolean) => props.onCoverClick(checked)} />
-                                }
-                                label="Cover"
-                            />
-                            <FormControlLabel
-                                className="filter-checkbox"
-                                control={
-                                    <Checkbox className="check" checked={props.screenshots} value={props.screenshots} onChange={(event: any, checked: boolean) => props.onScreenshotsClick(checked)} />
-                                }
-                                label="Screenshots"
-                            />
-                            <FormControlLabel
-                                className="filter-checkbox"
-                                control={
-                                    <Checkbox className="check" checked={props.trailer} value={props.trailer} onChange={(event: any, checked: boolean) => props.onTrailerClick(checked)} />
-                                }
-                                label="Trailer"
-                            />
-                        </div>
                         <div className={`sorting px-3 `}>
                             <div className="mb-2">Sorting</div>
                             <FormControl>
@@ -190,6 +124,17 @@ const Filter: React.SFC<IFilterProps> = (props: IFilterProps) => {
                                             <MenuItem value={x.id}>{x.name}</MenuItem>)}
                                 </Select>
                             </FormControl>
+                        </div>
+                        <div className={`prices px-3 mt-4 mb-5`}>
+                            Price — {getCurrencySymbol(props.currencyType)} {props.priceRange[0]} to {getCurrencySymbol(props.currencyType)} {props.priceRange[1]} {props.currencyType}
+                            <Slider
+                                className="slider mt-3"
+                                value={props.priceRange}
+                                onChange={props.onPricesChange}
+                                valueLabelDisplay="auto"
+                                min={MIN_PRICE_RANGE}
+                                max={MAX_PRICE_RANGE}
+                            />
                         </div>
                         <div className="refresh color-primary cursor-pointer text-center text-uppercase font-weight-bold mt-4" onClick={props.onRefreshClick}>
                             Refresh

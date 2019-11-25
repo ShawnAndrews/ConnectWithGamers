@@ -26,7 +26,7 @@ const HomeMenu: React.SFC<IHomeMenusProps> = (props: IHomeMenusProps) => {
             {props.games && props.games
                 .map((game: GameResponse, index: number) => (
                     <GameListContainer
-                        type={GameListType.FullsizeScreenshot}
+                        type={GameListType.FullsizeCover}
                         game={game}
                         index={index}
                     />
@@ -34,6 +34,6 @@ const HomeMenu: React.SFC<IHomeMenusProps> = (props: IHomeMenusProps) => {
         </div>
     );
 
-}; 
+};
 
 export default HomeMenu;

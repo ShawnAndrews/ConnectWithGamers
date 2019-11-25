@@ -109,12 +109,22 @@ export interface Config {
         ca: string;
     };
     mysql: {
-        host: string,
-        user: string,
-        password: string,
-        database: string,
-        insecureAuth: boolean,
-        charset: string
+        local: {
+            host: string,
+            user: string,
+            password: string,
+            database: string,
+            insecureAuth: boolean,
+            charset: string
+        },
+        remote: {
+            host: string,
+            user: string,
+            password: string,
+            database: string,
+            insecureAuth: boolean,
+            charset: string
+        }
     };
 }
 
@@ -425,7 +435,6 @@ export interface GameResponse {
     developer: string;
     publisher: string;
     pricings: PriceInfoResponse[];
-    achievements: Achievement[];
     cover: string;
     cover_thumb: string;
     cover_huge: string;
@@ -463,6 +472,14 @@ export interface Review {
     author: {
         playtime_forever: number;
     };
+}
+
+export interface PricingStatus {
+    title: string;
+    price: number;
+    discount_percent: number;
+    discount_end_dt: Date;
+    state: StateEnum;
 }
 
 export interface PriceInfoResponse {

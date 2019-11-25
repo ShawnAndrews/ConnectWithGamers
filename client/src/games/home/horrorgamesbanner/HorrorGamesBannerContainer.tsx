@@ -1,21 +1,21 @@
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
-import CheapGamesBanner from './CheapGamesBanner';
+import HorrorGamesBanner from './HorrorGamesBanner';
 import { SidenavEnums, GameResponse } from '../../../../client-server-common/common';
 
-interface ICheapGamesBannerContainerProps extends RouteComponentProps<any> {
+interface IHorrorGamesBannerContainerProps extends RouteComponentProps<any> {
     goToRedirect: (URL: string) => void;
     sidebarActiveEnum: SidenavEnums;
     games: GameResponse[];
 }
 
-interface ICheapGamesBannerContainerState {
+interface IHorrorGamesBannerContainerState {
     mediaCarouselElement: any;
 }
 
-class CheapGamesBannerContainer extends React.Component<ICheapGamesBannerContainerProps, ICheapGamesBannerContainerState> {
+class HorrorGamesBannerContainer extends React.Component<IHorrorGamesBannerContainerProps, IHorrorGamesBannerContainerState> {
 
-    constructor(props: ICheapGamesBannerContainerProps) {
+    constructor(props: IHorrorGamesBannerContainerProps) {
         super(props);
 
         this.state = {
@@ -25,7 +25,7 @@ class CheapGamesBannerContainer extends React.Component<ICheapGamesBannerContain
 
     render() {
         return (
-            <CheapGamesBanner
+            <HorrorGamesBanner
                 goToRedirect={this.props.goToRedirect}
                 sidebarActiveEnum={this.props.sidebarActiveEnum}
                 games={this.props.games}
@@ -36,4 +36,4 @@ class CheapGamesBannerContainer extends React.Component<ICheapGamesBannerContain
 
 }
 
-export default withRouter(CheapGamesBannerContainer);
+export default withRouter(HorrorGamesBannerContainer);

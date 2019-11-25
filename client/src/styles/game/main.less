@@ -285,7 +285,8 @@
         .pricing {
             position: relative;
             color: rgba(white, 0.9);
-            
+            height: 50px;
+
             .tooltip-container {
 
                 .tooltip-header {
@@ -328,9 +329,7 @@
 
             .review {
                 position: absolute;
-                right: 0;
                 top: 8px;
-                width: 45%;
 
                 .name {
                     font-weight: bold;
@@ -348,31 +347,38 @@
                 font-size: 35px;
             }
 
-            .game-price-container {
+            .price-container {
 
-                .price {
+                .text {
                     color: #38caeb;
                     font-weight: bold;
-                    font-size: 30px;
+                    font-size: 25px;
+                    position: absolute;
+                    top: 12px;
+
+                    &.with-discount {
+                        position: relative;
+                        top: 0px;
+                    }
                 }
 
-                .discount-container {
-                
-                    .discount-price {
-                        color: @tertiary-color;
-                        font-size: 13px;
-                    }
+                .base-price {
+                    color: @tertiary-color;
+                    font-size: 13px;
+                    position: relative;
+                    top: 5px;
+                }
 
-                    .discount-percent {
-                        background-color: #308420;
-                        border-radius: 20px;
-                        width: 47px;
-                        font-size: 13px;
-                        color: rgba(255, 255, 255, 0.73);
-                        margin-left: 10px;
-                        margin-bottom: 10px;
-                    }
-                    
+                .discount {
+                    background-color: #308420;
+                    border-radius: 20px;
+                    font-size: 13px;
+                    padding-left: 6px!important;
+                    padding-right: 6px!important;
+                    color: rgba(255,255,255,0.73);
+                    position: absolute;
+                    top: 4px;
+                    left: 105px;
                 }
             }
         }

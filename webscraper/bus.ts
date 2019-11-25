@@ -101,7 +101,7 @@ function processSteamId(steamId: number): Promise<void> {
             const reviewEnum: ReviewEnum = $(`.user_reviews_summary_row:nth-child(${totalReviewCountTempTemp}) .game_review_summary:not(.not_enough_reviews)`).length > 0 ? ReviewEnum[$(`.user_reviews_summary_row:nth-child(${totalReviewCountTempTemp}) .game_review_summary:not(.not_enough_reviews)`).html()] : ReviewEnum["No User Reviews"];
             const summary: string = $(`#game_area_description`).length > 0 ? cleanString($(`#game_area_description`).html().replace(`<h2>About This Game</h2>`, ``)) : "";
             const firstReleaseDate: Date = ($(".release_date > div.date").length > 0 && ($(".release_date > div.date").html().includes(`, 20`) || $(".release_date > div.date").html().includes(`, 19`))) ? new Date($(".release_date > div.date").html()) : undefined;
-            const video: string = $(".highlight_movie").length > 0 ? $(".highlight_movie").attr("data-mp4-source").replace(`movie480`, `movie_max`) : undefined;
+            const video: string = $(".highlight_movie").length > 0 ? $(".highlight_movie").attr("data-mp4-source") : undefined;
             const stateEnum: StateEnum =
             ($(`head > title`).html().includes(`Pre-purchase`) ? StateEnum.Preorder : undefined) ||
             ($(`.early_access_header`).length > 0 ? StateEnum["Early Access"] : undefined) ||

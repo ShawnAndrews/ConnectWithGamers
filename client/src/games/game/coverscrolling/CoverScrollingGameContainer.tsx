@@ -6,7 +6,6 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GameResponse, CurrencyType } from '../../../../client-server-common/common';
 import CoverScrollingGame from './CoverScrollingGame';
 import { GlobalReduxState } from '../../../reducers/main';
-import { getPriceInUserCurrency } from '../../../util/main';
 
 interface ICoverScrollingGameContainerProps extends RouteComponentProps<any> {
     index: number;
@@ -40,7 +39,6 @@ class CoverScrollingGameContainer extends React.Component<Props, ICoverScrolling
         this.onHoverOutGame = this.onHoverOutGame.bind(this);
         this.nextScreenshotIndex = this.nextScreenshotIndex.bind(this);
         this.onVideoPreviewEnded = this.onVideoPreviewEnded.bind(this);
-        this.getConvertedPrice = this.getConvertedPrice.bind(this);
 
         this.state = {
             hoveredTimeout: undefined,
@@ -88,10 +86,6 @@ class CoverScrollingGameContainer extends React.Component<Props, ICoverScrolling
         });
     }
 
-    getConvertedPrice(price: number): string {
-        return getPriceInUserCurrency(price, this.props.currencyType, this.props.currencyRate);
-    }
-
     render() {
         return (
             <CoverScrollingGame
@@ -103,7 +97,6 @@ class CoverScrollingGameContainer extends React.Component<Props, ICoverScrolling
                 goToGame={this.goToGame}
                 onVideoPreviewEnded={this.onVideoPreviewEnded}
                 videoPreviewEnded={this.state.videoPreviewEnded}
-                getConvertedPrice={this.getConvertedPrice}
             />
         );
     }

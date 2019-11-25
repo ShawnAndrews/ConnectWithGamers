@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { Tooltip } from '@material-ui/core';
-import { PriceInfoResponse, PricingsEnum, IdNamePair, ReviewEnum } from '../../../../client-server-common/common';
+import { PriceInfoResponse, PricingsEnum, IdNamePair, ReviewEnum, GameResponse } from '../../../../client-server-common/common';
 import { Textfit } from 'react-textfit';
+import PriceContainer from '../../price/PriceContainer';
 
 interface IPricingProps {
-    pricings: PriceInfoResponse[];
+    game: GameResponse;
     onPricingClick: () => void;
     getConvertedPrice: (price: number, skipCurrencyType: boolean) => string;
     review: IdNamePair;
@@ -13,12 +14,9 @@ interface IPricingProps {
 
 const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
 
-    const mainGame: PriceInfoResponse = props.pricings.find((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.main_game);
-    let isDiscounted: boolean = mainGame && mainGame.price && !!mainGame.discount_percent;
-    let basePrice: number = isDiscounted && + (mainGame.price / ((100 - mainGame.discount_percent) / 100)).toFixed(2);
-    const demoPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.demo) !== -1;
-    const dlcPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.dlc) !== -1;
-    const bundlesPricingsExist: boolean = props.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.bundles) !== -1;
+    const demoPricingsExist: boolean = props.game.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.demo) !== -1;
+    const dlcPricingsExist: boolean = props.game.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.dlc) !== -1;
+    const bundlesPricingsExist: boolean = props.game.pricings.findIndex((priceInfo: PriceInfoResponse) => priceInfo.pricingEnumSysKeyId === PricingsEnum.bundles) !== -1;
     const reviewColor: string = 
         props.review.id === ReviewEnum["Overwhelmingly Negative"] ? "216,20,20" : 
         props.review.id === ReviewEnum["Very Negative"] ? "214,63,63" : 
@@ -41,7 +39,7 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
         props.review.id === ReviewEnum["Overwhelmingly Positive"] ? 100 : 0;
 
     const getEntriesByPricingsEnum = (pricingEnum: PricingsEnum): any[] => {
-        return props.pricings
+        return props.game.pricings
             .filter((priceInfo: PriceInfoResponse) => {
                 return priceInfo.pricingEnumSysKeyId === pricingEnum
             })
@@ -60,19 +58,11 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
 
     return (
         <div className="pricing w-100 d-inline-block">
-            <div className="d-inline-block">
-                {!mainGame 
-                    ? 
-                    <div className="free">Free</div>
-                    : 
-                    <div className="game-price-container">
-                        {mainGame.price && <div className="price d-inline-block">{props.getConvertedPrice(mainGame.price, true)}</div>}
-                        {isDiscounted &&
-                            <div className="discount-container d-inline-block">
-                                <span className="discount-percent d-block pl-2">-{mainGame.discount_percent}%</span>
-                                <del className="discount-price d-block pl-2">{props.getConvertedPrice(basePrice, true)}</del>
-                            </div>}
-                    </div>}
+            <div className="d-inline-block w-50">
+                <PriceContainer
+                    game={props.game}
+                    showTextStatus={true}
+                />
             </div>
             <div className="review d-inline-block">
                 <Textfit className="name" style={{ color: `rgb(${reviewColor})` }} min={10.5}>{props.review.name} <sup>{props.total_review_count !== 0 ? props.total_review_count : ``}</sup></Textfit>

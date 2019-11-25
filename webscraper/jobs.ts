@@ -8,39 +8,42 @@ import { log } from "./logger/main";
 const steamIdsNotAvailableInRegion: number[] = [801220];
 const db: DatabaseBase = new DatabaseBase();
 
-export const scheduleRefreshGamesJob = (rule: any) => {
-    scheduleJob(rule, () => {
-        let steamIdToRefresh: number;
+export const scheduleRefreshGamesJob = (ms: any) => {
+    let steamIdToRefresh: number;
 
-        db.custom(
-            `SELECT ${DbTableSteamGamesFields[0]}
-            FROM ${DbTables.steam_games}
-            ORDER BY ${DbTableSteamGamesFields[8]} ASC
-            LIMIT 1`,
-            [])
-            .then((dbResponse: GenericModelResponse) => {
+    const recall = (): void => { setTimeout(scheduleRefreshGamesJob, ms, ms); };
 
-                if (dbResponse.data.length > 0) {
-                    steamIdToRefresh = dbResponse.data[0][DbTableSteamGamesFields[0]];
+    db.custom(
+        `SELECT ${DbTableSteamGamesFields[0]}
+        FROM ${DbTables.steam_games}
+        ORDER BY ${DbTableSteamGamesFields[8]} ASC
+        LIMIT 1`,
+        [])
+        .then((dbResponse: GenericModelResponse) => {
 
-                    db.custom(
-                        `INSERT INTO ${DbTables.bus_messages} (${DbTableBusMessagesFields.join(`,`)})
-                        VALUES (${BusMessagesEnum.game}, ${BusMessagesPriorityEnum.low}, ?, NOW())`,
-                        [steamIdToRefresh])
-                        .then()
-                        .catch(() => {
-                            // do nothing, steam id already exists in db to be updated
-                        });
-                } else {
-                    log(`[Refresh games job] Failed because there are no games in database.`);
-                }
+            if (dbResponse.data.length > 0) {
+                steamIdToRefresh = dbResponse.data[0][DbTableSteamGamesFields[0]];
 
-            })
-            .catch((error: string) => {
-                log(`[Refresh games job] Failed to select a game to refresh. ${error}`);
-            });
+                db.custom(
+                    `INSERT INTO ${DbTables.bus_messages} (${DbTableBusMessagesFields.join(`,`)})
+                    VALUES (${BusMessagesEnum.game}, ${BusMessagesPriorityEnum.low}, ?, NOW())`,
+                    [steamIdToRefresh])
+                    .then()
+                    .catch(() => {
+                        // do nothing, steam id already exists in db to be updated
+                    })
+                    .finally(() => {
+                        recall();
+                    });
+            } else {
+                recall();
+                log(`[Refresh games job] Failed because there are no games in database.`);
+            }
 
-    });
+        })
+        .catch((error: string) => {
+            log(`[Refresh games job] Failed to select a game to refresh. ${error}`);
+        });
 };
 
 export const scheduleRouteJob = (rule: any) => {
@@ -126,7 +129,7 @@ function addGamesToBus(steamIds: number[]): Promise<void> {
 function getAllSteamDatabaseGames(): Promise<number[]> {
 
     let max_pages: number = -1;
-    const getPageLink = (pageNum: number): string => `https://store.steampowered.com/search/?sort_by=Released_DESC&category1=998&page=${pageNum}`;
+    const getPageLink = (pageNum: number): string => `https:;// store.steampowered.com/search/?sort_by=Released_DESC&category1=998&page=${pageNum}`;
 
     return new Promise((resolve: any, reject: any) => {
 

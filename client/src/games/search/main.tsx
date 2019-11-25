@@ -9,7 +9,7 @@ const SearchRouter: React.SFC<any> = () => {
 
     return (
         <Switch>
-            <Route path="/search/filter/:required?/:platforms?/:genres?/:categories?/:date?/:sort?" component={ResultsContainer}/>
+            <Route path="/search/filter/:platforms?/:genres?/:price?/:date?/:sort?" component={ResultsContainer}/>
             <Route path="/search/game/:id" component={GameContainer} />
             <Route path="/search" component={HomeMenuContainer} />
             <Route exact path="/search" render={() => <Redirect to="/search/filter"/>} />

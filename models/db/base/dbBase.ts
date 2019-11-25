@@ -1,7 +1,6 @@
 import { createConnection, Connection, MysqlError, FieldInfo } from "mysql";
 import { GenericModelResponse } from "../../../client/client-server-common/common";
 import config from "../../../config";
-import { log } from "../../../webscraper/logger/main";
 
 export default class DatabaseBase {
 
@@ -20,7 +19,7 @@ export default class DatabaseBase {
      * Connect to MySQL database.
      */
     connectToDatabase(errCallback?: (err: MysqlError) => void): void {
-        this.connection = createConnection(config.mysql);
+        this.connection = createConnection(config.mysql.remote);
         this.connection.connect(errCallback);
         this.connection.on("error", function(err) {
             console.log(err.code);
@@ -45,7 +44,7 @@ export default class DatabaseBase {
             preparedVars = columnValues;
 
             // prepare query
-            query =  `INSERT INTO ${config.mysql.database}.${tableName} (${columnNames.join(",")}) VALUES (${preparedValues})`;
+            query =  `INSERT INTO ${tableName} (${columnNames.join(",")}) VALUES (${preparedValues})`;
 
             // execute query
             this.connection.query(query, preparedVars, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {
@@ -78,7 +77,7 @@ export default class DatabaseBase {
                 }
 
                 // prepare query
-                query = `SELECT ${returnColumns} FROM ${config.mysql.database}.${tableName}`;
+                query = `SELECT ${returnColumns} FROM ${tableName}`;
                 if (conditions) {
                     query = query.concat(` WHERE ${conditions}`);
                 }
@@ -92,6 +91,7 @@ export default class DatabaseBase {
                         console.log(`SELECT error: ${JSON.stringify(error)}`);
                         return reject(error);
                     }
+                    console.log(`SELECT resp: ${response.data}`);
                     response.data = results;
                     return resolve(response);
                 });
@@ -134,7 +134,7 @@ export default class DatabaseBase {
             preparedVars = columnValues.concat(conditionVals ? conditionVals : []);
 
             // prepare query
-            query =  `UPDATE ${config.mysql.database}.${tableName} SET ${preparedValues}`;
+            query =  `UPDATE ${tableName} SET ${preparedValues}`;
             if (conditions) {
                 query = query.concat(` WHERE ${conditions}`);
             }
@@ -163,7 +163,7 @@ export default class DatabaseBase {
             let query: string;
 
             // prepare query
-            query =  `DELETE FROM ${config.mysql.database}.${tableName} WHERE ${preparedValues.join(" AND ")}`;
+            query =  `DELETE FROM ${tableName} WHERE ${preparedValues.join(" AND ")}`;
 
             // execute query
             this.connection.query(query, values, (error: MysqlError | null, results: any, fields: FieldInfo[]) => {

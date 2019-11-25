@@ -5,10 +5,9 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GameResponse, CurrencyType } from '../../../client-server-common/common';
 import GameList from './GameList';
 import { GlobalReduxState } from '../../reducers/main';
-import { getPriceInUserCurrency } from '../../util/main';
 
 export enum GameListType {
-    FullsizeScreenshot,
+    SmallCover,
     Search,
     Transparent,
     FullsizeCover,
@@ -19,7 +18,7 @@ export enum GameListType {
 interface IGameListContainerProps extends RouteComponentProps<any> {
     type: GameListType;
     game: GameResponse;
-    index?: number;
+    index: number;
 } 
 
 interface IGameListContainerState { }
@@ -40,15 +39,10 @@ class GameListContainer extends React.Component<Props, IGameListContainerState> 
     constructor(props: Props) {
         super(props);
         this.goToGame = this.goToGame.bind(this);
-        this.getConvertedPrice = this.getConvertedPrice.bind(this);
     }
 
     goToGame(): void {
         this.props.history.push(`/search/game/${this.props.game.steamId}`);
-    }
-
-    getConvertedPrice(price: number): string {
-        return getPriceInUserCurrency(price, this.props.currencyType, this.props.currencyRate);
     }
 
     render() {
@@ -57,7 +51,6 @@ class GameListContainer extends React.Component<Props, IGameListContainerState> 
                 type={this.props.type}
                 game={this.props.game}
                 goToGame={this.goToGame}
-                getConvertedPrice={this.getConvertedPrice}
                 index={this.props.index}
             />
         );

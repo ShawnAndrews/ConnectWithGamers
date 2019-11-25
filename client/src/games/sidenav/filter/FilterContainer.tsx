@@ -1,12 +1,20 @@
 import * as React from 'react';
+import * as Redux from 'redux';
+import { connect } from 'react-redux';
+import * as SteamService from '../../../service/steam/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Filter from './Filter';
-import { IdNamePair } from '../../../../client-server-common/common';
+import { IdNamePair, GenericModelResponse, CurrencyType } from '../../../../client-server-common/common';
+import { GlobalReduxState } from '../../../reducers/main';
+
+export const MIN_PRICE_RANGE: number = 0;
+
+export const MAX_PRICE_RANGE: number = 100;
 
 export enum SortingOptionEnum {
     "None",
-    "PopularityAsc",
-    "PopularityDesc",
+    "PriceAsc",
+    "PriceDesc",
     "ReleaseDateAsc",
     "ReleaseDateDesc",
     "AlphabeticallyAsc",
@@ -19,101 +27,73 @@ interface IFilterContainerProps extends RouteComponentProps<any> {
 
 interface IFilterContainerState {
     searchTerm: string;
-    popularity: number;
+    priceRange: number[];
     releaseDateStart: Date;
     releaseDateEnd: Date;
     genreOptions: IdNamePair[];
     platformOptions: IdNamePair[];
     sortingOptions: IdNamePair[];
-    categoryOptions: IdNamePair[];
     sortingSelection: SortingOptionEnum;
     genresSelection: IdNamePair[];
     platformsSelection: IdNamePair[];
-    categorySelection: IdNamePair[];
-    cover: boolean;
-    screenshots: boolean;
-    trailer: boolean;
-    disableNonBrowse: boolean;
 }
 
-class FilterContainer extends React.Component<IFilterContainerProps, IFilterContainerState> {
+interface ReduxStateProps {
+    currencyType: CurrencyType;
+    currencyRate: number;
+}
 
-    constructor(props: IFilterContainerProps) {
+interface ReduxDispatchProps {
+
+}
+
+type Props = IFilterContainerProps & ReduxStateProps & ReduxDispatchProps;
+
+class FilterContainer extends React.Component<Props, IFilterContainerState> {
+
+    constructor(props: Props) {
         super(props);
-        this.onPopularityChange = this.onPopularityChange.bind(this);
+        this.onPricesChange = this.onPricesChange.bind(this);
         this.onReleaseDateStartChange = this.onReleaseDateStartChange.bind(this);
         this.onReleaseDateEndChange = this.onReleaseDateEndChange.bind(this);
         this.onSortingSelectionChange = this.onSortingSelectionChange.bind(this);
         this.onGenresSelectionChange = this.onGenresSelectionChange.bind(this);
         this.onPlatformSelectionChange = this.onPlatformSelectionChange.bind(this);
-        this.onCategorySelectionChange = this.onCategorySelectionChange.bind(this);
         this.onRefreshClick = this.onRefreshClick.bind(this);
-        this.onCoverClick = this.onCoverClick.bind(this);
-        this.onScreenshotsClick = this.onScreenshotsClick.bind(this);
-        this.onTrailerClick = this.onTrailerClick.bind(this);
         this.onSearchQueryChanged = this.onSearchQueryChanged.bind(this);
         this.onSearchKeypress = this.onSearchKeypress.bind(this);
+        this.loadGenres = this.loadGenres.bind(this);
+        this.loadPlatforms = this.loadPlatforms.bind(this);
 
         const sortingOptions: IdNamePair[] = [
-            { id: SortingOptionEnum.PopularityAsc, name: 'Popularity ↑' },
-            { id: SortingOptionEnum.PopularityDesc, name: 'Popularity ↓' },
+            { id: SortingOptionEnum.PriceAsc, name: 'Price ↑' },
+            { id: SortingOptionEnum.PriceDesc, name: 'Price ↓' },
             { id: SortingOptionEnum.ReleaseDateAsc, name: 'Release Date ↑' },
             { id: SortingOptionEnum.ReleaseDateDesc, name: 'Release Date ↓' },
             { id: SortingOptionEnum.AlphabeticallyAsc, name: 'Alphabetical ↑' },
             { id: SortingOptionEnum.AlphabeticallyDesc, name: 'Alphabetical ↓' },
         ];
 
-        // const genreOptions: IdNamePair[] = [
-        //     { id: SteamGenreEnums.action, name: 'Action' },
-        //     { id: SteamGenreEnums.adventure, name: 'Adventure' },
-        //     { id: SteamGenreEnums.shooter, name: 'Shooter' },
-        //     { id: SteamGenreEnums.simulation, name: 'Simulation' },
-        //     { id: SteamGenreEnums.rpg, name: 'RPG' },
-        //     { id: SteamGenreEnums.puzzle, name: 'Puzzle' },
-        //     { id: SteamGenreEnums.strategy, name: 'Strategy' },
-        // ];
-
-        // const platformOptions: IdNamePair[] = [
-        //     { id: SteamPlatformEnums.pc, name: 'PC' },
-        //     { id: SteamPlatformEnums.linux, name: 'Linux' },
-        //     { id: SteamPlatformEnums.mac, name: 'Mac' },
-        //     { id: SteamPlatformEnums.vr, name: 'Virtual Reality' },
-        //     { id: SteamPlatformEnums.switch, name: 'Nintendo Switch' },
-        //     { id: SteamPlatformEnums.ps4, name: 'Playstation 4' },
-        //     { id: SteamPlatformEnums.xboxone, name: 'Xbox One' }
-        // ];
-
-        // const categoryOptions: IdNamePair[] = [
-        //     { id: SteamCategoryEnums.maingame, name: 'Main Game' },
-        //     { id: SteamCategoryEnums.dlc, name: 'DLC' },
-        //     { id: SteamCategoryEnums.expansion, name: 'Expansion' },
-        //     { id: SteamCategoryEnums.bundle, name: 'Bundle' },
-        //     { id: SteamCategoryEnums.standaloneexpansion, name: 'Standalone Expansion' }
-        // ];
+        this.loadGenres();
+        this.loadPlatforms();
 
         this.state = {
             searchTerm: '',
-            popularity: 0,
+            priceRange: [MIN_PRICE_RANGE, MAX_PRICE_RANGE],
             releaseDateStart: undefined,
             releaseDateEnd: undefined,
             genreOptions: [],
-            categoryOptions: [],
             platformOptions: [],
             sortingOptions: sortingOptions,
-            sortingSelection: SortingOptionEnum.None,
+            sortingSelection: SortingOptionEnum.ReleaseDateDesc,
             genresSelection: [],
             platformsSelection: [],
-            categorySelection: [],
-            cover: false,
-            screenshots: false,
-            trailer: false,
-            disableNonBrowse: false
         };
     }
 
-    onPopularityChange(value: number): void {
+    onPricesChange(event: any, newValue: number[]): void {
         this.setState({
-            popularity: value
+            priceRange: newValue
         });
     }
 
@@ -169,44 +149,24 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         });
     }
 
-    onCategorySelectionChange(event: any): void {
-        const categoryNameToAdd: string = event.target.value[event.target.value.length - 1].toString();
-        const newCategorySelection: IdNamePair[] = this.state.categorySelection;
-        const foundCategoryIndex: number = newCategorySelection.findIndex((x: IdNamePair) => x.name === categoryNameToAdd);
-
-        if (foundCategoryIndex === -1) {
-            const categoryToAdd: IdNamePair = this.state.categoryOptions.find((x: IdNamePair) => x.name === categoryNameToAdd);
-            newCategorySelection.push(categoryToAdd);
-        } else {
-            newCategorySelection.splice(foundCategoryIndex, 1);
-        }
-
-        this.setState({
-            categorySelection: newCategorySelection
-        });
-    }
-
     onRefreshClick(): void {
         let queryString: string = `/search/filter/?`;
         const filters: string[] = [];
-        const required: string[] = [];
 
-        if (this.state.searchTerm) {
-            filters.push(`query=${this.state.searchTerm}`);
-        }
+        filters.push(`query=${this.state.searchTerm}`);
 
         if (this.state.releaseDateStart) {
-            const timestamp: number = this.state.releaseDateStart.getTime() / 1000;
+            const timestamp: number = this.state.releaseDateStart.getTime();
             filters.push(`released_after=${timestamp}`);
         }
 
         if (this.state.releaseDateEnd) {
-            const timestamp: number = this.state.releaseDateEnd.getTime() / 1000;
+            const timestamp: number = this.state.releaseDateEnd.getTime();
             filters.push(`released_before=${timestamp}`);
         }
 
-        if (this.state.popularity) {
-            filters.push(`popularity=${this.state.popularity}`);
+        if (this.state.priceRange) {
+            filters.push(`price=${this.state.priceRange[0]},${this.state.priceRange[1]}`);
         }
 
         if (this.state.genresSelection.length > 0) {
@@ -219,33 +179,12 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
             filters.push(`platforms=${platforms}`);
         }
 
-        if (this.state.categorySelection.length > 0) {
-            const categories: string = this.state.categorySelection.map((x: IdNamePair) => x.id).join();
-            filters.push(`categories=${categories}`);
-        }
-
-        if (this.state.cover) {
-            required.push(`cover`);
-        }
-
-        if (this.state.screenshots) {
-            required.push(`screenshots`);
-        }
-
-        if (this.state.trailer) {
-            required.push(`trailer`);
-        }
-
-        if (required.length > 0) {
-            filters.push(`required=${required.join()}`);
-        }
-
         if (this.state.sortingSelection) {
             
-            if (this.state.sortingSelection.valueOf() === SortingOptionEnum.PopularityAsc.valueOf()) {
-                filters.push(`sort=popularity:asc`);
-            } else if (this.state.sortingSelection.valueOf() === SortingOptionEnum.PopularityDesc.valueOf()) {
-                filters.push(`sort=popularity:desc`);
+            if (this.state.sortingSelection.valueOf() === SortingOptionEnum.PriceAsc.valueOf()) {
+                filters.push(`sort=price:asc`);
+            } else if (this.state.sortingSelection.valueOf() === SortingOptionEnum.PriceDesc.valueOf()) {
+                filters.push(`sort=price:desc`);
             } else if (this.state.sortingSelection.valueOf() === SortingOptionEnum.ReleaseDateAsc.valueOf()) {
                 filters.push(`sort=release_date:asc`);
             } else if (this.state.sortingSelection.valueOf() === SortingOptionEnum.ReleaseDateDesc.valueOf()) {
@@ -261,39 +200,45 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
         this.props.history.push(queryString);
     }
 
-    onCoverClick(checked: boolean): void {
-        this.setState({
-            cover: checked
-        });
+    loadGenres(): void {
+        SteamService.httpGenericGetData<GenericModelResponse>(`/api/steam/genres`)
+            .then( (response: GenericModelResponse) => {
+                const genres: IdNamePair[] = response.data.slice(0, 12);
+
+                this.setState({ genreOptions: genres });
+            })
+            .catch( (error: string) => {
+                this.setState({ genreOptions: [] });
+            });
     }
 
-    onScreenshotsClick(checked: boolean): void {
-        this.setState({
-            screenshots: checked
-        });
-    }
+    loadPlatforms(): void {
+        SteamService.httpGenericGetData<GenericModelResponse>(`/api/steam/platforms`)
+            .then( (response: GenericModelResponse) => {
+                const platforms: IdNamePair[] = response.data;
 
-    onTrailerClick(checked: boolean): void {
-        this.setState({
-            trailer: checked
-        });
+                this.setState({ platformOptions: platforms });
+            })
+            .catch( (error: string) => {
+                this.setState({ platformOptions: [] });
+            });
     }
-
+    
     onSearchQueryChanged(e: React.ChangeEvent<HTMLInputElement>): void {
         this.setState({ searchTerm: e.target.value });
     }
 
     onSearchKeypress(event: React.KeyboardEvent<Element>): void {
         if (event.key === `Enter`) {
-            this.props.history.push(`/search/filter/?query=${this.state.searchTerm}`);
+            this.onRefreshClick();
         }
     }
 
     render() {
         return (
             <Filter
-                popularity={this.state.popularity}
-                onPopularityChange={this.onPopularityChange}
+                priceRange={this.state.priceRange}
+                onPricesChange={this.onPricesChange}
                 releaseDateStart={this.state.releaseDateStart}
                 releaseDateEnd={this.state.releaseDateEnd}
                 onReleaseDateStartChange={this.onReleaseDateStartChange}
@@ -307,22 +252,28 @@ class FilterContainer extends React.Component<IFilterContainerProps, IFilterCont
                 platformOptions={this.state.platformOptions}
                 platformsSelection={this.state.platformsSelection}
                 onPlatformSelectionChange={this.onPlatformSelectionChange}
-                categoryOptions={this.state.categoryOptions}
-                categorySelection={this.state.categorySelection}
-                onCategorySelectionChange={this.onCategorySelectionChange}
                 onRefreshClick={this.onRefreshClick}
-                onCoverClick={this.onCoverClick}
-                onScreenshotsClick={this.onScreenshotsClick}
-                onTrailerClick={this.onTrailerClick}
                 onSearchKeypress={this.onSearchKeypress}
                 onSearchQueryChanged={this.onSearchQueryChanged}
-                cover={this.state.cover}
-                screenshots={this.state.screenshots}
-                trailer={this.state.trailer}
+                currencyType={this.props.currencyType}
             />
         );
     }
 
 }
 
-export default withRouter(FilterContainer);
+const mapStateToProps = (state: any, ownProps: IFilterContainerProps): ReduxStateProps => {
+    const globalModalReduxState: GlobalReduxState = state;
+
+    return {
+        currencyType: globalModalReduxState.topnav.currencyType,
+        currencyRate: globalModalReduxState.topnav.currencyRate
+    };
+};
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: IFilterContainerProps): ReduxDispatchProps => ({
+
+});
+
+export default withRouter(connect<ReduxStateProps, ReduxDispatchProps, IFilterContainerProps>
+    (mapStateToProps, mapDispatchToProps)(FilterContainer));

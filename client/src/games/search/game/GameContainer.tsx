@@ -1,5 +1,4 @@
 const popupS = require('popups');
-// const Chart = require('chart.js');
 import * as Chart from 'chart.js';
 import * as Redux from 'redux';
 import * as React from 'react';
@@ -7,7 +6,7 @@ import { connect } from 'react-redux';
 import * as SteamService from '../../../service/steam/main';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Game from './Game';
-import { SingleGameResponse, GameResponse, CurrencyType, Review, GameReviewsResponse, MultiGameResponse, PriceInfoResponse, PricingsEnum } from '../../../../../client/client-server-common/common';
+import { SingleGameResponse, GameResponse, CurrencyType, Review, GameReviewsResponse, MultiGameResponse, PriceInfoResponse, PricingsEnum, Achievement, GenericModelResponse } from '../../../../../client/client-server-common/common';
 import { loggedIn } from '../../../service/account/main';
 import { GlobalReduxState } from '../../../reducers/main';
 import { getPriceInUserCurrency, getFormattedDate, getUniquePricings } from '../../../util/main';
@@ -31,6 +30,7 @@ interface IGameContainerState {
     reviews: Review[];
     reviewsCollapsed: boolean[];
     similar_games: GameResponse[];
+    achievements: Achievement[];
 }
 
 interface ReduxStateProps {
@@ -63,7 +63,8 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
             containerValue: 0,
             reviews: undefined,
             reviewsCollapsed: undefined,
-            similar_games: undefined
+            similar_games: undefined,
+            achievements: undefined
         };
         this.loadGame = this.loadGame.bind(this);
         this.handleSteamClick = this.handleSteamClick.bind(this);
@@ -234,7 +235,17 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
                 this.setState({ similar_games: response.data });
             })
             .catch( (error: string) => {
-                console.log(`Error loading steam reviews: ${error}`);
+                console.log(`Error loading similar games: ${error}`);
+            });
+    }
+
+    loadAchievements(): void {
+        SteamService.httpGenericGetData<GenericModelResponse>(`/api/steam/game/achievements/${this.state.game.steamId}`)
+            .then( (response: GenericModelResponse) => {
+                this.setState({ achievements: response.data });
+            })
+            .catch( (error: string) => {
+                console.log(`Error loading steam achievements: ${error}`);
             });
     }
 
@@ -262,6 +273,8 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
 
         if (newValue === 1 && this.state.game.pricings && this.state.game.pricings.length > 0) {
             this.loadPricingHistory();
+        } else if (newValue === 2 && !this.state.achievements) {
+            this.loadAchievements();
         } else if (newValue === 3 && !this.state.similar_games) {
             this.loadSimilarGames();
         } else if (newValue === 4 && !this.state.reviews) {
@@ -352,6 +365,7 @@ class GameContainer extends React.PureComponent<Props, IGameContainerState> {
                 handleReviewClick={this.handleReviewClick}
                 reviewsCollapsed={this.state.reviewsCollapsed}
                 similar_games={this.state.similar_games}
+                achievements={this.state.achievements}
             />
         );
     }

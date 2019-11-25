@@ -110,7 +110,7 @@
         background-color: rgba(white, 0.1);
     }
     &::-webkit-scrollbar {
-        width: 7px;
+        width: 4px;
         background: transparent;
     }
     &::-webkit-scrollbar-thumb {
@@ -212,15 +212,31 @@
     line-height: 40px;
 }
 
-.slider {
-
-    * {
-        background-color: @games-filter-color!important;
-        box-shadow: none!important;
-    }
-}
-
 .date-picker {
+
+    &.left {
+
+        .react-datepicker-popper {
+            top: 30px!important;
+            left: 0px!important;
+            right: unset!important;
+            transform: none!important;
+        }
+    }
+
+    &.right {
+
+        .react-datepicker-popper {
+            top: 30px!important;
+            left: unset!important;
+            right: 0px!important;
+            transform: none!important;
+        }
+    }
+
+    .react-datepicker__triangle {
+        display: none;
+    }
 
     input {
         width: 95px;
@@ -247,12 +263,30 @@
     background: rgba(0,0,0,0.15);
 }
 
-.total-results {
+.sort-by {
     position: relative;
-    left: 0px;
-    margin-left: 0px;
+    margin-right: 50px;
+    float: right;
     color: @tertiary-color;
-    line-height: 43px;
+
+    .popper {
+        z-index: 1000;
+        right: 103px;
+    }
+
+    .MuiButton-containedPrimary {
+        color: @tertiary-color!important;
+        background-color: #424242!important;
+    }
+
+    .MuiButtonGroup-groupedContainedPrimary:not(:last-child) {
+        border-right: 1px solid #383737!important;
+    }
+
+    li {
+        background-color: #424242!important;
+        border: 1px solid #3c3c3c!important;
+    }
 }
 
 .filter-wrapper {
@@ -279,7 +313,7 @@
         margin: 0px;
     }
 
-    &:hover::before, &::after {
+    &::before, &::after {
         border-bottom: 1px solid @tertiary-color!important;
     }
 
@@ -324,6 +358,10 @@
         display: flex;
         flex-wrap: wrap;
     }
+}
+
+.MuiPaper-rounded {
+    border-radius: 0!important;
 }
 
 .filter-checkbox {
@@ -488,192 +526,6 @@ ul[role=listbox], ul[role=menu] {
     }
 }
 
-[class*="screenshot-game"] {
-    border-radius: 5px;
-    overflow: visible!important;
-    box-shadow: none!important;
-
-    .screenshot {
-        position: relative;
-        padding-top: 70%;
-
-        div, img {
-            width: 100%;
-            height: calc(100% + 1px);
-        }
-    }
-
-    .overlay {
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        height: calc(100% + 1px - 85px);
-        width: 100%;
-        background: radial-gradient(ellipse at center, rgba(255,255,255,0) 0%,rgba(255,255,255,.25) 100%);
-        display: none;
-        pointer-events: none;
-    }
-
-    .highlighted-table-discount {
-        position: absolute;
-        top: 0;
-        right: 0;
-        color: white;
-        background-color: forestgreen;
-        opacity: 0.7;
-        font-size: 15px;
-    }
-
-    .highlighted-table-text {
-        position: relative;
-        pointer-events: none;
-        background: rgba(black, 0.2);
-        height: 85px;
-
-        .name {
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            
-            > div {
-                color: #90d793;
-                font-weight: bold;
-            }
-        }
-
-        .genre-price-container {
-            position: relative;
-            height: 35px;
-
-            .genre {
-                position: absolute;
-                left: 15px;
-                bottom: 5px;
-                font-size: 0.9em;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                color: #ffc55b;
-                display: inline-block;
-                vertical-align: bottom;
-            }
-        
-            .price-container {
-                color: white;
-                display: inline-block;
-                vertical-align: bottom;
-                
-                .discount {
-                    position: absolute;
-                    right: 15px;
-                    bottom: 0;
-                    font-size: 20px;
-                    background: #516b2d;
-                    color: rgba(white, 0.7);
-                }
-        
-                .base-price {
-                    position: absolute;
-                    top: 0px;
-                    right: 75px;
-                    opacity: .75;
-                    font-size: 10px;
-        
-                    del {
-                        opacity: 0.8;
-                        vertical-align: text-top;
-                    }
-                }
-        
-                .final-price {
-                    position: absolute;
-                    bottom: 0px;
-                    right: 0px;
-                    opacity: 0.7;
-                    font-size: 8px;
-                }
-        
-                .text {
-                    position: absolute;
-                    bottom: 2px;
-                    right: 22px;
-                    text-align: right;
-                    font-size: 17px;
-                    color: white;
-        
-                    &.with-discount {
-                        bottom: -3px;
-                        right: 77px;
-                        font-size: 14px!important;
-                    }
-                }
-            }
-        }
-
-        .genres {
-            font-size: 0.8rem;
-        }
-
-        .platforms {
-            font-size: 1.3rem;
-        }
-
-        * {
-            color: rgba(white, 0.8);
-        }
-    }
-
-    .cover-img {
-        position: absolute;
-        top: -20px;
-        left: 23px;
-        width: calc(8vw);
-    }
-
-    .filter {
-        position: absolute; 
-        top: 0;
-        left: 0;
-        height: calc(100% + 1px);
-        width: 100%;
-        background: radial-gradient(ellipse at center, rgba(0,0,0,0.7) 0%, transparent 50%);
-        pointer-events: none;
-    }
-
-    &[class*="cover-game"] {
-        
-        .screenshot {
-            padding-top: 44%;
-        }
-
-        .overlay {
-            height: calc(100% + 1px - 85px);
-        }
-
-        .highlighted-table-text {
-            bottom: 0px;
-        }
-
-        .price-container {
-            bottom: 10px;
-
-            .base-price {
-                top: 3px;
-            }
-            
-            .discount {
-                font-size: 15px;
-            }
-
-            .text {
-                font-size: 15px;
-            }
-        }
-    }
-
-}
-
 [class*="cover-game"] {
 
     .screenshot {
@@ -690,7 +542,7 @@ ul[role=listbox], ul[role=menu] {
         position: absolute;
         top: 0px;
         left: 0px;
-        height: calc(100% + 1px - 99px);
+        height: calc(100% - 100px);
         width: 100%;
         background: radial-gradient(ellipse at center, rgba(255,255,255,0) 0%,rgba(255,255,255,.25) 100%);
         display: none;
@@ -724,9 +576,8 @@ ul[role=listbox], ul[role=menu] {
             }
         }
 
-        .genre-price-container {
+        .game-info-container {
             position: relative;
-            height: 45px;
 
             .genre {
                 position: absolute;
@@ -804,6 +655,271 @@ ul[role=listbox], ul[role=menu] {
 
 }
 
+[class*="search-game"] {
+
+    .screenshot {
+        position: relative;
+        padding-top: 44%;
+
+        div, img {
+            width: 100%;
+            height: calc(100% + 1px);
+        }
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: calc(100% - 129px);
+        width: 100%;
+        background: radial-gradient(ellipse at center, rgba(255,255,255,0) 0%,rgba(255,255,255,.25) 100%);
+        display: none;
+        pointer-events: none;
+    }
+
+    .highlighted-table-discount {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: white;
+        background-color: forestgreen;
+        opacity: 0.7;
+        font-size: 15px;
+    }
+
+    .highlighted-table-text {
+        position: relative;
+        pointer-events: none;
+        background: rgba(black, 0.2);
+
+        .name {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            
+            > div {
+                color: #90d793;
+                font-weight: bold;
+            }
+        }
+
+        .game-info-container {
+            position: relative;
+
+            .genre {
+                position: absolute;
+                left: 0px;
+                bottom: 0px;
+                font-size: 0.9em;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                color: #ffc55b;
+                display: inline-block;
+                vertical-align: bottom;
+            }
+        
+            .platforms {
+                color: rgba(white, 0.7);
+            }
+
+            .release-date {
+                color: rgba(white, 0.7);
+                margin: 3px 0;
+            }
+
+            .price-container {
+                color: white;
+                display: inline-block;
+                vertical-align: bottom;
+                
+                .discount {
+                    position: absolute;
+                    right: 0px;
+                    bottom: 0;
+                    font-size: 15px;
+                    background: #516b2d;
+                    color: rgba(white, 0.7);
+                }
+        
+                .base-price {
+                    position: absolute;
+                    bottom: 16px;
+                    right: 45px;
+                    opacity: .75;
+                    font-size: 10px;
+        
+                    del {
+                        opacity: 0.8;
+                        vertical-align: text-top;
+                    }
+                }
+        
+                .final-price {
+                    position: absolute;
+                    bottom: 0px;
+                    right: 0px;
+                    opacity: 0.7;
+                    font-size: 8px;
+                }
+        
+                .text {
+                    position: absolute;
+                    bottom: 2px;
+                    right: 7px;
+                    text-align: right;
+                    font-size: 15px;
+                    color: white;
+        
+                    &.with-discount {
+                        bottom: -3px;
+                        right: 47px;
+                        font-size: 16px!important;
+                    }
+                }
+            }
+        }
+
+    }
+
+}
+
+[class*="cover-small-game"] {
+    width: 180px;
+    height: 135px;
+    margin: 8px 10px;
+
+    .screenshot {
+        position: relative;
+
+        div, img {
+            width: 100%;
+            height: calc(100% + 1px);
+        }
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: calc(100% - 129px);
+        width: 100%;
+        background: radial-gradient(ellipse at center, rgba(255,255,255,0) 0%,rgba(255,255,255,.25) 100%);
+        display: none;
+        pointer-events: none;
+    }
+
+    .highlighted-table-discount {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: white;
+        background-color: forestgreen;
+        opacity: 0.7;
+        font-size: 15px;
+    }
+
+    .highlighted-table-text {
+        position: relative;
+        pointer-events: none;
+        background: rgba(black, 0.2);
+        padding: 8px!important;
+        max-height: 52px;
+
+        .name {
+            width: 100%;
+            max-height: 3em;
+            overflow: hidden;
+            
+            > div {
+                color: #90d793;
+                font-weight: bold;
+            }
+        }
+
+        .game-info-container {
+            position: relative;
+
+            .genre {
+                position: absolute;
+                left: 0px;
+                bottom: 0px;
+                font-size: 0.9em;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                color: #ffc55b;
+                display: inline-block;
+                vertical-align: bottom;
+            }
+        
+            .platforms {
+                color: rgba(white, 0.7);
+            }
+
+            .release-date {
+                color: rgba(white, 0.7);
+                margin: 3px 0;
+            }
+
+            .price-container {
+                color: white;
+                display: inline-block;
+                vertical-align: bottom;
+                
+                .discount {
+                    position: absolute;
+                    right: 0px;
+                    bottom: 0;
+                    font-size: 15px;
+                    background: #516b2d;
+                    color: rgba(white, 0.7);
+                }
+        
+                .base-price {
+                    position: absolute;
+                    bottom: 16px;
+                    right: 45px;
+                    opacity: .75;
+                    font-size: 10px;
+        
+                    del {
+                        opacity: 0.8;
+                        vertical-align: text-top;
+                    }
+                }
+        
+                .final-price {
+                    position: absolute;
+                    bottom: 0px;
+                    right: 0px;
+                    opacity: 0.7;
+                    font-size: 8px;
+                }
+        
+                .text {
+                    position: absolute;
+                    bottom: 2px;
+                    right: 7px;
+                    text-align: right;
+                    font-size: 15px;
+                    color: white;
+        
+                    &.with-discount {
+                        bottom: -3px;
+                        right: 47px;
+                        font-size: 16px!important;
+                    }
+                }
+            }
+        }
+
+    }
+
+}
+
 [class*="cover-scrolling-game"] {
 
     .screenshot {
@@ -855,7 +971,7 @@ ul[role=listbox], ul[role=menu] {
             }
         }
 
-        .genre-price-container {
+        .game-info-container {
             position: relative;
             height: 35px;
 
