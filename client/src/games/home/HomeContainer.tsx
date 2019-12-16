@@ -83,7 +83,7 @@ class HomeContainer extends React.Component<Props, IHomeContainerState> {
     componentDidMount(): void {
         let promises: Promise<any>[] = [];
 
-        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/popular`));
+        promises.push(SteamService.httpGenericGetData<MultiGameResponse>(`/api/steam/popular/upcoming`));
         this.state.editorsGamesSteamIds.forEach((steamId: number) => {
             promises.push(SteamService.httpGenericGetData<GenericModelResponse>(`/api/steam/game/${steamId}`));
         });
@@ -105,7 +105,7 @@ class HomeContainer extends React.Component<Props, IHomeContainerState> {
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
                     .filter((game: GameResponse) => game.cover)
                     .sort((a: GameResponse, b: GameResponse) => b.review.id - a.review.id)
-                    .slice(0, 10);
+                    .slice(0, 20);
                 const editorsGamesData: GenericModelResponse[] = data.slice(1, 1 + this.state.editorsGamesSteamIds.length);
                 const editorGames: GameResponse[] = [];
                 editorsGamesData.forEach((x: GenericModelResponse) => {
@@ -153,7 +153,7 @@ class HomeContainer extends React.Component<Props, IHomeContainerState> {
                 const endingSoonGames: GameResponse[] = endingSoonGamesData.data
                     .filter((game: GameResponse) => game.cover)
                     .filter((game: GameResponse) => ExcludedGameIds.findIndex((x: number) => x === game.steamId) === -1)
-                    .slice(0, 10);
+                    .slice(0, 20);
                 const recommendedGamesData: MultiGameResponse = data[7 + this.state.editorsGamesSteamIds.length];
                 const recommendedGames: GameResponse[] = recommendedGamesData.data
                     .filter((game: GameResponse) => game.cover)

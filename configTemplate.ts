@@ -44,7 +44,12 @@ const config: Config = {
             charset: ""
         },
         remote: {
-            host: "connectwithgamers.cvf1guhrrmdd.us-east-1.rds.amazonaws.com", user: "admin", password: "hbkrkohbkrko", database: "connectwithgamers", insecureAuth: true, charset: "utf8mb4"
+            host: "",
+            user: "",
+            password: "",
+            database: "",
+            insecureAuth: true,
+            charset: "utf8mb4"
         }
     }
 };

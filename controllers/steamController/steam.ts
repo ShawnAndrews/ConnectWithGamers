@@ -28,6 +28,14 @@ routes.addRoute("gameachievements", "/game/achievements/:id");
 routes.addRoute("game", "/game/:id");
 routes.addRoute("genres", "/genres");
 routes.addRoute("platforms", "/platforms");
+routes.addRoute("steampopularupcoming", "/popular/upcoming");
+routes.addRoute("steampopularrecent", "/popular/recent");
+routes.addRoute("steampopularearly", "/popular/early");
+routes.addRoute("steampopularpreorder", "/popular/preorder");
+routes.addRoute("steampopulartopselling", "/popular/topselling");
+routes.addRoute("steampopularhighlighted", "/popular/highlighted");
+
+
 routes.addRoute("steamweeklydeals", "/weeklydeals");
 routes.addRoute("steamcompmulti", "/compmulti");
 routes.addRoute("steamfreeonlinemulti", "/freeonlinemulti");
@@ -53,7 +61,6 @@ routes.addRoute("steamshooter", "/genre/shooter");
 routes.addRoute("steamrts", "/genre/rts");
 routes.addRoute("steamtowerdefence", "/genre/towerdefence");
 routes.addRoute("steamupcoming", "/upcoming");
-routes.addRoute("steampopular", "/popular");
 routes.addRoute("steamrecent", "/recent");
 routes.addRoute("steamearlyaccess", "/earlyaccess");
 routes.addRoute("steamopenworld", "/openworld");
@@ -373,6 +380,138 @@ router.post(routes.getRoute("gamesuggestions"), (req: Request, res: Response) =>
         });
 });
 
+/* popular games - upcoming */
+router.post(routes.getRoute("steampopularupcoming"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const url: string = req.url;
+    GenericCachedWithQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT t.steam_games_sys_key_id
+        FROM steam_games t
+        where first_release_date > now()
+        order by first_release_date ASC
+        LIMIT 200`,
+        [],
+        url)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* popular games - recent */
+router.post(routes.getRoute("steampopularrecent"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const url: string = req.url;
+    GenericCachedWithQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT t.steam_games_sys_key_id
+        FROM steam_games t
+        where first_release_date < now() AND total_review_count > 100
+        order by first_release_date DESC
+        LIMIT 200`,
+        [],
+        url)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* popular games - early */
+router.post(routes.getRoute("steampopularearly"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const url: string = req.url;
+    GenericCachedWithQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT t.steam_games_sys_key_id
+        FROM steam_games t
+        where t.steam_state_enum_sys_key_id = 2 AND first_release_date < now()
+        order by first_release_date DESC
+        LIMIT 200`,
+        [],
+        url)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* popular games - preorder */
+router.post(routes.getRoute("steampopularpreorder"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const url: string = req.url;
+    GenericCachedWithQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT t.steam_games_sys_key_id
+        FROM steam_games t
+        where t.steam_state_enum_sys_key_id = 3 AND first_release_date < now()
+        order by first_release_date DESC
+        LIMIT 200`,
+        [],
+        url)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* popular games - topselling */
+router.post(routes.getRoute("steampopulartopselling"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const url: string = req.url;
+    GenericCachedWithQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT t.steam_games_sys_key_id
+        FROM steam_games t
+        where first_release_date < now()
+        order by total_review_count DESC
+        LIMIT 200`,
+        [],
+        url)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
+/* popular games - highlighted */
+router.post(routes.getRoute("steampopularhighlighted"), (req: Request, res: Response) => {
+    const genericResponse: GenericModelResponse = { error: undefined };
+    const url: string = req.url;
+    GenericCachedWithQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
+        `SELECT t.steam_games_sys_key_id
+        FROM steam_games t
+        where t.video IS NOT NULL
+        order by first_release_date DESC
+        LIMIT 5`,
+        [],
+        url)
+        .then((data: GameResponse[]) => {
+            genericResponse.data = data;
+            return res.send(genericResponse);
+        })
+        .catch((error: string) => {
+            genericResponse.error = error;
+            return res.send(genericResponse);
+        });
+});
+
 /* weekly deals games */
 router.post(routes.getRoute("steamweeklydeals"), (req: Request, res: Response) => {
     const genericResponse: GenericModelResponse = { error: undefined };
@@ -426,27 +565,6 @@ router.post(routes.getRoute("platforms"), (req: Request, res: Response) => {
         [],
         url)
         .then((data: IdNamePair[]) => {
-            genericResponse.data = data;
-            return res.send(genericResponse);
-        })
-        .catch((error: string) => {
-            genericResponse.error = error;
-            return res.send(genericResponse);
-        });
-});
-
-/* popular games */
-router.post(routes.getRoute("steampopular"), (req: Request, res: Response) => {
-    const genericResponse: GenericModelResponse = { error: undefined };
-    const url: string = req.url;
-    GenericCachedWithQueryRoute<GameResponse[], string>(gameModel.getGamesByQuery,
-        `SELECT ${DbTableSteamGamesFields[0]}
-        FROM ${DbTables.steam_games}
-        where steam_games_sys_key_id = 696170 OR first_release_date > DATE_SUB(now(), INTERVAL 6 MONTH) order by total_review_count desc
-        LIMIT 10`,
-        [],
-        url)
-        .then((data: GameResponse[]) => {
             genericResponse.data = data;
             return res.send(genericResponse);
         })
@@ -557,7 +675,7 @@ router.post(routes.getRoute("endingsoon"), (req: Request, res: Response) => {
         join pricings p on p.steam_games_sys_key_id = t.steam_games_sys_key_id and p.pricings_enum_sys_key_id = 1
         where p.discount_end_dt > NOW() and p.discount_end_dt < (NOW() + INTERVAL 5 DAY)
         order by t.total_review_count desc
-        LIMIT 10`,
+        LIMIT 20`,
         [],
         url)
         .then((data: GameResponse[]) => {

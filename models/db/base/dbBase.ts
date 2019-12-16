@@ -19,11 +19,11 @@ export default class DatabaseBase {
      * Connect to MySQL database.
      */
     connectToDatabase(errCallback?: (err: MysqlError) => void): void {
-        this.connection = createConnection(config.mysql.remote);
+        this.connection = createConnection(config.mysql.local);
         this.connection.connect(errCallback);
         this.connection.on("error", function(err) {
             console.log(err.code);
-            if (err.code === "PROTOCOL_CONNECTION_LOST") {
+            if (err.code === "PROTOCOL_CONNECTION_LOST" || err.code === "ECONNRESET") {
                 console.log(`Connection to MySQL database lost. Retrying...`);
                 setTimeout(this.connectToDatabase, 2000);
             }
@@ -91,7 +91,6 @@ export default class DatabaseBase {
                         console.log(`SELECT error: ${JSON.stringify(error)}`);
                         return reject(error);
                     }
-                    console.log(`SELECT resp: ${response.data}`);
                     response.data = results;
                     return resolve(response);
                 });

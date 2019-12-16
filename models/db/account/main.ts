@@ -57,7 +57,7 @@ class AccountModel extends DatabaseBase {
             this.select(
                 DbTables.accounts,
                 DbTableAccountsFields,
-                `${DbTableAccountsFields[2]}=?`,
+                `${DbTableAccountsFields[1]}=?`,
                 [username])
                 .then((dbResponse: GenericModelResponse) => {
                     const accountid: number = dbResponse.data[0].accounts_sys_key_id;
@@ -107,7 +107,7 @@ class AccountModel extends DatabaseBase {
             this.select(
                 DbTables.accounts,
                 DbTableAccountsFields,
-                `${DbTableAccountsFields[2]}=?`,
+                `${DbTableAccountsFields[1]}=?`,
                 [username])
                 .then((dbResponse: GenericModelResponse) => {
                     const RecoveryEmailInfo: RecoveryEmailInfo = { email: dbResponse.data[0].email, uid: dbResponse.data[0].recovery_verification_code };
@@ -152,7 +152,7 @@ class AccountModel extends DatabaseBase {
             this.select(
                 DbTables.accounts,
                 DbTableAccountsFields,
-                `${DbTableAccountsFields[2]} LIKE ${usernameFilter ? `?` : `'%'`}`,
+                `${DbTableAccountsFields[1]} LIKE ${usernameFilter ? `?` : `'%'`}`,
                 [`%${usernameFilter}%`])
                 .then((dbResponse: GenericModelResponse) => {
                     const accounts: AccountInfo[] = [];
@@ -265,7 +265,7 @@ class AccountModel extends DatabaseBase {
 
                     return this.update(
                         DbTables.accounts,
-                        `${DbTableAccountsFields[11]}=?`,
+                        `${DbTableAccountsFields[10]}=?`,
                         [undefined],
                         `${DbTableAccountsFields[0]}=?`,
                         [accountid])

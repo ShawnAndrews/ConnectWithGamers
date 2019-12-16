@@ -8,6 +8,33 @@
 .games-page {
     height: -webkit-fill-available;
 
+    .games-options {
+        position: relative;
+        color: rgba(@tertiary-color, 1.0);
+        overflow: hidden;
+
+        .show {
+            position: absolute;
+            right: 0px;
+            top: 11px;
+            font-size: 12px;
+            color: @tertiary-color;
+        }
+
+        .underline {
+            position: relative;
+            height: 2px;
+            background-color: rgb(41, 41, 41);
+        }
+
+        .games-options-grid {
+            height: calc(100% - 50px);
+            overflow-y: hidden;
+            overflow-x: hidden;
+        }
+
+    }
+
     .pricey-games {
         display: table;
         table-layout: fixed;
@@ -27,7 +54,7 @@
             }
 
             .grid-results {
-                height: calc(700px - 28px);
+                height: calc(720px - 28px);
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: space-around;
@@ -35,66 +62,128 @@
 
                 & > div {
                     width: 215px;
-                    height: 205px;
+                    height: 215px;
                     margin: 10px 10px;
                 }
 
-                .genre {
-                    display: none;
-                }
-
                 .overlay {
-                    height: calc(100% - 109px)!important;
+                    height: calc(100% - 119px)!important;
                 }
             }
         }
     }
 
-    .editors-games {
-        position: relative;
-        display: table;
+    .highlighted-games-carousel {
+        height: 15vw;
 
-        @media @xxl {
-            display: block;
-        }
+        .item {
+            position: relative;
 
-        .recommended-games {
-            display: table-cell;
-            width: auto;
-            height: 480px;
+            .item-container {
+                width: fit-content;
+                margin: 0 auto;
 
-            @media @xxl {
-                display: block;
-            }
+                .image {
 
-            .recommended-games-label {
-                color: @tertiary-color;
-            }
-
-            .grid-results {
-                height: calc(480px - 40px);
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-around;
-                overflow: hidden;
-            }
-        }
-
-        .editors-games-container {
-            display: table-cell;
-            width: 1054px;
-            
-            .editors-game-info {
-                position: relative;
-                width: 200px;
-                height: 480px;
-
-                @media @xxl {
-                    width: 100%;
                 }
+    
+                .screenshots {
+                    width: 20vw;
+
+                    .screenshot {
+                        width: 50%;
+                        height: 50%;
+                        padding: 7px;
+
+                        &:nth-child(1) {
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                        }
+
+                        &:nth-child(2) {
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                        }
+
+                        &:nth-child(3) {
+                            position: absolute;
+                            bottom: 0;
+                            left: 0;
+                        }
+
+                        &:nth-child(4) {
+                            position: absolute;
+                            bottom: 0;
+                            right: 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        .slick-list {
+            height: inherit;
+        }
+
+        .slick-slide > div {
+            height: inherit;
+        }
+
+        .slick-slider {
+            margin-bottom: 0px!important;
+        }
+
+        .slick-dots {
+            position: relative!important;
+            bottom: -40px!important;
+
+            li {
+                margin: 5px 8px!important;
+                width: 40px!important;
+                height: 40px!important;
+
+                button:before {
+                    content: '●'!important;
+                }
+            }
+
+            .slick-active {
+                img {
+                    border: 2px solid @tertiary-color;
+                }
+            }
+
+        }
+
+        .slick-track {
+            height: inherit!important;
+        }
+    }
+
+    .editors-games-carousel {
+        height: 35vw;
+
+        .item {
+            position: relative;
+
+            .video-preview {
+                object-fit: fill; 
+            }
+
+            .highlighted-table-text {
+                position: absolute;
+                top: 47%;
+                left: 50%;
+                transform: translate(-50%, -70%);
+                text-align: center;
 
                 .name {
                     position: initial;
+                    width: 25vw;
+                    height: 46px;
+                    white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
                 
@@ -105,7 +194,7 @@
                 }
     
                 .genres {
-                    color: #ffc55b;
+                    color: white;
                     opacity: 0.8;
                     font-size: 0.8rem;
                 }
@@ -115,98 +204,76 @@
                     opacity: 0.8;
                     font-size: 1.3rem;
                 }
-    
-                .on-sale {
-                    color: rgba(white, 0.8);
-                    font-size: 0.8em;
-                }
 
-                .price-btn-container {
-                    position: absolute;
-                    bottom: 10px;
-                    width: calc(100%  - 32px);
-
-                    .price-label {
-                        color: rgba(white, 0.9);
-                        font-size: 1.2em;
+                .price-btn {
+                    min-width: unset!important;
+                    min-height: unset!important;
+                    background-color: #4c6b22 !important;
+                    color: white!important;
+                    font-size: 0.7rem;
+                    pointer-events: all;
+                    
+                    &.discounted {
+                        height: 45px;
+                        width: 110px;
                     }
 
-                    .price-btn {
-                        left: 50%;
-                        transform: translateX(-50%);
-                        min-width: unset!important;
-                        min-height: unset!important;
-                        background-color: #4c6b22 !important;
-                        color: white!important;
-                        font-size: 0.7rem;
-                        margin-bottom: 4px;
-                        pointer-events: all;
-                        
-                        &:hover {
-                            background-color: #699230!important
-                        }
-    
-                        .base-price {
-                            position: relative;
-                            bottom: -1px;
-                            font-size: 0.8em;
-                            opacity: 0.5;
-                            text-decoration: line-through;
-                        }
+                    .base-price {
+                        position: absolute;
+                        top: 6px;
+                        right: 17px;
+                        opacity: .5;
+                        font-size: 10px;
+                        text-decoration: line-through;
+                    }
+
+                    .price.discounted {
+                        position: absolute;
+                        bottom: 3px;
+                        font-size: 13px;
+                    }
+
+                    &:hover {
+                        background-color: #699230!important
                     }
                 }
 
-            }
-
-            .editors-games-carousel {
-                width: 854px;
-                height: 480px;
-                overflow: hidden;
-            
-                @media @xxl {
-                    display: none!important;
-                }
-
-                .item {
-                    position: relative;
-                }
-        
-                .slick-list {
-                    height: inherit;
-                }
-        
-                .slick-slide > div {
-                    height: inherit;
-                }
-        
-                .slick-slider {
-                    margin-bottom: 0px!important;
-                }
-        
-                .slick-dots {
-                    position: relative!important;
-                    bottom: 5px!important;
-        
-                    li {
-                        margin: 5px 8px!important;
-                        width: 40px!important;
-                        height: 40px!important;
-                    }
-        
-                    .slick-active {
-                        img {
-                            border: 2px solid @tertiary-color;
-                        }
-                    }
-                }
-        
-                .slick-track, img {
-                    height: inherit!important;
-                }
-        
             }
         }
-        
+
+        .slick-list {
+            height: inherit;
+        }
+
+        .slick-slide > div {
+            height: inherit;
+        }
+
+        .slick-slider {
+            margin-bottom: 0px!important;
+        }
+
+        .slick-dots {
+            position: relative!important;
+            bottom: 5px!important;
+
+            li {
+                margin: 5px 8px!important;
+                width: 40px!important;
+                height: 40px!important;
+            }
+
+            .slick-active {
+                img {
+                    border: 2px solid @tertiary-color;
+                }
+            }
+        }
+
+        .slick-track, img {
+            height: inherit!important;
+        }
+
     }
 
     .header .title {
@@ -228,13 +295,13 @@
             overflow: hidden;
 
             &.limit-two-rows {
-                height: 575px;
+                height: 490px;
             }
 
             & > div {
-                width: 315px;
-                height: 240px;
-                margin: 20px 10px;
+                width: 220px;
+                height: 210px;
+                margin: 15px 10px;
             }
         }
 
@@ -850,7 +917,8 @@
 
         .ending-soon {
             width: 616px;
-
+            text-align: -webkit-center;
+            
             @media @xxl {
                 width: 100%;
             }
@@ -897,6 +965,7 @@
             }
 
             .today-deals {
+                max-width: 600px;
 
                 .today-deals-header, .today-deals-footer {
                     position: relative;
@@ -1052,44 +1121,6 @@
             }
         }
 
-        .news-article {
-
-            .title {
-                position: relative;
-                overflow: hidden;
-                color: #90d794d8;
-                font-size: .8em;
-            }
         
-            .author {
-                color: hsla(0,0%,100%,.5);
-                font-size: .6em;
-                height: 1.4em;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        
-            .date {
-                color: orange;
-                font-size: .8em;
-                text-align: right;
-                overflow: hidden;
-                height: 1.4em;
-            }
-        
-            > div {
-                background-color: rgba(white,0.05)
-            }
-        
-            img {
-                max-height: 165px;
-                max-width: 100%;
-            }
-        
-            * {
-                color: white;
-            }
-        }
     }
 }

@@ -34,7 +34,7 @@ class SecurityModel extends DatabaseBase {
             this.select(
                 DbTables.accounts,
                 DbTableAccountsFields,
-                `${DbTableAccountsFields[2]} = ?`,
+                `${DbTableAccountsFields[1]} = ?`,
                 [attemptedUsername])
                 .then((dbResponse: GenericModelResponse) => {
 
@@ -73,7 +73,7 @@ class SecurityModel extends DatabaseBase {
             this.select(
                 DbTables.accounts,
                 DbTableAccountsFields,
-                `${DbTableAccountsFields[2]}=?`,
+                `${DbTableAccountsFields[1]}=?`,
                 [username])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
@@ -122,7 +122,7 @@ class SecurityModel extends DatabaseBase {
             this.select(
                 DbTables.tokens,
                 DbTableTokensFields,
-                `${DbTableTokensFields[3]}=?`,
+                `${DbTableTokensFields[2]}=?`,
                 [authToken])
                 .then((dbResponse: GenericModelResponse) => {
                     if (dbResponse.data.length > 0) {
@@ -154,7 +154,7 @@ class SecurityModel extends DatabaseBase {
                 this.select(
                     DbTables.accounts,
                     DbTableAccountsFields,
-                    `${DbTableAccountsFields[2]}=?`,
+                    `${DbTableAccountsFields[1]}=?`,
                     [username])
                     .then((dbResponse: GenericModelResponse) => {
                         if (dbResponse.error) {
@@ -190,7 +190,7 @@ class SecurityModel extends DatabaseBase {
                     DbTables.tokens,
                     DbTableTokensFields.slice(1),
                     [dbAccountid, authToken, Date.now() / 1000, authTokenExpiration / 1000],
-                    "?, ?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?)")
+                    "?, ?, FROM_UNIXTIME(?), FROM_UNIXTIME(?)")
                     .then((dbResponse: GenericModelResponse) => {
                         if (dbResponse.error) {
                             return reject(dbResponse.error);

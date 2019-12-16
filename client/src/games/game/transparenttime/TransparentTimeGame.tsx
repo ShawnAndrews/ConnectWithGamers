@@ -35,7 +35,7 @@ const TransparentTimeGame: React.SFC<ITransparentTimeGameProps> = (props: ITrans
                                 })}
                         </div>}
                     <div className="genres font-italic pt-1">
-                        {props.game.genres && props.game.genres.map(x => x.name).splice(0, 2).join(`, `)}
+                        {props.game.genres.length > 0 && props.game.genres.map(x => x.name).splice(0, 2).join(`, `)}
                     </div>
                     <PriceContainer 
                         game={props.game}

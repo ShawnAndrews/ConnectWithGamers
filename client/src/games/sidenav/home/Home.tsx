@@ -65,7 +65,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                     <i className="fas fa-home mr-3"/>
                     Home
                 </div>
-                <div className="title mb-2">Browse Steam</div>
+                <div className="title mb-2">Categories</div>
                 <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.MostPopular) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.MostPopular)}>
                     <i className="fas fa-fire mr-3"/>
                     Most Popular
@@ -82,67 +82,6 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                     <i className="fab fa-earlybirds mr-3"/>
                     Early Access
                 </div>
-                <div className="title mb-2">Categories</div>
-                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary`} onClick={() => props.onOptionClick(HomeOptionsEnum.Genres)}>
-                    <i className="fas fa-align-justify mr-3"/>
-                    <span>Genres</span>
-                    <i className={`fas ${props.genresExpanded ? 'fa-chevron-left' : 'fa-chevron-right'} arrow float-right`}/>
-                </div>
-                {props.genresExpanded && 
-                    <>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreAction) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreAction)}>
-                            <i className="fas fa-user-ninja mr-3"/>
-                            <span>Action</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreAdventure) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreAdventure)}>
-                            <i className="fas fa-hiking mr-3"/>
-                            <span>Adventure</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreCasual) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreCasual)}>
-                            <i className="fas fa-walking mr-3"/>
-                            <span>Casual</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreStrategy) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreStrategy)}>
-                            <i className="far fa-map mr-3"/>
-                            <span>Strategy</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreRacing) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreRacing)}>
-                            <i className="fas fa-car mr-3"/>
-                            <span>Racing</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreSimulation) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreSimulation)}>
-                            <i className="fas fa-robot mr-3"/>
-                            <span>Simulation</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreSports) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreSports)}>
-                            <i className="fas fa-snowboarding mr-3"/>
-                            <span>Sports</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreIndie) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreIndie)}>
-                            <i className="fas fa-user mr-3"/>
-                            <span>Indie</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.Genre2D) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.Genre2D)}>
-                            <i className="fas fa-cube mr-3"/>
-                            <span>2D</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenrePuzzle) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenrePuzzle)}>
-                            <i className="fas fa-puzzle-piece mr-3"/>
-                            <span>Puzzle</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreShooter) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreShooter)}>
-                            <i className="fas fa-fighter-jet mr-3"/>
-                            <span>Shooter</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreRTS) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreRTS)}>
-                            <i className="fas fa-headset mr-3"/>
-                            <span>RTS</span>
-                        </div>
-                        <div className={`option py-1 px-2 my-1 ml-4 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreTowerDefence) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreTowerDefence)}>
-                            <i className="fas fa-gopuram mr-3"/>
-                            <span>Tower Defence</span>
-                        </div>
-                    </>}
                 <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.WeeklyDeals) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.WeeklyDeals)}>
                     <i className="far fa-calendar-alt mr-3"/>
                     Weekly Deals
@@ -159,6 +98,7 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                     <i className="fas fa-dollar-sign mr-3"/>
                     Paid Multiplayer
                 </div>
+                <div className="title mb-2">Genres</div>
                 <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.MostDifficult) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.MostDifficult)}>
                     <i className="fas fa-exclamation-circle mr-3"/>
                     Most Difficult
@@ -191,6 +131,58 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
                             <span>All</span>
                         </div>
                     </>}
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreAction) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreAction)}>
+                    <i className="fas fa-user-ninja mr-3"/>
+                    <span>Action</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreAdventure) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreAdventure)}>
+                    <i className="fas fa-hiking mr-3"/>
+                    <span>Adventure</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreCasual) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreCasual)}>
+                    <i className="fas fa-walking mr-3"/>
+                    <span>Casual</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreStrategy) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreStrategy)}>
+                    <i className="far fa-map mr-3"/>
+                    <span>Strategy</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreRacing) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreRacing)}>
+                    <i className="fas fa-car mr-3"/>
+                    <span>Racing</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreSimulation) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreSimulation)}>
+                    <i className="fas fa-robot mr-3"/>
+                    <span>Simulation</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreSports) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreSports)}>
+                    <i className="fas fa-snowboarding mr-3"/>
+                    <span>Sports</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreIndie) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreIndie)}>
+                    <i className="fas fa-user mr-3"/>
+                    <span>Indie</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.Genre2D) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.Genre2D)}>
+                    <i className="fas fa-cube mr-3"/>
+                    <span>2D</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenrePuzzle) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenrePuzzle)}>
+                    <i className="fas fa-puzzle-piece mr-3"/>
+                    <span>Puzzle</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreShooter) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreShooter)}>
+                    <i className="fas fa-fighter-jet mr-3"/>
+                    <span>Shooter</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreRTS) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreRTS)}>
+                    <i className="fas fa-headset mr-3"/>
+                    <span>RTS</span>
+                </div>
+                <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.GenreTowerDefence) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.GenreTowerDefence)}>
+                    <i className="fas fa-gopuram mr-3"/>
+                    <span>Tower Defence</span>
+                </div>
                 <div className={`option py-1 px-2 my-1 cursor-pointer color-tertiary ${props.isSelected(HomeOptionsEnum.MOBO) ? 'selected' : ''}`} onClick={() => props.onOptionClick(HomeOptionsEnum.MOBO)}>
                     <i className="fas fa-dungeon mr-3"/>
                     MOBA

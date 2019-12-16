@@ -1,4 +1,3 @@
-const $ = require('jquery');
 import * as Redux from 'redux';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -17,6 +16,7 @@ interface ICoverScrollingGameContainerState {
     hoveredInterval: number;
     hoveredScreenshotIndex: number;
     videoPreviewEnded: boolean;
+    hovering: boolean;
 }
 
 interface ReduxStateProps {
@@ -44,7 +44,8 @@ class CoverScrollingGameContainer extends React.Component<Props, ICoverScrolling
             hoveredTimeout: undefined,
             hoveredInterval: undefined,
             hoveredScreenshotIndex: 0,
-            videoPreviewEnded: false
+            videoPreviewEnded: false,
+            hovering: false
         };
     }
 
@@ -57,8 +58,8 @@ class CoverScrollingGameContainer extends React.Component<Props, ICoverScrolling
     }
 
     onHoverGame(): void {
-        $(`.cover-scrolling-game-${this.props.index} .overlay`).stop().fadeIn("fast");
         this.setState({
+            hovering: true,
             hoveredTimeout: window.setTimeout(() => {
                 this.setState({ 
                     hoveredInterval: window.setInterval(() => this.nextScreenshotIndex(), 1250) 
@@ -68,10 +69,10 @@ class CoverScrollingGameContainer extends React.Component<Props, ICoverScrolling
     }
 
     onHoverOutGame(): void {
-        $(`.cover-scrolling-game-${this.props.index} .overlay`).stop().fadeOut("fast");
         clearTimeout(this.state.hoveredTimeout);
         clearTimeout(this.state.hoveredInterval);
         this.setState({
+            hovering: false,
             hoveredScreenshotIndex: 0
         });
     }
@@ -97,6 +98,7 @@ class CoverScrollingGameContainer extends React.Component<Props, ICoverScrolling
                 goToGame={this.goToGame}
                 onVideoPreviewEnded={this.onVideoPreviewEnded}
                 videoPreviewEnded={this.state.videoPreviewEnded}
+                hovering={this.state.hovering}
             />
         );
     }

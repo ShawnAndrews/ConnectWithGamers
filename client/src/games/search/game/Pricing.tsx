@@ -64,7 +64,7 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
                     showTextStatus={true}
                 />
             </div>
-            <div className="review d-inline-block">
+            <div className="review d-inline-block w-50">
                 <Textfit className="name" style={{ color: `rgb(${reviewColor})` }} min={10.5}>{props.review.name} <sup>{props.total_review_count !== 0 ? props.total_review_count : ``}</sup></Textfit>
                 <div className="stat-bar position-relative mt-2 w-100">
                     <span className="stat-bar-rating" role="stat-bar" style={{ width: `${reviewPercent}%`, backgroundImage: `-webkit-linear-gradient(bottom, rgba(${reviewColor}, 1.0) 0%, rgba(${reviewColor}, 1.0) 47%, rgba(${reviewColor}, 0.65) 50%, rgba(${reviewColor}, 0.65) 100%)` }}/>

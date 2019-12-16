@@ -42,20 +42,19 @@ const Home: React.SFC<IHomeProps> = (props: IHomeProps) => {
     }
 
     const timeGames: GameResponse[] = props.timeGamesOption === TimeGamesOptions.Upcoming ? props.upcomingGames : (props.timeGamesOption === TimeGamesOptions.Recent ? props.recentGames : props.earlyGames);
-
+    
     return (
         <>
             <EditorsGamesContainer
                 goToRedirect={props.goToRedirect}
                 sidebarActiveEnum={props.sidebarActiveEnum}
                 editorsGames={props.editorGames}
-                recommendedGames={props.recommendedGames}
                 currencyRate={props.currencyRate}
                 currencyType={props.currencyType}
             />
             <h5 className="header color-tertiary px-5">
                 <i className="far fa-star d-inline-block mr-2"/>
-                <div className="d-inline-block title" onClick={() => props.goToRedirect(`/search/steam/popular`)}>Featured</div>
+                <div className="d-inline-block title" onClick={() => props.goToRedirect(`/search/steam/popular/upcoming`)}>Featured</div>
             </h5>
             <div className="grid-results horizontal limit-two-rows px-2 pb-5">
                 {props.endingSoonGames && props.endingSoonGames

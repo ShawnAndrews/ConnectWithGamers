@@ -103,7 +103,7 @@ export function getSteamPricings(data: string, steamGamesSysKeyId: number): Pric
         const discountEndDate: Date = $(element).find(`.game_purchase_discount_countdown`).length > 0
         ? new Date((parseInt(data.substring(data.indexOf(`$DiscountCountdown, `), data.indexOf(` );`, data.indexOf(`$DiscountCountdown, `) + 20)))) || new Date(`${$(element).find(`.game_purchase_discount_countdown`).text().split(" ").splice(-2)}, ${monthNameToNumber($(element).find(`.game_purchase_discount_countdown`).text().split(" ").splice(-2)[0]) >= monthNameToNumber(new Date().toLocaleString(`default`, { month: `long` })) ? new Date().getFullYear() : new Date().getFullYear() + 1}`).getTime())
         : undefined;
-        const rawPrice: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`$`, ``) : $(element).find(`.game_purchase_price`).text().replace(`$`, ``).trim();
+        const rawPrice: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`CDN$`, ``).replace(`$`, ``) : $(element).find(`.game_purchase_price`).text().replace(`CDN$`, ``).replace(`$`, ``).trim();
         const price: number = rawPrice.includes(`Free`) ? undefined : Number.parseFloat(rawPrice);
         const pricingEnum: PricingsEnum = i === 0 ? PricingsEnum.main_game : PricingsEnum.bundles;
 
@@ -118,7 +118,7 @@ export function getSteamPricings(data: string, steamGamesSysKeyId: number): Pric
         const pricingEnum: PricingsEnum = PricingsEnum.dlc;
         const title: string = cleanString($(element).find(`.game_area_dlc_name`).text().trim());
         const discountPercent: number = Number.parseInt($(element).find(`.discount_pct`).text().replace(`-`, ``).replace(`%`, ``)) || undefined;
-        const rawPrice: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`$`, ``) : $(element).find(`.game_area_dlc_price`).text().replace(`$`, ``).trim();
+        const rawPrice: string = discountPercent ? $(element).find(`.discount_final_price`).text().replace(`CDN$`, ``).replace(`$`, ``) : $(element).find(`.game_area_dlc_price`).text().replace(`CDN$`, ``).replace(`$`, ``).trim();
         const price: number = (rawPrice === `N/A` || rawPrice === `Free`) ? undefined : Number.parseFloat(rawPrice);
 
         const pricing: PriceInfoResponse = { pricingEnumSysKeyId: pricingEnum, steamGamesSysKeyId: steamGamesSysKeyId, title: title, price: price, discount_percent: discountPercent, discount_end_dt: undefined, log_dt: new Date() };

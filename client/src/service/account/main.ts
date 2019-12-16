@@ -8,7 +8,7 @@ import { SettingsData } from '../../../src/account/settings/SettingsFormsContain
  */
 export function httpGetPublicAccountInfo (): Promise<AccountInfoResponse> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post('/account/public/info')
+        axios.post('/api/account/public/info')
         .then((result) => {
             if (result.data.error) {
                 return reject(`Failed to get public account info. ${result.data.error}`);
@@ -28,7 +28,7 @@ export function httpGetPublicAccountInfo (): Promise<AccountInfoResponse> {
  */
 export function httpRecoverPassword (password: string, uid: string): Promise<DatalessResponse> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post('/account/recover/password', { password: password, uid: uid })
+        axios.post('/api/account/recover/password', { password: password, uid: uid })
         .then((result) => {
             if (result.data.error) {
                 return reject(`Failed to change password via account recovery. ${result.data.error}`);
@@ -47,7 +47,7 @@ export function httpRecoverPassword (password: string, uid: string): Promise<Dat
  */
 export function httpVerifyRecoveryLink (uid: string): Promise<EmailRecoveryVerifyResponse> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post('/account/email/recovery/verify', { uid: uid })
+        axios.post('/api/account/email/recovery/verify', { uid: uid })
         .then((result) => {
             if (result.data.error) {
                 return reject(`Failed to change password via account recovery. ${result.data.error}`);
@@ -66,7 +66,7 @@ export function httpVerifyRecoveryLink (uid: string): Promise<EmailRecoveryVerif
  */
 export function httpAccountSettings(): Promise<AccountInfoResponse> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post('/account/settings')
+        axios.post('/api/account/settings')
         .then((result) => {
             if (result.data.error) {
                 return reject(`Failed to retrieve account settings. ${result.data.error}`);
@@ -85,7 +85,7 @@ export function httpAccountSettings(): Promise<AccountInfoResponse> {
  */
 export function httpLogin (username: string, password: string, remember: boolean): Promise<null> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post('/account/login', {
+        axios.post('/api/account/login', {
             username: username,
             password: password,
             remember: remember
@@ -108,7 +108,7 @@ export function httpLogin (username: string, password: string, remember: boolean
  */
 export function httpSignup (username: string, password: string, email: string): Promise<null> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post('/account/signup', {
+        axios.post('/api/account/signup', {
             username: username,
             password: password,
             email: email
@@ -131,7 +131,7 @@ export function httpSignup (username: string, password: string, email: string): 
  */
 export function httpChangeAccountInfo (newSettings: SettingsData): Promise<null> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post(`/account/settings/change`, { newSettings })
+        axios.post(`/api/account/settings/change`, { newSettings })
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);
@@ -150,7 +150,7 @@ export function httpChangeAccountInfo (newSettings: SettingsData): Promise<null>
  */
 export function httpVerifyEmail (verificationCode: string): Promise<EmailVerifiedFlagResponse> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post('/account/email/verify', { verificationCode: verificationCode })
+        axios.post('/api/account/email/verify', { verificationCode: verificationCode })
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);
@@ -170,7 +170,7 @@ export function httpVerifyEmail (verificationCode: string): Promise<EmailVerifie
  */
 export function httpResendAccountEmail (): Promise<null> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post(`/account/email/resend`)
+        axios.post(`/api/account/email/resend`)
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);
@@ -189,7 +189,7 @@ export function httpResendAccountEmail (): Promise<null> {
  */
 export function httpChangeAccountImage (imageBase64: string, fileExtension: string): Promise<GenericModelResponse> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post(`/account/settings/image/change`, { imageBase64: imageBase64, fileExtension: fileExtension })
+        axios.post(`/api/account/settings/image/change`, { imageBase64: imageBase64, fileExtension: fileExtension })
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);
@@ -209,7 +209,7 @@ export function httpChangeAccountImage (imageBase64: string, fileExtension: stri
  */
 export function httpDeleteAccountImage (): Promise<AccountImageResponse> {
     return new Promise((resolve: any, reject: any) => {
-        axios.post(`/account/settings/image/delete`, {})
+        axios.post(`/api/account/settings/image/delete`, {})
         .then((result) => {
             if (result.data.error) {
                 return reject(result.data.error);

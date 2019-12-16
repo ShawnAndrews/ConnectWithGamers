@@ -2,7 +2,6 @@ import * as React from 'react';
 import { GameResponse } from '../../../../client-server-common/common';
 import Spinner from '../../../spinner/main';
 import TopnavContainer from './topnav/TopnavContainer';
-import { Paper } from '@material-ui/core';
 import GameListContainer, { GameListType } from '../../game/GameListContainer';
 import Pagination from 'rc-pagination';
 import 'rc-pagination/assets/index.css';
@@ -28,7 +27,7 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
     let sortedGames: GameResponse[] = props.games;
 
     return (
-        <Paper className="results overflow-auto">
+        <div className="results overflow-auto">
             <TopnavContainer
                 title="Search results"
                 totalGames={props.games.length}
@@ -59,7 +58,7 @@ const Results: React.SFC<IResultsProps> = (props: IResultsProps) => {
                     pageSize={pageSize}
                 />
             </div>
-        </Paper>
+        </div>
     );
 
 }; 

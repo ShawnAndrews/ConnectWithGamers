@@ -1,4 +1,3 @@
-const $ = require('jquery');
 import * as React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { GameResponse } from '../../../../client-server-common/common';
@@ -14,6 +13,7 @@ interface ICoverFullsizeGameContainerState {
     hoveredInterval: number;
     hoveredScreenshotIndex: number;
     videoPreviewEnded: boolean;
+    hovering: boolean;
 }
 
 class CoverFullsizeGameContainer extends React.Component<ICoverFullsizeGameContainerProps, ICoverFullsizeGameContainerState> {
@@ -30,7 +30,8 @@ class CoverFullsizeGameContainer extends React.Component<ICoverFullsizeGameConta
             hoveredTimeout: undefined,
             hoveredInterval: undefined,
             hoveredScreenshotIndex: 0,
-            videoPreviewEnded: false
+            videoPreviewEnded: false,
+            hovering: false
         };
     }
 
@@ -43,8 +44,8 @@ class CoverFullsizeGameContainer extends React.Component<ICoverFullsizeGameConta
     }
 
     onHoverGame(): void {
-        $(`.cover-game-${this.props.index} .overlay`).stop().fadeIn("fast");
         this.setState({
+            hovering: true,
             hoveredTimeout: window.setTimeout(() => {
                 this.setState({ 
                     hoveredInterval: window.setInterval(() => this.nextScreenshotIndex(), 1250) 
@@ -54,10 +55,10 @@ class CoverFullsizeGameContainer extends React.Component<ICoverFullsizeGameConta
     }
 
     onHoverOutGame(): void {
-        $(`.cover-game-${this.props.index} .overlay`).stop().fadeOut("fast");
         clearTimeout(this.state.hoveredTimeout);
         clearTimeout(this.state.hoveredInterval);
         this.setState({
+            hovering: false,
             hoveredScreenshotIndex: 0
         });
     }
@@ -83,6 +84,7 @@ class CoverFullsizeGameContainer extends React.Component<ICoverFullsizeGameConta
                 goToGame={this.goToGame}
                 onVideoPreviewEnded={this.onVideoPreviewEnded}
                 videoPreviewEnded={this.state.videoPreviewEnded}
+                hovering={this.state.hovering}
             />
         );
     }

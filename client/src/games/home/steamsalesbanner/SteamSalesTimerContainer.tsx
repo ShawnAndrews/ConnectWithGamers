@@ -45,7 +45,7 @@ class SteamSalesTimerContainer extends React.Component<ISteamSalesTimerContainer
     }
 
     getTimeToNextMondayMs(): number {
-        return (this.nextDayAndTime(1, 11, 0).getTime() - new Date().getTime()) / 1000;
+        return (this.nextDayAndTime(1, 12, 0).getTime() - new Date().getTime()) / 1000;
     }
     
     render() {

@@ -13,23 +13,23 @@ interface ISearchGameProps {
     goToGame: () => void;
     onVideoPreviewEnded: () => void;
     videoPreviewEnded: boolean;
+    hovering: boolean;
 }
 
 const SearchGame: React.SFC<ISearchGameProps> = (props: ISearchGameProps) => {
-
     return (
         <div className={`search-game-${props.index} position-relative bg-transparent cursor-pointer`}>
             <div className="screenshot w-100" onClick={props.goToGame} onMouseOver={props.onHoverGame} onMouseOut={props.onHoverOutGame}>
                 <Crossfade src={[props.game.cover, ...props.game.screenshots]} index={props.hoveredScreenshotIndex} />
             </div>
-            <div className='overlay'/>
+            <div className={`overlay ${props.hovering ? 'hovering' : ''}`}/>
             <div className="highlighted-table-text p-3">
                 <>
                     <Textfit className="name" min={11} max={15}>
                         {props.game.name}
                     </Textfit>
                     <div className="game-info-container">
-                        {props.game.genres &&
+                        {props.game.genres.length > 0 &&
                             <div className={`genre`}>
                                 {props.game.genres[0].name}
                             </div>}

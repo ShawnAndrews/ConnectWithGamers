@@ -7,7 +7,6 @@ interface IEditorsGamesContainerProps extends RouteComponentProps<any> {
     goToRedirect: (URL: string) => void;
     sidebarActiveEnum: SidenavEnums;
     editorsGames: GameResponse[];
-    recommendedGames: GameResponse[];
     currencyType: CurrencyType;
     currencyRate: number;
 }
@@ -37,7 +36,6 @@ class EditorsGamesContainer extends React.Component<IEditorsGamesContainerProps,
                 goToRedirect={this.props.goToRedirect}
                 sidebarActiveEnum={this.props.sidebarActiveEnum}
                 editorsGames={this.props.editorsGames}
-                recommendedGames={this.props.recommendedGames}
                 currencyRate={this.props.currencyRate}
                 currencyType={this.props.currencyType}
                 currentIndex={this.state.currentIndex}
