@@ -58,7 +58,7 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
 
     return (
         <div className="pricing w-100 d-inline-block">
-            <div className="d-inline-block w-50">
+            <div className="price-text d-inline-block w-50">
                 <PriceContainer
                     game={props.game}
                     showTextStatus={true}
@@ -71,17 +71,17 @@ const Pricing: React.SFC<IPricingProps> = (props: IPricingProps) => {
                 </div>
             </div>
             {demoPricingsExist && 
-                <div className="tooltip-container my-2">
+                <div className="tooltip-container">
                     <div className="tooltip-header mb-2 mt-3">Demos</div>
                     {getEntriesByPricingsEnum(PricingsEnum.demo)}
                 </div>}
             {bundlesPricingsExist && 
-                <div className="tooltip-container my-2">
+                <div className="tooltip-container">
                     <div className="tooltip-header mb-2 mt-3">Bundles</div>
                     {getEntriesByPricingsEnum(PricingsEnum.bundles)}
                 </div>}
             {dlcPricingsExist && 
-                <div className="tooltip-container my-2">
+                <div className="tooltip-container">
                     <div className="tooltip-header mb-2 mt-3">Downloadable Content</div>
                     {getEntriesByPricingsEnum(PricingsEnum.dlc)}
                 </div>}
