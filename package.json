@@ -22,7 +22,7 @@
         "@types/node": "^12.7.4",
         "@types/node-schedule": "^1.2.4",
         "@types/socket.io": "^2.1.2",
-        "axios": "^0.18.1",
+        "axios": "^0.21.1",
         "bcryptjs": "^2.4.3",
         "blocked": "^1.2.1",
         "body-parser": "^1.18.3",
