@@ -37,7 +37,7 @@
     "react-textfit": "^1.1.0",
     "react-truncate": "^2.3.0",
     "reactstrap": "^7.0.2",
-    "socket.io": "^2.2.0",
+    "socket.io": "^2.4.0",
     "terser": "^3.14.1",
     "ts-loader": "^5.3.2"
   },
