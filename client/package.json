@@ -14,7 +14,7 @@
     "@types/reactstrap": "^6.4.3",
     "@types/socket.io-client": "^1.4.32",
     "axios": "^0.18.1",
-    "chart.js": "^2.8.0",
+    "chart.js": "^2.9.4",
     "chartjs-plugin-datalabels": "^0.7.0",
     "css-loader": "^2.1.0",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
