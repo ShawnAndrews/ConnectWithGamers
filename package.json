@@ -32,7 +32,7 @@
         "cluster": "^0.7.7",
         "cookie-parser": "^1.4.3",
         "email-templates": "^3.0.6",
-        "express": "^4.16.4",
+        "express": "^4.17.3",
         "express-force-ssl": "^0.3.2",
         "express-rate-limit": "^3.3.2",
         "express-session": "^1.15.6",
